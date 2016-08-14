@@ -1,1 +1,4 @@
 lenguage: java
+after_success:
+  - bash <(curl -s https://codecov.io/bash) -t bcdb4fed-8d80-445a-bc9a-3178cddfc9da
+ 
