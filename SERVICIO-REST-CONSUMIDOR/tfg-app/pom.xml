@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>es.udc.fic.tfg</groupId>
+	<artifactId>tfg-app</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>war</packaging>
+	<name>${project-name}</name>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>1.4.1.RELEASE</version>
+		<relativePath /> <!-- lookup parent from repository -->
+	</parent>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<java.version>1.8</java.version>
+		<spring-framework.version>4.0.3.RELEASE</spring-framework.version>
+		<hibernate-annotation>5.0.1.Final</hibernate-annotation>
+		<licence-version>1.10</licence-version>
+		<commons-dbcp.version>1.2.2</commons-dbcp.version>
+		<project-name>tfg-app</project-name>
+	</properties>
+
+	<dependencies>
+		<!-- api rest -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-rest</artifactId>
+		</dependency>
+		<!-- web -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<!-- HATEOAS -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-hateoas</artifactId>
+		</dependency>
+		<!-- tomcat -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-tomcat</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<!-- test -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- JPA -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-dbcp</groupId>
+			<artifactId>commons-dbcp</artifactId>
+		</dependency>
+		<!-- logging <dependency> <groupId>org.springframework.boot</groupId> <artifactId>spring-boot-starter-log4j2</artifactId> 
+			</dependency> -->
+		<!-- inject -->
+		<dependency>
+			<groupId>javax.inject</groupId>
+			<artifactId>javax.inject</artifactId>
+			<version>1</version>
+		</dependency>
+		<!-- Anotaciones hibernate -->
+		<dependency>
+			<groupId>org.hibernate.common</groupId>
+			<artifactId>hibernate-commons-annotations</artifactId>
+			<version>${hibernate-annotation}</version>
+		</dependency>
+	</dependencies>
+	<build>
+		<finalName>${project-name}</finalName>
+		<plugins>
+			<!-- Applications that use spring-boot-devtools will automatically restart 
+				whenever files on the classpath change -->
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<fork>true</fork>
+				</configuration>
+			</plugin>
+			<!-- licencia -->
+			<plugin>
+				<!-- Identificación del plugin license -->
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<version>${licence-version}</version>
+				<configuration>
+					<inceptionYear>2016</inceptionYear>
+					<organizationName>Heidy Mabel Izaguirre Alvarez</organizationName>
+					<projectName>TFG BYTEPIT-APP</projectName>
+					<licenseName>gpl_v3</licenseName>
+					<addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
+					<processStartTag>========================LICENSE_START=================================</processStartTag>
+					<processEndTag>=========================LICENSE_END==================================</processEndTag>
+					<roots>
+						<root>src/main/java</root>
+						<root>src/test</root>
+						<root>src/main/sql</root>
+					</roots>
+					<excludes>
+						<exclude>*.png</exclude>
+						<exclude>*.txt</exclude>
+						<exclude>*.xml</exclude>
+						<exclude>*Test.java</exclude>
+					</excludes>								
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<description>This is the first demo. Map the Barcelona api an save the data into the database.</description>
+</project>

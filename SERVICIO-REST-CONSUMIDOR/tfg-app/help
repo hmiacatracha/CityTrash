@@ -1,0 +1,292 @@
+Ejemplo de proyectos buenos
+https://github.com/Pivopil/spring-boot-oauth2-rest-service-password-encoding
+https://github.com/joedayz?tab=repositories
+backend: https://github.com/joedayz/campusbackend/blob/master/src/main/java/pe/joedayz/api/domain/model/repository/jpa/PermissionJpaRepository.java
+frontend:https://github.com/joedayz/campusfrontend
+oauth2: https://github.com/rajithd/spring-security-oauth2-rest
+		https://github.com/saintdan/spring-rest-oauth2-sample
+		https://github.com/niuyuzhou/staffManager
+https://github.com/Pivopil/spring-boot-oauth2-rest-service-password-encoding
+
+Crear un proyecto desde cero
+http://start.spring.io/
+http://uaihebert.com/complete-web-application-angular-twitter-bootstrap-spring-mvc-data-and-security/
+https://www.adictosaltrabajo.com/tutoriales/tests-de-integracion-con-spring-boot-spring-security-en-servicios-rest/
+
+Tomcat
+./bin/catalina.sh start
+http://localhost:8081/
+http://localhost:8081/tfg-app/
+
+
+PROFILES:
+https://kielczewski.eu/2013/11/setting-active-profile-and-property-sources-in-spring-mvc/
+http://www.arquitecturajava.com/spring-profiles/
+https://www.adictosaltrabajo.com/tutoriales/tutorial-logback-en-spring-boot/
+http://oa.upm.es/38731/1/TFG_Federico_Gutierrez_Faraoni.pdf
+http://javasampleapproach.com/spring-framework/spring-profiles-profile-annotation-and-xml-configuration
+
+mvn clean spring-boot:run -Dspring.profiles.active=dev
+spring.profiles.default=production
+spring.profiles.active=@activeProfile@
+
+@RunWith(SpringJUnit4ClassRunner.class)
+//Change it to your desired profile
+@ActiveProfiles(profiles = "dev")
+@ContextConfiguration("classpath:spring/xml-config-context.xml")
+
+@Before
+	public void before() {
+		this.profiles = System.getProperty("spring.profiles.active");
+	}
+
+	@After
+	public void after() {
+		if (this.profiles != null) {
+			System.setProperty("spring.profiles.active", this.profiles);
+		}
+		else {
+			System.clearProperty("spring.profiles.active");
+		}
+	}
+	
+
+https://www.mkyong.com/spring-boot/spring-boot-deploy-war-file-to-tomcat/
+https://devcenter.heroku.com/articles/deploying-spring-boot-apps-to-heroku
+mvn spring-boot:run -Dspring.profiles.active=stage
+
+#Links para poder meter en los informes del TFG
+https://picodotdev.github.io/blog-bitix/2015/10/aplicacion-java-autocontenida-con-spring-boot/
+https://picodotdev.github.io/blog-bitix/2015/03/aplicacion-web-java-autocontenida-con-tomcat-embedded/
+https://picodotdev.github.io/blog-bitix/2014/11/inicio-basico-de-docker/
+https://github.com/spring-projects/spring-boot/tree/master/spring-boot-samples
+https://www.adictosaltrabajo.com/tutoriales/spring-jdbcnamespace/
+https://github.com/spring-projects/spring-data-jpa/blob/master/src/main/asciidoc/jpa.adoc
+http://www.jtech.ua.es/j2ee/publico/spring-2012-13/sesion04-apuntes.html
+
+.... muy bueno
+http://www.arquitecturajava.com/categoria/spring/spring-rest/
+http://uaihebert.com/complete-web-application-angular-twitter-bootstrap-spring-mvc-data-and-security/
+https://www.tothepoint.company/blog/spring-rest-doc/
+http://www.adeveloperdiary.com/java/spring-boot/create-restful-webservices-using-spring-boot/
+https://geeksjavamexico.wordpress.com/2016/09/05/spring-boot-rest-jersey-agregando-spring-data-parte-2/
+https://github.com/raidentrance/spring-boot-example/tree/part2-adding-springdata
+https://github.com/spring-projects/spring-data-jpa/blob/master/src/main/asciidoc/jpa.adoc
+https://docs.spring.io/spring-data/jpa/docs/current/reference/html/
+http://blog.netgloo.com/2014/10/06/spring-boot-data-access-with-jpa-hibernate-and-mysql/	
+https://www.ccampo.me/java/spring/2016/02/13/multi-datasource-spring-boot.html
+http://www.baeldung.com/the-persistence-layer-with-spring-and-jpa
+http://www.jtech.ua.es/j2ee/publico/spring-2012-13/sesion04-apuntes.html
+https://www.ibm.com/developerworks/library/wa-restful/
+
+#datasource
+		https://mytechrepo.wordpress.com/2015/02/17/drivermanagerdatasource-vs-basicdatasource/
+		//DriverManagerDataSource dataSource = new DriverManagerDataSource();
+		//https://mytechrepo.wordpress.com/2015/02/17/drivermanagerdatasource-vs-basicdatasource/
+		//http://opac.pucv.cl/pucv_txt/txt-5500/UCF5503_01.pdf
+		http://javamanikandan.blogspot.com.es/2014/05/sql-dialects-in-hibernate.html
+		
+		
+
+
+1.- plugin de licencia libre
+http://snmb-desarrollo.readthedocs.io/en/develop/howtos/licensing.html
+
+2.- Sheduling 
+http://howtodoinjava.com/spring/spring-core/4-ways-to-schedule-tasks-in-spring-3-scheduled-example/
+http://www.quartz-scheduler.org/documentation/quartz-2.x/tutorials/tutorial-lesson-06
+http://www.baeldung.com/spring-async
+https://spring.io/guides/gs/async-method/
+http://docs.spring.io/spring/docs/current/spring-framework-reference/html/scheduling.html
+
+3.-Container links
+http://ledze.mx/index.php/10-spring-boot/restful/7-spring-boot-servicio-data-restful-con-acceso-a-datos-con-jpa-front-end-basado-en-restful-hypermedia
+// http://www.amb.cat/es/web/medi-ambient/residus/gestio/recollida#box1
+http://www.actividades-mcp.es/gestionresiduos/2014/03/los-contenedores-se-hacen-inteligentes/
+
+4.- Empaquetar con spring boot
+https://stormpath.com/blog/tutorial-spring-boot-war-files
+http://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#build-tool-plugins-maven-packaging
+
+4.- Datasource configuracion
+http://developerscookbook.blogspot.com.es/2009/10/configurar-un-datasource-mediante-jndi.html
+http://sinjava.blogspot.com.es/2015/10/configurando-datasource-de-oracle-en.html
+http://www.busydeveloper.info/recipe/springboot_configure_jndi_datasource.html
+http://kataribe.naist.jp/spring-projects/spring-boot/blob/ee1cab7f5b60811193a1c08203c526af9f0edddb/spring-boot-docs/src/main/asciidoc/spring-boot-features.adoc
+http://ebanshi.cc/questions/699000/how-do-you-use-a-tomcat-jndi-jdbc-datasource-in-spring-boot
+http://sivalabs.in/2014/03/springmvc4-spring-data-jpa-springsecurity-configuration-using-javaconfig/
+http://docs.spring.io/spring-data/jpa/docs/1.3.0.RELEASE/reference/html/jpa.repositories.html
+http://xantorohara.blogspot.com.es/2013/11/spring-boot-jdbc-with-multiple.html
+
+5.- COntroller mvc spring boot
+https://www.toptal.com/spring/beginners-guide-to-mvc-with-spring-framework
+http://recursivechaos.com/blog/spring-boot-jpa-mysql/
+http://jasenkoh.blogspot.com.es/2014/09/restfull-web-services-with-spring-boot.html
+https://blog.de-swaef.eu/spring-profiles-using-spring-boot/
+
+5.1 REST
+http://ledze.mx/index.php/10-spring-boot/restful/7-spring-boot-servicio-data-restful-con-acceso-a-datos-con-jpa-front-end-basado-en-restful-hypermedia
+http://ledze.mx/index.php/9-spring-boot/6-spring-boot-servicio-restful-con-base-de-datos
+https://elbauldelprogramador.com/buenas-practicas-para-el-diseno-de-una-api-restful-pragmatica/
+http://www.arquitecturajava.com/categoria/spring/spring-rest/
+https://www.tothepoint.company/blog/spring-rest-doc/
+http://www.adeveloperdiary.com/java/spring-boot/create-restful-webservices-using-spring-boot/
+http://blog.codeleak.pl/2015/01/building-hateoas-api-with-jax-rs-and.html
+https://www.insaneprogramming.be/article/2015/09/04/spring-jaxrs/
+http://uaihebert.com/complete-web-application-angular-twitter-bootstrap-spring-mvc-data-and-security/
+http://www.carlos-garcia.es/index.php/tutorial/spring-mvc-api-rest-oauth2
+
+5.2 EMAILS
+https://www.adictosaltrabajo.com/tutoriales/javamail/
+
+
+6.- Test
+https://www.tothepoint.company/blog/spring-rest-doc/
+https://www.grobmeier.de/junit-with-spring-and-jndi-22042016.html
+http://blog.codeleak.pl/2015/05/groovier-spring-boot-integration-testing.html
+http://recursivechaos.com/blog/spring-boot-jpa-mysql/
+
+
+
+7.- Criteria jpa
+http://docs.spring.io/spring-data/jpa/docs/1.3.0.RELEASE/reference/html/jpa.repositories.html
+
+
+8.- Application.properties
+http://kataribe.naist.jp/spring-projects/spring-boot/blob/ee1cab7f5b60811193a1c08203c526af9f0edddb/spring-boot-docs/src/main/asciidoc/spring-boot-features.adoc
+http://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/html/common-application-properties.html
+
+
+9.- IMPORTANTISIMO
+http://kataribe.naist.jp/spring-projects/spring-boot/blob/ee1cab7f5b60811193a1c08203c526af9f0edddb/spring-boot-docs/src/main/asciidoc/spring-boot-features.adoc
+https://geowarin.github.io/understanding-spring-boot.html
+
+
+
+10.- SQL DIALECT
+RDBMS                   Dialect
+DB2                     org.hibernate.dialect.DB2Dialect
+DB2 AS/400              org.hibernate.dialect.DB2400Dialect
+DB2 OS390               org.hibernate.dialect.DB2390Dialect
+PostgreSQL              org.hibernate.dialect.PostgreSQLDialect
+MySQL                   org.hibernate.dialect.MySQLDialect
+MySQL with InnoDB       org.hibernate.dialect.MySQLInnoDBDialect
+MySQL with MyISAM       org.hibernate.dialect.MySQLMyISAMDialect
+Oracle (any version)    org.hibernate.dialect.OracleDialect
+Oracle 9i/10g           org.hibernate.dialect.Oracle9Dialect
+Sybase                  org.hibernate.dialect.SybaseDialect
+Sybase Anywhere         org.hibernate.dialect.SybaseAnywhereDialect
+Microsoft SQL Server    org.hibernate.dialect.SQLServerDialect
+SAP DB                  org.hibernate.dialect.SAPDBDialect
+Informix                org.hibernate.dialect.InformixDialect
+HypersonicSQL           org.hibernate.dialect.HSQLDialect
+Ingres                  org.hibernate.dialect.IngresDialect
+Progress                org.hibernate.dialect.ProgressDialect
+Mckoi SQL               org.hibernate.dialect.MckoiDialect
+Interbase               org.hibernate.dialect.InterbaseDialect
+Pointbase               org.hibernate.dialect.PointbaseDialect
+FrontBase               org.hibernate.dialect.FrontbaseDialect
+Firebird                org.hibernate.dialect.FirebirdDialect
+
+11.- JSON TO OBJECT
+-RestTemplate
+-http://www.mkyong.com/java/jackson-2-convert-java-object-to-from-json/
+
+
+12.- TEST
+
+13.- TOKENS
+http://frameworksjava2008.blogspot.com.es/2015/09/aplicacion-de-seguridad-en-rest-con.html
+http://docs.spring.io/spring-security/site/docs/current/guides/html5/helloworld-xml.html
+https://willmanortiz.wordpress.com/2016/01/25/spring-security-oauth2/
+https://github.com/royclarkson/spring-rest-service-oauth
+https://spring.io/guides/tutorials/spring-boot-oauth2/
+https://content.pivotal.io/blog/securing-restful-web-services-with-oauth2
+https://projects.spring.io/spring-security-oauth/docs/oauth2.html
+http://www.baeldung.com/rest-api-spring-oauth2-angularjs
+https://github.com/Baeldung/spring-security-oauth
+https://www.adictosaltrabajo.com/tutoriales/spring-mvc-api-rest-oauth-2/
+https://www.adictosaltrabajo.com/tutoriales/spring-mvc-rest/
+https://github.com/laishidua/ghostmyselfie/tree/master/ghostmyselfie-server
+
+
+14.- Rest
+https://github.com/dschulten/spring-hateoas-rest-service-sample/blob/master/rest-service/src/main/java/de/escalon/rest/PersonController.java
+hateoas resources.... : https://github.com/spring-projects/spring-hateoas/tree/master/src/main/java/org/springframework/hateoas
+		resource con paginacion: https://github.com/dschulten/spring-hateoas-rest-service-sample/blob/master/rest-service/src/main/java/de/escalon/rest/PersonController.java		
+rest:https://github.com/spring-projects/spring-data-rest
+hateoas: https://www.adictosaltrabajo.com/tutoriales/spring-hateoas/
+		https://spring.io/understanding/HATEOAS
+		http://docs.spring.io/autorepo/docs/spring-hateoas/0.20.x/reference/html/
+hateas y secutity: http://docs.spring.io/spring-data/rest/docs/current/reference/html/		
+wraping a class: https://blog.zenika.com/2012/06/13/hateoas-with-spring-mvc-rest/
+paginacion y ordenacion: https://github.com/spring-projects/spring-data-rest/blob/master/src/main/asciidoc/paging-and-sorting.adoc
+https://blog.agetic.gob.bo/2015/05/disenar-una-api-rest/
+http://www.baeldung.com/rest-api-pagination-in-spring
+https://www.javacodegeeks.com/2012/01/rest-pagination-in-spring.html
+http://www.baeldung.com/rest-api-pagination-in-spring
+http://www.jtech.ua.es/j2ee/publico/spring-2012-13/sesion04-apuntes.html
+https://www.ibm.com/developerworks/library/wa-restful/
+---me gusta throws OfertaInexistenteException http://www.jtech.ua.es/j2ee/publico/spring-2012-13/sesion04-apuntes.html
+https://www.adictosaltrabajo.com/tutoriales/springmvc-angular/
+
+Auth2:
+https://speakerdeck.com/dsyer/data-modelling-and-identity-management-with-oauth2
+https://www.tothepoint.company/blog/spring-rest-doc/
+http://www.baeldung.com/rest-api-spring-oauth2-angularjs
+http://www.carlos-garcia.es/index.php/tutorial/spring-mvc-api-rest-oauth2
+https://www.youtube.com/watch?v=BPqgBAh_j9o
+https://www.laishidua.com/es/servicio-rest-con-spring-security/
+http://www.thegameofcode.com/2012/07/conceptos-basicos-de-oauth2.html
+http://aplicacionesysistemas.com/que-es-oauth/
+https://support.zendesk.com/hc/es/articles/203663836-Uso-de-la-autenticaci%C3%B3n-OAuth-con-su-aplicaci%C3%B3n
+https://loopback.io/doc/en/lb3/OAuth-2.0.html
+http://blog.rajithdelantha.com/2015/09/secure-your-rest-api-with-spring.html
+https://github.com/rajithd/spring-security-oauth2-rest
+
+	
+DOCUMENTACION:
+http://espressoprogrammer.com/spring-rest-docs-example/
+http://uaihebert.com/complete-web-application-angular-twitter-bootstrap-spring-mvc-data-and-security/
+
+
+ROLES:
+https://www.adictosaltrabajo.com/tutoriales/utilizaciondegruposenspringsecurity/
+http://ingenieroweb.com.co/usuarios-roles-y-permisos
+http://ingenieroweb.com.co/usuarios-roles-y-permisos-segunda-parte
+https://www.securityartwork.es/2012/03/16/spring-security-%E2%80%93-mejorando-la-infraestructura-de-seguridad/
+http://ictblog.luisalbertogh.net/?p=235
+
+
+SCRUM:
+https://www.youtube.com/watch?v=C-_LxHXpXuo
+http://www.javiergarzas.com/2012/04/herramientas-scrum.html
+https://tree.taiga.io/support/integrations/changing-elements-status-via-commit-message/
+https://tree.taiga.io/support/integrations/github-integration/
+
+
+CACHE:
+https://docs.spring.io/spring/docs/current/spring-framework-reference/html/cache.html
+http://www.arquitecturajava.com/introduccion-a-spring-cache/
+
+DOCKER:
+https://www.adictosaltrabajo.com/tutoriales/desarrollo-de-microservicios-con-spring-boot-y-docker/
+http://www.arquitecturajava.com/que-es-docker-y-para-que-sirve/
+
+
+ANGULAR:
+https://github.com/lukedd3/todo-list-webapp-angular2-spring-mvc-boot-data-rest/blob/master/README.md
+https://github.com/dvelopp/SpringAngularApp
+https://github.com/dlizarra/spring-angular2-cli-starter
+https://www.adictosaltrabajo.com/tutoriales/springmvc-angular/
+http://www.arquitecturajava.com/angular-2-y-el-futuro-de-la-web/
+
+SSL:
+-https://www.laishidua.com/es/servicio-rest-con-spring-security/
+Por defecto el proyecto está para correr por el protocolo HTTP, entonces vamos a hacer que corra por HTTPS el cuál agrega seguridad mediante SSL. 
+	spring.profiles.active=https
+-	https://github.com/laishidua/ghostmyselfie/tree/master/ghostmyselfie-server
+-
+-
+
+-SSL-TTL:
