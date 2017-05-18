@@ -1,0 +1,7 @@
+<html t:type="layout" title="Contact es.udc.tfg"
+      xmlns:t="http://tapestry.apache.org/schema/tapestry_5_4.xsd"
+      xmlns:p="tapestry:parameter">
+
+    <p>Contact es.udc.tfg ...</p>
+
+</html>
