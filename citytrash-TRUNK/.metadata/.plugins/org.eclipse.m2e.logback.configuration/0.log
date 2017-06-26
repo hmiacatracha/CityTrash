@@ -1,0 +1,38 @@
+2017-05-29 17:14:02,083 [Worker-3] INFO  o.e.m.c.i.i.nexus.NexusIndexManager - Updating index for repository: esudcpojoprofile|http://www.tic.udc.es/is-java/maven-repo
+2017-05-29 17:14:02,441 [Worker-3] ERROR o.e.m.c.i.i.nexus.NexusIndexManager - Unable to update index for esudcpojoprofile|http://www.tic.udc.es/is-java/maven-repo: /home/hmia/.m2/repository/.cache/m2e/1.7.0/4787fe4e937198ed77666c43258abca5/nexus-maven-repository-index.zip (No existe el archivo o el directorio)
+java.io.FileNotFoundException: /home/hmia/.m2/repository/.cache/m2e/1.7.0/4787fe4e937198ed77666c43258abca5/nexus-maven-repository-index.zip (No existe el archivo o el directorio)
+	at java.io.FileInputStream.open0(Native Method) ~[na:1.8.0_112]
+	at java.io.FileInputStream.open(FileInputStream.java:195) ~[na:1.8.0_112]
+	at java.io.FileInputStream.<init>(FileInputStream.java:138) ~[na:1.8.0_112]
+	at org.apache.maven.index.updater.DefaultIndexUpdater$FileFetcher.retrieve(DefaultIndexUpdater.java:568) ~[indexer-core-3.1.0.jar:3.1.0]
+	at org.apache.maven.index.updater.DefaultIndexUpdater.loadIndexDirectory(DefaultIndexUpdater.java:206) ~[indexer-core-3.1.0.jar:3.1.0]
+	at org.apache.maven.index.updater.DefaultIndexUpdater.access$300(DefaultIndexUpdater.java:75) ~[indexer-core-3.1.0.jar:3.1.0]
+	at org.apache.maven.index.updater.DefaultIndexUpdater$LuceneIndexAdaptor.setIndexFile(DefaultIndexUpdater.java:645) ~[indexer-core-3.1.0.jar:3.1.0]
+	at org.apache.maven.index.updater.DefaultIndexUpdater.fetchAndUpdateIndex(DefaultIndexUpdater.java:844) ~[indexer-core-3.1.0.jar:3.1.0]
+	at org.apache.maven.index.updater.DefaultIndexUpdater.fetchAndUpdateIndex(DefaultIndexUpdater.java:156) ~[indexer-core-3.1.0.jar:3.1.0]
+	at org.eclipse.m2e.core.internal.index.nexus.NexusIndexManager.updateRemoteIndex(NexusIndexManager.java:1251) [org.eclipse.m2e.core_1.7.0.me201611191457.jar:na]
+	at org.eclipse.m2e.core.internal.index.nexus.NexusIndexManager.updateIndex(NexusIndexManager.java:1193) [org.eclipse.m2e.core_1.7.0.me201611191457.jar:na]
+	at org.eclipse.m2e.core.internal.index.nexus.NexusIndexManager$1.run(NexusIndexManager.java:703) [org.eclipse.m2e.core_1.7.0.me201611191457.jar:na]
+	at org.eclipse.m2e.core.internal.index.nexus.IndexUpdaterJob.run(IndexUpdaterJob.java:72) [org.eclipse.m2e.core_1.7.0.me201611191457.jar:na]
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55) [org.eclipse.core.jobs_3.8.0.v20160509-0411.jar:na]
+2017-05-29 17:14:02,449 [Worker-3] INFO  o.e.m.c.i.i.nexus.NexusIndexManager - Updating index for repository: central|https://repo.maven.apache.org/maven2
+2017-05-29 17:14:02,682 [Worker-11] INFO  c.g.t.t.d.PublishedGradleVersions - Gradle version information cache is up-to-date. Trying to read.
+2017-05-31 18:29:44,406 [Worker-0] INFO  c.g.t.t.d.PublishedGradleVersions - Gradle version information cache is out-of-date. Trying to update.
+2017-05-31 18:29:50,522 [Worker-4] INFO  o.e.m.c.i.i.nexus.NexusIndexManager - Updating index for repository: esudcpojoprofile|http://www.tic.udc.es/is-java/maven-repo
+2017-05-31 18:29:50,929 [Worker-4] ERROR o.e.m.c.i.i.nexus.NexusIndexManager - Unable to update index for esudcpojoprofile|http://www.tic.udc.es/is-java/maven-repo: /home/hmia/.m2/repository/.cache/m2e/1.7.0/4787fe4e937198ed77666c43258abca5/nexus-maven-repository-index.zip (No existe el archivo o el directorio)
+java.io.FileNotFoundException: /home/hmia/.m2/repository/.cache/m2e/1.7.0/4787fe4e937198ed77666c43258abca5/nexus-maven-repository-index.zip (No existe el archivo o el directorio)
+	at java.io.FileInputStream.open0(Native Method) ~[na:1.8.0_112]
+	at java.io.FileInputStream.open(FileInputStream.java:195) ~[na:1.8.0_112]
+	at java.io.FileInputStream.<init>(FileInputStream.java:138) ~[na:1.8.0_112]
+	at org.apache.maven.index.updater.DefaultIndexUpdater$FileFetcher.retrieve(DefaultIndexUpdater.java:568) ~[indexer-core-3.1.0.jar:3.1.0]
+	at org.apache.maven.index.updater.DefaultIndexUpdater.loadIndexDirectory(DefaultIndexUpdater.java:206) ~[indexer-core-3.1.0.jar:3.1.0]
+	at org.apache.maven.index.updater.DefaultIndexUpdater.access$300(DefaultIndexUpdater.java:75) ~[indexer-core-3.1.0.jar:3.1.0]
+	at org.apache.maven.index.updater.DefaultIndexUpdater$LuceneIndexAdaptor.setIndexFile(DefaultIndexUpdater.java:645) ~[indexer-core-3.1.0.jar:3.1.0]
+	at org.apache.maven.index.updater.DefaultIndexUpdater.fetchAndUpdateIndex(DefaultIndexUpdater.java:844) ~[indexer-core-3.1.0.jar:3.1.0]
+	at org.apache.maven.index.updater.DefaultIndexUpdater.fetchAndUpdateIndex(DefaultIndexUpdater.java:156) ~[indexer-core-3.1.0.jar:3.1.0]
+	at org.eclipse.m2e.core.internal.index.nexus.NexusIndexManager.updateRemoteIndex(NexusIndexManager.java:1251) [org.eclipse.m2e.core_1.7.0.me201611191457.jar:na]
+	at org.eclipse.m2e.core.internal.index.nexus.NexusIndexManager.updateIndex(NexusIndexManager.java:1193) [org.eclipse.m2e.core_1.7.0.me201611191457.jar:na]
+	at org.eclipse.m2e.core.internal.index.nexus.NexusIndexManager$1.run(NexusIndexManager.java:703) [org.eclipse.m2e.core_1.7.0.me201611191457.jar:na]
+	at org.eclipse.m2e.core.internal.index.nexus.IndexUpdaterJob.run(IndexUpdaterJob.java:72) [org.eclipse.m2e.core_1.7.0.me201611191457.jar:na]
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55) [org.eclipse.core.jobs_3.8.0.v20160509-0411.jar:na]
+2017-05-31 18:29:50,939 [Worker-4] INFO  o.e.m.c.i.i.nexus.NexusIndexManager - Updating index for repository: central|https://repo.maven.apache.org/maven2
