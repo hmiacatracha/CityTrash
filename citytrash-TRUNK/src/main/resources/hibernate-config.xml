@@ -12,5 +12,9 @@
 		<property name="cache.provider_class">org.hibernate.cache.internal.NoCacheProvider</property>
 		<!-- List of entity files -->
 		<mapping class="es.udc.citytrash.model.entity.prioridad.Prioridad" />
+		<mapping class="es.udc.citytrash.model.entity.trabajador.Trabajador" />
+		<mapping class="es.udc.citytrash.model.entity.trabajador.Conductor" />
+		<mapping class="es.udc.citytrash.model.entity.trabajador.Recolector" />
+		<mapping class="es.udc.citytrash.model.entity.trabajador.Administrador" />
 	</session-factory>
 </hibernate-configuration>

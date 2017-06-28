@@ -1,3 +1,29 @@
+URL: ESTA WEB TIENE TODO DE HIBERNATE, SPRING, ETC.
+https://vladmihalcea.com/tutorials/hibernate/
+https://www.javatpoint.com/hibernate-inheritance-mapping-tutorial
+
+----------------------------------------------------------------------
+SECUENCIAS EN HIBERNATE YA QUE CAMBIA RESPECTO A HIBERNATE 4
+https://vladmihalcea.com/2017/01/24/why-should-not-use-the-auto-jpa-generationtype-with-mysql-and-hibernate/
+https://hibernate.atlassian.net/browse/HHH-11014
+
+Currently, if the hibernate.id.new_generator_mappings is set to false, @GeneratedValue(strategy = GenerationType.AUTO) is mapped to native. If this property is true (which is the deafult value in 5.x), the @GeneratedValue(strategy = GenerationType.AUTO) is always mapped to SequenceStyleGenerator.
+For this reason, on any database that does not support sequences natively (e.g. MySQL) we are going to use the TABLE generator instead of IDENTITY.
+However, TABLE generator, although more portable, uses a separate transaction every time a value is being fetched from the database. In fact, even if the IDENTITY disables JDBC batch updates and the TABLE generator uses the pooled optimizer, the IDENTITY still scales better.
+
+	antes (hibernate4):
+	
+	@SequenceGenerator(name = "TrabajadorIdGenerator", sequenceName =
+	 "TrabajadorSeq", allocationSize = 1)
+	 @GeneratedValue(strategy = GenerationType.IDENTITY, generator =
+	 "TrabajadorIdGenerator")
+	 
+	 ahora (hibernate 5) :	 
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "TrabajadorIdGenerator")
+	@GenericGenerator(name = "TrabajadorIdGenerator", strategy = "native")
+
+----------------------------------------------------------------------
+	
 PROYECTO GUAY:
 https://github.com/fpozzas/fic/tree/master/5o/is/bet-o-matic/trunk/src/main/java/es/udc/betomatic/model
 
@@ -31,6 +57,8 @@ JETTY MAVEN :
 	http://www.eclipse.org/jetty/documentation/9.3.x/jetty-maven-plugin.html
 	
 login con spring security:
+http://www.studytrails.com/frameworks/spring/spring-security-using-xml/
+http://www.codejava.net/frameworks/spring/spring-web-mvc-security-basic-example-part-1-with-xml-configuration
 http://websystique.com/springmvc/spring-mvc-4-and-spring-security-4-integration-example/
 
 --config thymeleft with spring xml configuration
@@ -39,3 +67,107 @@ https://github.com/jmiguelsamper/thymeleaf3-spring-xml-helloworld
 
 --boostrap and thymeleaf
 http://joaoduraes.github.io/2015/02/07/spring-bootstrap-thymeleaf-example.html
+
+
+--paginacion SPRIN MCV
+https://www.javacodegeeks.com/2013/03/implement-bootstrap-pagination-with-spring-data-and-thymeleaf.html
+https://bthurley.wordpress.com/2012/07/18/spring-mvc-with-restful-datatables/
+
+---INHERITANCE MAPPING
+la mejor:
+http://www.thejavageek.com/2014/05/14/jpa-single-table-inheritance-example/
+http://www.thejavageek.com/2014/05/17/jpa-joined-inheritance-example/
+https://www.javatpoint.com/hibernate-inheritance-mapping-tutorial
+https://openjpa.apache.org/builds/1.2.3/apache-openjpa/docs/jpa_overview_mapping_inher.html
+
+otras: 
+https://vladmihalcea.com/2017/05/30/the-best-way-to-map-the-single_table-inheritance-with-jpa-and-hibernate/
+https://docs.jboss.org/ejb3/app-server/tutorial/singleinheritance/single.html
+http://www.concretepage.com/hibernate/example-inheritancetype-single_table-hibernate
+http://www.dineshonjava.com/p/implementing-inheritance-in-hibernate.html
+
+
+Mapeo de clases página a partir del 54 
+
+JPA permite 3 tipos de mapeo:
+--Tabla por cada clase no abstracta InheritanceType.TABLE_PER_CLASS
+--Tabla por cada clase InheritanceType.JOINED
+--Tabla unica para toda la jerarquía InheritanceType.SINGLE_TABLE
+
+-------------   Tabla unica para toda la jerarquía InheritanceType.SINGLE_TABLE => esta la usaremos para sensores
+Todas las clases persistentes en una única tabla con la unión de todas las columnas de todas las clases. Usa un discriminador
+en cada fila para distinguir el tipo. 
+
+Ventajas:
+-Es simple y eficiente 
+-Soporta polimorfismo
+-Fácil de implementar
+-Fácil de implementar
+-Fácil de modificar cualquier clase
+
+Desventajas:
+-Todas las columnas no comunes deben ser nullables
+-Pueden quedar columnas vacías
+
+Mapeo
+En la clase raiz añadir @DiscriminatorColumn
+En cada clase hija añadir @DiscriminatorValue
+
+Recomendación:
+Si las clases hijas tienen pocas propiedades (se diferencian más en comportamiento) y se necesitan asociaciones polimórficas
+Debería ser tomada como estrategia por defecto
+
+----- Tabla por cada subclase InheritanceType.JOINED
+Cada clase de la jerarquía tiene su propia tabla Las relaciones de herencia se resuelven con FK
+Cada tabla solo tiene columnas para las propiedades no heredadas 
+
+Ventaja:
+-Modelo relacional completamente normalizado
+-Integridad se mantiene
+-Soporta polimorfismo
+-Evoluciona bien
+
+Desventaja:
+- Si hay que hacer cosas a mano las consultas son mas complicadas
+- Para jerarquías muy complejas el rendimiento en consultas puede ser pobre, muchas joins
+
+Recomendación: 
+-Si las clases hijas se diferencian mucho en sus propiedades y tienen muchas
+- Si se necesita polimorfismo Cuando los nullables den problemas
+
+
+--- 
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "ANIMAL_TYPE", discriminatorType = DiscriminatorType.STRING)
+public class Pet implements java.io.Serializable
+{
+The @DiscriminatorColumn specifies the column that will hold the type of the persisted entity. For subclasses, they must define the value of the discriminator column that will identify the class.
+
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorValue("DOG")
+public class Dog extends Pet
+{
+
+create table PET (
+  ID integer primary key,
+  ANIMAL_TYPE varchar,
+  NAME varchar,
+  WEIGHT double,
+  LIVES int,
+  NUMBONES int
+);
+
+
+-----------------------------------------------------------------------------------------------
+mysql plugin maven:
+http://hmkcode.com/sq-maven-plugin-mysql/
+-----------------------------------------------------------------------------------------------
+
+
+
+
+
+

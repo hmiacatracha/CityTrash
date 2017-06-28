@@ -7,8 +7,10 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Immutable;
+
 @Entity
-/* @Immutable */
+@Immutable
 @Table(name = "TBL_PRIORIDADES")
 public class Prioridad implements Serializable {
 
@@ -18,27 +20,23 @@ public class Prioridad implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	public Prioridad() {
-		super();
-	}
-
-	public Prioridad(String tipo, String es) {
-		super();
-		this.tipo = tipo;
-		this.es = es;
+		/**
+		 * A persistent class should has a empty constructor.
+		 **/
 	}
 
 	@Id
 	@Column(name = "TIPO")
-	public String tipo;
+	private String tipo;
 
 	@Column(name = "DESCRIPCION")
-	public String es;
+	private String es;
 
 	public String getTipo() {
 		return tipo;
 	}
 
-	public void setTipo(String tipo) {
+	protected void setTipo(String tipo) {
 		this.tipo = tipo;
 	}
 
@@ -46,7 +44,7 @@ public class Prioridad implements Serializable {
 		return es;
 	}
 
-	public void setEs(String es) {
+	protected void setEs(String es) {
 		this.es = es;
 	}
 }

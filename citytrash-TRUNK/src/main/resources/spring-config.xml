@@ -20,14 +20,14 @@
 
 	<!-- Use @MVC annotations -->
 	<mvc:annotation-driven />
-	
+
 	<!-- Enables the Spring MVC @Controller programming model -->
 	<context:annotation-config />
 
 	<!-- Enable component scanning for defining beans with annotations. -->
 	<context:component-scan base-package="es.udc.citytrash.model.entity" />
 	<context:component-scan base-package="es.udc.citytrash.model.repository" />
-	<context:component-scan base-package="es.udc.citytrash.service" />
+	<context:component-scan base-package="es.udc.citytrash.model.service" />
 
 	<!-- For translating native persistence exceptions to Spring's DataAccessException 
 		hierarchy. -->
@@ -39,9 +39,9 @@
 		p:jndiName="${dataSource.jndiName}" p:resourceRef="true" />
 
 	<!-- *********************************************************************** 
-		To avoid requesting unnecessary connections (not necessary for MiniBank) 
-		with the Open Session in View filter, uncomment this and change "sessionFactory" 
-		bean (below) to use "dataSourceProxy" instead of "dataSource". -->
+		To avoid requesting unnecessary connections with the Open Session in View 
+		filter, uncomment this and change "sessionFactory" bean (below) to use "dataSourceProxy" 
+		instead of "dataSource". -->
 	<bean id="dataSourceProxy"
 		class="org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy"
 		p:targetDataSource-ref="dataSource" />

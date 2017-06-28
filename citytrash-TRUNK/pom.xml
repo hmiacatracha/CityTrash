@@ -8,7 +8,7 @@
 	<packaging>war</packaging>
 	<name>${project.artifactId} Project</name>
 	<url>http://maven.apache.org</url>
-	
+
 	<properties>
 		<!-- Data source properties -->
 		<dataSource.user>citytrashpojo</dataSource.user>
@@ -32,6 +32,7 @@
 		<junit.version>4.12</junit.version>
 		<spring.version>4.3.7.RELEASE</spring.version>
 		<springdata.version>1.11.3.RELEASE</springdata.version>
+		<spring.security.version>4.2.3.RELEASE</spring.security.version>
 		<servletApi.version>3.1.0</servletApi.version>
 		<thymeleaf.version>3.0.6.RELEASE</thymeleaf.version>
 		<boostrap.version>3.2.0</boostrap.version>
@@ -161,6 +162,18 @@
 			<artifactId>spring-aop</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
+		<!-- Spring Security -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+			<version>${spring.security.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+			<version>${spring.security.version}</version>
+		</dependency>
 		<!-- java mysql connector -->
 		<dependency>
 			<groupId>mysql</groupId>
@@ -201,6 +214,7 @@
 				<includes>
 					<include>spring-config.xml</include>
 					<include>dispatcher-servlet.xml</include>
+					<include>spring-security.xml</include>
 					<include>hibernate-config.xml</include>
 				</includes>
 			</resource>

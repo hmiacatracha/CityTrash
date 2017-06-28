@@ -1,4 +1,4 @@
-package es.udc.citytrash.service.recursoshumanos;
+package es.udc.citytrash.model.service.recursoshumanos;
 
 import java.util.List;
 
