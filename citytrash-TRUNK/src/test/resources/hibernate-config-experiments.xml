@@ -22,7 +22,10 @@
 		<property name="hibernate.dialect">${hibernate.dialect}</property>
 
 		<!-- List of persistent classes -->
-		<mapping class="es.udc.citytrash.model.entity.prioridad.Prioridad" />
-		<mapping class="es.udc.citytrash.model.entity.trabajador.Trabajador" />
+		<mapping class="es.udc.citytrash.business.entity.prioridad.Prioridad" />
+		<mapping class="es.udc.citytrash.business.entity.trabajador.Trabajador" />
+		<mapping class="es.udc.citytrash.business.entity.trabajador.Conductor" />
+		<mapping class="es.udc.citytrash.business.entity.trabajador.Recolector" />
+		<mapping class="es.udc.citytrash.business.entity.trabajador.Administrador" />
 	</session-factory>
 </hibernate-configuration>

@@ -1,0 +1,84 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header(~{::title})">
+<title th:text="#{page_activar_cuenta}">Activar Page</title>
+</head>
+<body>
+	<div th:replace="fragments/nav_brand :: nav_brand(${menu})"></div>
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-6 col-md-6 col-md-offset-3 col-sm-offset-3">
+				<div class="panel panel-primary">
+
+					<h3 class="text-center" th:text="#{label_activar_cuenta_header}"></h3>
+
+					<div class="panel-body">
+
+						<div class="row">
+
+							<th:block th:if="${msg!=null}">
+								<div
+									th:replace="fragments/alert :: alert (type='dismissable', message=${msg})"></div>
+							</th:block>
+						</div>
+
+						<form role="form" th:action="@{#{link.activar}+ '/' + ${token}}"
+							action="#" method="post" th:object="${activarCuentaForm}">
+
+							<div th:if="${msg==null}">
+								<th:block th:if="${#fields.hasErrors('${activarCuentaForm.*}')}">
+									<div
+										th:replace="fragments/alert :: alert (type='danger', message=#{frm_registro_verificar_alerta})">Alert</div>
+									<ul>
+										<li th:each="err : ${#fields.errors('*')}" th:text="${err}">Error</li>
+									</ul>
+								</th:block>
+								<fieldset>
+									<div class="input-group has-feedback col-xs-12"
+										id="password_div">
+										<label for="documento" class="control-label"
+											th:text="#{lbl_password}"></label> <input id="password"
+											type="password" th:field="*{password}"
+											th:placeholder="#{lbl_password}" class="form-control"
+											required="required" autofocus><span
+											class="glyphicon glyphicon-lock form-control-feedback"></span>
+
+										<span class="help-block"
+											th:if="${#fields.hasErrors('${activarCuentaForm.*}')}"
+											th:errors="*{password}"></span>
+									</div>
+
+
+									<div class="input-group has-feedback col-xs-12"
+										id="password_div">
+										<label for="documento" class="control-label"
+											th:text="#{lbl_repetir_password}"></label> <input
+											id="repetir_password" type="password"
+											th:field="*{repetirPassword}"
+											th:placeholder="#{lbl_repetir_password}" class="form-control"
+											required="required"> <span
+											class="glyphicon glyphicon-lock form-control-feedback"></span>
+										<span class="help-block"
+											th:if="${#fields.hasErrors('${activarCuentaForm.*}')}"
+											th:errors="*{repetirPassword}"></span>
+									</div>
+									<br>
+
+									<button class="btn btn-lg default btn-block" type="submit"
+										th:text="#{btn_activar_cuenta}">Activar Cuenta</button>
+								</fieldset>
+							</div>
+						</form>
+					</div>
+					<div class="panel-footer">
+						<a href="login" th:href="@{#{menu.signin_link_ref}}"
+							th:text="#{signin}">Login</a><br />
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
+

@@ -1,0 +1,52 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header(~{::title})">
+<title th:text="#{page_loguearse}">Login Page</title>
+</head>
+<body>
+	<div th:replace="fragments/nav_brand :: nav_brand(${menu})"></div>
+
+	<div class="container">
+		<div class="row col-md-offset-4 col-md-4 col-lg-offset-2 col-lg-8">
+			<div class="panel panel-primary">
+
+				<h3 class="text-center" th:text="#{label_recuperar_cuenta_header}"></h3>
+
+				<div class="panel-body">
+					<form action="forgotPwd" th:action="@{/cuenta/recuperar}"
+						method="post">
+
+
+						<th:block th:if="${err!=null}">
+							<div
+								th:replace="fragments/alert :: alert (type='danger', message=#{InstanceNotFoundException_cuenta(${err.key})})">Alert</div>
+						</th:block>
+
+
+						<div class="form-group has-feedback">
+							<input type="email" class="form-control" name="email"
+								placeholder="Email" required="required" /> <span
+								class="glyphicon glyphicon-envelope form-control-feedback"></span>
+						</div>
+
+						<button class="btn btn-lg default btn-block" type="submit"
+							th:text="#{btn_recuperar_cuenta}">Recuperar CUenta</button>
+
+					</form>
+				</div>
+				<div class="panel-footer">
+					<a href="login" th:href="@{#{menu.signin_link_ref}}"
+						th:text="#{signin}">Login</a><br />
+				</div>
+
+			</div>
+		</div>
+	</div>
+	<div
+		class="container col-xs-12 col-xs-offset-0 col-sm-12 col-sm-offset-0 col-md-12 col-md-offset-0">
+		<div th:replace="fragments/footer :: footer()"></div>
+	</div>
+</body>
+</html>
+

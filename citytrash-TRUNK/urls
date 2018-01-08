@@ -1,7 +1,363 @@
+VELOCITY TEMPLATE:
+http://www.texantek.com/forums/java/6158-using-apache-velocity-templating-engine-with-example
+http://www.technicalkeeda.com/spring-tutorials/spring-4-sending-email-with-velocity-template
+
+----------------------------------------------------------------
+explicacion en español de:
+-spring 
+-thymeleaf: http://acodigo.blogspot.com.es/search?q=thymeleaf
+-spring mvc
+-spring segurity, etc.
+-internalizacion: 
+https://ultraq.github.io/thymeleaf-layout-dialect/Examples.html#reusable-templates
+
+http://www.programacionj2ee.com/internacionalizacion-i18n-en-spring/
+https://blog.mornati.net/spring-mvc-database-messagesource-fall-back-to-properties-file/
+http://acodigo.blogspot.com.es/2017/03/spring-i18n-multiples-lenguajes.html, http://www.concretepage.com/spring/resourcebundlemessagesource-spring-example
+http://memorynotfound.com/spring-mvc-internationalization-i18n-example/, http://howtodoinjava.com/spring/spring-mvc/spring-mvc-internationalization-i18n-and-localization-i10n-example/
+http://www.logicbig.com/tutorials/spring-framework/spring-web-mvc/spring-mvc-i18n/, http://www.technicalkeeda.com/spring-tutorials/spring-mvc-internationalization-i18n-example
+http://www.codingpedia.org/ama/spring-3-mvc-internationalization-localization-of-podcastpedia-org/
+http://www.njoshi.com/2014/11/22/adding-internationalization-support-to-spring-mvc/
+https://www.keyup.eu/en/blog/95-localized-strings-in-java-spring
+http://www.programacionj2ee.com/internacionalizacion-i18n-en-spring/
+
+
+*(important) https://github.com/nnjoshi14/ess/tree/0.2, http://www.njoshi.com/2014/11/22/adding-internationalization-support-to-spring-mvc/
+			http://acodigo.blogspot.com.es/search?q=thymeleaf
+			https://github.com/thymeleaf/thymeleafexamples-layouts
+			
+http://acodigo.blogspot.com.es/p/spring.html
+https://github.com/thymeleaf/thymeleafexamples-layouts
+
+
+---------------------------PAGINATION----------------------------
+https://github.com/BranislavLazic/spring-thymeleaf-pagination/tree/master/src/main
+
+------------------------------------------------------------------------------
+
+****************************************************************************************************************
+****************************************************************************************************************
+PATRONES DE DISEÑO:
+http://www.jtech.ua.es/j2ee/2007-2008/doc/patrones-sesion01-apuntes.pdf
+http://aprendeenlinea.udea.edu.co/lms/moodle/pluginfile.php/109874/mod_resource/content/0/Presentaciones/2-Patrones.pdf
+http://www.tic.udc.es/~fbellas/teaching/pfc3/IntroPatrones.pdf
+https://jossjack.wordpress.com/2014/06/22/patron-de-diseno-mvc-modelo-vista-controlador-y-dao-data-access-object/
+http://cic.javerianacali.edu.co/wiki/lib/exe/fetch.php?media=materias:patronmvc.pdf
+
+	-*Patron MVC:
+		http://cic.javerianacali.edu.co/wiki/lib/exe/fetch.php?media=materias:patronmvc.pdf
+		Problemas:
+			¿Cómo modularizar la funcionalidad de la interfaz de usuario de una aplicación web de tal 
+			forma que usted puede modificar fácilmente sus partes individuales?
+		Solucion:
+			Patron MVC separa el modelado del dominio, la presentación y las acciones basadas de dominio,
+			la presentacion y las acciones basados en las entradas de usuario en tres partes.
+			
+		Dependencias: 
+			-Tanto la vista como el contralador dependen del modelo, sin embargo, el modelo no depende ni de la
+			vista ni del controlador.
+		
+			-La separación permite que el modelo sea construido y aprobado independientemente de la vista
+			
+			-La separación entre vista y controlador es secundaria en muchas aplicaciones, sin embargo en 
+			 las aplicaciones Web la vista (el navegador) y el controlador (los componentes del lado servidor)
+			 están bien definidos.
+			 
+	-*Patron DAO
+	http://aprendeenlinea.udea.edu.co/lms/moodle/pluginfile.php/109874/mod_resource/content/0/Presentaciones/2-Patrones.pdf
+	http://ungranoparajava.blogspot.com.es/2009/01/patron-de-diseno-dao.html	
+	El patrón Data Access Object (DAO) pretende principalmente independizar la aplicación de la forma de 
+	acceder a la base de datos, o cualquier otro tipo de repositorio de datos. Para ello se centraliza el 
+	código relativo al acceso al repositorio de datos en las clases llamadas DAO. 
+	Fuera de las clases DAO no debe haber ningún tipo de código que acceda al repositorio de datos.
+
+	*Patron DTO
+		http://www.oracle.com/technetwork/java/transferobject-139757.html
+		https://unpocodejava.com/2010/03/29/patrones-que-odio-dto/
+		https://pigexception.wordpress.com/2016/03/26/patron-de-diseno-dao/
+		
+
+*****Modelo vista controlador:
+https://examples.javacodegeeks.com/enterprise-java/spring/mvc/spring-mvc-interceptor-tutorial/
+https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc
+http://desarrollo-java.readthedocs.io/es/latest/tutorial7.md.html
+http://todosobreprogramacion.blogspot.com.es/2013/11/spring-mvc-formularios-validator.html
+https://www.codecraftersstudio.com/parte-2-spring-en-la-web-1-construyendo-aplicaciones-web-con-spring-1-1-introduccion-a-spring-mvc/
+
+SEGUIMIENTO DE VIDA DE UN REQUEST
+1.- Click en un enlace o envio de un formulario en el navegador -> solicitud request
+2.- Solicitud o peticion que llevará a una url -> DispatcherServlet, este canaliza las peticiones a través de un 
+único servlet front controller. Un Front Controller es un patrón común de aplicación web en el que el servlet unico
+delega la responsabilidad de una solicitud de una aplicación para realizar procesamiento real. En el caso de Spring MVC, DispatcherServlet es el front controller.
+
+	-FRONT CONTROLLER:
+		patron FRONT CONTROLLER => 
+		https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc
+		https://www.martinfowler.com/eaaCatalog/frontController.html
+		http://castellanosmiguel.blogspot.com.es/2013/07/front-controller-definicion-esun-patron.html
+		http://www.w3big.com/es/design-pattern/front-controller-pattern.html
+		
+	Patron de diseño que se basa en usar un controlador como punto inicial para la gestion de las peticiones. EL controlador
+	gestiona estas peticiones y realiza las funcionalidades como: comprobación de restricciones de seguridad, manejo
+	de errores, mapear y delegacion de peticiones a otros componentes de la aplicación que se encargaran de gestionar
+	la vista adecuada para el usuario.
+	
+	Ventajas:
+	-Tenemos centralizado en un único punto la gestión de las peticiones.
+	-Aumentamos la reusabilidad de código.
+	-Mejoramos la gestión de la seguridad.
+	
+	Desventajas:
+	   La velocidad de respuesta disminuye al tener que ser procesadas las peticiones primero por el controlador.
+	   
+	   Resulta necesario obtener un punto de acceso centralizado para vincularlo con la gestión de peticiones y de soporte a las necesidades de la capa de presentación (recuperación de contenidos, navegación, control de vistas). Si pensamos en acceder a la vista directamente sin pasar por el  punto centralizado, esto puede tener las siguientes consecuencias:
+		No reutilizamos código, cada vista necesita incluir sus propias necesidades lo que conlleva a duplicaciones de código ineccesarias. Afecta negativamente al control de cambios. Un cambio resulta necesario el replicarlo a todos los códigos que se han duplicado.
+		Puede existir problemas con los visores, que son los encargados de la navegación.
+
+
+	Diagrama de clase y Diagrama de secuencias 
+		
+
+*****internalizacion:
+-MessageSource => Access the resource budle
+	-ResourceBudleMessageSource
+	-ReloadableResourceBudleMessageSource
+	(https://codigoalonso.blogspot.com.es/2016/01/internacionalizacion-i18n-en-spring-mvc.html)
+	http://laurel.datsi.fi.upm.es/_media/docencia/asignaturas/daw/daw-tema3.2.pdf
+	
+	Spring cuenta con dos clases para obtener el origen de estos archivos:
+	ResourceBundleMessageSource
+	ReloadableResourceBundleMessageSource
+	
+	Estas clases tienen algunas diferencias, la primera es el origen de los archivos, 
+	Mientras que ResourceBundleMessageSource mira dentro de la carpeta resources, 
+	la segunda puede además buscarlos en el exterior utilizando el prefijo classpath  para dentro de la aplicación,
+	file: dentro del sistema de archivos y http: busca en una url.
+	Otra diferencia sustancial es que mientra en la primera si modificamos un archivo de propiedades 
+	no refleja los cambios hasta que no se re-compile la aplicación y en la segunda no es necesario.	
+
+-Local Resolver => Resolves the locale changed
+	-Request
+	-Session
+	-Cookies
+	
+	La diferencia de ambas está en cómo cada una guardan los datos:
+		http://www.bufa.es/usar-sesiones-cookies/
+		– Las cookies a nivel local en el navegador del usuario.
+		– Las Sesiones almacenan los datos directamente en el servidor web.
+		
+	*SESIONES:
+		*Ventajas
+			-Pueden almacenar grandes cantidades de datos fácilmente.
+			-Ahorrar ancho de banda al pasar sólo una referencia a la sesión de cada pageLoad. Una “cookie” en el cliente tiene que pasar todos sus datos.	
+			-Los datos se almacenan en el servidor web. Esto hace que las sesiones seguras, porque los datos no pueden ser vistos o editados por el cliente.		
+		*Desventajas		
+			-Termina cuando se cierra el navegador a menos que haya configurado php.ini para alargar la vida sesiones de ‘cookie. No puede durar para siempre.
+
+	*COOKIES
+		*Ventajas:
+		-Pueden durar tanto como el sitio web. Ellas seguirán ahí, incluso si el navegador está cerrado o abierto.
+		-Son muy útiles para “recordar” los inicios de sesión
+		-Útiles para almacenar valores temporales de usuario. 
+		Por ejemplo, si un usuario está navegando por una lista paginada de artículos, 
+		ordenados de cierta manera, el ajuste de la clasificación se puede almacenar en una cookie.
+
+		*Desventajas:
+			-Se almacenan en pequeños archivos dentro del ordenador de los usuarios. Esto significa que el usuario puede manipularlas.
+			-Sólo pueden almacenar una cantidad limitada de datos.
+			-Deben pasar todos los datos al servidor web cada pageLoad. Esta toma de ancho de banda de hasta más.
+			
+-LocalChangeInterceptor => Is the inceptor which observes the local changes
+
+*****Manejo de excepciones
+http://www.codejava.net/frameworks/spring/how-to-handle-exceptions-in-spring-mvc
+http://www.w3ii.com/es/spring/spring_exception_handling_example.html
+
+En spring MVC el control de excepciones se puede realizar de dos maneras:
+
+1.- Usando XML Configuration
+<bean
+    class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+    <property name="exceptionMappings">
+        <props>
+            <prop key="java.lang.ArithmeticException">MathError</prop>
+        </props>
+    </property>
+    <property name="defaultErrorView" value="Error" />
+</bean>
+
+<bean
+    class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+    <property name="exceptionMappings">
+        <props>
+            <prop key="java.lang.ArithmeticException">MathError</prop>
+            <prop key="java.io.IOException">IOError</prop>
+        </props>
+    </property>
+</bean>
+
+Then Spring will redirect the client to the page /WEB-INF/views/MathError.jsp in 
+case a java.lang.ArithmeticException exception is thrown. Accessing the exception in the MathError.jsp 
+page as follows:
+		Arithmetic Error: ${exception}
+
+**** Anotaciones Java
+https://docs.oracle.com/javase/7/docs/api/java/lang/annotation/package-summary.html
+https://www.javacodegeeks.com/2014/11/java-annotations-tutorial.html
+//https://www.arquitecturajava.com/anotaciones-java-ii/
+//https://www.adictosaltrabajo.com/tutoriales/crear-anotaciones-propias-en-java/
+
+En Java, una anotación se define por medio de la palabra reservada @interface. Hay que tener ciertas consideraciones en cuenta a la hora de crearlas:
+
+Cada método dentro de la anotación es un elemento.
+Los métodos no deben tener parámetros o cláusulas throws.
+Los tipos de retorno están restringidos a tipos primitivos, String, Class, enum, anotaciones, y arrrays de los tipos anteriores.
+Los métodos pueden tener valores por defecto
+
+
+Como se ve en el código, hemos usado algunas meta-anotaciones para definir ciertos parámetors en nuestra anotación. Veamos cuáles de estas se pueden usar al crear nuestras anotaciones y qué significan:
+
+@Target – Especifica el tipo de elemento al que se va a asociar la anotación.
+	ElementType.TYPE – se puede aplicar a cualquier elemento de la clase.
+	ElementType.FIELD – se puede aplicar a un miebro de la clase.
+	ElementType.METHOD – se puede aplicar a un método
+	ElementType.PARAMETER – se puede aplicar a parámetros de un método.
+	ElementType.CONSTRUCTOR – se puede aplicar a constructores
+	ElementType.LOCAL_VARIABLE – se puede aplicar a variables locales
+	ElementType.ANNOTATION_TYPE – indica que el tipo declarado en sí es un tipo de anotación.
+@Retention – Especifica el nivel de retención de la anotación (cuándo se puede acceder a ella).
+	RetentionPolicy.SOURCE — Retenida sólo a nivel de código; ignorada por el compilador.
+	RetentionPolicy.CLASS — Retenida en tiempo de compilación, pero ignorada en tiempo de ejcución.
+	RetentionPolicy.RUNTIME — Retenida en tiempo de ejecución, sólo se puede acceder a ella en este tiempo.
+@Documented – Hará que la anotación se mencione en el javadoc.
+@Inherited – Indica que la anotación será heredada automáticamente.
+
+***** roles spring segurity (seguridad spring) 
+https://www.adictosaltrabajo.com/tutoriales/utilizaciondegruposenspringsecurity/
+https://docs.spring.io/spring-security/site/docs/current/reference/html/el-access.html
+
+**** CSRF Proteccion SEGURIDAD 
+http://acodigo.blogspot.com.es/2017/06/proteccion-csrf-en-spring-security.html
+https://www.albertcoronado.com/2016/02/29/seguridad-it-protegiendote-de-ataques-csrf-con-spring-y-angular/
+https://docs.spring.io/spring-security/site/docs/current/reference/html/csrf.html
+http://terasolunaorg.github.io/guideline/5.0.0.RELEASE/en/Security/Authentication.html
+
+
+<http>
+	<!-- ... -->
+	<csrf disabled="true"/>
+</http>
+
+
+@EnableWebSecurity
+public class WebSecurityConfig extends
+WebSecurityConfigurerAdapter {
+
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+		http
+			.csrf().disable();
+	}
+}
+
+19.4.3 Include the CSRF Token
+The last step is to ensure that you include the CSRF token in all PATCH, POST, PUT, and DELETE methods. One way to approach this is to use the _csrf request attribute to obtain the current CsrfToken. An example of doing this with a JSP is shown below:
+<c:url var="logoutUrl" value="/logout"/>
+<form action="${logoutUrl}"
+	method="post">
+<input type="submit"
+	value="Log out" />
+<input type="hidden"
+	name="${_csrf.parameterName}"
+	value="${_csrf.token}"/>
+</form>
+
+CookieCsrfTokenRepository
+
+There can be cases where users will want to persist the CsrfToken in a cookie. By default the CookieCsrfTokenRepository will write to a cookie named XSRF-TOKEN and read it from a header named X-XSRF-TOKEN or the HTTP parameter _csrf. These defaults come from AngularJS
+
+You can configure CookieCsrfTokenRepository in XML using the following:
+
+<http>
+	<!-- ... -->
+	<csrf token-repository-ref="tokenRepository"/>
+</http>
+<b:bean id="tokenRepository"
+	class="org.springframework.security.web.csrf.CookieCsrfTokenRepository"
+	p:cookieHttpOnly="false"/>
+	
+	
+
+
+2.- Usando un método de controlador de excepcion
+
+@Controller
+public class FileUploadController {
+     
+    @RequestMapping(value = "/uploadFile", method = RequestMethod.GET)
+    public String doFileUpload(@RequestParam int a) throws IOException, SQLException {
+         
+        // handles file upload stuff...
+        if (a == 1) {
+            throw new IOException("Could not read upload file.");
+        } else if (a == 2) {
+            throw new SQLException("Database exception!!!");
+        }
+         
+        return "done";
+    }
+     
+    @ExceptionHandler({IOException.class, java.sql.SQLException.class})
+    public ModelAndView handleIOException(Exception ex) {
+        ModelAndView model = new ModelAndView("IOError");
+        model.addObject("exception", ex.getMessage());
+        return model;
+    }
+}
+
+@ExceptionHandler(IOException.class)
+public ModelAndView handleIOException(IOException ex) {
+    ModelAndView model = new ModelAndView("IOError");
+ 
+    model.addObject("exception", ex.getMessage());
+ 
+    return model;
+}
+
+
+
+
+***INTERCEPTORES
+https://examples.javacodegeeks.com/enterprise-java/spring/mvc/spring-mvc-interceptor-tutorial/
+https://infow.wordpress.com/2014/02/06/interceptores/
+
+
+*****AJAX
+http://www.jtech.ua.es/j2ee/publico/spring-2012-13/sesion04-apuntes.html
+
+
+
+**** SECURITY SEGURIDAD SPRING MVC
+https://www.adictosaltrabajo.com/tutoriales/utilizaciondegruposenspringsecurity/
+http://terasolunaorg.github.io/guideline/5.0.0.RELEASE/en/Security/Authentication.html
+
+
+*** validaciones validar
+http://formvalidation.io/validators/date/
+https://docs.jboss.org/hibernate/validator/4.1/reference/en-US/html/validator-customconstraints.html#validator-customconstraints
+http://www.baeldung.com/spring-mvc-custom-validator
+http://javasampleapproach.com/spring-framework/create-custom-validation-spring
+https://jaimedearcos.github.io/spring-mvc/2016/12/28/Spring-MVC-03-Validaciones/
+http://formvalidation.io/validators/date/
+
+***** cookies => remeber me  => recordar contraseña
+http://www.baeldung.com/spring-security-remember-me
+http://javasampleapproach.com/spring-framework/spring-security/configure-persistent-token-remember-me-authentication-persistent-token-approach-spring-boot
+
+
 URL: ESTA WEB TIENE TODO DE HIBERNATE, SPRING, ETC.
 https://vladmihalcea.com/tutorials/hibernate/
 https://www.javatpoint.com/hibernate-inheritance-mapping-tutorial
-
 ----------------------------------------------------------------------
 SECUENCIAS EN HIBERNATE YA QUE CAMBIA RESPECTO A HIBERNATE 4
 https://vladmihalcea.com/2017/01/24/why-should-not-use-the-auto-jpa-generationtype-with-mysql-and-hibernate/
@@ -15,7 +371,7 @@ However, TABLE generator, although more portable, uses a separate transaction ev
 	
 	@SequenceGenerator(name = "TrabajadorIdGenerator", sequenceName =
 	 "TrabajadorSeq", allocationSize = 1)
-	 @GeneratedValue(strategy = GenerationType.IDENTITY, generator =
+		 @GeneratedValue(strategy = GenerationType.IDENTITY, generator =
 	 "TrabajadorIdGenerator")
 	 
 	 ahora (hibernate 5) :	 
@@ -42,6 +398,7 @@ http://in.relation.to/2005/09/09/generic-dao-pattern-with-jdk-50/
 https://gist.github.com/AppSensei/4944425
 
 THYMELEAF CONFIGURATION: http://www.baeldung.com/thymeleaf-in-spring-mvc
+https://unpocodejava.wordpress.com/2013/04/24/un-poco-de-thymeleaf/
 
 DISPATCHER SERVLET:
 				http://www.cursohibernate.es/doku.php?id=unidades:08_spring:03_spring_mvc
@@ -50,13 +407,19 @@ DISPATCHER SERVLET:
 				http://www.programacionj2ee.com/dispatcherservlet-y-contextloaderlistener/
 				http://proliferay.com/xml-configuration-files-for-spring-mvc/
 								
-internalizacion aplicacion spring: http://www.jtech.ua.es/j2ee/publico/spring-2012-13/sesion05-apuntes.html
+internalizacion aplicacion spring: 
+http://www.jtech.ua.es/j2ee/publico/spring-2012-13/sesion05-apuntes.html
+http://www.journaldev.com/2610/spring-mvc-internationalization-i18n-and-localization-l10n-example
+
+http://blog.codeleak.pl/2014/04/csrf-protectrion-in-spring-mvc.html
+
 
 JETTY MAVEN :
 	http://www.eclipse.org/jetty/documentation/9.1.5.v20140505/jetty-maven-plugin.html
 	http://www.eclipse.org/jetty/documentation/9.3.x/jetty-maven-plugin.html
 	
 login con spring security:
+http://terasolunaorg.github.io/guideline/5.0.0.RELEASE/en/Security/Authentication.html
 http://www.studytrails.com/frameworks/spring/spring-security-using-xml/
 http://www.codejava.net/frameworks/spring/spring-web-mvc-security-basic-example-part-1-with-xml-configuration
 http://websystique.com/springmvc/spring-mvc-4-and-spring-security-4-integration-example/
@@ -69,10 +432,59 @@ https://github.com/jmiguelsamper/thymeleaf3-spring-xml-helloworld
 http://joaoduraes.github.io/2015/02/07/spring-bootstrap-thymeleaf-example.html
 
 
+
 --paginacion SPRIN MCV
 https://www.javacodegeeks.com/2013/03/implement-bootstrap-pagination-with-spring-data-and-thymeleaf.html
 https://bthurley.wordpress.com/2012/07/18/spring-mvc-with-restful-datatables/
+http://www.apprenticeshipnotes.org/2014/06/spring-mvc-thymeleaf-bootstrap-twitter.html
 
+1.-
+<!-- bootstrap and jquery -->
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>jquery</artifactId>
+			<version>${jquery.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>bootstrap</artifactId>
+			<version>${boostrap.version}</version>
+		</dependency>
+		<!-- -->
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>${guava.version}</version>
+		</dependency>
+		
+2.-	    registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+		
+		http://localhost:8080/citytrash/webjars/
+		
+3.- 	<link href="webjars/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet" media="screen"> </link>
+
+
+header=>
+
+    <link rel="shortcut icon" type="image/png" th:href="@{/images/favicon.png}"></link>
+
+   	<title th:text="${title}">(title)</title>
+
+  	<link th:href="@{/webjars/bootstrap/3.0.3/css/bootstrap.css}" rel="stylesheet"></link>
+  	<link th:href="@{/css/starter.css}" rel="stylesheet"></link>
+  	
+  	
+  footer=>
+   <div th:fragment="footer" id="footer">
+      <div class="container">
+        <p class="muted credit">Spring MVC/Thymeleaf/Bootstrap Project Template by Craig Walls.</p>
+      </div>
+      <script th:src="@{/webjars/jquery/2.0.3/jquery.min.js}"></script>
+      <script th:src="@{/webjars/bootstrap/3.0.3/js/bootstrap.min.js}"></script>
+    </div>
+    
+  	
+  	
 ---INHERITANCE MAPPING
 la mejor:
 http://www.thejavageek.com/2014/05/14/jpa-single-table-inheritance-example/
@@ -166,8 +578,54 @@ mysql plugin maven:
 http://hmkcode.com/sq-maven-plugin-mysql/
 -----------------------------------------------------------------------------------------------
 
+libro:
+https://books.google.es/books?id=GqDcDgAAQBAJ&pg=PA670&lpg=PA670&dq=Thymeleaf+%2B+Spring+Security&source=bl&ots=4xBfh2kgTZ&sig=18cz2fULAoOZa_IHEcDy-jlWXVY&hl=es&sa=X&ved=0ahUKEwig29Xfy-PUAhXNyRoKHRDVCw84HhDoAQgiMAA#v=onepage&q=Thymeleaf%20%2B%20Spring%20Security&f=false
+
+thymeleaf fragmentos:
+https://github.com/thymeleaf/thymeleafexamples-layouts
+https://hellokoding.com/registration-and-login-example-with-spring-xml-configuration-maven-jsp-and-mysql/
+http://www.concretepage.com/spring-boot/spring-boot-mvc-security-custom-login-and-logout-thymeleaf-csrf-mysql-database-jpa-hibernate-example
+
+https://www.codebyamir.com/blog/check-for-logged-in-user-with-thymeleaf-and-spring-security-4
+http://blog.kaczmarzyk.net/2015/01/04/loading-view-templates-from-database-with-thymeleaf/
+http://www.mkyong.com/spring-boot/spring-boot-spring-security-thymeleaf-example/
+http://www.thymeleaf.org/doc/articles/springsecurity.html
+http://www.baeldung.com/csrf-thymeleaf-with-spring-security
+https://stormpath.com/blog/build-spring-boot-spring-security-app
+
+cart shopping
+http://o7planning.org/en/10605/create-a-java-shopping-cart-web-application-using-spring-mvc-and-hibernate
+
+
+** INSTALL THYMELEAF IN ECLIPSE: http://www.thymeleaf.org/eclipse-plugin-update-site/
+This is the Thymeleaf Eclipse Plugin Update Site... but if you're reading this, then you're visiting with a browser. Instead, open up Eclipse and point it to this update site.
+In Eclipse, go to Help >> Install New Software... then enter this update site URL (should be http://www.thymeleaf.org/eclipse-plugin-update-site/). Eclipse should then pick up the plugin to install.
+If you encounter any issues, visit the plugin site's GitHub issues section (https://github.com/thymeleaf/thymeleaf-extras-eclipse-plugin/issues) and raise a new issue or check through the existing closed ones to see if what you're encountering has already been resolved.
+
+
+******			
+******
+******
 
 
 
+	<!-- Spring Security cifradores de contraseñas -->
+	<!-- https://www.securityartwork.es/2012/03/16/spring-security-%E2%80%93-mejorando-la-infraestructura-de-seguridad/ -->
+	<!-- http://re-orientation.com/configurando-spring-security -->
+	<!-- https://books.google.es/books?id=4CtJE6fVergC&pg=PA257&lpg=PA257&dq=%3Cbean+id%3D%22passwordEncoder%22+class%3D%22org.springframework.security.authentication.encoding.ShaPasswordEncoder%22%3E%3C/bean%3E&source=bl&ots=h27Hf-hEkf&sig=pW8NzxyOmjaYnv-Lplu6NlV3Ofc&hl=es&sa=X&ved=0ahUKEwjnrbCCxujXAhUCnBoKHacEAswQ6AEIPDAD#v=onepage&q&f=false -->
+	<!-- el password se cifra con SHA-256 algoritmo Pro Spring Security Charter8 
+		pag 257 -->
+	<!-- http://www.jtech.ua.es/j2ee/publico/spring-2012-13/sesion07-apuntes.html -->
+	<bean id="bCryptPasswordEncoder"
+		class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
 
-
+	<!-- protección a las contraseñas cifradas es concatenar un token único 
+		a la contraseña denominado salt -->
+	<bean id="saltSource"
+		class="org.springframework.security.authentication.dao.ReflectionSaltSource">
+		<property name="userPropertyToUse" value="username"></property>
+	</bean>
+	<!-- fin passwordEncoder -->
+	
+	
+	

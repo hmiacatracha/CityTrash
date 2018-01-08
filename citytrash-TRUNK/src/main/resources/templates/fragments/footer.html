@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<body>
+	<div th:fragment="footer()">
+		<br> <br> <br>
+
+		<nav class="navbar navbar-default navbar-fixed-bottom">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<a class="navbar-brand" href="#">&copy; Heidy Izaguirre -
+						UDC </a>
+				</div>
+
+				<div class="collapse navbar-collapse" id="navbar-collapse-1">
+					<ul class="nav navbar-nav navbar-right"
+						sec:authorize="hasAnyRole('ROLE_ANONYMOUS')">
+						<li><a th:text="#{message_anonymous}" href="#"> </a></li>
+					</ul>
+					<ul class="nav navbar-nav navbar-right"
+						sec:authorize="hasAnyRole('ROLE_USER')">
+						<li><a th:text="#{message_user}" href="#"> </a></li>
+					</ul>
+					<ul class="nav navbar-nav navbar-right"
+						sec:authorize="hasAnyRole('ROLE_ADMIN')">
+						<li><a th:text="#{message_admin}" href="#"> </a></li>
+					</ul>
+				</div>
+			</div>
+		</nav>
+		<!-- include javascript in the footer -->
+		<script src="http://code.jquery.com/jquery.js"></script>
+		<script th:src="@{/webjars/jquery/3.2.1/jquery.min.js}"></script>
+		<script th:src="@{/webjars/bootstrap/3.3.7-1/js/bootstrap.min.js}"></script>
+		<script type="text/javascript"
+			src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+		<script
+			th:src="@{/webjars/bootstrap-hover-dropdown/2.1.3/bootstrap-hover-dropdown.min.js}"></script>
+	</div>
+</body>

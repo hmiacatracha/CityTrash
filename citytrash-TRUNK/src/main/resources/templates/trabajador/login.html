@@ -1,0 +1,119 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header(~{::title})">
+<title th:text="#{page_loguearse}">Login Page</title>
+</head>
+<body>
+	<div th:replace="fragments/nav_brand :: nav_brand(${menu})"></div>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6 col-md-offset-3">
+				<div class="panel panel-primary">
+					<h3 class="text-center" th:text="#{label_login_header}">Login</h3>
+					<div class="panel-body">
+						<div
+							class="form-group https://lh5.googleusercontent.com/-b0-k99FZlyE/AAAAAAAAAAI/AAAAAAAAAAA/eu7opA4byxI/photo.jpg?sz=120row">
+							<div class="text-center account-wall">
+								<img class="img-responsive img-circle displayed account"
+									th:src="@{/resources/static/img/profile.jpg}" alt="" />
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-xs-12">
+								<div th:if="${error}"
+									class="alert alert-danger alert-dismissable">
+
+									<a href="#" class="close" data-dismiss="alert"
+										aria-label="close">×</a>
+									<p>
+										<i class="icon fa fa-ban"></i> <span
+											th:text="#{error.login_failed}">Invalid Email and
+											Password.</span>
+									</p>
+								</div>
+								<div th:if="${logout}"
+									class="alert alert-success alert-dismissable">
+									<p>
+										<i class="icon fa fa-info"></i> <span
+											th:text="#{info.logout_success}">You have been logged
+											out.</span>
+									</p>
+								</div>
+								<div th:if="${msg!=null}"
+									class="alert alert-warning alert-dismissable">
+									<p>
+										<i class="icon fa fa-warning"></i> <span th:text="${msg}"></span>
+									</p>
+								</div>
+							</div>
+
+						</div>
+
+						<form role="form" class="form-signin" th:action="@{#{link.login}}"
+							action="#" method="post" th:object="${loginForm}"
+							th:fragment="login">
+							<fieldset>
+
+								<input type="hidden" name="_csrf"
+									value="16e9ae08-76b9-4530-b816-06819983d048" />
+
+
+								<div class="form-group">
+									<div class="has-feedback" id="email_div">
+										<label for="email" class="control-label"
+											th:text="#{lbl_email}"></label> <input id="email"
+											type="email" th:field="*{email}" class="form-control"
+											th:placeholder="#{lbl_pholder_email}" required="required"
+											autofocus> <span
+											class="glyphicon glyphicon-envelope form-control-feedback">
+
+										</span> <span class="help-block"
+											th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+									</div>
+								</div>
+
+
+
+
+								<div class="form-group">
+									<div class="has-feedback" id="password_div">
+										<label for="password" class="control-label"
+											th:text="#{lbl_password}"></label> <input id="password"
+											type="password" th:field="*{password}"
+											th:placeholder="#{lbl_pholder_password}" class="form-control"
+											required> <span
+											class="glyphicon glyphicon-lock form-control-feedback"></span>
+										<span class="help-block"
+											th:if="${#fields.hasErrors('password')}"
+											th:errors="*{password}"></span>
+									</div>
+								</div>
+
+								<button class="btn btn-lg default btn-block" type="submit"
+									th:text="#{btn_signin}">Sign in</button>
+
+								<div class="checkbox">
+									<label class="checkbox"> <input
+										th:text="#{lbl_remember_me}" name="remember-me-param"
+										type="checkbox" value="remember-me">
+									</label>
+								</div>
+							</fieldset>
+						</form>
+					</div>
+					<div class="panel-footer">
+						<a href="recuperarCuenta" th:href="@{#{link.recuperar}}"
+							th:text="#{lbl_recuperar_cuenta}"></a><br />
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div
+		class="container col-xs-12 col-xs-offset-0 col-sm-12 col-sm-offset-0 col-md-12 col-md-offset-0">
+		<div th:replace="fragments/footer :: footer()"></div>
+	</div>
+</body>
+</html>

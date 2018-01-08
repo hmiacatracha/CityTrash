@@ -1,24 +1,71 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans:beans xmlns="http://www.springframework.org/schema/security"
 	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
-    http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
-    http://www.springframework.org/schema/security
-    http://www.springframework.org/schema/security/spring-security-4.0.xsd">
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.2.xsd">
 
-	<http auto-config="true">
-		<intercept-url pattern="/" access="permitAll" />
-		<intercept-url pattern="/home" access="permitAll" />
-		<intercept-url pattern="/admin**" access="hasRole('ADMIN')" />
-		<intercept-url pattern="/user**" access="hasRole('USER')" />
-		<form-login authentication-failure-url="/Access_Denied" />
+	<!-- <http pattern="/resources/static/**" security="none" /> -->
+	<!-- https://docs.spring.io/spring-security/site/docs/3.1.x/reference/springsecurity-single.html -->
+	<!-- http://cleventy.com/configurando-spring-security/ -->
+	<!-- http://www.juntadeandalucia.es/servicios/madeja/contenido/recurso/213 -->
+	<!-- https://www.adictosaltrabajo.com/tutoriales/utilizaciondegruposenspringsecurity/ -->
+	<!-- http://www.baeldung.com/security-none-filters-none-access-permitAll -->
+
+	<http auto-config="true" use-expressions="true"
+		disable-url-rewriting="true">
+		<intercept-url pattern="/resources/static/**" access="permitAll" />
+		<intercept-url pattern="/login?logout" access="isAuthenticated()" />
+		<intercept-url pattern="/login*" access="!isAuthenticated()" />
+
+		<!-- <intercept-url pattern="/auth/admin/**" access="hasRole('ROLE_ADMIN')" 
+			/> <intercept-url pattern="/auth/user/**" access="hasRole('ROLE_USER')" /> 
+			<intercept-url pattern="/auth/all/**" access="isAuthenticated()" /> -->
+
+		<form-login default-target-url="/home" login-page='/login'
+			authentication-failure-url="/login?error" />
+
+		<logout logout-url="/logout" logout-success-url="/login?logout"
+			invalidate-session="true" delete-cookies=" JSESSIONID" />
+		<!-- remember-me => default of 2 weeks but this only for one day -->
+		<!-- 24 * 60 * 60 = 86400 -->
+
+		<remember-me key="remember-me" token-validity-seconds="86400"
+			remember-me-parameter="remember-me-param" remember-me-cookie="my-remember-me" />
+		<!-- session management -->
+		<!-- https://docs.spring.io/spring-security/site/docs/current/reference/html/ns-config.html -->
+		<session-management invalid-session-url="/home?invalid=true"
+			session-fixation-protection="migrateSession">
+			<concurrency-control expired-url="/home?expired=true"
+				max-sessions="1" error-if-maximum-exceeded="true" />
+		</session-management>
+		<!-- Other Configurations => DISABLE CSRF is Cross Site Request Forgery 
+			SUPPORT -->
+		<csrf disabled="true" />
+		<!-- access denied page -->
+		<access-denied-handler error-page="/error/403" />
 	</http>
+
+
 	<authentication-manager>
 		<authentication-provider>
 			<user-service>
-				<user name="bill" password="abc123" authorities="ROLE_USER" />
-				<user name="admin" password="root123" authorities="ROLE_ADMIN" />
+				<user name="heidy.izaguirre@udc.es" password="admin"
+					authorities="ROLE_ADMIN" />
+				<user name="hmiacatracha@gmail.com" password="user"
+					authorities="ROLE_USER" />
 			</user-service>
 		</authentication-provider>
 	</authentication-manager>
+
+	<beans:bean id="bcryptEncoder"
+		class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
+
+	<!-- CSRF Protection -->
+	<!-- CSRF https://github.com/terasolunaorg/guideline/blob/master/source_en/Security/CSRF.rst -->
+	<!-- ><beans:bean id="requestDataValueProcessor" class="org.springframework.security.web.servlet.support.csrf.CsrfRequestDataValueProcessor" 
+		/> -->
+
+	<!-- fin CSRF Protection -->
+
 </beans:beans>

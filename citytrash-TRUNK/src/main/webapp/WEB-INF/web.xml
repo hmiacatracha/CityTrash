@@ -3,15 +3,10 @@
 	xmlns="http://java.sun.com/xml/ns/javaee"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	version="2.5">
-
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
-		<param-value>classpath:/spring-config.xml</param-value>
+		<param-value>classpath:/spring-config.xml,classpath:/spring-security.xml</param-value>
 	</context-param>
-
-	<listener>
-		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-	</listener>
 
 	<servlet>
 		<servlet-name>SpringController</servlet-name>
@@ -23,24 +18,72 @@
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 
-	<filter>
-		<filter-name>openSessionInView</filter-name>
-		<filter-class>org.springframework.orm.hibernate5.support.OpenSessionInViewFilter</filter-class>
-		<init-param>
-			<param-name>sessionFactoryBeanName</param-name>
-			<param-value>sessionFactory</param-value>
-		</init-param>
-	</filter>
-
-	<!-- Uncomment to enable open session in view filter -->
-	<filter-mapping>
-		<filter-name>openSessionInView</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
-
 	<servlet-mapping>
 		<servlet-name>SpringController</servlet-name>
 		<url-pattern>/</url-pattern>
 	</servlet-mapping>
 
+	<!-- Spring Security -->
+	<!-- El ContextLoaderListener se encargará de cargar los ficheros de configuración 
+		de Spring indicados en “contextConfigLocation”. -->
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+
+
+	<!-- http://jamesjefferies.com/2009/03/04/concurrent-http-session-management-with-spring-security/ -->
+	<!-- https://github.com/spring-projects/spring-security/blob/master/docs/manual/src/docs/asciidoc/index.adoc -->
+	<listener>
+		<listener-class>org.springframework.security.web.session.HttpSessionEventPublisher</listener-class>
+	</listener>
+
+	<!-- El filtro de seguridad es el encargado de manejar las peticiones que 
+		se hagan a todas las URLs para permitir o no el acceso de acuerdo a los permisos 
+		que hayamos establecido en el fichero de configuración. -->
+	<!-- https://machiel.me/post/how-to-configure-spring-security-using-hibernate-with-spring-mvc/ -->
+
+	<filter>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+	<!-- -->
+	<filter-mapping>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<!-- fin spring security -->
+
+
+	<!--encoding start -->
+	<!-- Filter that helps to correctly encode and decode characters. -->
+	<!-- Hint: http://wiki.apache.org/tomcat/FAQ/CharacterEncoding#Q8 -->
+	<filter>
+		<filter-name>characterEncodingFilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+		<init-param>
+			<param-name>forceEncoding</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>characterEncodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<!-- fin -->
+
+	<!-- ERROR PAGE -->
+	<error-page>
+		<error-code>404</error-code>
+		<location>/error/404</location>
+	</error-page>
+
+	<error-page>
+		<error-code>403</error-code>
+		<location>/error/403</location>
+	</error-page>
+	<!-- FIN ERROR PAGE -->
 </web-app>

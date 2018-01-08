@@ -10,11 +10,17 @@
 		<property name="hibernate.use_sql_comments">${hibernate.use_sql_comments}</property>
 		<!-- Disable the second-level cache -->
 		<property name="cache.provider_class">org.hibernate.cache.internal.NoCacheProvider</property>
+
 		<!-- List of entity files -->
-		<mapping class="es.udc.citytrash.model.entity.prioridad.Prioridad" />
-		<mapping class="es.udc.citytrash.model.entity.trabajador.Trabajador" />
-		<mapping class="es.udc.citytrash.model.entity.trabajador.Conductor" />
-		<mapping class="es.udc.citytrash.model.entity.trabajador.Recolector" />
-		<mapping class="es.udc.citytrash.model.entity.trabajador.Administrador" />
+		<property name="hibernate.connection.CharSet">${hibernate.charSet}</property>
+		<property name="hibernate.connection.characterEncoding">${hibernate.charSet}</property>
+		<property name="hibernate.connection.useUnicode">${hibernate.useunicode}</property>
+
+		<!-- mapping -->
+		<mapping class="es.udc.citytrash.business.entity.prioridad.Prioridad" />
+		<mapping class="es.udc.citytrash.business.entity.trabajador.Trabajador" />
+		<mapping class="es.udc.citytrash.business.entity.trabajador.Conductor" />
+		<mapping class="es.udc.citytrash.business.entity.trabajador.Recolector" />
+		<mapping class="es.udc.citytrash.business.entity.trabajador.Administrador" />
 	</session-factory>
 </hibernate-configuration>

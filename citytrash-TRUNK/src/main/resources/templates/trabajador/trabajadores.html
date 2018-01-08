@@ -1,0 +1,14 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/header :: header(~{::title})">
+
+<title th:text="#{page_trabajadores}"></title>
+</head>
+<body>
+	<div th:replace="fragments/nav :: nav(${menu})"></div>
+	<div th:replace="fragments/footer :: footer()"></div>
+</body>
+</html>
+
