@@ -85,5 +85,10 @@
 		<error-code>403</error-code>
 		<location>/error/403</location>
 	</error-page>
+
+	<error-page>
+		<error-code>400</error-code>
+		<location>/error/400</location>
+	</error-page>
 	<!-- FIN ERROR PAGE -->
 </web-app>

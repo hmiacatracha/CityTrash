@@ -25,8 +25,13 @@
         <tr>
             <td bgcolor="#eaeaea" style="padding: 40px 30px 40px 30px;">
              <p> El administrador de cityTrash le ha registrado para que forme parte del equipo de trabajo. 
-             Recuerde que para activar la cuenta tiene que dar click en el siguiente enlace. </p>
-             <p><a href="${activar_url}">${activar_url}</a><p>  
+             Por favor, para activar la cuenta tiene que dar click en el siguiente enlace 
+             <a href="${activar_url}">${activar_url}</a><p>  
+             
+              <p>          
+				Recuerde que debe activar la cuenta antes de ${fechaExpiracion}  
+			 </p>
+			        			        
             </td>
         </tr>
         <tr>

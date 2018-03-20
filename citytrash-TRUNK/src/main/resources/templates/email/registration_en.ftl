@@ -23,8 +23,13 @@
         </tr>
         <tr>
             <td bgcolor="#eaeaea" style="padding: 40px 30px 40px 30px;">
-             <p> The administrator of cityTrash signing up to you, please active this count by clicking the next url</p>
-             <p><a href="${activar_url}">${activar_url}</a><p>  
+             <p> The administrator of cityTrash signing up to you, please active this count by clicking the next url 
+             <a href="${activar_url}">${activar_url}</a>
+             </p>
+             <p> 				
+				Remember that you must activate the account before ${fechaExpiracion}
+			</p>
+			
             </td>
         </tr>
         <tr>

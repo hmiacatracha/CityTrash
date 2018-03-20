@@ -2,28 +2,30 @@
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:th="http://www.thymeleaf.org"
-	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity">
-
-<head th:replace="fragments/header :: header(~{::title})">
-<title>Index</title>
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/default}">
+<head>
+<title th:text="#{page_index}"></title>
 </head>
 <body class="index">
-	<div th:replace="fragments/nav :: nav(${menu})"></div>
-	<div class="container">
+	<div id="viewBody" class="container" th:fragment="content">
 		<div class="row">
 			<div class="fondoBlanco">
 
-				<h3 class="text-center" th:text="#{welcome_header}">Welcome to
-					cityTrash Project</h3>
+				<th:block th:if="${login!=null}">
+					<div
+						th:replace="fragments/alert :: alert (type='success',  message=#{login_ok(${#authentication.getName()})})"></div>
+				</th:block>
 
-				<p class="text-center" th:utext="#{description_text}">Final
-					Project of Computer Degree</p>
+				<h3 class="text-center" th:text="#{welcome_header}"></h3>
+
+				<p class="text-center" th:utext="#{description_text}"></p>
 				<br />
 
-				<h3 class="text-center" th:text="#{project_header}">City Trash</h3>
+				<h3 class="text-center" th:text="#{project_header}"></h3>
 
 			</div>
-			<div th:replace="fragments/footer :: footer()"></div>
 		</div>
 	</div>
 </body>

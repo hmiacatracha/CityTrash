@@ -1,0 +1,110 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/default}">
+<head>
+<title>Login</title>
+</head>
+<body class="blanco">
+	<div class="container" th:fragment="content">
+		<div class="row">
+			<div class="col-md-6 col-md-offset-3">
+				<div class="panel panel-primary">
+
+					<h2 class="text-center">CityTrash</h2>
+					<h3 class="text-center" th:text="#{label_login_header}">Login</h3>
+
+					<div class="panel-body">
+
+						<th:block th:if="${#fields.hasErrors('${loginForm.*}')}">
+							<div
+								th:replace="fragments/alert :: alert (type='danger', message=#{frm_registro_verificar_alerta})">Alert</div>
+							<ul>
+								<li th:each="err : ${#fields.errors('*')}" th:text="#{${err}}">Error</li>
+							</ul>
+						</th:block>
+
+						<th:block th:if="${error}">
+							<div
+								th:replace="fragments/alert :: alert (type='danger',  message=#{error.login_failed})"></div>
+						</th:block>
+
+						<th:block th:if="${msg!=null}">
+							<div
+								th:replace="fragments/alert :: alert (type='warning',  message=#{${msg}})"></div>
+						</th:block>
+
+						<form role="form" class="form-signin" th:action="@{#{link.login}}"
+							action="#" method="post" th:object="${loginForm}"
+							th:fragment="login">
+							<fieldset>
+
+								<input type="hidden" name="_csrf"
+									value="16e9ae08-76b9-4530-b816-06819983d048" />
+
+
+								<div class="form-group">
+									<div class="has-feedback" id="email_div">
+										<label for="email" class="control-label"
+											th:text="#{lbl_email}"></label> <input id="email"
+											type="email" th:field="*{email}" class="form-control"
+											th:placeholder="#{lbl_pholder_email}" required="required"
+											autofocus> <span
+											class="glyphicon glyphicon-envelope form-control-feedback">
+
+										</span> <span class="help-block"
+											th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<div class="has-feedback" id="password_div">
+										<label for="password" class="control-label"
+											th:text="#{lbl_password}"></label> <input id="password"
+											type="password" th:field="*{password}"
+											th:placeholder="#{lbl_pholder_password}" class="form-control"
+											required> <span
+											class="glyphicon glyphicon-lock form-control-feedback"></span>
+										<span class="help-block"
+											th:if="${#fields.hasErrors('password')}"
+											th:errors="*{password}"></span>
+									</div>
+								</div>
+
+								<button class="btn btn-lg default btn-block" type="submit"
+									th:text="#{btn_signin}">
+									<span class="glyphicon glyphicon-log-in"></span>
+								</button>
+
+								<div class="checkbox">
+									<label class="checkbox"> <input
+										th:text="#{lbl_remember_me}" name="remember-me-param"
+										type="checkbox" value="remember-me">
+									</label>
+								</div>
+							</fieldset>
+						</form>
+					</div>
+					<div class="panel-footer">
+
+						<div class="pull-left">
+							<a th:href="@{#{link.home}}"> <span
+								class="glyphicon glyphicon-home"></span>&nbsp; <label
+								th:text="#{home}"></label></a>
+						</div>
+
+						<div class="pull-right">
+							<a href="recuperarCuenta" th:href="@{#{link.recuperar}}"
+								th:text="#{lbl_recuperar_cuenta}"></a>
+						</div>
+
+						<br />
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

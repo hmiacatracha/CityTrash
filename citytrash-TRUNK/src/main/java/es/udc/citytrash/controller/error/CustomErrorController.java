@@ -7,26 +7,29 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import es.udc.citytrash.controller.trabajador.TrabajadorController;
+import es.udc.citytrash.controller.util.WebUtils;
 
 @Controller
 @RequestMapping("error")
 public class CustomErrorController {
 
-	private static final String URL_FORBIDDEN = "/403";
-	private static final String URL_NOT_FOUND = "/404";
+	final Logger logger = LoggerFactory.getLogger(CustomErrorController.class);
 
-	final Logger logger = LoggerFactory.getLogger(TrabajadorController.class);
-
-	@RequestMapping(value = URL_FORBIDDEN)
+	@RequestMapping(value = WebUtils.URL_FORBIDDEN)
 	@ResponseStatus(HttpStatus.FORBIDDEN)
 	public String forbidden() {
 		return "error/403";
 	}
 
-	@RequestMapping(value = URL_NOT_FOUND)
+	@RequestMapping(value = WebUtils.URL_NOT_FOUND)
 	@ResponseStatus(HttpStatus.NOT_FOUND)
 	public String notFoundException() {
 		return "error/404";
+	}
+
+	@RequestMapping(value = WebUtils.URL_BAD_REQUEST)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public String badRequestException() {
+		return "error/400";
 	}
 }

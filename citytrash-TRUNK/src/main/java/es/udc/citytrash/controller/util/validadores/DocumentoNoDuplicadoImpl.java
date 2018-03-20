@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import es.udc.citytrash.business.entity.trabajador.Trabajador;
 import es.udc.citytrash.business.service.trabajador.TrabajadorService;
 import es.udc.citytrash.business.util.excepciones.InstanceNotFoundException;
+import es.udc.citytrash.controller.util.anotaciones.DocumentoNoDuplicado;
 
 @Component
 public class DocumentoNoDuplicadoImpl implements ConstraintValidator<DocumentoNoDuplicado, String> {

@@ -61,7 +61,7 @@ public class MailConfiguration {
 		mailSender.setPort(port);
 		mailSender.setProtocol(protocol);
 		mailSender.setUsername(username);
-		mailSender.setPassword(password);
+		mailSender.setPassword(password);	
 		return mailSender;
 	}
 

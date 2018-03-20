@@ -1,0 +1,141 @@
+<!DOCTYPE>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:sd="http://www.thymeleaf.org/spring-data"
+	layout:decorate="~{layouts/default}">
+<head>
+<title th:text="#{page_registro}"></title>
+</head>
+<body class="blanco">
+	<div id="viewBody" class="container" th:fragment="content"
+		th:remove="tag">
+		<div class="row">
+			<div class="col-sm-10 col-sm-offset-1">
+
+				<h1 class="text-center" th:text="#{frm_trabajadores_header}"></h1>
+				<div th:fragment="register-success" id="success">
+					<th:block th:if="${success!=null}">
+						<div
+							th:replace="fragments/alert :: alert (type='success', message=#{frm_registro_ok})">Alert</div>
+						<p></p>
+					</th:block>
+				</div>
+				<a data-toggle="modal" href="#openRegistroModal"
+					th:text="#{frm_trabajadores_registro}"></a> <a href="#"
+					onclick="showUrlInDialog('/feedback-form', {error: function() { alert('Could not load form') }}); return false;">Give
+					us feedback</a>
+
+				<hr>
+				<!--  			
+				<a href="login" th:href="@{#{link.registro}}"
+					th:onclick="'javascript::openRegistroModal();'"></a>
+	 			-->
+				<br />
+				<!-- Modal -->
+				<div class="modal fade" id="openRegistroModal" role="dialog"
+					th:fragment="content_registro">
+					<div class="modal-dialog">
+
+						<!-- Modal content-->
+						<div class="modal-content">
+							<div class="modal-header">
+								<div class="pull-left">
+									<button type="button" class="close" data-dismiss="modal">&times;</button>
+								</div>
+
+								<h4 class="modal-title text-center"
+									th:text="#{frm_registro_header}">Modal Header</h4>
+							</div>
+							<div class="modal-body">
+								<div
+									th:replace="trabajador/add_trabajador_form :: trabajador_form(${registro})"></div>
+							</div>
+
+							<div class="modal-footer">
+								<!-- 
+								<button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+								<button form="registro_form" class="btn btn-primary"
+									type="submit" th:text="#{btn_registrar}">Save changes</button>
+								 -->
+							</div>
+						</div>
+
+					</div>
+				</div>
+				<!--  fin de registro-modal -->
+
+				<!-- trabajadores list -->
+				<th:block th:if="${trabajadores}">
+				Show <span sd:page-size-selector="default"></span> entries
+					<div class="btn-group dropup" sd:page-size-selector="dropdown"></div>
+
+					<!-- tabla -->
+					<table class="table table-bordered table-striped table-hover">
+						<tr>
+							<th><a class="sorted" sd:pagination-sort="id"
+								th:text="#{frm_trabajadores_id}"> </a></th>
+							<th><a class="sorted" sd:pagination-sort="nombre"
+								th:text="#{frm_trabajadores_nombre}"> Name</a></th>
+							<th><a class="sorted" sd:pagination-sort="apellidos"
+								th:text="#{frm_trabajadores_apellidos}">Apellidos</a></th>
+							<th><a class="sorted" sd:pagination-sort="rol"
+								th:text="#{frm_trabajadores_rol}">Rol</a></th>
+							<th>&nbsp;</th>
+						</tr>
+						<tr th:each="trabajador : ${trabajadores.content}">
+							<td class="align-middle"><span
+								class="articleTitle truncated" data-toggle="tooltip"
+								data-placement="bottom" th:title="${trabajador.id}"
+								th:text="${trabajador.id}"> </span></td>
+
+							<td class="align-middle"
+								th:text="${#strings.capitalize(
+                  #strings.replace(trabajador.nombre, '_', ' '))}">
+								nombre</td>
+
+							<td class="align-middle"
+								th:text="${#strings.capitalize(
+                  #strings.replace(trabajador.apellidos, '_', ' '))}">
+								apellidos</td>
+
+							<td class="align-middle"
+								th:text="${#strings.toUpperCase(
+                  #strings.replace(trabajador.rol, '_', ' '))}">
+								rol</td>
+
+							<td><a class="btn"
+								th:href="@{/auth/trabajadores/edit(id=${trabajador.id})}"
+								th:text="#{lbl_editar}"><i
+									class="glyphicon glyphicon-envelope"></i> </a> <a class="btn"
+								href="view" th:text="#{lbl_detalles}">detail</a></td>
+						</tr>
+					</table>
+
+					<!-- fin table -->
+
+					<!-- paginacion -->
+					<div class="row">
+						<div class="col-sm-6">
+							<div sd:pagination-summary="compact">info</div>
+						</div>
+						<div class="col-sm-6">
+							<nav class="pull-right">
+								<ul class="pagination" sd:pagination="full">
+									<!-- Pagination created by SpringDataDialect, this content is just for mockup -->
+									<li class="disabled"><a href="#" aria-label="Previous"><span
+											aria-hidden="true">&laquo;</span></a></li>
+									<li class="active"><a href="#">1 <span class="sr-only">(current)</span></a></li>
+								</ul>
+							</nav>
+						</div>
+					</div>
+					<!-- fin paginacion -->
+					<p th:unless="${trabajadores}">No worker have been created yet.</p>
+					<!-- fin trabajadores list -->
+			</div>
+		</div>
+	</div>
+</body>
+</html>

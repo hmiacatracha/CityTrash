@@ -14,8 +14,8 @@ public class ErrorController {
 	// https://spring.io/blog/2013/11/01/exception-handling-in-spring-mvc
 	private static Logger logger = LoggerFactory.getLogger(ErrorController.class);
 
-	@ExceptionHandler(Throwable.class)
-	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	// @ExceptionHandler(Throwable.class)
+	// @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	public String exception500(final Throwable throwable, final Model model) {
 		logger.error("Exception 500 during execution of SpringSecurity application", throwable);
 		String errorMessage = (throwable != null ? throwable.getMessage() : "Unknown error");

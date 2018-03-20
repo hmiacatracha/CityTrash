@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import es.udc.citytrash.business.service.trabajador.TrabajadorService;
 import es.udc.citytrash.business.util.excepciones.InstanceNotFoundException;
+import es.udc.citytrash.controller.util.anotaciones.EmailNoDuplicado;
 
 @Component
 public class EmailNoDuplicadoImpl implements ConstraintValidator<EmailNoDuplicado, String> {

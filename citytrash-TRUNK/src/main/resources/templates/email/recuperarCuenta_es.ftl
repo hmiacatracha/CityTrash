@@ -24,9 +24,12 @@
         </tr>
         <tr>
             <td bgcolor="#eaeaea" style="padding: 40px 30px 40px 30px;">
-             <p>  Hemos recibido la solicitud para recuperar su cuenta ${email} de CityTrash. 
-             Si usted no ha solicitado, por favor no acceda al siguiente enlace
-              <a href="${recuperar_url}">${recuperar_url}</a> e ignore el mensaje.</p>                             
+             <p>  Hemos recibido la solicitud para recuperar su cuenta ${email} de CityTrash. Si usted no ha solicitado, por favor no acceda al siguiente enlace <a href="${recuperar_url}">${recuperar_url}</a> e ignore el mensaje.</p>    
+              
+             <p>         
+				Recuerde que debe de recuperar su cuenta antes de ${fechaExpiracion}  
+			 </p>
+			                       
             </td>
         </tr>
         <tr>

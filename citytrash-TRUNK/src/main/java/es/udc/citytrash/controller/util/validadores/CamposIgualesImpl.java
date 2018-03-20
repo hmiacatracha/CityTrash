@@ -5,6 +5,9 @@ import javax.validation.ConstraintValidatorContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import es.udc.citytrash.controller.util.anotaciones.CamposIguales;
+
 import java.lang.reflect.Field;
 
 public class CamposIgualesImpl implements ConstraintValidator<CamposIguales, Object> {
@@ -32,6 +35,11 @@ public class CamposIgualesImpl implements ConstraintValidator<CamposIguales, Obj
 
 			toReturn = primerObjeto != null && primerObjeto.equals(segundoObjeto);
 
+			if (!toReturn) {
+				context.disableDefaultConstraintViolation();
+				context.buildConstraintViolationWithTemplate(context.getDefaultConstraintMessageTemplate())
+						.addPropertyNode(segundoCampo).addConstraintViolation();
+			}
 		} catch (final Exception ignore) {
 			toReturn = false;
 		}

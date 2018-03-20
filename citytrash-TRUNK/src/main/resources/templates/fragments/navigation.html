@@ -1,0 +1,122 @@
+<body>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
+<!-- http://softpei.blogspot.com.es/2017/02/agregarle-bootstrap-3-submenu-de-varios.html -->
+
+<nav th:fragment="nav(m)"
+	class="navbar navbar navbar-default navbar-static-top">
+	<div class="container">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle" data-toggle="collapse"
+				data-target=".navbar-collapse">
+				<span class="sr-only"> </span> <span class="icon-bar"></span> <span
+					class="icon-bar"></span> <span class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" href="#" th:text="#{brand}">Project name</a>
+		</div>
+
+		<div class="collapse navbar-collapse" id="navbar-collapse-1">
+			<ul class="nav navbar-nav">
+
+				<li class="active"><a th:href="@{#{link.home}}"> <span
+						class="glyphicon glyphicon-home" aria-hidden="true"></span>&nbsp;
+						<label th:text="#{home}"></label>
+				</a></li>
+
+				<li><a th:text="#{about}" th:href="@{#{link.about.us}}"> </a></li>
+
+				<li class="dropdown"><a class="dropdown-toggle"
+					data-toggle="dropdown" th:href="@{#{menu.mapa_link_ref}}"
+					th:text="#{mapa}"> </a>
+					<ul class="dropdown-menu">
+						<li><a th:text="#{contenedores}"
+							th:href="@{#{menu.mapa_contendores_link_ref}}"> </a></li>
+						<li sec:authorize="isAuthenticated()"><a th:text="#{rutas}"
+							th:href="@{#{menu.mapa_rutas_link_ref}}"> </a></li>
+					</ul></li>
+				<li class="dropdown"><a class="dropdown-toggle"
+					data-toggle="dropdown" th:text="#{estadisticas}"
+					th:href="@{#{menu.estadisticas_link_ref}}"> </a>
+					<ul class="dropdown-menu">
+						<li><a th:text="#{reciclado}"
+							th:href="@{#{menu.estadisticas_reciclado_link_ref}}"> </a></li>
+						<li><a th:text="#{pronostico}"
+							th:href="@{#{menu.estadisticas_pronos_realid_link_ref}}"> </a></li>
+					</ul></li>
+				<li class="dropdown"><a class="dropdown-toggle"
+					data-toggle="dropdown" th:text="#{recursos}"
+					th:href="@{#{menu.recursos}}"> </a>
+					<ul class="dropdown-menu dropdown-submenu">
+
+						<li class="dropdown dropdown-submenu"><a
+							class="dropdown-toggle" data-toggle="dropdown"
+							th:text="#{recursos}" th:href="@{#{menu.recursos}}"> </a>
+							<ul class="dropdown-menu">
+								<li><a th:text="#{camiones}"
+									th:href="@{#{menu.recursos_camiones_realid_link_ref}}"> </a></li>
+								<li><a th:text="#{contenedores}"
+									th:href="@{#{menu.recursos_contenedores_realid_link_ref}}">
+								</a></li>
+							</ul></li>
+						<li><a th:text="#{camiones}"
+							th:href="@{#{menu.recursos_camiones_realid_link_ref}}"> </a></li>
+						<li><a th:text="#{contenedores}"
+							th:href="@{#{menu.recursos_contenedores_realid_link_ref}}"> </a></li>
+					</ul></li>
+			</ul>
+
+
+
+			<ul class="nav navbar-nav navbar-right"
+				sec:authorize="isAuthenticated()">
+				<li th:if="${#authorization.expression('hasRole(''ROLE_USER'')')}">
+					<a href="#"> <label th:text="#{alertas}"> </label> <span
+						class="badge pull-right">3</span>
+				</a>
+				</li>
+
+				<li class="dropdown"><a id="user-menu" href="#"
+					class="dropdown-toggle glyphicon glyphicon-user"
+					data-toggle="dropdown" role="button" aria-haspopup="true"
+					aria-expanded="false"> <span class="caret"> </span>
+				</a>
+					<ul class="dropdown-menu">
+						<li class="dropdown-header"
+							th:text="#{navbar.welcome(${#authentication.getName()})}"></li>
+
+						<li><a id="cambioIdioma"
+							th:href="@{#{link.cuenta.idiomaPreferencia}}"> <span
+								class="	 glyphicon-log-out" aria-hidden="true"></span>&nbsp; <label
+								th:text="#{lang.preferencia}"></label>
+						</a></li>
+
+						<li><a id="logout" th:href="@{#{link.logout}}"> <span
+								class="glyphicon glyphicon-log-out" aria-hidden="true"> </span>&nbsp;
+								<label th:text="#{logout}"></label>
+						</a></li>
+					</ul></li>
+			</ul>
+
+			<ul th:if="${#authorization.expression('!isAuthenticated()')}"
+				class="nav navbar-nav navbar-right">
+				<li class="dropdown"><a class="dropdown-toggle"
+					aria-haspopup="true" aria-expanded="false" data-toggle="dropdown"
+					href="#"> <label th:text="#{lang.change}"> </label> <span
+						class="caret"></span></a>
+					<ul class="dropdown-menu" id="locales">
+						<li
+							th:each="tipo :
+					${T(es.udc.citytrash.business.entity.idioma.Idioma).values()}">
+							<a href="" th:value="${tipo}" th:text="#{${'lang.' + tipo}}"></a>
+						</li>
+					</ul>
+				<li><a th:href="@{#{link.signin}}"> <span
+						class="glyphicon glyphicon-log-in" aria-hidden="true"></span>&nbsp;
+						<label th:text="#{signin}"></label>
+				</a></li>
+			</ul>
+		</div>
+	</div>
+</nav>

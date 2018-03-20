@@ -9,8 +9,7 @@
 		<nav class="navbar navbar-default navbar-fixed-bottom">
 			<div class="container-fluid">
 				<div class="navbar-header">
-					<a class="navbar-brand" href="#">&copy; Heidy Izaguirre -
-						UDC </a>
+					<a class="navbar-brand" href="#">&copy; Heidy Izaguirre - UDC </a>
 				</div>
 
 				<div class="collapse navbar-collapse" id="navbar-collapse-1">
@@ -26,16 +25,40 @@
 						sec:authorize="hasAnyRole('ROLE_ADMIN')">
 						<li><a th:text="#{message_admin}" href="#"> </a></li>
 					</ul>
+					<ul class="nav navbar-nav navbar-right"
+						sec:authorize="hasAuthority('CHANGE_PASSWORD_PRIVILEGE')">
+						<li><a th:text="#{message_password_privilege}" href="#">
+						</a></li>
+					</ul>
 				</div>
 			</div>
 		</nav>
 		<!-- include javascript in the footer -->
-		<script src="http://code.jquery.com/jquery.js"></script>
-		<script th:src="@{/webjars/jquery/3.2.1/jquery.min.js}"></script>
-		<script th:src="@{/webjars/bootstrap/3.3.7-1/js/bootstrap.min.js}"></script>
+		<script type="text/javascript" src="http://code.jquery.com/jquery.js"></script>
+		<script type="text/javascript"
+			th:src="@{/webjars/jquery/3.2.1/jquery.min.js}"></script>
+		<script type="text/javascript"
+			th:src="@{/webjars/bootstrap/3.3.7-1/js/bootstrap.min.js}"></script>
 		<script type="text/javascript"
 			src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
-		<script
+		<script type="text/javascript"
 			th:src="@{/webjars/bootstrap-hover-dropdown/2.1.3/bootstrap-hover-dropdown.min.js}"></script>
+
+		<script type="text/javascript"
+			th:src="@{/webjars/jquery-validation/1.17.0/jquery.validate.min.js}"></script>
+
+		<script type="text/javascript"
+			th:src="@{/webjars/jquery-i18n-properties/1.10.2/jquery.i18n.properties.min.js}"></script>
+
+		<script type="text/javascript"
+			th:src="@{/resources/static/js/form.js}">
+		</script>
+		<script type="text/javascript"
+			th:src="@{/resources/static/js/jquery.validate.formularios.js}">
+		</script>
+
+		<script type="text/javascript"
+			th:src="@{/resources/static/js/jquery.validate.bootstrap.js}"></script>
+
 	</div>
 </body>

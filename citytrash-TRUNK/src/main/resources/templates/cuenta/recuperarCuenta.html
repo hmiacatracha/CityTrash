@@ -1,0 +1,62 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/default}">
+
+<head>
+<title th:text="#{page_recuperar_cuenta}"></title>
+</head>
+<body class="blanco">
+	<div id="viewBody" class="container" th:fragment="content">
+		<div class="row">
+
+			<th:block th:if="${success!=null}">
+				<div
+					th:replace="fragments/alert :: alert (type='success ', message=#{recuperar_cuenta_ok(${email})})">Alert</div>
+			</th:block>
+
+			<div class="col-md-6 col-md-offset-3">
+				<div th:unless="${success!=null}" class="panel panel-default">
+
+					<div class="panel-heading ">
+						<h3 class="text-center" th:text="#{label_recuperar_cuenta_header}"></h3>
+					</div>
+					
+					<div class="panel-body">
+
+						<th:block th:if="${err!=null}">
+							<div
+								th:replace="fragments/alert :: alert (type='danger', message=#{InstanceNotFoundException_cuenta(${err.key})})">Alert</div>
+						</th:block>
+
+						<form action="forgotPwd" th:action="@{#{link.cuenta.reset}}"
+							method="post">
+							<div class="form-group has-feedback">
+								<input type="email" class="form-control" name="email"
+									placeholder="Email" required="required" /> <span
+									class="glyphicon glyphicon-envelope form-control-feedback"></span>
+							</div>
+							<button class="btn btn-default btn-lg btn-block" type="submit"
+								th:text="#{btn_recuperar_cuenta}"></button>
+						</form>
+					</div>
+					<div class="panel-footer">
+						<div class="pull-left">
+							<a th:href="@{#{link.home}}"> <span
+								class="glyphicon glyphicon-home"></span>&nbsp; <label
+								th:text="#{home}"></label></a>
+						</div>
+						<div class="pull-right">
+							<a href="#" th:href="@{#{link.signin}}" th:text="#{signin}"></a><br />
+						</div>
+						<br />
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
+

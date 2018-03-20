@@ -15,13 +15,19 @@
         http://www.springframework.org/schema/cache/spring-cache-4.2.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd">
 
-	<!-- Use @MVC annotations -->
-	<mvc:annotation-driven />
-
 	<!-- Enables the Spring MVC @Controller programming model -->
 	<context:annotation-config />
 
+	<!-- Configures the location of static resources such as css files. Requires 
+		Spring Framework 3.0 or higher. -->
+	<!-- comentado porque da error al realizar mvc:test <mvc:resources mapping="/static/**" 
+		location="/static/" /> <mvc:resources mapping="/resources/**" location="/resources/" 
+		/> -->
+
 	<!-- Use spring servlet for all requests, including static resources -->
+	<!-- Ensures that dispatcher servlet can be mapped to '/' and that static 
+		resources are still served by the containers default servlet. Requires Spring 
+		Framework 3.0 or higher. -->
 	<mvc:default-servlet-handler />
 
 	<!-- Enable component scanning for defining beans with annotations. -->
@@ -54,4 +60,5 @@
 	</bean>
 	<!-- Enable the configuration of transactional behavior based on annotations. -->
 	<tx:annotation-driven transaction-manager="txManager" />
+
 </beans>

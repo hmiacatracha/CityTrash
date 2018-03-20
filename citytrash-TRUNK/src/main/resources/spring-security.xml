@@ -5,67 +5,92 @@
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
         http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.2.xsd">
 
-	<!-- <http pattern="/resources/static/**" security="none" /> -->
-	<!-- https://docs.spring.io/spring-security/site/docs/3.1.x/reference/springsecurity-single.html -->
-	<!-- http://cleventy.com/configurando-spring-security/ -->
-	<!-- http://www.juntadeandalucia.es/servicios/madeja/contenido/recurso/213 -->
-	<!-- https://www.adictosaltrabajo.com/tutoriales/utilizaciondegruposenspringsecurity/ -->
-	<!-- http://www.baeldung.com/security-none-filters-none-access-permitAll -->
+	<!-- https://docs.spring.io/autorepo/docs/spring-security/4.0.x/reference/html/ns-config.html -->
+	<!-- Enabled secured-annotations with Java based configuration @Secured 
+		@Secured("IS_AUTHENTICATED_ANONYMOUSLY") and SPring Native annotations @PreAuthorize("isAnonymous()"), 
+		@PreAuthorize("hasAuthority('ROLE_TELLER')") -->
+	<global-method-security secured-annotations="enabled"
+		pre-post-annotations="enabled" />
 
-	<http auto-config="true" use-expressions="true"
-		disable-url-rewriting="true">
+	<!-- beans bcryptEncoder -->
+	<beans:bean id="bcryptEncoder"
+		class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
+
+	<!-- failure autentication handler -->
+	<beans:bean id="authenticationFailureHandler"
+		class="org.springframework.security.web.authentication.ExceptionMappingAuthenticationFailureHandler">
+		<beans:property name="defaultFailureUrl"
+			value="/login?error=BadCredentialsException" />
+		<beans:property name="exceptionMappings">
+			<beans:map>
+				<beans:entry
+					key="org.springframework.security.core.userdetails.UsernameNotFoundException"
+					value="/login?error=UsernameNotFoundException" />
+				<beans:entry
+					key="org.springframework.security.authentication.BadCredentialsException"
+					value="/login?error=BadCredentialsException" />
+				<beans:entry
+					key="org.springframework.security.authentication.CredentialsExpiredException"
+					value="/login?error=CredentialsExpiredException" />
+				<beans:entry
+					key="org.springframework.security.authentication.LockedException"
+					value="/login?error=LockedException" />
+				<beans:entry
+					key="org.springframework.security.authentication.DisabledException"
+					value="/login?error=DisabledException" />
+			</beans:map>
+		</beans:property>
+	</beans:bean>
+
+	<!-- https://doanduyhai.wordpress.com/2012/02/05/spring-security-part-iii-authenticationprocessingfilter-anonymousfilter/ -->
+	<!-- succes handler => after login, return to the last visited page -->
+	<!-- SavedRequestAwareAuthenticationSuccessHandler: redirects the user to 
+		the requested page. If the initial request does not target any specific page, 
+		redirect it to the defaultTargetUrl set as parameter -->
+	<beans:bean id="authenticationSuccessHandler"
+		class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
+		<!-- After login, return to the last visited page -->
+		<beans:property name="defaultTargetUrl" value="/" />
+	</beans:bean>
+
+	<!-- Declare an authentication-manager to use a custom userService -->
+	<authentication-manager>
+		<!-- <authentication-provider user-service-ref='userServiceImpl'> <user-service> 
+			<user name="memuser" password="pass" authorities="ROLE_USER" /> </user-service> 
+			</authentication-provider> -->
+		<authentication-provider ref="customAuthenticationProvider" />
+		<!-- customAuthenticationProvider is @Component -->
+	</authentication-manager>
+
+	<!-- Authentication policy for every page -->
+	<http auto-config="true" use-expressions="true">
 		<intercept-url pattern="/resources/static/**" access="permitAll" />
-		<intercept-url pattern="/login?logout" access="isAuthenticated()" />
-		<intercept-url pattern="/login*" access="!isAuthenticated()" />
+		<intercept-url pattern="/**" access="permitAll" />
+		<!-- <intercept-url pattern="/login**" access="IS_AUTHENTICATED_ANONYMOUSLY" 
+			/> <intercept-url pattern="/cuenta/actualizarPassword/**" access="isAuthenticated()" 
+			/> <intercept-url pattern="/cuenta/idiomapreferencia/**" access="isAuthenticated()" 
+			/> <intercept-url pattern="/auth/admin/**" access="hasRole('ROLE_ADMIN')" 
+			/> <intercept-url pattern="/auth/user/**" access="hasRole('ROLE_USER')" /> -->
 
-		<!-- <intercept-url pattern="/auth/admin/**" access="hasRole('ROLE_ADMIN')" 
-			/> <intercept-url pattern="/auth/user/**" access="hasRole('ROLE_USER')" /> 
-			<intercept-url pattern="/auth/all/**" access="isAuthenticated()" /> -->
+		<form-login default-target-url="/" login-page="/login"
+			username-parameter="username" password-parameter="password"
+			authentication-success-handler-ref="authenticationSuccessHandler"
+			authentication-failure-handler-ref="authenticationFailureHandler" />
 
-		<form-login default-target-url="/home" login-page='/login'
-			authentication-failure-url="/login?error" />
-
-		<logout logout-url="/logout" logout-success-url="/login?logout"
+		<logout logout-success-url="/" logout-url="/j_spring_security_logout"
 			invalidate-session="true" delete-cookies=" JSESSIONID" />
-		<!-- remember-me => default of 2 weeks but this only for one day -->
-		<!-- 24 * 60 * 60 = 86400 -->
-
+		<!-- remember-me default of 2 weeks but this only for one day => 24 * 60 
+			* 60 = 86400 -->
 		<remember-me key="remember-me" token-validity-seconds="86400"
 			remember-me-parameter="remember-me-param" remember-me-cookie="my-remember-me" />
 		<!-- session management -->
 		<!-- https://docs.spring.io/spring-security/site/docs/current/reference/html/ns-config.html -->
-		<session-management invalid-session-url="/home?invalid=true"
+		<session-management invalid-session-url="/login"
 			session-fixation-protection="migrateSession">
-			<concurrency-control expired-url="/home?expired=true"
+			<concurrency-control expired-url="/login"
 				max-sessions="1" error-if-maximum-exceeded="true" />
 		</session-management>
-		<!-- Other Configurations => DISABLE CSRF is Cross Site Request Forgery 
-			SUPPORT -->
 		<csrf disabled="true" />
-		<!-- access denied page -->
 		<access-denied-handler error-page="/error/403" />
 	</http>
-
-
-	<authentication-manager>
-		<authentication-provider>
-			<user-service>
-				<user name="heidy.izaguirre@udc.es" password="admin"
-					authorities="ROLE_ADMIN" />
-				<user name="hmiacatracha@gmail.com" password="user"
-					authorities="ROLE_USER" />
-			</user-service>
-		</authentication-provider>
-	</authentication-manager>
-
-	<beans:bean id="bcryptEncoder"
-		class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
-
-	<!-- CSRF Protection -->
-	<!-- CSRF https://github.com/terasolunaorg/guideline/blob/master/source_en/Security/CSRF.rst -->
-	<!-- ><beans:bean id="requestDataValueProcessor" class="org.springframework.security.web.servlet.support.csrf.CsrfRequestDataValueProcessor" 
-		/> -->
-
-	<!-- fin CSRF Protection -->
-
 </beans:beans>

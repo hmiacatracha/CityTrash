@@ -1,0 +1,25 @@
+<!DOCTYPE>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/default}">
+<head>
+<title th:text="#{page_registro}"></title>
+</head>
+
+<body class="formularios"
+	th:with="httpStatus=${T(org.springframework.http.HttpStatus).valueOf(#response.status)}">
+	<div id="viewBody" class="container" th:fragment="content">
+		<h1 th:text="|${httpStatus} - ${httpStatus.reasonPhrase}">400</h1>
+		<p th:text="#{error.400}"></p>
+		<a th:href="@{#{link.home}}"> <span
+			class="glyphicon glyphicon-home" aria-hidden="true"></span>&nbsp; <label
+			th:text="#{home}"></label>
+		</a> <a th:href="@{#{link.home}}"> <span
+			class="glyphicon glyphicon-home" aria-hidden="true"></span>&nbsp; <label
+			th:text="#{home}"></label>
+		</a>
+	</div>
+</body>
+</html>

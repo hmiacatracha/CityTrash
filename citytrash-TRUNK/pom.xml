@@ -19,6 +19,7 @@
 		<hibernate.show_sql>true</hibernate.show_sql>
 		<hibernate.format_sql>true</hibernate.format_sql>
 		<hibernate.use_sql_comments>true</hibernate.use_sql_comments>
+		<hibernate.timezone>UTC</hibernate.timezone>
 		<!-- Encoding -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<!-- project versions -->
@@ -32,19 +33,22 @@
 		<java.validator.version>2.0.0.Final</java.validator.version>
 		<mysql-connector-java.version>5.1.6</mysql-connector-java.version>
 		<junit.version>4.12</junit.version>
-		<spring.version>4.3.10.RELEASE</spring.version>
+		<spring.version>4.3.14.RELEASE</spring.version>
 		<springdata.version>1.11.3.RELEASE</springdata.version>
 		<spring.security.version>4.2.3.RELEASE</spring.security.version>
 		<servletApi.version>3.1.0</servletApi.version>
 		<thymeleaf.version>3.0.6.RELEASE</thymeleaf.version>
 		<thymeleaf.security>3.0.2.RELEASE</thymeleaf.security>
-
+		<thymeleaf.layout>2.2.2</thymeleaf.layout>
+		<thymeleaf.data.dialect>3.3.1</thymeleaf.data.dialect>
 		<jquery.version>3.2.1</jquery.version>
+		<jquery.validador.version>1.17.0</jquery.validador.version>
+		<jqyery.i18.version>1.0.9</jqyery.i18.version>
 		<boostrap.version>3.3.7-1</boostrap.version>
 		<boostrap.hover.dropdown.version>2.1.3</boostrap.hover.dropdown.version>
 		<animate.version>3.5.2</animate.version>
 		<guava.version>22.0</guava.version>
-
+		<jackson.version>2.9.4</jackson.version>
 
 		<!-- Plugin versions -->
 		<mavenCompilerPlugin.version>3.5.1</mavenCompilerPlugin.version>
@@ -78,6 +82,7 @@
 				<hibernate.dialect>org.hibernate.dialect.MySQLDialect</hibernate.dialect>
 				<hibernate.charSet>utf8</hibernate.charSet>
 				<hibernate.useunicode>true</hibernate.useunicode>
+				<!-- Email properties -->
 			</properties>
 		</profile>
 	</profiles>
@@ -244,6 +249,13 @@
 			<version>${java.validator.version}</version>
 		</dependency>
 
+		<!-- jquery validation plugin -->
+		<!-- https://mvnrepository.com/artifact/org.webjars/jquery-validation -->
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>jquery-validation</artifactId>
+			<version>${jquery.validador.version}</version>
+		</dependency>
 		<!-- java mysql connector -->
 		<dependency>
 			<groupId>mysql</groupId>
@@ -273,12 +285,31 @@
 			<artifactId>thymeleaf-extras-springsecurity4</artifactId>
 			<version>${thymeleaf.security}</version>
 		</dependency>
-		<!-- bootstrap plugis -->
+		<dependency>
+			<groupId>nz.net.ultraq.thymeleaf</groupId>
+			<artifactId>thymeleaf-layout-dialect</artifactId>
+			<version>${thymeleaf.layout}</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/io.github.jpenren/thymeleaf-spring-data-dialect -->
+		<!-- https://github.com/jpenren/thymeleaf-spring-data-dialect for pagination 
+			in thymeleaf -->
+		<dependency>
+			<groupId>io.github.jpenren</groupId>
+			<artifactId>thymeleaf-spring-data-dialect</artifactId>
+			<version>${thymeleaf.data.dialect}</version>
+		</dependency>
+		<!-- jquery plugis -->
 		<dependency>
 			<groupId>org.webjars</groupId>
 			<artifactId>jquery</artifactId>
 			<version>${jquery.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>jquery-i18n-properties</artifactId>
+			<version>${jqyery.i18.version}</version>
+		</dependency>
+		<!-- boostrap plugins -->
 		<!-- css -->
 		<dependency>
 			<groupId>org.webjars</groupId>
@@ -312,8 +343,24 @@
 			<artifactId>commons-beanutils</artifactId>
 			<version>1.6</version>
 		</dependency>
+		<!-- json generator return value (json to/from object) -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<!-- fin dependencias json -->
 	</dependencies>
-
 
 	<build>
 		<finalName>${project.artifactId}</finalName>
@@ -329,7 +376,7 @@
 					<include>hibernate-config.xml</include>
 					<include>templates/**</include>
 					<include>templates/email/**.txt</include>
-					<include>i18/**.properties</include>
+					<include>i18n/**.properties</include>
 					<include>config/**.properties</include>
 					<include>static/**</include>
 				</includes>
@@ -526,6 +573,11 @@
 						<version>${spring.version}</version>
 					</dependency>
 				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>org.webjars</groupId>
+				<artifactId>webjars-maven-plugin</artifactId>
+				<version>0.2.0</version>
 			</plugin>
 		</plugins>
 	</build>

@@ -7,6 +7,8 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -15,11 +17,12 @@ import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 
-import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
+
+import es.udc.citytrash.business.entity.idioma.Idioma;
 
 @Entity
 @Table(name = "TBL_TRABAJADORES")
@@ -42,16 +45,29 @@ public abstract class Trabajador implements Serializable {
 	 * @param rol
 	 * @param email
 	 * @param token
+	 * @param fechaExpiracionToken
 	 */
-	Trabajador(String documento, String nombre, String apellidos, String rol, String email, String token) {
+	Trabajador(String documento, String nombre, String apellidos, String rol, String email, String token,
+			Calendar fechaExpiracionToken) {
 		this.docId = documento;
 		this.nombre = nombre;
 		this.rol = rol;
 		this.email = email;
 		this.apellidos = apellidos;
 		this.token = token;
-		this.activeWorker = true;
-		this.enableCount = false;
+		this.trabajadorActivo = true;
+		this.cuentaActiva = false;
+		this.fechaExpiracionToken = fechaExpiracionToken;
+	}
+
+	Trabajador(String documento, String nombre, String apellidos, String rol, String email) {
+		this.docId = documento;
+		this.nombre = nombre;
+		this.rol = rol;
+		this.email = email;
+		this.apellidos = apellidos;
+		this.trabajadorActivo = true;
+		this.cuentaActiva = false;
 	}
 
 	@Id
@@ -121,7 +137,7 @@ public abstract class Trabajador implements Serializable {
 		this.password = encryptedPassword;
 	}
 
-	@Column(name = "CODIGO_RECUPERACION")
+	@Column(name = "TOKEN")
 	public String getToken() {
 		return token;
 	}
@@ -130,12 +146,17 @@ public abstract class Trabajador implements Serializable {
 		this.token = token;
 	}
 
+	/*
+	 * @Enumerated =>
+	 * http://tomee.apache.org/examples-trunk/jpa-enumerated/README.html
+	 */
+	@Enumerated(EnumType.STRING)
 	@Column(name = "IDIOMA")
-	public String getIdioma() {
+	public Idioma getIdioma() {
 		return idioma;
 	}
 
-	public void setIdioma(String idioma) {
+	public void setIdioma(Idioma idioma) {
 		this.idioma = idioma;
 	}
 
@@ -149,11 +170,11 @@ public abstract class Trabajador implements Serializable {
 	}
 
 	@Column(name = "NUMERO")
-	public int getNumero() {
+	public Integer getNumero() {
 		return numero;
 	}
 
-	public void setNumero(int numero) {
+	public void setNumero(Integer numero) {
 		this.numero = numero;
 	}
 
@@ -167,32 +188,32 @@ public abstract class Trabajador implements Serializable {
 	}
 
 	@Column(name = "CP")
-	public int getCp() {
+	public Integer getCp() {
 		return cp;
 	}
 
-	public void setCp(int cp) {
+	public void setCp(Integer cp) {
 		this.cp = cp;
 	}
 
 	@Column(name = "CUENTA_HABILITADA", nullable = false)
 	@Type(type = "org.hibernate.type.NumericBooleanType")
-	public boolean isEnabledCount() {
-		return enableCount;
+	public Boolean isEnabledCount() {
+		return cuentaActiva;
 	}
 
-	public void setEnabledCount(boolean enabled) {
-		this.enableCount = enabled;
+	public void setEnabledCount(Boolean enabled) {
+		this.cuentaActiva = enabled;
 	}
 
 	@Column(name = "TRABAJADOR_ACTIVO", nullable = false)
 	@Type(type = "org.hibernate.type.NumericBooleanType")
-	public boolean isActiveWorker() {
-		return activeWorker;
+	public Boolean isActiveWorker() {
+		return trabajadorActivo;
 	}
 
-	public void setActiveWorker(boolean activeWorker) {
-		this.activeWorker = activeWorker;
+	public void setActiveWorker(Boolean activeWorker) {
+		this.trabajadorActivo = activeWorker;
 	}
 
 	@Column(name = "ROL")
@@ -205,11 +226,11 @@ public abstract class Trabajador implements Serializable {
 	}
 
 	@Column(name = "PISO")
-	public String getPiso() {
+	public Integer getPiso() {
 		return piso;
 	}
 
-	public void setPiso(String piso) {
+	public void setPiso(Integer piso) {
 		this.piso = piso;
 	}
 
@@ -222,6 +243,54 @@ public abstract class Trabajador implements Serializable {
 		this.restoDireccion = resto_direccion;
 	}
 
+	@Column(name = "PROVINCIA")
+	public String getProvincia() {
+		return Provincia;
+	}
+
+	public void setProvincia(String provincia) {
+		Provincia = provincia;
+	}
+
+	@Column(name = "LOCALIDAD")
+	public String getLocalidad() {
+		return Localidad;
+	}
+
+	public void setLocalidad(String localidad) {
+		Localidad = localidad;
+	}
+
+	@Column(name = "FECHA_ACTIVACION", columnDefinition = "DATETIME")
+	@Temporal(TemporalType.TIMESTAMP)
+	public Calendar getFechaActivacion() {
+		return fechaActivacion;
+	}
+
+	public void setFechaActivacion(Calendar activacionCuenta) {
+		this.fechaActivacion = activacionCuenta;
+	}
+
+	@Column(name = "FECHA_CREACION", updatable = false)
+	@CreationTimestamp
+	public Calendar getFechaCreacion() {
+		return fechaCreacion;
+	}
+
+	public void setFechaCreacion(Calendar fechaCreacion) {
+		this.fechaCreacion = fechaCreacion;
+	}
+
+	@Column(name = "FECHA_EXPIRACION_TOKEN", columnDefinition = "DATETIME")
+	@Temporal(TemporalType.TIMESTAMP)
+	public Calendar getFechaExpiracionToken() {
+		return fechaExpiracionToken;
+	}
+
+	public void setFechaExpiracionToken(Calendar fechaToken) {
+		this.fechaExpiracionToken = fechaToken;
+	}
+
 	/* Atributos */
 	private long id;
 	private String docId;
@@ -231,14 +300,19 @@ public abstract class Trabajador implements Serializable {
 	private String email;
 	private String password;
 	private String token;
-	private String idioma;
+	private Calendar fechaExpiracionToken;
+	private Idioma idioma;
 	private String nombreVia;
-	private int numero;
-	private String piso;
+	private Integer numero;
+	private Integer piso;
 	private String puerta;
-	private int cp;
+	private String Provincia;
+	private String Localidad;
+	private Integer cp;
 	private String restoDireccion;
-	private boolean enableCount;
-	private boolean activeWorker;
+	private Boolean cuentaActiva;
+	private Boolean trabajadorActivo;
+	public Calendar fechaCreacion;
+	public Calendar fechaActivacion;
 	private String rol;
 }

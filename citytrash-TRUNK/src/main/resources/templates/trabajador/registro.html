@@ -1,244 +1,36 @@
-<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<!DOCTYPE>
 <html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:th="http://www.thymeleaf.org">
-
-<head th:replace="fragments/header :: header(~{::title})">
-
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/default}">
+<head>
 <title th:text="#{page_registro}"></title>
 </head>
-<body>
-	<div th:replace="fragments/nav :: nav(${menu})"></div>
-	<div class="container">
-		<div class="row">
-			<div class="col-md-8 col-md-offset-3 col-lg-8 col-md-offset-3">
-				<div class="panel panel-primary">
 
+<body class="formularios">
+	<!-- id="viewBody" -->
+	<div id="content" class="container" th:fragment="content"
+		th:remove="tag">
+		<div class="col-md-offset-3 col-md-6">
+			<div class="panel panel-default">
+
+				<div class="panel-heading ">
 					<h3 class="text-center" th:text="#{frm_registro_header}"></h3>
-
-					<div class="panel-body">
-						<form role="form" class="form-narrow form-horizontal"
-							method="post" action="#" th:action="@{#{link.registro}}"
-							th:object="${registro}" th:fragment="registro">
-							<th:block th:if="${#fields.hasErrors('${registro.*}')}">
-								<div
-									th:replace="fragments/alert :: alert (type='danger', message=#{frm_registro_verificar_alerta})">Alert</div>
-								<ul class="list-group">
-									<li class="list-group-item"
-										th:each="err : ${#fields.errors('*')}"><span
-										class="glyphicon glyphicon-remove"> </span> <a href="#"
-										th:text="${err}"></a></li>
-								</ul>
-								<br />
-							</th:block>
-
-							<fieldset>
-								<legend class="col-xs-12" th:text="#{frm_registro_subHeader1}"></legend>
-
-								<div class="col-xs-6 col-offset-xs-2 col-md-6 col-offset-md-2">
-									<div
-										th:classappend="${#fields.hasErrors('documento')}? 'has-error'">
-										<label for="documento" class="control-label"
-											th:text="#{lbl_documento}"></label> <input type="text"
-											class="form-control" id="documento"
-											th:placeholder="#{frm_registro_pholder_documento}"
-											th:field="*{documento}" required="required" /> <span
-											class="help-block" th:if="${#fields.hasErrors('documento')}"
-											th:errors="*{documento}"></span>
-									</div>
-								</div>
-								<!-- http://bootstrap-datepicker.readthedocs.io/en/latest/options.html -->
-								<div class="col-xs-5 col-offset-xs-1 col-md-6 col-offset-md-2">
-									<div
-										th:classappend="${#fields.hasErrors('fechaNacimiento')} ? has-error">
-										<label for="fechaNacimiento" class="control-label"
-											th:text="#{lbl_fechaNacimiento}"></label>
-										<div class="input-group date  has-feedback"
-											id="datetimePicker">
-											<input th:placeholder="#{fecha_formato}" type="text"
-												class="form-control" id="fechaNacimiento"
-												th:field="*{fechaNacimiento}" th:data-provide="datepicker"
-												th:data-date-format="#{fecha_formato}"
-												th:data-date-language="#{frm_registro_lenguage}"
-												th:data-date-autoclose="true"
-												th:data-date-today-highlight="true"
-												th:data-date-orientation="bottom" required="required" /> <span
-												class="glyphicon glyphicon-calendar form-control-feedback"></span>
-										</div>
-										<span class="help-block"
-											th:if="${#fields.hasErrors('fechaNacimiento')}"
-											th:errors="*{fechaNacimiento}"> <br></span>
-									</div>
-								</div>
-
-								<br>
-								<div class="col-xs-12 col-md-6 col-offset-md-2"
-									th:classappend="${#fields.hasErrors('nombre')}? 'has-error'">
-									<label for="nombre" class="control-label"
-										th:text="#{lbl_nombre}"></label> <input type="text"
-										class="form-control" id="nombre"
-										th:placeholder="#{frm_registro_pholder_nombre}"
-										th:field="*{nombre}" required="required" /> <span
-										class="help-block" th:text="#{frm_registro_nombre_alerta}"
-										th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></span>
-								</div>
-								<div class="col-xs-12 col-md-6 col-offset-md-2"
-									th:classappend="${#fields.hasErrors('apellidos')}? 'has-error'">
-									<label for="apellidos" class="control-label"
-										th:text="#{lbl_apellidos}"></label> <input type="text"
-										class="form-control" id="apellidos"
-										th:placeholder="#{frm_registro_pholder_apellidos}"
-										th:field="*{apellidos}" required="required" /> <span
-										class="help-block" th:text="#{frm_registro_apellidos_alerta}"
-										th:if="${#fields.hasErrors('apellidos')}"
-										th:errors="*{apellidos}"></span>
-								</div>
-
-								<div class="col-xs-12 col-md-6 col-offset-md-2">
-									<div
-										th:classappend="${#fields.hasErrors('email')}? 'has-error'">
-										<label for="email" class="control-label"
-											th:text="#{lbl_email}"></label>
-										<div class="has-feedback">
-											<input type="email" class="form-control" id="email"
-												th:placeholder="#{frm_registro_pholder_email}"
-												th:field="*{email}" required="required" /> <span
-												class="glyphicon glyphicon-envelope form-control-feedback">
-											</span>
-										</div>
-
-										<span class="help-block" th:if="${#fields.hasErrors('email')}"
-											th:errors="*{email}"></span>
-									</div>
-								</div>
-
-								<div class="col-xs-12 col-md-6 col-offset-md-2">
-									<div
-										th:classappend="${#fields.hasErrors('confirmarEmail')}? 'has-error'">
-										<label for="confirmarEmail" class="control-label"
-											th:text="#{lbl_confirmarEmail}"></label>
-										<div class="has-feedback">
-											<input type="email" class="form-control" id="confirmarEmail"
-												th:placeholder="#{frm_registro_pholder_confirmarEmail}"
-												th:field="*{confirmarEmail}" required="required" /> <span
-												class="glyphicon glyphicon-envelope form-control-feedback">
-											</span> </span>
-										</div>
-										<span class="help-block"
-											th:if="${#fields.hasErrors('confirmarEmail')}"
-											th:errors="*{confirmarEmail}"></span>
-									</div>
-								</div>
-
-								<div class="col-xs-12">
-									<label for="tipoTrabajador" class="control-label"
-										th:text="#{lbl_trabajador_tipo}"></label> <select
-										th:field="*{tipo}" class="form-control" id="tipoTrabajador">
-										<option
-											th:each="tipoTrabajador : ${T(es.udc.citytrash.business.entity.trabajador.TipoTrabajador).values()}"
-											th:value="${tipoTrabajador}"
-											th:text="#{${'trabajador.tipo.' + tipoTrabajador}}">
-   										</option>
-									</select> <br>
-								</div>
-
-
-								<legend class="col-xs-12" th:text="#{frm_registro_subHeader2}"></legend>
-
-
-								<div class="col-xs-12">
-									<div th:classappend="${#fields.hasErrors('via')}? 'has-error'">
-										<label for="via" class="control-label" th:text="#{lbl_via}"></label>
-										<input type="text" class="form-control" id="via"
-											th:placeholder="#{frm_registro_pholder_via}"
-											th:field="*{via}" /> <span class="help-block"
-											th:text="#{frm_registro_via_alerta}"
-											th:if="${#fields.hasErrors('via')}" th:errors="*{via}"></span>
-									</div>
-								</div>
-
-								<div class="col-xs-12 col-md-4 col-offset-md-3">
-									<div
-										th:classappend="${#fields.hasErrors('numero')}? 'has-error'">
-										<label for="numero" class="control-label"
-											th:text="#{lbl_dir_numero}"></label> <input type="text"
-											class="form-control" id="numero"
-											th:placeholder="#{frm_registro_pholder_dir_numero}"
-											th:field="*{numero}" /> <span class="help-block"
-											th:text="#{frm_registro_numero_alerta}"
-											th:if="${#fields.hasErrors('numero')}" th:errors="*{numero}"></span>
-									</div>
-								</div>
-
-
-								<div class="col-xs-12 col-md-4 col-offset-md-3">
-									<div th:classappend="${#fields.hasErrors('piso')}? 'has-error'">
-										<label for="piso" class="control-label"
-											th:text="#{lbl_dir_piso}"></label> <input type="text"
-											class="form-control" id="piso"
-											th:placeholder="#{frm_registro_pholder_dir_piso}"
-											th:field="*{piso}" /> <span class="help-block"
-											th:text="#{frm_registro_piso_alerta}"
-											th:if="${#fields.hasErrors('piso')}" th:errors="*{piso}"></span>
-									</div>
-								</div>
-
-								<div class="col-xs-12 col-md-4 col-offset-md-3">
-									<div
-										th:classappend="${#fields.hasErrors('puerta')}? 'has-error'">
-										<label for="puerta" class="control-label"
-											th:text="#{lbl_puerta}"></label> <input type="text"
-											class="form-control" id="puerta"
-											th:placeholder="#{frm_registro_pholder_puerta}"
-											th:field="*{puerta}" /> <span class="help-block"
-											th:text="#{frm_registro_puerta_alerta}"
-											th:if="${#fields.hasErrors('puerta')}" th:errors="*{puerta}"></span>
-									</div>
-								</div>
-
-								<div class="col-xs-12 col-md-6 col-offset-md-2">
-									<div
-										th:classappend="${#fields.hasErrors('localidad')}? 'has-error'">
-										<label for="localidad" class="control-label"
-											th:text="#{lbl_localidad}"></label> <input type="text"
-											class="form-control" id="localidad"
-											th:placeholder="#{frm_registro_pholder_localidad}"
-											th:field="*{localidad}" /> <span class="help-block"
-											th:text="#{frm_registro_localidad_alerta}"
-											th:if="${#fields.hasErrors('localidad')}"
-											th:errors="*{localidad}"></span>
-									</div>
-								</div>
-
-								<div class="col-xs-12 col-md-6 col-offset-md-2">
-									<div
-										th:classappend="${#fields.hasErrors('provincia')}? 'has-error'">
-										<label for="provincia" class="control-label"
-											th:text="#{lbl_provincia}"></label> <input type="text"
-											class="form-control" id="provincia"
-											th:placeholder="#{frm_registro_pholder_provincia}"
-											th:field="*{provincia}" /> <span class="help-block"
-											th:text="#{frm_registro_provincia_alerta}"
-											th:if="${#fields.hasErrors('provincia')}"
-											th:errors="*{provincia}"></span>
-									</div>
-								</div>
-
-								<div class="col-xs-12">
-									<br>
-									<button class="btn btn-lg btn-block col-xs-12" type="submit"
-										th:text="#{btn_registrar}"></button>
-								</div>
-							</fieldset>
-						</form>
-					</div>
-					<div class="panel-footer"></div>
 				</div>
 
+				<div class="panel-body">
+					<div class="row">
+						<a class="btn" href="javascript:window.history.back();"
+							role="button"> <span class="glyphicon glyphicon-arrow-left"></span>&nbsp;
+							<label th:text="#{btn_atras}"></label></a>
+					</div>
+					<div th:fragment="registroForm"
+						th:replace="trabajador/registroForm :: registroForm(${registro})"></div>
+				</div>
 			</div>
+			<div class="panel-footer"></div>
 		</div>
 	</div>
-	<div th:replace="fragments/footer :: footer()"></div>
 </body>
-
 </html>
-

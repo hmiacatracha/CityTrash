@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<body>
+	<div th:fragment="registroForm(registro)">
+		<form id="registroForm" role="form"
+			class="form-narrow form-horizontal" method="post" action="#"
+			th:action="@{#{link.registro}}" th:object="${registro}"
+			th:fragment="registroForm">
+
+			<fieldset>
+				<th:block th:if="${#fields.hasErrors('${registro.*}')}">
+					<br />
+					<div
+						th:replace="fragments/alert :: alert (type='danger', message=#{frm_registro_verificar_alerta})">Alert</div>
+
+					<ul class="list-group">
+						<li class="list-group-item" th:each="err : ${#fields.errors('*')}"><span
+							class="glyphicon glyphicon-remove"> </span> <a href="#"
+							th:text="${err}"></a></li>
+					</ul>
+					<br />
+				</th:block>
+				<br />
+				<legend class="col-xs-12" th:text="#{frm_registro_subHeader1}"></legend>
+
+				<div id="documento-group" class="form-group row">
+					<div
+						th:classappend="${#fields.hasErrors('documento')}? 'has-error'">
+						<label for="documento" class="col-sm-3 col-form-label"
+							th:text="#{lbl_documento} + '*' "></label>
+
+						<div class="col-sm-9">
+							<input type="text" class="col-sm-6 form-control" id="documento"
+								th:placeholder="#{frm_registro_pholder_documento}"
+								th:field="*{documento}" required="required" /> <span
+								class="help-block" th:if="${#fields.hasErrors('documento')}"
+								th:errors="*{documento}"></span>
+						</div>
+					</div>
+				</div>
+				<!-- http://bootstrap-datepicker.readthedocs.io/en/latest/options.html -->
+				<div class="form-group row">
+					<div
+						th:classappend="${#fields.hasErrors('fechaNacimiento')} ? 'has-error'">
+						<label for="fechaNacimiento" class="col-sm-3 col-form-label"
+							th:text="#{lbl_fechaNacimiento}+ '*'"></label>
+
+						<div class="col-sm-9">
+							<div class="input-group date  has-feedback col-sm-6"
+								id="datetimePicker">
+								<input th:placeholder="#{fecha_formato}" type="text"
+									class="form-control" id="fechaNacimiento"
+									th:field="*{fechaNacimiento}" th:data-provide="datepicker"
+									th:data-date-format="#{fecha_formato}"
+									th:data-date-language="#{frm_registro_lenguage}"
+									th:data-date-autoclose="true"
+									th:data-date-today-highlight="true"
+									th:data-date-orientation="bottom" required="required" /> <span
+									class="glyphicon glyphicon-calendar form-control-feedback"></span>
+							</div>
+							<span class="help-block"
+								th:if="${#fields.hasErrors('fechaNacimiento')}"
+								th:errors="*{fechaNacimiento}" th:text="#{*{fechaNacimiento}}">
+								<br>
+							</span>
+						</div>
+					</div>
+				</div>
+				<br>
+				<th:block>
+
+					<div id="nombre-group" class="form-group row"
+						th:classappend="${#fields.hasErrors('nombre')}? 'has-error'">
+						<label for="nombre" class="col-sm-3 col-form-label"
+							th:text="#{lbl_nombre} + '*'"></label>
+
+						<div class="col-sm-9">
+							<input type="text" class="col-sm-6 form-control" id="nombre"
+								th:placeholder="#{frm_registro_pholder_nombre}"
+								th:field="*{nombre}" required="required" /> <span
+								class="help-block" th:if="${#fields.hasErrors('nombre')}"
+								th:errors="*{nombre}"></span>
+						</div>
+					</div>
+					<div class="form-group row"
+						th:classappend="${#fields.hasErrors('apellidos')}? 'has-error'">
+						<label for="apellidos" class="col-sm-3 col-form-label"
+							th:text="#{lbl_apellidos} + '*'"></label>
+						<div class="col-sm-9">
+							<input type="text" class="col-sm-6 form-control" id="apellidos"
+								th:placeholder="#{frm_registro_pholder_apellidos}"
+								th:field="*{apellidos}" required="required" /> <span
+								class="help-block" th:if="${#fields.hasErrors('apellidos')}"
+								th:errors="*{apellidos}"></span>
+						</div>
+					</div>
+
+					<div id="email-group" class="form-group row">
+						<div th:classappend="${#fields.hasErrors('email')}? 'has-error'">
+							<label for="email" class="col-sm-3 col-form-label"
+								th:text="#{lbl_email}+ '*'"></label>
+							<div class="col-sm-9">
+								<div class="has-feedback">
+									<input type="email" class="col-sm-6 form-control" id="email"
+										th:placeholder="#{frm_registro_pholder_email}"
+										th:field="*{email}" required="required" /> <span
+										class="glyphicon glyphicon-envelope form-control-feedback">
+									</span>
+								</div>
+								<span class="help-block" th:if="${#fields.hasErrors('email')}"
+									th:errors="*{email}"></span>
+							</div>
+						</div>
+					</div>
+					<div class="form-group row">
+						<div
+							th:classappend="${#fields.hasErrors('confirmarEmail')}? 'has-error'">
+							<label for="confirmarEmail" class="col-sm-3 col-form-label"
+								th:text="#{lbl_confirmarEmail}+ '*'"></label>
+							<div class="col-sm-9">
+								<div class="has-feedback">
+									<input type="email" class="col-sm-6 form-control"
+										id="confirmarEmail"
+										th:placeholder="#{frm_registro_pholder_confirmarEmail}"
+										th:field="*{confirmarEmail}" required="required"
+										data-fv-identical="true" data-fv-identical-field="email"
+										data-fv-identical-message="#{fieldMatch_email_alerta}" /> <span
+										class="glyphicon glyphicon-envelope form-control-feedback">
+									</span>
+								</div>
+
+								<span class="help-block"
+									th:if="${#fields.hasErrors('confirmarEmail')}"
+									th:errors="*{confirmarEmail}"></span>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="form-group row">
+						<label for="tipoTrabajador" class="col-sm-3 col-form-label"
+							th:text="#{lbl_trabajador_tipo}+ '*'"></label>
+						<div class="col-sm-9">
+							<select th:field="*{tipo}" class="form-control mySelect"
+								data-style="btn-default" id="tipoTrabajador">
+								<option
+									th:each="tipoTrabajador : ${T(es.udc.citytrash.business.entity.trabajador.TipoTrabajador).values()}"
+									th:value="${tipoTrabajador}"
+									th:text="#{${'trabajador.tipo.' + tipoTrabajador}}">
+   										</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="form-group row"
+						th:classappend="${#fields.hasErrors('idioma')}? 'has-error'">
+						<label for="idioma" class="col-sm-3 col-form-label"
+							th:text="#{lbl_trabajador_idioma}+ '*'"></label>
+						<div class="col-sm-9">
+							<select th:field="*{idioma}" class="form-control mySelect"
+								id="idioma">
+								<option
+									th:each="lang : ${T(es.udc.citytrash.business.entity.idioma.Idioma).values()}"
+									th:value="${lang}" th:text="#{${'lang.' + lang}}">
+   										</option>
+							</select> <span class="help-block" th:if="${#fields.hasErrors('idioma')}"
+								th:errors="*{idioma}"></span>
+						</div>
+					</div>
+					<br>
+
+					<legend class="col-xs-12" th:text="#{frm_registro_subHeader2}"></legend>
+
+					<div class="form-group row">
+						<div th:classappend="${#fields.hasErrors('via')}? 'has-error'">
+							<label for="via" class="col-sm-3 col-form-label"
+								th:text="#{lbl_via}"></label>
+							<div class="col-sm-9">
+								<input type="text" class="col-sm-6 form-control" id="via"
+									th:placeholder="#{frm_registro_pholder_via}" th:field="*{via}" />
+								<span class="help-block" th:text="#{frm_registro_via_alerta}"
+									th:if="${#fields.hasErrors('via')}" th:errors="*{via}"></span>
+							</div>
+						</div>
+					</div>
+
+					<div class="form-group row">
+						<div th:classappend="${#fields.hasErrors('numero')}? 'has-error'">
+							<label for="numero" class="col-sm-3 col-form-label"
+								th:text="#{lbl_dir_numero}"></label>
+							<div class="col-sm-9">
+								<input type="number" class="col-sm-6 form-control" id="numero"
+									th:placeholder="#{frm_registro_pholder_dir_numero}"
+									th:field="*{numero}" /> <span class="help-block"
+									th:text="#{frm_registro_numero_alerta}"
+									th:if="${#fields.hasErrors('numero')}" th:errors="*{numero}"></span>
+							</div>
+						</div>
+					</div>
+					<div class="form-group row">
+						<div th:classappend="${#fields.hasErrors('piso')}? 'has-error'">
+							<label for="piso" class="col-sm-3 col-form-label"
+								th:text="#{lbl_dir_piso}"></label>
+							<div class="col-sm-9">
+								<input type="number" class="col-sm-6 form-control" id="piso"
+									th:placeholder="#{frm_registro_pholder_dir_piso}"
+									th:field="*{piso}" /> <span class="help-block"
+									th:text="#{frm_registro_piso_alerta}"
+									th:if="${#fields.hasErrors('piso')}" th:errors="*{piso}"></span>
+							</div>
+						</div>
+					</div>
+
+					<div class="form-group row">
+						<div th:classappend="${#fields.hasErrors('puerta')}? 'has-error'">
+							<label for="puerta" class="col-sm-3 col-form-label"
+								th:text="#{lbl_puerta}"></label>
+							<div class="col-sm-9">
+								<input type="text" class="col-sm-6 form-control" id="puerta"
+									th:placeholder="#{frm_registro_pholder_puerta}"
+									th:field="*{puerta}" /> <span class="help-block"
+									th:text="#{frm_registro_puerta_alerta}"
+									th:if="${#fields.hasErrors('puerta')}" th:errors="*{puerta}"></span>
+							</div>
+						</div>
+					</div>
+
+					<div class="form-group row">
+						<div
+							th:classappend="${#fields.hasErrors('restoDireccion')}? 'has-error'">
+							<label for="puerta" class="col-sm-3 col-form-label"
+								th:text="#{lbl_restoDireccion}"></label>
+							<div class="col-sm-9">
+								<input type="text" class="col-sm-6 form-control"
+									id="restoDireccion"
+									th:placeholder="#{frm_registro_pholder_restoDireccion}"
+									th:field="*{restoDireccion}" /> <span class="help-block"
+									th:text="#{frm_registro_restoDireccion_alerta}"
+									th:if="${#fields.hasErrors('restoDireccion')}"
+									th:errors="*{restoDireccion}"></span>
+							</div>
+						</div>
+					</div>
+
+
+
+					<div class="form-group row">
+						<div
+							th:classappend="${#fields.hasErrors('localidad')}? 'has-error'">
+							<label for="localidad" class="col-sm-3 col-form-label"
+								th:text="#{lbl_localidad}"></label>
+							<div class="col-sm-9">
+								<input type="text" class="col-sm-6 form-control" id="localidad"
+									th:placeholder="#{frm_registro_pholder_localidad}"
+									th:field="*{localidad}" /> <span class="help-block"
+									th:text="#{frm_registro_localidad_alerta}"
+									th:if="${#fields.hasErrors('localidad')}"
+									th:errors="*{localidad}"></span>
+							</div>
+						</div>
+					</div>
+
+					<div class="form-group row">
+						<div
+							th:classappend="${#fields.hasErrors('provincia')}? 'has-error'">
+							<label for="provincia" class="col-sm-3 col-form-label"
+								th:text="#{lbl_provincia}"></label>
+							<div class="col-sm-9">
+								<input type="text" class="col-sm-6 form-control" id="provincia"
+									th:placeholder="#{frm_registro_pholder_provincia}"
+									th:field="*{provincia}" /> <span class="help-block"
+									th:text="#{frm_registro_provincia_alerta}"
+									th:if="${#fields.hasErrors('provincia')}"
+									th:errors="*{provincia}"></span>
+							</div>
+						</div>
+					</div>
+			</fieldset>
+			<br>
+
+			<button class="btn btn-default btn-lg btn-block" type="submit"
+				th:text="#{btn_registrar}" th:value="#{btn_registrar}"></button>
+		</form>
+
+	</div>
+</body>
+</html>

@@ -25,9 +25,13 @@
         <tr>
             <td bgcolor="#eaeaea" style="padding: 40px 30px 40px 30px;">
              <p>
-             We have received the request to recover your ${email} account from CityTrash.
-              If you have not requested, please do not access the following link
-               <a href="${activar_url}">${recuperar_url}</a> and ignore the message.                                         
+             We have received the request to recover your ${email} account from CityTrash. If you have not requested, please do not access the following link <a href="${recuperar_url}">${recuperar_url}</a> and ignore the message.
+			</p>
+			
+			<p>	
+				Remember that you must recover your account before ${fechaExpiracion}
+			</p>         
+			                                 
             </td>
         </tr>
         <tr>

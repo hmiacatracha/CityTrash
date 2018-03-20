@@ -1,0 +1,33 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+<meta charset="utf-8"></meta>
+<meta name="viewport" content="width=device-width, initial-scale=1.0 shrink-to-fit=no">
+<meta name="description" content="cityTrash project">
+<meta name="author" content="heidy izaguirre">
+
+<link rel="shortcut icon" type="image/png"
+	th:href="@{/resources/static/img/icon.png}"></link>
+<link rel="stylesheet" media="screen"
+	th:href="@{/webjars/bootstrap/3.3.7-1/css/bootstrap.min.css}" />
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css" />
+
+<link rel="stylesheet"
+	th:href="@{/webjars/animate.css/3.5.2/animate.min.css}">
+<link th:href="@{/resources/static/css/styles.css}" rel="stylesheet"></link>
+<meta name="author" content="heidy">
+
+<title layout:title-pattern="$LAYOUT_TITLE - $CONTENT_TITLE"></title>
+</head>
+
+<body>
+	<div th:replace="fragments/navigation :: nav(${menu})"></div>
+	<div th:replace="${view} :: content">Page Content</div>
+	<div th:replace="fragments/footer :: footer()"></div>
+</body>
+</html>

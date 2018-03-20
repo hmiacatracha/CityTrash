@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans:beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
-	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:cache="http://www.springframework.org/schema/cache"
 	xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd 
@@ -13,9 +13,33 @@
 	<!-- **************************************************************** -->
 	<!-- SPRING ANNOTATION PROCESSING -->
 	<!-- **************************************************************** -->
-	<mvc:annotation-driven />
+	<!-- <mvc:annotation-driven /> declares explicit support for annotation-driven 
+		MVC controllers (i.e. @RequestMapping, @Controller, although support for 
+		those is the default behaviour), as well as adding support for declarative 
+		validation via @Valid and message body marshalling with @RequestBody/ResponseBody. -->
+
+	<!-- Configures the @Controller (mvc:annotation-driven) programming model 
+		(validator and SortHabdler and Pageableander for paging -->
+	<mvc:annotation-driven conversion-service="conversionService"
+		validator="validator">
+		<mvc:argument-resolvers>
+			<bean
+				class="org.springframework.data.web.SortHandlerMethodArgumentResolver"
+				id="sortResolver" />
+			<bean
+				class="org.springframework.data.web.PageableHandlerMethodArgumentResolver"
+				id="pagingResolver">
+				<constructor-arg ref="sortResolver" />
+			</bean>
+			<!--Enabled @AuthenticationPrincipal => pring Security provides AuthenticationPrincipalArgumentResolver 
+				which can automatically resolve the current Authentication.getPrincipal() -->
+			<bean
+				class="org.springframework.security.web.method.annotation.AuthenticationPrincipalArgumentResolver" />
+		</mvc:argument-resolvers>
+	</mvc:annotation-driven>
+
 	<context:component-scan base-package="es.udc.citytrash.controller" />
-	<mvc:annotation-driven validator="validator" />
+
 	<!-- spring security -->
 	<import resource="classpath:/spring-security.xml" />
 
@@ -34,11 +58,16 @@
 		<property name="characterEncoding" value="UTF-8" />
 	</bean>
 
+
 	<bean id="templateEngine" class="org.thymeleaf.spring4.SpringTemplateEngine">
 		<property name="templateResolver" ref="templateResolver" />
 		<!-- https://devhub.io/repos/thymeleaf-thymeleaf-extras-springsecurity -->
 		<property name="additionalDialects">
+			<!-- layout -->
+			<!-- https://libraries.io/github/kamaq/thymeleaf-layout-dialect -->
 			<set>
+				<bean class="nz.net.ultraq.thymeleaf.LayoutDialect" />
+				<!-- segurity dialect -->
 				<bean
 					class="org.thymeleaf.extras.springsecurity4.dialect.SpringSecurityDialect" />
 			</set>
@@ -49,6 +78,38 @@
 		<property name="templateEngine" ref="templateEngine" />
 		<property name="characterEncoding" value="UTF-8" />
 	</bean>
+
+	<!-- **************************************************************** -->
+	<!-- **************************************************************** -->
+	<!-- PAGINACION => thymeleaf-spring-data-dialect -->
+	<!-- This is a dialect for Thymeleaf that provides some attributes to create 
+		pagination and sorting elements, bootstrap style, based on Spring Data. -->
+	<!-- Spring Data proporciona interfaces genéricas para estos aspectos (CrudRepository, 
+		PagingAndSortingRepository) e implementaciones específicas para cada tipo 
+		de tecnología de persistencia. -->
+	<!-- https://www.adictosaltrabajo.com/tutoriales/spring-data-jpa/ -->
+	<!-- http://projects.spring.io/spring-data-jpa/ -->
+	<!-- **************************************************************** -->
+	<!-- **************************************************************** -->
+
+	<!-- PASO1: @EnableSpringDataWebSupport -->
+	<bean class="org.springframework.data.web.config.SpringDataWebConfiguration" />
+
+	<bean
+		class="org.springframework.data.repository.support.DomainClassConverter">
+		<constructor-arg ref="conversionService" />
+	</bean>
+
+	<bean
+		class="org.springframework.format.support.FormattingConversionServiceFactoryBean"
+		id="conversionService" />
+
+	<!-- <mvc:annotation-driven> <mvc:argument-resolvers> <ref bean="sortResolver" 
+		/> <ref bean="pageableResolver" /> </mvc:argument-resolvers> </mvc:annotation-driven> 
+		<bean id="sortResolver" class="org.springframework.data.web.SortHandlerMethodArgumentResolver" 
+		/> <bean id="pageableResolver" class="org.springframework.data.web.PageableHandlerMethodArgumentResolver"> 
+		<constructor-arg ref="sortResolver" /> </bean> -->
+
 
 	<!-- **************************************************************** -->
 	<!-- MESSAGE EXTERNALIZATION/INTERNATIONALIZATION -->
@@ -62,15 +123,19 @@
 	<!-- http://acodigo.blogspot.com.es/2017/04/spring-mvc-i18n-soporte-para-varios.html -->
 
 	<!-- PASO1: Application Message Bundle -->
+	<!-- https://codigoalonso.blogspot.com.es/2016/01/internacionalizacion-i18n-en-spring-mvc.html -->
 	<bean id="messageSource"
-		class="org.springframework.context.support.ResourceBundleMessageSource">
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
 		<property name="basenames">
 			<list>
-				<value>i18/index</value>
-				<value>i18/validationMessages</value>
-				<value>config/urls</value>
+				<!-- <value>i18/index</value> <value>i18/ValidationMessages</value> <value>config/urls</value> -->
+				<value>classpath:/i18n/validationMessages
+				</value>
+				<value>classpath:/i18n/index</value>
+				<value>classpath:/config/urls</value>
 			</list>
 		</property>
+		<property name="fallbackToSystemLocale" value="false" />
 		<property name="useCodeAsDefaultMessage" value="true" />
 		<property name="cacheSeconds" value="0" />
 		<property name="defaultEncoding" value="UTF-8" />
@@ -97,25 +162,34 @@
 
 	<!-- Messages validator con i18n -->
 	<!-- https://stackoverflow.com/questions/34397070/spring-mvc-i18n-validation-error-messages -->
+	<!-- https://stackoverflow.com/questions/44794810/not-able-to-read-validation-messages-from-messages-properties-file -->
+
+	<!-- PASO1: messageSource => EN EL PASO ANTERIOR -->
+
+	<!-- PASO2 => ResourceBudleMessageInterpolator -->
+	<bean id="resourceBundleMessageInterpolator"
+		class="org.hibernate.validator.messageinterpolation.ResourceBundleMessageInterpolator">
+		<constructor-arg index="0">
+			<bean
+				class="org.springframework.validation.beanvalidation.MessageSourceResourceBundleLocator">
+				<constructor-arg index="0" ref="messageSource" />
+			</bean>
+		</constructor-arg>
+	</bean>
+
+	<!-- PASO3 => validator -->
 	<bean id="validator"
 		class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
-		<property name="validationMessageSource" ref="messageSource" />
+		<!-- <property name="validationMessageSource" ref="messageSource" /> -->
+		<property name="messageInterpolator" ref="resourceBundleMessageInterpolator" />
 	</bean>
 
+	<!-- **************************************************************** -->
+	<!-- **************************************************************** -->
+
+	<!-- Beans validators -->
 	<!-- Bean para el envio de correos -->
-	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
-		<property name="host" value="smtp.gmail.com" />
-		<property name="port" value="587" />
-		<property name="username" value="citytrashtfg@gmail.com" />
-		<property name="password" value="c17yTr4asH" />
-		<property name="javaMailProperties">
-			<props>
-				<prop key="mail.transport.protocol">smtp</prop>
-				<prop key="mail.smtp.auth">true</prop>
-				<prop key="mail.smtp.starttls.enable">true</prop>
-			</props>
-		</property>
-	</bean>
-
+	<!-- **************************************************************** -->
+	<!-- **************************************************************** -->
 </beans:beans>
 		

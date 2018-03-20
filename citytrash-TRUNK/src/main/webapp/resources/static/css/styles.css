@@ -1,3 +1,6 @@
+@import url("https://fonts.googleapis.com/css?family=Open+Sans");
+
+/*NAV BAR FROM BOOSTRAP3 CSS*/
 .pull-right>.dropdown-menu {
 	right: 0;
 	left: auto;
@@ -121,15 +124,32 @@
 	border-radius: 6px 0 6px 6px;
 }
 
-/* background*/
+/* BACKGROUND CSS*/
 body {
-	background: #e6ffe6
+	background: #FFFFFF
 		url(https://electronicsofthings.com/wp-content/uploads/2016/09/smart-trash-collection.jpg)
 		no-repeat center center fixed;
 	-webkit-background-size: cover;
 	-moz-background-size: cover;
 	-o-background-size: cover;
 	background-size: cover;
+}
+
+h1, h2, h3, p, button, form {
+	font-family: 'Open Sans', sans-serif;
+}
+
+.fa.valid-feedback, .fa.invalid-feedback {
+	position: absolute;
+	right: 25px;
+	margin-top: -50px;
+	z-index: 2;
+	display: block;
+	pointer-events: none;
+}
+
+.fa.valid-feedback {
+	margin-top: -28px;
 }
 
 body.index {
@@ -139,6 +159,14 @@ body.index {
 	-moz-background-size: cover;
 	-o-background-size: cover;
 	background-size: cover;
+}
+
+body.formularios {
+	background: #ABB2B9
+}
+
+body.blanco {
+	background: #FFFFFF
 }
 
 img {
@@ -163,4 +191,126 @@ img.account {
 
 .form-group.last {
 	margin-bottom: 0px;
+}
+
+/* SORT ICONS PAGEABLE THYMELEAF (custom CSS to have sort icons in the table headers*/
+.sorted-desc::after, .sorted-asc::after {
+	float: right;
+}
+
+.sorted-desc::after {
+	content: "\25BC";
+}
+
+.sorted-asc::after {
+	content: "\25B2";
+}
+
+a:link {
+	color: #000000;
+}
+
+/* visited link */
+a:visited {
+	color: #555753;
+}
+
+/* mouse over link */
+a:hover {
+	color: #ff4000;
+}
+
+/* selected link */
+a:active {
+	color: #555753;
+}
+
+.btn-default {
+	padding: 10px 20px;
+	background-color: #333;
+	color: #f1f1f1;
+	border-radius: 0;
+	transition: .2s;
+}
+
+.btn-default:hover, .btn-default:focus {
+	border: 1px solid #333;
+	background-color: #fff;
+	color: #000;
+}
+
+select.form-control, input.form-control, option.form-control {
+	cursor: pointer;
+	outline-style: none;
+	box-shadow: none;
+	border: none;
+	border-bottom: 1px solid #ccc;
+	-webkit-border-radius: 0px;
+	-moz-border-radius: 0px;
+	border-radius: 0px;
+}
+
+.form-control:focus {
+	border: none;
+	border-bottom: 1px solid #000000;
+	-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.001), 0 0 8px
+		rgba(255, 255, 255, .9);
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.001), 0 0 8px
+		rgba(255, 255, 255, .9);
+}
+
+.form-control:hover {
+	border: none;
+	border-bottom: 1px solid #000000;
+	-webkit-box-shadow: inset 0 0px 0px rgba(0, 0, 0, 0.001), 0 0 8px
+		rgba(255, 255, 255, .9);
+	box-shadow: inset 0 0px 0px rgba(0, 0, 0, 0.001), 0 0 8px
+		rgba(255, 255, 255, .9);
+	/*
+	-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px
+		rgba(255, 64, 0, .6);
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px
+		rgba(255, 64, 0, .6);*/
+}
+
+/*
+.validation-summary-errors {
+	padding: 15px;
+	margin-bottom: 20px;
+	border: 1px solid transparent;
+	border-radius: 4px;
+	color: #b94a48;
+	background-color: #f2dede;
+	border-color: #ebccd1;
+}
+
+.field-validation-error {
+	display: inline;
+	padding: .2em .6em .3em;
+	font-size: 75%;
+	font-weight: bold;
+	line-height: 1;
+	color: #ffffff;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: baseline;
+	border-radius: .25em;
+	background-color: #d9534f;
+} */
+
+.modal-header, h4, .close-modal {
+	background-color: #333;
+	color: #fff !important;
+	text-align: center;
+	font-size: 30px;
+}
+
+.modal-header, .modal-body {
+	padding: 40px 50px;
+}
+
+.panel-default>.panel-heading {
+	color: #2e3436;
+	background-color: #ffffff;
+	border-color: #ffffff;
 }

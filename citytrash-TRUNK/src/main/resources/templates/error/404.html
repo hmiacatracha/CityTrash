@@ -1,27 +1,20 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<!DOCTYPE>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/default}">
 <head>
-<title th:text="#{page_error}">Error Page</title>
-<meta charset="utf-8"></meta>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
-<meta name="description" content=""></meta>
-<meta name="author" content=""></meta>
-<link rel="shortcut icon" type="image/png"
-	th:href="@{/resources/static/img/icon.png}"></link>
-
-<!-- css  -->
-<!-- Bootstrap -->
-<link rel="stylesheet" media="screen"
-	th:href="@{/webjars/bootstrap/3.3.7-1/css/bootstrap.min.css}" />
-<script src="http://code.jquery.com/jquery.js"></script>
-<script th:src="@{/webjars/jquery/3.2.1/jquery.min.js}"></script>
-<script th:src="@{/webjars/bootstrap/3.3.7-1/js/bootstrap.min.js}"></script>
-
+<title th:text="#{page_registro}"></title>
 </head>
-<body
+
+<body class="formularios"
 	th:with="httpStatus=${T(org.springframework.http.HttpStatus).valueOf(#response.status)}">
-	<h1 th:text="|${httpStatus} - ${httpStatus.reasonPhrase}|">404</h1>
-	<p th:text="#{error.404}"></p>
-	<a th:text="#{home}" th:href="@{#{menu.home_link_ref}}"> </a>
+	<div id="viewBody" class="container" th:fragment="content"
+		th:remove="tag">
+		<h1 th:text="|${httpStatus} - ${httpStatus.reasonPhrase}|">404</h1>
+		<p th:text="#{error.404}"></p>
+		<a th:text="#{home}" th:href="@{#{menu.home_link_ref}}"> </a>
+	</div>
 </body>
 </html>
