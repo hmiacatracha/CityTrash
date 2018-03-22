@@ -32,4 +32,5 @@ public class CustomErrorController {
 	public String badRequestException() {
 		return "error/400";
 	}
+	
 }

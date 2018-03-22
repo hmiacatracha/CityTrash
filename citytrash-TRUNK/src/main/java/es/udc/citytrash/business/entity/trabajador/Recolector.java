@@ -26,12 +26,13 @@ public class Recolector extends Trabajador implements Serializable {
 	 * @param apellidos
 	 * @param rol
 	 * @param email
+	 * @param fechaNacimiento
 	 * @param token
 	 * @param fechaExpiracionToken
 	 */
-	public Recolector(String documento, String nombre, String apellidos, String rol, String email, String token,
+	public Recolector(String documento, String nombre, String apellidos, String rol, String email,Calendar fechaNacimiento, String token,
 			Calendar fechaExpiracionToken) {
-		super(documento, nombre, apellidos, rol, email, token, fechaExpiracionToken);
+		super(documento, nombre, apellidos, rol, email,fechaNacimiento, token, fechaExpiracionToken);
 	}
 
 	/**

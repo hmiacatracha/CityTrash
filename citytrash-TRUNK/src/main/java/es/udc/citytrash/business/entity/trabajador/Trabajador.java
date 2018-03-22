@@ -44,15 +44,17 @@ public abstract class Trabajador implements Serializable {
 	 * @param apellidos
 	 * @param rol
 	 * @param email
+	 * @param fechaNacimiento
 	 * @param token
 	 * @param fechaExpiracionToken
 	 */
-	Trabajador(String documento, String nombre, String apellidos, String rol, String email, String token,
-			Calendar fechaExpiracionToken) {
+	Trabajador(String documento, String nombre, String apellidos, String rol, String email, Calendar fechaNacimiento,
+			String token, Calendar fechaExpiracionToken) {
 		this.docId = documento;
 		this.nombre = nombre;
 		this.rol = rol;
 		this.email = email;
+		this.fecNac = fechaNacimiento;
 		this.apellidos = apellidos;
 		this.token = token;
 		this.trabajadorActivo = true;

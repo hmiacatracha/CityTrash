@@ -1,4 +1,4 @@
-package es.udc.citytrash.controller;
+package es.udc.citytrash.controller.trabajadores;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -19,16 +19,17 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import es.udc.citytrash.business.entity.trabajador.Trabajador;
 import es.udc.citytrash.business.service.trabajador.TrabajadorService;
 import es.udc.citytrash.business.util.excepciones.DuplicateInstanceException;
+import es.udc.citytrash.business.util.excepciones.InstanceNotFoundException;
+import es.udc.citytrash.controller.error.EmployeeNotFoundException;
 import es.udc.citytrash.controller.error.PageNotFoundException;
 import es.udc.citytrash.controller.util.AjaxUtils;
 import es.udc.citytrash.controller.util.WebUtils;
@@ -36,16 +37,16 @@ import es.udc.citytrash.controller.util.dtos.TrabajadorFormDto;
 
 @Controller
 @PreAuthorize("hasRole('ROLE_ADMIN')")
-@RequestMapping("auth/admin/")
-public class RolAdminController {
+@RequestMapping("trabajadores")
+public class TrabajadoresController {
 
 	@Autowired
 	TrabajadorService tservicio;
 
-	final Logger logger = LoggerFactory.getLogger(RolAdminController.class);
+	final Logger logger = LoggerFactory.getLogger(TrabajadoresController.class);
 
 	/* TRABAJADORES */
-	@RequestMapping(value = WebUtils.URL_TRABAJADORES, method = RequestMethod.GET)
+	@RequestMapping(value = { "", WebUtils.REQUEST_MAPPING_TRABAJADORES }, method = RequestMethod.GET)
 	public String trabajadores(
 			@PageableDefault(size = WebUtils.DEFAULT_PAGE_SIZE, direction = Direction.DESC) @SortDefault("creationTimestamp") Pageable pageRequest,
 			Model model) {
@@ -66,6 +67,21 @@ public class RolAdminController {
 		return WebUtils.VISTA_TRABAJADORES;
 	}
 
+	@RequestMapping(value = { WebUtils.REQUEST_MAPPING_TRABAJADORES_DETALLES }, method = RequestMethod.GET)
+	public String trabajadorDetalle(@PathVariable("trabajadorId") long id, Model model)
+			throws EmployeeNotFoundException {
+		Trabajador t;
+		try {
+			logger.info("Showing details of a worker GET");
+			t = tservicio.buscarTrabajador(id);
+			model.addAttribute("trabajador", t);
+			return WebUtils.VISTA_TRABAJADOR_DETALLE;
+
+		} catch (InstanceNotFoundException e) {
+			throw new EmployeeNotFoundException(id);
+		}
+	}
+
 	/**
 	 * Register form
 	 */
@@ -74,7 +90,7 @@ public class RolAdminController {
 		return new TrabajadorFormDto();
 	}
 
-	@RequestMapping(value = WebUtils.URL_TRABAJADORES_REGISTRO, method = RequestMethod.GET)
+	@RequestMapping(value = WebUtils.REQUEST_MAPPING_TRABAJADORES_REGISTRO, method = RequestMethod.GET)
 	public String registro(Model model,
 			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
 		logger.info("GET REGISTRO TRABAJADORES");
@@ -83,7 +99,7 @@ public class RolAdminController {
 		return WebUtils.VISTA_TRABAJADORES_REGISTRO;
 	}
 
-	@RequestMapping(value = WebUtils.URL_TRABAJADORES_REGISTRO, method = RequestMethod.POST)
+	@RequestMapping(value = WebUtils.REQUEST_MAPPING_TRABAJADORES_REGISTRO, method = RequestMethod.POST)
 	public String registro(@ModelAttribute("registro") @Valid TrabajadorFormDto user, BindingResult result,
 			HttpServletRequest request, Errors errors, Model model, RedirectAttributes redirectAttributes,
 			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
@@ -111,7 +127,7 @@ public class RolAdminController {
 		}
 		redirectAttributes.addFlashAttribute("success", "ok");
 		redirectAttributes.addFlashAttribute("userAdd", user);
-		return "redirect:" + WebUtils.URL_TRABAJADORES_REAL;
+		return "redirect:/" + WebUtils.URL_TRABAJADORES;
 	}
 
 	/* FIN TRABAJADORES */
@@ -124,4 +140,5 @@ public class RolAdminController {
 		model.addAttribute("key", ex.getKey());
 		return model;
 	}
+
 }

@@ -1,4 +1,4 @@
-package es.udc.citytrash.controller.util;
+package es.udc.citytrash.controller.cuenta;
 
 import java.util.Collection;
 
@@ -42,6 +42,10 @@ public class CustomUserDetails implements UserDetails {
 	@Override
 	public String getPassword() {
 		return perfil.getPassword();
+	}
+
+	public String getName() {
+		return perfil.getNombre();
 	}
 
 	@Override

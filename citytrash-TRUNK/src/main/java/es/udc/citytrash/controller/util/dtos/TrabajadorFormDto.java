@@ -74,6 +74,7 @@ public class TrabajadorFormDto {
 	@Pattern(regexp = "0[1-9][0-9]{3}|[1-4][0-9]{4}|5[0-2][0-9]{3}", message = TrabajadorFormDto.CP_MENSAJE)
 	private String cp;
 
+	@NotBlank(message = TrabajadorFormDto.NO_BLACK_MENSAJE)
 	@Past(message = TrabajadorFormDto.FECHA_NACIMIENTO_MENSAJE)
 	@DateTimeFormat(pattern = TrabajadorFormDto.DATE_FORMAT_MENSAJE)
 	private Date fechaNacimiento;

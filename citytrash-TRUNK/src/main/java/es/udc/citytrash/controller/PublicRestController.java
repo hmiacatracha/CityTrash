@@ -16,7 +16,7 @@ import es.udc.citytrash.business.service.trabajador.TrabajadorService;
 import es.udc.citytrash.business.util.excepciones.InstanceNotFoundException;
 
 @Controller
-public class RestController {
+public class PublicRestController {
 
 	/*
 	 * http://www.jtech.ua.es/j2ee/publico/spring-2012-13/sesion04-apuntes.html
@@ -28,7 +28,7 @@ public class RestController {
 	@Autowired
 	UserService userService;
 
-	final Logger logger = LoggerFactory.getLogger(RestController.class);
+	final Logger logger = LoggerFactory.getLogger(PublicRestController.class);
 
 	@RequestMapping(value = "/cuenta/validarEmail", method = RequestMethod.POST, produces = "application/json")
 	public @ResponseBody Boolean validarEmail(HttpServletResponse response,

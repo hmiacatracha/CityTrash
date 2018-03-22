@@ -40,6 +40,7 @@
 		<thymeleaf.version>3.0.6.RELEASE</thymeleaf.version>
 		<thymeleaf.security>3.0.2.RELEASE</thymeleaf.security>
 		<thymeleaf.layout>2.2.2</thymeleaf.layout>
+		<thymeleaf.java8time>3.0.1.RELEASE</thymeleaf.java8time>
 		<thymeleaf.data.dialect>3.3.1</thymeleaf.data.dialect>
 		<jquery.version>3.2.1</jquery.version>
 		<jquery.validador.version>1.17.0</jquery.validador.version>
@@ -290,6 +291,14 @@
 			<artifactId>thymeleaf-layout-dialect</artifactId>
 			<version>${thymeleaf.layout}</version>
 		</dependency>
+		<!-- Times in thymeleaf http://www.baeldung.com/dates-in-thymeleaf -->
+		<!-- https://mvnrepository.com/artifact/org.thymeleaf.extras/thymeleaf-extras-java8time -->
+		<dependency>
+			<groupId>org.thymeleaf.extras</groupId>
+			<artifactId>thymeleaf-extras-java8time</artifactId>
+			<version>${thymeleaf.java8time}</version>
+		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/io.github.jpenren/thymeleaf-spring-data-dialect -->
 		<!-- https://github.com/jpenren/thymeleaf-spring-data-dialect for pagination 
 			in thymeleaf -->

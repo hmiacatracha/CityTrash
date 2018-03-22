@@ -1,4 +1,4 @@
-package es.udc.citytrash.controller;
+package es.udc.citytrash.controller.cuenta;
 
 import java.util.Locale;
 
@@ -11,10 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -23,13 +19,15 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 import es.udc.citytrash.business.service.cuenta.UserService;
+import es.udc.citytrash.business.util.excepciones.ExpiredTokenException;
 import es.udc.citytrash.business.util.excepciones.InstanceNotFoundException;
-import es.udc.citytrash.controller.util.CustomUserDetails;
+import es.udc.citytrash.business.util.excepciones.TokenInvalidException;
 import es.udc.citytrash.controller.util.WebUtils;
 import es.udc.citytrash.controller.util.anotaciones.UsuarioActual;
 import es.udc.citytrash.controller.util.dtos.CambiarPasswordFormDto;
@@ -37,13 +35,13 @@ import es.udc.citytrash.controller.util.dtos.IdiomaFormDto;
 import es.udc.citytrash.controller.util.dtos.TrabajadoDto;
 
 @Controller
-@PreAuthorize("isAuthenticated()")
-public class UsuariosAutenticadosController {
+@RequestMapping("cuenta")
+public class CuentaController {
 
 	@Autowired
 	UserService cuentaServicio;
 
-	final Logger logger = LoggerFactory.getLogger(UsuariosAutenticadosController.class);
+	final Logger logger = LoggerFactory.getLogger(CuentaController.class);
 
 	/*
 	 * Retrieve User Information in Spring Security
@@ -54,21 +52,77 @@ public class UsuariosAutenticadosController {
 	 * mvc.html
 	 * 
 	 */
+
+	/* ACTIVAR CUENTA */
+	@PreAuthorize("isAnonymous()")
+	@RequestMapping(value = { WebUtils.REQUEST_MAPPING_CUENTA_ACTIVAR,
+			WebUtils.URL_CUENTA_RECUPERAR }, method = RequestMethod.GET)
+	public String activarCuenta(@RequestParam(value = "id", required = true) long id,
+			@RequestParam(value = "token", required = true) String token, Model model,
+			RedirectAttributes redirectAttributes) {
+		CambiarPasswordFormDto activarCuentaForm = new CambiarPasswordFormDto();
+		model.addAttribute("activarCuentaForm", activarCuentaForm);
+		model.addAttribute("token", token);
+
+		try {
+			cuentaServicio.loguearsePorIdToken(id, token);
+		} catch (TokenInvalidException e) {
+			redirectAttributes.addFlashAttribute("msg", "TokenInvalidoException");
+			return "redirect:" + WebUtils.URL_LOGIN;
+		} catch (ExpiredTokenException e) {
+			redirectAttributes.addFlashAttribute("msg", "ExpiredTokenException");
+			return "redirect:" + WebUtils.URL_LOGIN;
+		}
+		logger.info("TOKEN activar cuenta DESPUES2=> " + token);
+		logger.info("TOKEN activar cuenta DESPUES2 url=> " + WebUtils.URL_CUENTA_CAMBIAR_CONTRASENA);
+		return "redirect:" + WebUtils.URL_CUENTA_ACTUALIZAR_CONTRASENA;
+	}
+
+	@PreAuthorize("isAnonymous()")
+	@RequestMapping(value = WebUtils.REQUEST_MAPPING_CUENTA_RESET_PASSWORD, method = RequestMethod.POST)
+	public String recuperarCuenta(HttpServletRequest request, RedirectAttributes redirectAttributes, Model model) {
+		String email = request.getParameter("email");
+		logger.info("PASO1 URL:" + WebUtils.URL_CUENTA_RESET_PASSWORD);
+		try {
+			cuentaServicio.recuperarCuenta(email, WebUtils.getURLWithContextPath(request));
+			redirectAttributes.addFlashAttribute("titulo", "title_recuperar_cuenta");
+			redirectAttributes.addFlashAttribute("mensaje", "mensaje_recuperar_cuenta(" + email + ")");
+			redirectAttributes.addFlashAttribute("tipoAlerta", "success");
+
+		} catch (InstanceNotFoundException e) {
+			model.addAttribute("err", e);
+			return WebUtils.VISTA_RECUPERAR_CUENTA;
+		}
+		redirectAttributes.addFlashAttribute("success", "ok");
+		redirectAttributes.addFlashAttribute("email", email);
+		return "redirect:" + WebUtils.URL_CUENTA_RESET_PASSWORD;
+	}
+
+	/* RECUPERAR CUENTA */
+	@PreAuthorize("isAnonymous()")
+	@RequestMapping(value = { WebUtils.REQUEST_MAPPING_CUENTA_RESET_PASSWORD }, method = RequestMethod.GET)
+	public String recuperarCuenta() {
+		logger.info("PASO1 URL:" + WebUtils.URL_CUENTA_RESET_PASSWORD);
+		return WebUtils.VISTA_RECUPERAR_CUENTA;
+	}
+
 	/* CAMBIAR CONTRASEÑA */
 	@ModelAttribute("reiniciarPasswordForm")
 	public CambiarPasswordFormDto cambiarPasswordForm() {
 		return new CambiarPasswordFormDto();
 	}
 
-	@RequestMapping(value = WebUtils.URL_CUENTA_ACTUALIZAR_CONTRASENA, method = RequestMethod.GET)
+	@PreAuthorize("isAuthenticated()")
+	@RequestMapping(value = WebUtils.REQUEST_MAPPING_CUENTA_ACTUALIZAR_CONTRASENA, method = RequestMethod.GET)
 	public String cambiarPassword(Model model) {
 		return WebUtils.VISTA_REINICIAR_CONTRASENA;
 	}
 
-	@RequestMapping(value = { WebUtils.URL_CUENTA_ACTUALIZAR_CONTRASENA }, method = RequestMethod.POST)
+	@PreAuthorize("isAuthenticated()")
+	@RequestMapping(value = { WebUtils.REQUEST_MAPPING_CUENTA_ACTUALIZAR_CONTRASENA }, method = RequestMethod.POST)
 	public String cambiarPassword(@UsuarioActual CustomUserDetails usuario, Model model,
 			@ModelAttribute("reiniciarPasswordForm") @Valid CambiarPasswordFormDto form, BindingResult result,
-			RedirectAttributes redir) {		
+			RedirectAttributes redir) {
 		logger.info("POST ACTIVAR CUENTA1");
 
 		if (result.hasErrors()) {
@@ -95,12 +149,14 @@ public class UsuariosAutenticadosController {
 		return new IdiomaFormDto();
 	}
 
-	@RequestMapping(value = { WebUtils.URL_CUENTA_CAMBIO_IDIOMA }, method = RequestMethod.GET)
+	@PreAuthorize("isAuthenticated()")
+	@RequestMapping(value = { WebUtils.REQUEST_MAPPING_CUENTA_CAMBIO_IDIOMA }, method = RequestMethod.GET)
 	public String cambiarIdioma(@UsuarioActual TrabajadoDto perfil, Model model) {
 		return WebUtils.VISTA_CAMBIAR_IDIOMA;
 	}
 
-	@RequestMapping(value = { WebUtils.URL_CUENTA_CAMBIO_IDIOMA }, method = RequestMethod.POST)
+	@PreAuthorize("isAuthenticated()")
+	@RequestMapping(value = { WebUtils.REQUEST_MAPPING_CUENTA_CAMBIO_IDIOMA }, method = RequestMethod.POST)
 	public String cambiarIdioma(@UsuarioActual CustomUserDetails usuario,
 			@ModelAttribute("idiomaForm") @Valid IdiomaFormDto idiomaForm, BindingResult result,
 			HttpServletRequest request, Errors errors, Model model, HttpServletResponse response) {

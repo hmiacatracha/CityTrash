@@ -26,6 +26,7 @@ public class WebUtils {
 	private static final String VISTA_TRABAJADORES_PREFIX = "trabajador/";
 	public static final String VISTA_TRABAJADORES_REGISTRO = VISTA_TRABAJADORES_PREFIX + "registro";
 	public static final String VISTA_TRABAJADORES = VISTA_TRABAJADORES_PREFIX + "trabajadores";
+	public static final String VISTA_TRABAJADOR_DETALLE = VISTA_TRABAJADORES_PREFIX + "detalle";
 
 	/* Paquete cuenta */
 	private static final String VISTA_CUENTA_PREFIX = "cuenta/";
@@ -55,17 +56,31 @@ public class WebUtils {
 	public static final String URL_BAD_REQUEST = "/400";
 
 	/* URLS BAJO EL ROOT /AUTH/ADMIN/ */
-	public static final String URL_TRABAJADORES_REAL = "/auth/admin/trabajadores/registro";
-	public static final String URL_TRABAJADORES = "/trabajadores";
+	public static final String URL_TRABAJADORES = "/trabajadores/registro";
+	public static final String REQUEST_MAPPING_TRABAJADORES = "/";
 	public static final String URL_TRABAJADORES_REGISTRO = "/trabajadores/registro";
+	public static final String REQUEST_MAPPING_TRABAJADORES_REGISTRO = "registro";
+	public static final String URL_TRABAJADORES_DETALLES = "/trabajadores/{trabajadorId}/detalle";
+	public static final String REQUEST_MAPPING_TRABAJADORES_DETALLES = "/{trabajadorId}/detalle";
 
 	/* URLS CUENTA */
-	public static final String URL_CUENTA_ACTIVAR = "/cuenta/activar";
+	public static final String URL_CUENTA_ACTIVAR_REAL = "/cuenta/activar";
+	public static final String REQUEST_MAPPING_CUENTA_ACTIVAR = "activar";
+
 	public static final String URL_CUENTA_RECUPERAR = "/cuenta/recuperar";
+	public static final String REQUEST_MAPPING_CUENTA_RECUPERAR = "recuperar";
+
 	public static final String URL_CUENTA_RESET_PASSWORD = "/cuenta/reset-password";
+	public static final String REQUEST_MAPPING_CUENTA_RESET_PASSWORD = "reset-password";
+
 	public static final String URL_CUENTA_CAMBIO_IDIOMA = "/cuenta/idiomapreferencia";
+	public static final String REQUEST_MAPPING_CUENTA_CAMBIO_IDIOMA = "idiomapreferencia";
+
 	public static final String URL_CUENTA_ACTUALIZAR_CONTRASENA = "/cuenta/actualizarPassword";
-	public static final String URL_CUENTA_CAMBIAR_CONTRASENA = "/cuenta/cambiarPassword";
+	public static final String REQUEST_MAPPING_CUENTA_ACTUALIZAR_CONTRASENA = "actualizarPassword";
+
+	public static final String URL_CUENTA_CAMBIAR_CONTRASENA = "/cambiarPassword";
+	public static final String REQUEST_MAPPING_CAMBIAR_CONTRASENA = "cuenta/cambiarPassword";
 
 	public static String getURLWithContextPath(HttpServletRequest request) {
 		return request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()

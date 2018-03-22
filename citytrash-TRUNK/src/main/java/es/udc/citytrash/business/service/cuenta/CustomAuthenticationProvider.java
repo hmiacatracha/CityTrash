@@ -16,7 +16,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import es.udc.citytrash.controller.util.CustomUserDetails;
+import es.udc.citytrash.controller.cuenta.CustomUserDetails;
 
 @Component
 public class CustomAuthenticationProvider implements AuthenticationProvider {

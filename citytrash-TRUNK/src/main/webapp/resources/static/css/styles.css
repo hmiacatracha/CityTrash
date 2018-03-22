@@ -1,6 +1,51 @@
 @import url("https://fonts.googleapis.com/css?family=Open+Sans");
 
-/*NAV BAR FROM BOOSTRAP3 CSS*/
+/* BACKGROUND CSS*/
+body {
+	/*background: #FFFFFF
+		url(https://electronicsofthings.com/wp-content/uploads/2016/09/smart-trash-collection.jpg)
+		no-repeat center center fixed;*/
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+	font-family: 'Enriqueta', serif;
+	background: #FFFFFF;
+	/*font-family: 'Lustria', serif;*/
+	
+}
+body.index {
+	background: #FFFFFF
+		url(http://ncuwash.org/newfour/wp-content/uploads/2015/07/Savin-NY-Website-Background-Web-615x384@2x.jpg)
+		no-repeat center center fixed;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+}
+
+body.formularios {
+	background: #FFFFFF;
+}
+body.blanco {
+	background: #FFFFFF;
+}
+
+.header {
+  padding: 1px;
+  color: #FFFFFF;
+  text-align: center;
+}
+
+.navbar{
+	font-family: 'Merienda One', cursive;
+}
+
+.navbar-brand>img {
+  height: 150%;
+  padding: 15px;
+  width: auto;
+}
+
 .pull-right>.dropdown-menu {
 	right: 0;
 	left: auto;
@@ -8,7 +53,7 @@
 
 .dropup .caret, .navbar-fixed-bottom .dropdown .caret {
 	border-top: 0;
-	border-bottom: 4px solid #000000;
+	border-bottom: 4px solid #ffffff;
 	content: "";
 }
 
@@ -72,6 +117,7 @@
 	border-radius: 6px 0 6px 6px;
 }
 
+
 .navbar .nav li.dropdown>a:hover .caret, .navbar .nav li.dropdown>a:focus .caret
 	{
 	border-top-color: #333333;
@@ -124,20 +170,6 @@
 	border-radius: 6px 0 6px 6px;
 }
 
-/* BACKGROUND CSS*/
-body {
-	background: #FFFFFF
-		url(https://electronicsofthings.com/wp-content/uploads/2016/09/smart-trash-collection.jpg)
-		no-repeat center center fixed;
-	-webkit-background-size: cover;
-	-moz-background-size: cover;
-	-o-background-size: cover;
-	background-size: cover;
-}
-
-h1, h2, h3, p, button, form {
-	font-family: 'Open Sans', sans-serif;
-}
 
 .fa.valid-feedback, .fa.invalid-feedback {
 	position: absolute;
@@ -152,25 +184,8 @@ h1, h2, h3, p, button, form {
 	margin-top: -28px;
 }
 
-body.index {
-	background: #FFFFFF
-		url(http://ncuwash.org/newfour/wp-content/uploads/2015/07/Savin-NY-Website-Background-Web-615x384@2x.jpg)
-		no-repeat center center fixed;
-	-moz-background-size: cover;
-	-o-background-size: cover;
-	background-size: cover;
-}
-
-body.formularios {
-	background: #ABB2B9
-}
-
-body.blanco {
-	background: #FFFFFF
-}
-
-img {
-	opacity: 0.7;
+.container {
+	margin-top: 0%;
 }
 
 img.displayed {
@@ -180,8 +195,10 @@ img.displayed {
 }
 
 img.account {
-	height: 30%;
-	width: 30%;
+	height: 25%;
+	width: 25%;
+	border-radius: 60%;
+	margin: 0 auto;
 }
 
 .panel-primary {
@@ -297,8 +314,7 @@ select.form-control, input.form-control, option.form-control {
 	border-radius: .25em;
 	background-color: #d9534f;
 } */
-
-.modal-header, h4, .close-modal {
+.modal-header, h4.modal-header, .close-modal {
 	background-color: #333;
 	color: #fff !important;
 	text-align: center;
@@ -310,7 +326,16 @@ select.form-control, input.form-control, option.form-control {
 }
 
 .panel-default>.panel-heading {
-	color: #2e3436;
+	color: #000000;
 	background-color: #ffffff;
 	border-color: #ffffff;
 }
+
+
+.panel-primary>.panel-heading {
+	color: #ffffff;
+	background-color: #494949;
+	border-color: #ffffff;
+}
+
+

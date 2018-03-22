@@ -6,28 +6,44 @@
 <!-- http://softpei.blogspot.com.es/2017/02/agregarle-bootstrap-3-submenu-de-varios.html -->
 
 <nav th:fragment="nav(m)"
-	class="navbar navbar navbar-default navbar-static-top">
+	class="navbar navbar-inverse navbar-static-top">
 	<div class="container">
+		<!--
+		<div class="header">
+			<h2>CityTrash</h2>
+			<p>Scroll down to see the sticky effect.</p>
+		</div>-->
+		  <div class="container-fluid header">
+        <div class="row">
+            <div class="col-md-12">
+                <h2>CityTrash</h2>
+                <p>Scroll down to see the sticky effect.</p>
+            </div>
+        </div>
+    </div>
+		
 		<div class="navbar-header">
 			<button type="button" class="navbar-toggle" data-toggle="collapse"
 				data-target=".navbar-collapse">
 				<span class="sr-only"> </span> <span class="icon-bar"></span> <span
-					class="icon-bar"></span> <span class="icon-bar"></span>
+					class="icon-bar"></span> <span class="icon-bar"></span>					
 			</button>
-			<a class="navbar-brand" href="#" th:text="#{brand}">Project name</a>
+			
+			<!--<a class="navbar-brand active" href="#" th:text="#{brand}"><img th:src="@{/resources/static/img/icon.png}"  class="img-responsive"/></a> -->
+			<a class="navbar-brand" href="#" th:text="#{brand}">Project name</a> 
 		</div>
 
 		<div class="collapse navbar-collapse" id="navbar-collapse-1">
 			<ul class="nav navbar-nav">
 
-				<li class="active"><a th:href="@{#{link.home}}"> <span
+				<li th:classappend="${#httpServletRequest.getRequestURI() == '/' ? 'active':''}"><a th:href="@{#{link.home}}"> <span
 						class="glyphicon glyphicon-home" aria-hidden="true"></span>&nbsp;
 						<label th:text="#{home}"></label>
 				</a></li>
 
-				<li><a th:text="#{about}" th:href="@{#{link.about.us}}"> </a></li>
+				<li th:class="${classActiveSettings}"><a th:text="#{about}" th:href="@{#{link.about.us}}"> </a></li>
 
-				<li class="dropdown"><a class="dropdown-toggle"
+				<li th:class="dropdown" class="dropdown"><a class="dropdown-toggle"
 					data-toggle="dropdown" th:href="@{#{menu.mapa_link_ref}}"
 					th:text="#{mapa}"> </a>
 					<ul class="dropdown-menu">
@@ -36,7 +52,7 @@
 						<li sec:authorize="isAuthenticated()"><a th:text="#{rutas}"
 							th:href="@{#{menu.mapa_rutas_link_ref}}"> </a></li>
 					</ul></li>
-				<li class="dropdown"><a class="dropdown-toggle"
+				<li th:class="dropdown" class="dropdown"><a class="dropdown-toggle"
 					data-toggle="dropdown" th:text="#{estadisticas}"
 					th:href="@{#{menu.estadisticas_link_ref}}"> </a>
 					<ul class="dropdown-menu">
@@ -45,7 +61,7 @@
 						<li><a th:text="#{pronostico}"
 							th:href="@{#{menu.estadisticas_pronos_realid_link_ref}}"> </a></li>
 					</ul></li>
-				<li class="dropdown"><a class="dropdown-toggle"
+				<li th:class="dropdown" class="dropdown"><a class="dropdown-toggle"
 					data-toggle="dropdown" th:text="#{recursos}"
 					th:href="@{#{menu.recursos}}"> </a>
 					<ul class="dropdown-menu dropdown-submenu">
@@ -71,7 +87,7 @@
 
 			<ul class="nav navbar-nav navbar-right"
 				sec:authorize="isAuthenticated()">
-				<li th:if="${#authorization.expression('hasRole(''ROLE_USER'')')}">
+				<li th:if="${#authorization.expression('hasRole(''ROLE_USER'')')}" th:class="${classActiveSettings}">
 					<a href="#"> <label th:text="#{alertas}"> </label> <span
 						class="badge pull-right">3</span>
 				</a>

@@ -10,9 +10,7 @@
 </head>
 
 <body class="blanco">
-	<div id="viewBody" class="container" th:fragment="content"
-		th:remove="tag">
-
+	<div id="viewBody" class="container" th:fragment="content">
 		<div class="row">
 			<div class="col-sm-10 col-sm-offset-1">
 				<h1 class="text-center" th:text="#{frm_trabajadores_header}"></h1>
@@ -75,7 +73,8 @@
 							<td>
 								<div class="btn-group text-center">
 									<!-- view details -->
-									<a th:href="@{/auth/trabajadores/ver(id=${trabajador.id})}"
+									<a
+										th:href="@{#{link.trabajadores.detalle}(id=${trabajador.id})}"
 										class="btn-sm"><i class="glyphicon glyphicon-eye-open"></i></a>
 									<!-- edit -->
 									<a th:href="@{/auth/trabajadores/editar(id=${trabajador.id})}"

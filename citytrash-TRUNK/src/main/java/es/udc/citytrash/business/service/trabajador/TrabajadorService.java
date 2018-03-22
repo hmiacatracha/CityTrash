@@ -28,6 +28,15 @@ public interface TrabajadorService {
 
 	Trabajador registrar(TrabajadorFormDto usuario, String appUrl) throws DuplicateInstanceException;
 
+	/**
+	 * Buscar trabajador por Id
+	 * 
+	 * @param id
+	 * @return
+	 * @throws InstanceNotFoundException
+	 */
+	Trabajador buscarTrabajador(long id) throws InstanceNotFoundException;
+
 	/***
 	 * Buscar trabajador por email
 	 * 

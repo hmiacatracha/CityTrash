@@ -23,12 +23,13 @@ public class Conductor extends Trabajador implements Serializable {
 	 * @param apellidos
 	 * @param rol
 	 * @param email
+	 * @param fechaNacimiento
 	 * @param token
 	 * @para fechaExpiracionToken
 	 */
-	public Conductor(String documento, String nombre, String apellidos, String rol, String email, String token,
-			Calendar fechaExpiracionToken) {
-		super(documento, nombre, apellidos, rol, email, token, fechaExpiracionToken);
+	public Conductor(String documento, String nombre, String apellidos, String rol, String email,
+			Calendar fechaNacimiento, String token, Calendar fechaExpiracionToken) {
+		super(documento, nombre, apellidos, rol, email, fechaNacimiento, token, fechaExpiracionToken);
 	}
 
 	/**

@@ -10,6 +10,8 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import es.udc.citytrash.business.util.excepciones.InstanceNotFoundException;
+
 public class GenericHibernateDAOImpl<T, ID extends Serializable> implements GenericDAO<T, ID> {
 
 	private Class<T> persistentClass;
@@ -41,11 +43,10 @@ public class GenericHibernateDAOImpl<T, ID extends Serializable> implements Gene
 	}
 
 	@Override
-	public T findById(ID id) {
+	public T findById(ID id) throws InstanceNotFoundException {
 		T entity = getSession().get(getPersistentClass(), id);
 		if (entity == null) {
-			// throw new InstanceException("", id,
-			// getPersistentClass().getName());
+			throw new InstanceNotFoundException(id, persistentClass.getName().toString());
 		}
 		return entity;
 

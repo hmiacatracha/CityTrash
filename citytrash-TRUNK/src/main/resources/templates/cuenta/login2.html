@@ -36,6 +36,8 @@
 								th:replace="fragments/alert :: alert (type='warning',  message=#{${msg}})"></div>
 						</th:block>
 
+
+			
 						<form role="form" class="form-signin" th:action="@{#{link.login}}"
 							action="#" method="post" th:object="${loginForm}"
 							th:fragment="login">

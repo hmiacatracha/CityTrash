@@ -30,7 +30,7 @@ import es.udc.citytrash.business.service.email.EmailNotificacionesService;
 import es.udc.citytrash.business.util.excepciones.ExpiredTokenException;
 import es.udc.citytrash.business.util.excepciones.InstanceNotFoundException;
 import es.udc.citytrash.business.util.excepciones.TokenInvalidException;
-import es.udc.citytrash.controller.util.CustomUserDetails;
+import es.udc.citytrash.controller.cuenta.CustomUserDetails;
 import es.udc.citytrash.controller.util.WebUtils;
 import es.udc.citytrash.controller.util.dtos.TrabajadoDto;
 

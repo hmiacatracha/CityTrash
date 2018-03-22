@@ -1,6 +1,7 @@
 package es.udc.citytrash.business.service.trabajador;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -66,7 +67,7 @@ public class TrabajadorServiceImpl implements TrabajadorService {
 		case ADMIN:
 			rol = "ROLE_ADMIN";
 			Administrador admin = new Administrador(user.getDocumento(), user.getNombre(), user.getApellidos(), rol,
-					user.getEmail(), token, fechaExpiracionToken);
+					user.getEmail(), toCalendar(user.getFechaNacimiento()), token, fechaExpiracionToken);
 			admin.setIdioma(user.getIdioma());
 			admin.setNombreVia(user.getVia());
 			admin.setNumero(esNumero(user.getNumero()) ? Integer.parseInt(user.getNumero()) : null);
@@ -84,7 +85,7 @@ public class TrabajadorServiceImpl implements TrabajadorService {
 		case CONDUCT:
 			rol = "ROLE_USER";
 			Conductor conductor = new Conductor(user.getDocumento(), user.getNombre(), user.getApellidos(), rol,
-					user.getEmail(), token, fechaExpiracionToken);
+					user.getEmail(), toCalendar(user.getFechaNacimiento()), token, fechaExpiracionToken);
 			conductor.setIdioma(user.getIdioma());
 			conductor.setNombreVia(user.getVia());
 			conductor.setNumero(esNumero(user.getNumero()) ? Integer.parseInt(user.getNumero()) : null);
@@ -102,7 +103,7 @@ public class TrabajadorServiceImpl implements TrabajadorService {
 		default:
 			rol = "ROLE_USER";
 			Recolector recolector = new Recolector(user.getDocumento(), user.getNombre(), user.getApellidos(), rol,
-					user.getEmail(), token, fechaExpiracionToken);
+					user.getEmail(), toCalendar(user.getFechaNacimiento()), token, fechaExpiracionToken);
 			recolector.setIdioma(user.getIdioma());
 			recolector.setNombreVia(user.getVia());
 			recolector.setNumero(esNumero(user.getNumero()) ? Integer.parseInt(user.getNumero()) : null);
@@ -117,6 +118,12 @@ public class TrabajadorServiceImpl implements TrabajadorService {
 			trabajador = (Trabajador) recolector;
 		}
 		return trabajador;
+	}
+
+	@Override
+	public Trabajador buscarTrabajador(long id) throws InstanceNotFoundException {
+		Trabajador t = trabajadorProfileDao.findById(id);
+		return t;
 	}
 
 	@Override
@@ -142,6 +149,12 @@ public class TrabajadorServiceImpl implements TrabajadorService {
 		} catch (NumberFormatException nfe) {
 			return false;
 		}
+	}
+
+	public static Calendar toCalendar(Date date) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		return cal;
 	}
 
 }

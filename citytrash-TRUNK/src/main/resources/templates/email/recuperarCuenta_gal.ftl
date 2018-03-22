@@ -25,7 +25,7 @@
         <tr>
             <td bgcolor="#eaeaea" style="padding: 40px 30px 40px 30px;">
              <p>
-			Recibimos a solicitude para recuperar a túa conta de ${email} desde CityTrash. Se non solicitou, non acceda á seguinte ligazón <a href="${recuperar_url}"> $ {recuperar_url} </a> e ignora a mensaxe. 
+			Recibimos a solicitude para recuperar a túa conta de ${email} desde CityTrash. Se non solicitou, non acceda á seguinte ligazón <a href="${recuperar_url}"> ${recuperar_url} </a> e ignora a mensaxe. 
 			</p>
 			
 			<p> Lembre que debes recuperar a túa conta antes ${fechaExpiracion} </p> 
