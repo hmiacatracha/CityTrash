@@ -1,12 +1,8 @@
-<<<<<<< HEAD
-#Aplicación para la gestión de una empresa de recogida de residuos - TRABAJO FIN DE GRADO (TFG) 
-=======
+
+# Aplicación para la gestión de una empresa de recogida de residuos 
+
 [![Build Status](https://travis-ci.com/hmiacatracha/TFG.svg?token=9HkAeJE9p5Tzyz4kH65E&branch=master)](https://travis-ci.com/hmiacatracha/TFG) [![Code Coverage](https://img.shields.io/codecov/c/github/pvorb/property-providers/develop.svg)](https://codecov.io/github/pvorb/property-providers?branch=develop)
 
-
-# Aplicación para la gestión de una empresa de recogida de residuos - TRABAJO FIN DE GRADO (TFG) 
-
->>>>>>> 5a67939a3893ea835e86180a71c79fbaa09e0340
 ## Objetivos
 El objetivo de este proyecto es desarrollar una aplicación para la gestión de una empresa de recogida de residuos. El sistema debe permitir: -Gestionar los recursos de la empresa, como puede ser los empleados, los camiones de recogida y los contenedores de residuos. -Gestionar las rutas de recogida. -Generar y visualizar alertas. -Visualizar el histórico de rutas y estadísticas.
 ## Descripcion
@@ -17,22 +13,5 @@ La aplicación se desarrollará en un entorno de desarrollo integrado (IDE). Bas
 
 ## IMPLEMENTACION
 ### LÓGICA DEL NEGOCIO
-<<<<<<< HEAD
-
-
 ### VISTA
-
-
 ### PRUEBAS
-
-
-
-
-=======
-
-
-### VISTA
-
-
-### PRUEBAS
->>>>>>> 5a67939a3893ea835e86180a71c79fbaa09e0340
