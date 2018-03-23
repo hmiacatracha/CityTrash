@@ -19,7 +19,7 @@
     <table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="border-collapse: collapse;">
         <tr>
             <td align="center" bgcolor="#16A085" style="padding: 40px 0 30px 0;">               
-                <p style="color:#F7F9F9";> ola ${nombre} ${apellidos}! </p>                
+                <p style="color:#F7F9F9";> Ola ${nombre} ${apellidos}! </p>                
             </td>
         </tr>
         <tr>

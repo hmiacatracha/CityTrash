@@ -12,8 +12,8 @@ body {
 	font-family: 'Enriqueta', serif;
 	background: #FFFFFF;
 	/*font-family: 'Lustria', serif;*/
-	
 }
+
 body.index {
 	background: #FFFFFF
 		url(http://ncuwash.org/newfour/wp-content/uploads/2015/07/Savin-NY-Website-Background-Web-615x384@2x.jpg)
@@ -26,24 +26,22 @@ body.index {
 body.formularios {
 	background: #FFFFFF;
 }
+
 body.blanco {
 	background: #FFFFFF;
 }
 
 .header {
-  padding: 1px;
-  color: #FFFFFF;
-  text-align: center;
+	width: 50px;
+	height: 50px;
+	background: #FFFFFF url(../img/ciudad.png) no-repeat center center fixed;
+	padding: 1px;
+	color: #FFFFFF;
+	text-align: center;
 }
 
-.navbar{
+.navbar {
 	font-family: 'Merienda One', cursive;
-}
-
-.navbar-brand>img {
-  height: 150%;
-  padding: 15px;
-  width: auto;
 }
 
 .pull-right>.dropdown-menu {
@@ -117,7 +115,6 @@ body.blanco {
 	border-radius: 6px 0 6px 6px;
 }
 
-
 .navbar .nav li.dropdown>a:hover .caret, .navbar .nav li.dropdown>a:focus .caret
 	{
 	border-top-color: #333333;
@@ -169,7 +166,6 @@ body.blanco {
 	-moz-border-radius: 6px 0 6px 6px;
 	border-radius: 6px 0 6px 6px;
 }
-
 
 .fa.valid-feedback, .fa.invalid-feedback {
 	position: absolute;
@@ -331,11 +327,8 @@ select.form-control, input.form-control, option.form-control {
 	border-color: #ffffff;
 }
 
-
 .panel-primary>.panel-heading {
 	color: #ffffff;
 	background-color: #494949;
 	border-color: #ffffff;
 }
-
-

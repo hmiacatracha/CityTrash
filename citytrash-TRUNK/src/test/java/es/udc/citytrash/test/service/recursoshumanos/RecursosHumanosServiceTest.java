@@ -55,8 +55,9 @@ public class RecursosHumanosServiceTest {
 		 * r.setFecNac(fecNacimiento); r.setEmail(email2);
 		 * r.setPassword("contrasena");
 		 */
-
-		Administrador a = new Administrador("10284977Y", "ADMIN", "apellidos", "ADMIN", email3, "xasakdsadasoideqnrasd",
+		Calendar fechaNacimiento = Calendar.getInstance();
+		
+		Administrador a = new Administrador("10284977Y", "ADMIN", "apellidos", "ADMIN", email3,fechaNacimiento, "xasakdsadasoideqnrasd",
 				fechaExpiracion);
 		/*
 		 * a.setNombre("nombre"); a.setApellidos("apellidos");

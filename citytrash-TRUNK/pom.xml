@@ -58,6 +58,7 @@
 		<mavenAssemblyPlugin.version>2.4</mavenAssemblyPlugin.version>
 		<jettyMavenPlugin>9.3.0.v20150612</jettyMavenPlugin>
 		<webVersion>3.1</webVersion>
+		<cobertura.plugin>2.7</cobertura.plugin>
 	</properties>
 	<!-- Profiles -->
 	<profiles>
@@ -459,6 +460,18 @@
 						<warSourceDirectory>src/main/webapp</warSourceDirectory>
 						<warName>icityTrash</warName>
 						<failOnMissingWebXml>false</failOnMissingWebXml>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>cobertura-maven-plugin</artifactId>
+					<version>${cobertura.plugin}</version>
+					<configuration>
+						<formats>
+							<format>html</format>
+							<format>xml</format>
+						</formats>
+						<check />
 					</configuration>
 				</plugin>
 			</plugins>
