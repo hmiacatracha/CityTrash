@@ -2,7 +2,7 @@
  jdk: oraclejdk8 # utilizamos la plataforma java 8
  sudo: false # faster builds
  install: 
-     - mvn test-compile -DskipTests=true -Dmaven.javadoc.skip=true -B -V    
+     - true
  addons:
   apt:
     packages:
@@ -14,9 +14,10 @@
   
  #ejecutar el script de construcción del proyecto.
  script: 
+   - mvn install
    - mvn clean test 
    - mvn cobertura:cobertura
-   
+  
  cache:
   directories:
     - $HOME/.m2
