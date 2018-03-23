@@ -1,3 +1,7 @@
+[![Build Status](https://travis-ci.com/hmiacatracha/TFG.svg?token=9HkAeJE9p5Tzyz4kH65E&branch=master)](https://travis-ci.com/hmiacatracha/TFG)
+
+[![Code Coverage](https://img.shields.io/codecov/c/github/pvorb/property-providers/develop.svg)](https://codecov.io/github/pvorb/property-providers?branch=develop)
+
 
 # Aplicación para la gestión de una empresa de recogida de residuos - TRABAJO FIN DE GRADO (TFG) 
 
