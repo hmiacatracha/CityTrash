@@ -1,4 +1,6 @@
-#Aplicación para la gestión de una empresa de recogida de residuos - TRABAJO FIN DE GRADO (TFG) 
+
+# Aplicación para la gestión de una empresa de recogida de residuos - TRABAJO FIN DE GRADO (TFG) 
+
 ## Objetivos
 El objetivo de este proyecto es desarrollar una aplicación para la gestión de una empresa de recogida de residuos. El sistema debe permitir: -Gestionar los recursos de la empresa, como puede ser los empleados, los camiones de recogida y los contenedores de residuos. -Gestionar las rutas de recogida. -Generar y visualizar alertas. -Visualizar el histórico de rutas y estadísticas.
 ## Descripcion
