@@ -1,30 +1,27 @@
- language: 
-    -java
-    
- jdk: 
-  - oraclejdk8 # utilizamos la plataforma java 8
-  
- sudo: 
-  -false # faster builds
-    
+ language: java
+ jdk: oraclejdk8 # utilizamos la plataforma java 8
+ sudo: false # faster builds
  install: 
-    - mvn test-compile -DskipTests=true -Dmaven.javadoc.skip=true -B -V    
-    
+     - true
+ addons:
+  apt:
+    packages:
+      - oracle-java8-installer        
  #instalar paquetes del SO necesarios para la construcción del proyecto
-  before_install:
-  - sudo apt-get -qq update 
-  - sudo apt-get install -y libxml2-dev
+  before_install: 
+   - sudo apt-get -qq update 
+   - sudo apt-get install -y libxml2-dev
   
  #ejecutar el script de construcción del proyecto.
  script: 
-    - mvn clean test 
-    - mvn cobertura:cobertura
-
+   - mvn install
+   - mvn clean test 
+   - mvn cobertura:cobertura
+  
  cache:
-      directories:
-          - $HOME/.m2 
-          
- #se ejecutará si la construcción se realiza correctamente como generar la documentación.
-  after_success:
-    - bash <(curl -s https://codecov.io/bash) -t bcdb4fed-8d80-445a-bc9a-3178cddfc9da
+  directories:
+    - $HOME/.m2
+    
+ after_success: 
+  - bash <(curl -s https://codecov.io/bash) -t bcdb4fed-8d80-445a-bc9a-3178cddfc9da
  
