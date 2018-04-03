@@ -2,8 +2,10 @@ package es.udc.citytrash.business.service.cuenta;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.UUID;
@@ -13,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -39,6 +42,7 @@ import es.udc.citytrash.controller.util.dtos.TrabajadoDto;
 @Transactional
 public class UserServiceImpl implements UserDetailsService, UserService {
 
+	private static String ROL_CAMBIAR_PASSWORD = "ROLE_CHANGE_PASSWORD";
 	@Autowired
 	private TrabajadorDao trabajadorProfileDao;
 
@@ -104,6 +108,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 	@Override
 	public void cambiarPassword(String email, String password) throws InstanceNotFoundException {
 		Trabajador t = trabajadorProfileDao.buscarTrabajadorPorEmail(email);
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		Calendar ahora = Calendar.getInstance();
 
 		logger.info("password => " + password);
@@ -118,7 +123,17 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 			Calendar calendar = Calendar.getInstance();
 			t.setFechaActivacion(calendar);
 		}
-		trabajadorProfileDao.save(t);
+		trabajadorProfileDao.guardar(t);
+
+		/* Volvemos a autenticarnos sin el rol cambiar contraseña */
+		if (auth.isAuthenticated()) {
+			List<GrantedAuthority> updatedAuthorities = new ArrayList<>(auth.getAuthorities());
+			GrantedAuthority g = new SimpleGrantedAuthority(ROL_CAMBIAR_PASSWORD);
+			updatedAuthorities.remove(g);
+			Authentication newAuth = new UsernamePasswordAuthenticationToken(auth.getPrincipal(), auth.getCredentials(),
+					updatedAuthorities);
+			SecurityContextHolder.getContext().setAuthentication(newAuth);
+		}
 	}
 
 	@Override
@@ -133,7 +148,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 			t = trabajadorProfileDao.buscarTrabajadorPorEmail(email);
 			t.setToken(token);
 			t.setFechaExpiracionToken(fechaExpiracion);
-			trabajadorProfileDao.save(t);
+			trabajadorProfileDao.guardar(t);
 			emailService.recuperarCuentaEmail(t.getId(), t.getNombre(), t.getApellidos(), t.getEmail(), token,
 					fechaExpiracion, t.getIdioma(), appUrl);
 
@@ -150,20 +165,42 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
 	}
 
+	@Override
+	public Idioma obtenerIdiomaPreferencia(long trabajadorId) throws InstanceNotFoundException {
+		Trabajador t;
+		t = trabajadorProfileDao.buescarById(trabajadorId);
+		return t.getIdioma();
+	}
+
 	private List<SimpleGrantedAuthority> getAuthorities(String role, Boolean loginPorToken) {
 		List<SimpleGrantedAuthority> authList = new ArrayList<>();
-
-		authList.add(new SimpleGrantedAuthority("ROLE_USER"));
-
-		if (loginPorToken == true) {
-			authList.add(new SimpleGrantedAuthority("CHANGE_PASSWORD_PRIVILEGE"));
-		}
+		logger.info("getAuthorities LOGIN POR TOKEN:" + loginPorToken);
 
 		if (role != null && role.trim().length() > 0) {
-			if (!role.equalsIgnoreCase("ROLE_USER")) {
-				authList.add(new SimpleGrantedAuthority(role));
-			}
+			authList.add(new SimpleGrantedAuthority(role));
 		}
+
+		if (loginPorToken == true) {
+			authList.add(new SimpleGrantedAuthority(ROL_CAMBIAR_PASSWORD));
+		}
+
+		logger.info("getAuthorities:" + authList.toString());
+		return authList;
+	}
+
+	private Collection<? extends GrantedAuthority> removeAuthority(String role,
+			Collection<? extends GrantedAuthority> authList) {
+		Collection<? extends GrantedAuthority> authListCopy = new HashSet(Arrays.asList(authList));
+		logger.info("removeAuthorities antes:" + authList.toString());
+		authListCopy.removeIf((GrantedAuthority g) -> g.getAuthority().equals(role));
+		logger.info("removeAuthorities despues:" + authListCopy.toString());
+		return authListCopy;
+	}
+
+	private Collection<? extends GrantedAuthority> addAuthority(String role, List<GrantedAuthority> authList) {
+		logger.info("removeAuthorities antes:" + authList.toString());
+		authList.add(new SimpleGrantedAuthority(role));
+		logger.info("removeAuthorities despues:" + authList.toString());
 		return authList;
 	}
 }

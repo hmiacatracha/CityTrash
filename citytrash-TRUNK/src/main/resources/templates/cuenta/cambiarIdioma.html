@@ -4,7 +4,7 @@
 	xmlns:th="http://www.thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{layouts/default}">
+	layout:decorate="~{layouts/default}" th:with="currentPage='cuenta'">
 <head>
 <title th:text="#{page_cambiar_idioma}"></title>
 </head>

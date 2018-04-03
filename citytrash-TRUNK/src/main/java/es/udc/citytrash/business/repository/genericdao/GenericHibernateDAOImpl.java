@@ -43,7 +43,7 @@ public class GenericHibernateDAOImpl<T, ID extends Serializable> implements Gene
 	}
 
 	@Override
-	public T findById(ID id) throws InstanceNotFoundException {
+	public T buescarById(ID id) throws InstanceNotFoundException {
 		T entity = getSession().get(getPersistentClass(), id);
 		if (entity == null) {
 			throw new InstanceNotFoundException(id, persistentClass.getName().toString());
@@ -53,7 +53,7 @@ public class GenericHibernateDAOImpl<T, ID extends Serializable> implements Gene
 	}
 
 	@Override
-	public boolean exists(ID id) {
+	public boolean existe(ID id) {
 		T entity = getSession().get(getPersistentClass(), id);
 		if (entity == null) {
 			return false;
@@ -63,7 +63,7 @@ public class GenericHibernateDAOImpl<T, ID extends Serializable> implements Gene
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<T> findAll() {
+	public List<T> buscarTodos() {
 		String findAllQueryStr = "select p from " + persistentClass.getName() + " p";
 		List<T> objects = new ArrayList<T>();
 		List<T> resultList = getSession().createQuery(findAllQueryStr).getResultList();
@@ -72,13 +72,13 @@ public class GenericHibernateDAOImpl<T, ID extends Serializable> implements Gene
 	}
 
 	@Override
-	public T save(T entity) {
+	public T guardar(T entity) {
 		getSession().saveOrUpdate(entity);
 		return entity;
 	}
 
 	@Override
-	public void delete(T entity) {
+	public void eliminar(T entity) {
 		getSession().delete(entity);
 	}
 }

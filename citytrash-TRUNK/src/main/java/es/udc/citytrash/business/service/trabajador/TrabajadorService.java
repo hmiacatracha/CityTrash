@@ -60,7 +60,7 @@ public interface TrabajadorService {
 	/***
 	 * Mostrar la lista de trabajadores
 	 * 
-	 * @param pageable
+	 * @param pageable pageable
 	 * @return
 	 */
 

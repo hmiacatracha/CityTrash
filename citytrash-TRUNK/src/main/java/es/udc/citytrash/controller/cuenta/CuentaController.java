@@ -1,5 +1,7 @@
 package es.udc.citytrash.controller.cuenta;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
@@ -11,6 +13,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -24,13 +31,14 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
+import es.udc.citytrash.business.entity.idioma.Idioma;
 import es.udc.citytrash.business.service.cuenta.UserService;
 import es.udc.citytrash.business.util.excepciones.ExpiredTokenException;
 import es.udc.citytrash.business.util.excepciones.InstanceNotFoundException;
 import es.udc.citytrash.business.util.excepciones.TokenInvalidException;
 import es.udc.citytrash.controller.util.WebUtils;
 import es.udc.citytrash.controller.util.anotaciones.UsuarioActual;
-import es.udc.citytrash.controller.util.dtos.CambiarPasswordFormDto;
+import es.udc.citytrash.controller.util.dtos.ActualizarPasswordFormDto;
 import es.udc.citytrash.controller.util.dtos.IdiomaFormDto;
 import es.udc.citytrash.controller.util.dtos.TrabajadoDto;
 
@@ -60,7 +68,7 @@ public class CuentaController {
 	public String activarCuenta(@RequestParam(value = "id", required = true) long id,
 			@RequestParam(value = "token", required = true) String token, Model model,
 			RedirectAttributes redirectAttributes) {
-		CambiarPasswordFormDto activarCuentaForm = new CambiarPasswordFormDto();
+		ActualizarPasswordFormDto activarCuentaForm = new ActualizarPasswordFormDto();
 		model.addAttribute("activarCuentaForm", activarCuentaForm);
 		model.addAttribute("token", token);
 
@@ -84,7 +92,7 @@ public class CuentaController {
 		String email = request.getParameter("email");
 		logger.info("PASO1 URL:" + WebUtils.URL_CUENTA_RESET_PASSWORD);
 		try {
-			cuentaServicio.recuperarCuenta(email, WebUtils.getURLWithContextPath(request));
+			cuentaServicio.recuperarCuenta(email, WebUtils.getUrlWithContextPath(request));
 			redirectAttributes.addFlashAttribute("titulo", "title_recuperar_cuenta");
 			redirectAttributes.addFlashAttribute("mensaje", "mensaje_recuperar_cuenta(" + email + ")");
 			redirectAttributes.addFlashAttribute("tipoAlerta", "success");
@@ -98,7 +106,6 @@ public class CuentaController {
 		return "redirect:" + WebUtils.URL_CUENTA_RESET_PASSWORD;
 	}
 
-	/* RECUPERAR CUENTA */
 	@PreAuthorize("isAnonymous()")
 	@RequestMapping(value = { WebUtils.REQUEST_MAPPING_CUENTA_RESET_PASSWORD }, method = RequestMethod.GET)
 	public String recuperarCuenta() {
@@ -106,32 +113,33 @@ public class CuentaController {
 		return WebUtils.VISTA_RECUPERAR_CUENTA;
 	}
 
-	/* CAMBIAR CONTRASEÑA */
+	/* REINICIAR Y CAMBIAR CONTRASEÑA */
 	@ModelAttribute("reiniciarPasswordForm")
-	public CambiarPasswordFormDto cambiarPasswordForm() {
-		return new CambiarPasswordFormDto();
+	public ActualizarPasswordFormDto reiniciarPasswordForm() {
+		return new ActualizarPasswordFormDto();
 	}
 
-	@PreAuthorize("isAuthenticated()")
+	/* REINICIAR PASSWORD GET */
+	@PreAuthorize("hasRole('ROLE_CHANGE_PASSWORD')")
 	@RequestMapping(value = WebUtils.REQUEST_MAPPING_CUENTA_ACTUALIZAR_CONTRASENA, method = RequestMethod.GET)
-	public String cambiarPassword(Model model) {
+	public String reiniciarPassword(Model model) {
 		return WebUtils.VISTA_REINICIAR_CONTRASENA;
 	}
 
-	@PreAuthorize("isAuthenticated()")
+	/* REINICIAR PASSWORD POST */
+	@PreAuthorize("hasRole('ROLE_CHANGE_PASSWORD')")
 	@RequestMapping(value = { WebUtils.REQUEST_MAPPING_CUENTA_ACTUALIZAR_CONTRASENA }, method = RequestMethod.POST)
-	public String cambiarPassword(@UsuarioActual CustomUserDetails usuario, Model model,
-			@ModelAttribute("reiniciarPasswordForm") @Valid CambiarPasswordFormDto form, BindingResult result,
+	public String reiniciarPassword(@UsuarioActual CustomUserDetails usuario, Model model,
+			@ModelAttribute("reiniciarPasswordForm") @Valid ActualizarPasswordFormDto form, BindingResult result,
 			RedirectAttributes redir) {
 		logger.info("POST ACTIVAR CUENTA1");
-
 		if (result.hasErrors()) {
 			logger.info("PAGINA vista => " + WebUtils.VISTA_REINICIAR_CONTRASENA);
 			return WebUtils.VISTA_REINICIAR_CONTRASENA;
 		}
 		try {
 			cuentaServicio.cambiarPassword(usuario.getPerfil().getEmail(), form.getPassword());
-			redir.addFlashAttribute("login", "hola");
+			redir.addFlashAttribute("cambioCredenciales", "ok");
 			logger.info("PAGINA REDIRECT => " + WebUtils.URL_HOME);
 			return "redirect:" + WebUtils.URL_HOME;
 
@@ -143,7 +151,23 @@ public class CuentaController {
 		}
 	}
 
-	/* CAMBIO DE IDIOMA */
+	/* Cambiar contraseña GET */
+	@PreAuthorize("isAuthenticated()")
+	@RequestMapping(value = WebUtils.REQUEST_MAPPING_CAMBIAR_PASSWORD, method = RequestMethod.GET)
+	public String cambiarPassword(Model model) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+		if (auth.isAuthenticated()) {
+			List<GrantedAuthority> updatedAuthorities = new ArrayList<>(auth.getAuthorities());
+			GrantedAuthority g = new SimpleGrantedAuthority("ROLE_CHANGE_PASSWORD");
+			updatedAuthorities.add(g);
+			Authentication newAuth = new UsernamePasswordAuthenticationToken(auth.getPrincipal(), auth.getCredentials(),
+					updatedAuthorities);
+			SecurityContextHolder.getContext().setAuthentication(newAuth);
+		}
+		return WebUtils.VISTA_CAMBIAR_CONTRASENA;
+	}
+
 	@ModelAttribute("idiomaForm")
 	public IdiomaFormDto idiomaForm() {
 		return new IdiomaFormDto();

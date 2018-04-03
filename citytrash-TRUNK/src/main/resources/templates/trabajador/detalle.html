@@ -3,7 +3,7 @@
 	xmlns:th="http://www.thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{layouts/default}">
+	layout:decorate="~{layouts/default}" th:with="currentPage='recursos'">
 <head>
 <title th:text="#{page_registro}"></title>
 </head>
@@ -34,27 +34,22 @@
 						</div>
 					</div>
 					<div class="panel-body">
-
-
-
 						<div class="row">
-
-
 							<div class="col-lg-9 col-md-9">
-
-
 
 								<ul class="nav nav-tabs">
 									<li class="active"><a data-toggle="tab" href="#Summery"
-										class="text-success"><i class="fa fa-id-card-o"></i>
-											Datos Personales</a></li>
+										class="text-success"><i class="fa fa-id-card-o"></i> Datos
+											Personales</a></li>
 									<li><a data-toggle="tab" href="#Address"
-										class="text-success"><i class="fa fa-address-book-o"></i> Domicilio</a></li>
+										class="text-success"><i class="fa fa-address-book-o"></i>
+											Domicilio</a></li>
 									<li><a data-toggle="tab" href="#Trabajador"
 										class="text-success"><i class="glyphicon glyphicon-user"></i>
 											Trabajador</a></li>
 									<li><a data-toggle="tab" href="#Cuenta"
-										class="text-success"><i class="fa fa-user-circle-o"></i> Cuenta</a></li>
+										class="text-success"><i class="fa fa-user-circle-o"></i>
+											Cuenta</a></li>
 								</ul>
 
 								<!-- tabs content -->
@@ -65,25 +60,26 @@
 												<tbody>
 													<tr>
 														<td class="text-success"><i class="fa fa-user"></i> <label
-															th:text="#{lbl_documento}"></label></td>
-														<td th:text="${trabajador.id}">Trabajador ID</td>
+															class="mayusculas" th:text="#{lbl_documento}"></label></td>
+														<td th:text="${#strings.toUpperCase(trabajador.docId)}">Trabajador
+															ID</td>
 													</tr>
 													<tr>
 														<td class="text-success"><i class="fa fa-user"></i> <label
-															th:text="#{lbl_nombre_apellidos}"></label></td>
+															class="mayusculas" th:text="#{lbl_nombre_apellidos}"></label></td>
 														<td
-															th:text="${trabajador.nombre} + ' ' + ${trabajador.apellidos} ">
+															th:text="${#strings.capitalizeWords(#strings.toLowerCase(trabajador.nombre + ' ' + trabajador.apellidos))}">
 															Nombre completo</td>
 													</tr>
 													<tr>
 														<td class="text-success"><i
 															class="glyphicon glyphicon-calendar"></i> <label
-															th:text="#{lbl_fechaNacimiento}"></label></td>
+															class="mayusculas" th:text="#{lbl_fechaNacimiento}"></label></td>
 
 														<td>
 															<!-- http://www.baeldung.com/dates-in-thymeleaf -->
 															<p th:if="${trabajador.FecNac != null}"
-																th:with="df=#{date.format}"
+																th:with="df=#{fecha_formato}"
 																th:text="${#dates.format(trabajador.FecNac, df)}"></p>
 														</td>
 													</tr>
@@ -91,13 +87,13 @@
 														<td class="text-success"><i
 															class="glyphicon glyphicon-envelope"></i> <label
 															th:text="#{lbl_email}"></label></td>
-														<td>English</td>
+														<td th:text="${#strings.toLowerCase(trabajador.email)}"></td>
 													</tr>
 													<tr>
 														<td class="text-success"><i
 															class="glyphicon glyphicon-earphone"></i> <label
 															th:text="#{lbl_telefono}"></label></td>
-														<td>12-F</td>
+														<td th:text="${trabajador.telefono}"></td>
 													</tr>
 													<tr>
 														<td class="text-success"><i class="fa fa-calendar"></i>

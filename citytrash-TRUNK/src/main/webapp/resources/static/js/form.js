@@ -9,7 +9,28 @@ jQuery(function($) {
 	/*http://librosweb.es/libro/fundamentos_jquery/capitulo_7/metodos_ajax_de_jquery.html*/
 	/*https://codingsomething.wordpress.com/2011/04/23/libro-gratuito-on-line-sobre-jquery/*/
 
+	/*
+	jQuery('ul.nav li.dropdown').hover(function() {
+		jQuery(this).find('.dropdown-menu').stop(true, true).delay(200).fadeIn();
+	}, function() {
+		jQuery(this).find('.dropdown-menu').stop(true, true).delay(200).fadeOut();
+	}); */
+
+	/*
+	jQuery('ul.nav li.dropdown').hover(function() {
+		jQuery(this).find('.dropdown-menu').stop(true, true).delay(200).fadeIn();
+		jQuery(this).addClass('open');
+	}, function() {
+		jQuery(this).find('.dropdown-menu').stop(true, true).hide();
+		jQuery(this).removeClass('open');
+	});*/
+
 	$(document).ready(function() {
+
+		/* Dropdowns on Hover and on Click*/
+		$('.dropdown').on('mouseenter mouseleave click tap', function() {
+			$(this).toggleClass("open");
+		});
 
 		$('select[id$=-status][id^=id_item-]').change(
 			function() {

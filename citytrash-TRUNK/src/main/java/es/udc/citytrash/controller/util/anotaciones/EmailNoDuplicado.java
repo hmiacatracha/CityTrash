@@ -23,7 +23,7 @@ import javax.validation.Payload;
 @Documented
 public @interface EmailNoDuplicado {
 
-	String message() default "{validador.NotDuplicatedEmai}";
+	String message() default "{constraints.duplicated.email}";
 
 	Class<?>[] groups() default {};
 

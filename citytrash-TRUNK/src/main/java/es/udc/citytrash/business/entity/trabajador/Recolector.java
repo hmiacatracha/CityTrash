@@ -7,7 +7,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 @Entity
-@DiscriminatorValue(value = "RECOLECTOR")
+@DiscriminatorValue(value = "1")
 public class Recolector extends Trabajador implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -21,31 +21,29 @@ public class Recolector extends Trabajador implements Serializable {
 	/***
 	 * Recolector
 	 * 
-	 * @param documento
-	 * @param nombre
-	 * @param apellidos
-	 * @param rol
-	 * @param email
-	 * @param fechaNacimiento
-	 * @param token
-	 * @param fechaExpiracionToken
+	 * @param documento coducmento id del trabajador (DNI, passaporte, etc)
+	 * @param nombre nombre del trabajador
+	 * @param apellidos apellido del trabajador
+	 * @param email email del trabajador
+	 * @param fechaNacimiento fecha_nacimiento
+	 * @param token token del trabajador
+	 * @param fechaExpiracionToken fecha de expiracion
 	 */
-	public Recolector(String documento, String nombre, String apellidos, String rol, String email,Calendar fechaNacimiento, String token,
+	public Recolector(String documento, String nombre, String apellidos, String email,Calendar fechaNacimiento, String token,
 			Calendar fechaExpiracionToken) {
-		super(documento, nombre, apellidos, rol, email,fechaNacimiento, token, fechaExpiracionToken);
+		super(documento, nombre, apellidos, "ROLE_USER", email,fechaNacimiento, token, fechaExpiracionToken);
 	}
 
 	/**
 	 * Recolector
 	 * 
-	 * @param documento
-	 * @param nombre
-	 * @param apellidos
-	 * @param rol
-	 * @param email
+	 * @param documento documento id
+	 * @param nombre nombre del trabajador
+	 * @param apellidos apellidos del trabajador
+	 * @param email email
 	 */
-	public Recolector(String documento, String nombre, String apellidos, String rol, String email) {
-		super(documento, nombre, apellidos, rol, email);
+	public Recolector(String documento, String nombre, String apellidos, String email) {
+		super(documento, nombre, apellidos, "ROLE_USER", email);
 	}
 
 }

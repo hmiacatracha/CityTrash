@@ -33,7 +33,7 @@ import es.udc.citytrash.controller.util.validadores.CamposIgualesImpl;
 @Documented
 public @interface CamposIguales {
 
-	String message() default "{validador.fieldmatch}";
+	String message() default "{constraints.fieldmatch}";
 
 	Class<?>[] groups() default {};
 

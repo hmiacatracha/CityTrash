@@ -1,140 +1,210 @@
-
+<!DOCTYPE HTML>
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:th="http://www.thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 
-<body>
-	<!-- http://softpei.blogspot.com.es/2017/02/agregarle-bootstrap-3-submenu-de-varios.html -->
+<nav th:fragment="nav(m)"
+	class="navbar navbar-default navbar-static-top">
 
-	<nav th:fragment="nav(m)"
-		class="navbar navbar-inverse navbar-static-top">
-		<div class="container">
-			<!--
-		<div class="header">
-			<h2>CityTrash</h2>
-			<p>Scroll down to see the sticky effect.</p>
-		</div>-->
-			<div class="header">
-				<!-- <img th:src="@{/resources/static/img/ciudad.png}" alt="logo"> </img>  -->
-			</div>
+	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+		<img th:src="@{/resources/static/img/header.png}"
+			class="img-responsive" />
+	</div>
 
-			<div class="navbar-header">
-				<button type="button" class="navbar-toggle" data-toggle="collapse"
-					data-target=".navbar-collapse">
-					<span class="sr-only"> </span> <span class="icon-bar"></span> <span
-						class="icon-bar"></span> <span class="icon-bar"></span>
-				</button>
+	<div class="container">
 
-				<!--<a class="navbar-brand active" href="#" th:text="#{brand}"><img th:src="@{/resources/static/img/icon.png}"  class="img-responsive"/></a> -->
-				<a class="navbar-brand" href="#" th:text="#{brand}">Project name</a>
-			</div>
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle" data-toggle="collapse"
+				data-target=".navbar-collapse">
+				<span class="sr-only"> </span> <span class="icon-bar"></span> <span
+					class="icon-bar"></span> <span class="icon-bar"></span>
+			</button>
 
-			<div class="collapse navbar-collapse" id="navbar-collapse-1">
-				<ul class="nav navbar-nav">
-
-					<li
-						th:classappend="${#httpServletRequest.getRequestURI() == '/' ? 'active':''}"><a
-						th:href="@{#{link.home}}"> <span
-							class="glyphicon glyphicon-home" aria-hidden="true"></span>&nbsp;
-							<label th:text="#{home}"></label>
-					</a></li>
-
-					<li th:class="${classActiveSettings}"><a th:text="#{about}"
-						th:href="@{#{link.about.us}}"> </a></li>
-
-					<li th:class="dropdown" class="dropdown"><a
-						class="dropdown-toggle" data-toggle="dropdown"
-						th:href="@{#{menu.mapa_link_ref}}" th:text="#{mapa}"> </a>
-						<ul class="dropdown-menu">
-							<li><a th:text="#{contenedores}"
-								th:href="@{#{menu.mapa_contendores_link_ref}}"> </a></li>
-							<li sec:authorize="isAuthenticated()"><a th:text="#{rutas}"
-								th:href="@{#{menu.mapa_rutas_link_ref}}"> </a></li>
-						</ul></li>
-					<li th:class="dropdown" class="dropdown"><a
-						class="dropdown-toggle" data-toggle="dropdown"
-						th:text="#{estadisticas}"
-						th:href="@{#{menu.estadisticas_link_ref}}"> </a>
-						<ul class="dropdown-menu">
-							<li><a th:text="#{reciclado}"
-								th:href="@{#{menu.estadisticas_reciclado_link_ref}}"> </a></li>
-							<li><a th:text="#{pronostico}"
-								th:href="@{#{menu.estadisticas_pronos_realid_link_ref}}"> </a></li>
-						</ul></li>
-					<li th:class="dropdown" class="dropdown"><a
-						class="dropdown-toggle" data-toggle="dropdown"
-						th:text="#{recursos}" th:href="@{#{menu.recursos}}"> </a>
-						<ul class="dropdown-menu dropdown-submenu">
-
-							<li class="dropdown dropdown-submenu"><a
-								class="dropdown-toggle" data-toggle="dropdown"
-								th:text="#{recursos}" th:href="@{#{menu.recursos}}"> </a>
-								<ul class="dropdown-menu">
-									<li><a th:text="#{camiones}"
-										th:href="@{#{menu.recursos_camiones_realid_link_ref}}"> </a></li>
-									<li><a th:text="#{contenedores}"
-										th:href="@{#{menu.recursos_contenedores_realid_link_ref}}">
-									</a></li>
-								</ul></li>
-							<li><a th:text="#{camiones}"
-								th:href="@{#{menu.recursos_camiones_realid_link_ref}}"> </a></li>
-							<li><a th:text="#{contenedores}"
-								th:href="@{#{menu.recursos_contenedores_realid_link_ref}}">
-							</a></li>
-						</ul></li>
-				</ul>
-
-
-
-				<ul class="nav navbar-nav navbar-right"
-					sec:authorize="isAuthenticated()">
-					<li th:if="${#authorization.expression('hasRole(''ROLE_USER'')')}"
-						th:class="${classActiveSettings}"><a href="#"> <label
-							th:text="#{alertas}"> </label> <span class="badge pull-right">3</span>
-					</a></li>
-
-					<li class="dropdown"><a id="user-menu" href="#"
-						class="dropdown-toggle glyphicon glyphicon-user"
-						data-toggle="dropdown" role="button" aria-haspopup="true"
-						aria-expanded="false"> <span class="caret"> </span>
-					</a>
-						<ul class="dropdown-menu">
-							<li class="dropdown-header"
-								th:text="#{navbar.welcome(${#authentication.getName()})}"></li>
-
-							<li><a id="cambioIdioma"
-								th:href="@{#{link.cuenta.idiomaPreferencia}}"> <span
-									class="	 glyphicon-log-out" aria-hidden="true"></span>&nbsp; <label
-									th:text="#{lang.preferencia}"></label>
-							</a></li>
-
-							<li><a id="logout" th:href="@{#{link.logout}}"> <span
-									class="glyphicon glyphicon-log-out" aria-hidden="true">
-								</span>&nbsp; <label th:text="#{logout}"></label>
-							</a></li>
-						</ul></li>
-				</ul>
-
-				<ul th:if="${#authorization.expression('!isAuthenticated()')}"
-					class="nav navbar-nav navbar-right">
-					<li class="dropdown"><a class="dropdown-toggle"
-						aria-haspopup="true" aria-expanded="false" data-toggle="dropdown"
-						href="#"> <label th:text="#{lang.change}"> </label> <span
-							class="caret"></span></a>
-						<ul class="dropdown-menu" id="locales">
-							<li
-								th:each="tipo :
-					${T(es.udc.citytrash.business.entity.idioma.Idioma).values()}">
-								<a href="" th:value="${tipo}" th:text="#{${'lang.' + tipo}}"></a>
-							</li>
-						</ul>
-					<li><a th:href="@{#{link.signin}}"> <span
-							class="glyphicon glyphicon-log-in" aria-hidden="true"></span>&nbsp;
-							<label th:text="#{signin}"></label>
-					</a></li>
-				</ul>
-			</div>
+			<!--<a class="navbar-brand active" href="#" th:text="#{brand}"><img th:src="@{/resources/static/img/icon.png}"  class="img-responsive"/></a> -->
+			<a class="navbar-brand" href="#" th:text="#{brand}">Project name</a>
 		</div>
-	</nav>
-</body>
+
+		<div class="collapse navbar-collapse" id="navbar-collapse-1">
+			<ul class="nav navbar-nav">
+				<li th:classappend="${currentPage == 'home'} ? 'active'"><a
+					th:href="@{#{link.home}}"> <span
+						class="glyphicon glyphicon-home" aria-hidden="true"></span>&nbsp;
+						<label th:text="#{home}"></label>
+				</a></li>
+
+				<li th:classappend="${currentPage == 'about'} ? 'active'"><a
+					th:text="#{about}" th:href="@{#{link.about.us}}"> </a></li>
+
+				<li th:classappend="${currentPage == 'mapa'} ? 'active'"
+					th:class="dropdown" class="dropdown"><a
+					class="dropdown-toggle" data-toggle="dropdown"
+					th:href="@{#{menu.mapa_link_ref}}" th:text="#{mapa}"> </a>
+					<ul class="dropdown-menu">
+						<li><a th:text="#{contenedores}"
+							th:href="@{#{menu.mapa_contendores_link_ref}}"> </a></li>
+						<li sec:authorize="isAuthenticated()"><a th:text="#{rutas}"
+							th:href="@{#{menu.mapa_rutas_link_ref}}"> </a></li>
+					</ul></li>
+				<li th:classappend="${currentPage == 'estadisticas'} ? 'active'"
+					th:class="dropdown" class="dropdown"><a
+					class="dropdown-toggle" data-toggle="dropdown"
+					th:text="#{estadisticas}"
+					th:href="@{#{menu.estadisticas_link_ref}}"> </a>
+					<ul class="dropdown-menu">
+						<li><a th:text="#{reciclado}"
+							th:href="@{#{menu.estadisticas_reciclado_link_ref}}"> </a></li>
+						<li><a th:text="#{pronostico}"
+							th:href="@{#{menu.estadisticas_pronos_realid_link_ref}}"> </a></li>
+					</ul></li>
+
+
+
+				<li th:classappend="${currentPage == 'recursos'} ? 'active'"
+					th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}"
+					th:class="dropdown" class="dropdown"><a
+					class="dropdown-toggle" data-toggle="dropdown"
+					th:text="#{recursos}" th:href="@{#{menu.recursos}}"> </a>
+
+					<ul class="dropdown-menu dropdown-submenu">
+
+						<!-- trabajadores -->
+						<li class="dropdown dropdown-submenu"><a
+							class="dropdown-toggle" data-toggle="dropdown"
+							th:text="#{trabajadores}" th:href="@{#{menu.trabajadores}}">
+						</a>
+							<ul class="dropdown-menu">
+								<li><a th:href="@{#{link.trabajadores.registro}}"> <i
+										class="glyphicon glyphicon-plus"></i> &nbsp; <label
+										th:text="#{lbl_registrar}"></label>
+
+								</a></li>
+								<li><a th:href="@{#{link.trabajadores}}"> <i
+										class="glyphicon glyphicon-list"></i> &nbsp; <label
+										th:text="#{lbl_listado}"></label>
+								</a></li>
+							</ul></li>
+
+						<!-- camiones -->
+						<!-- <i class="fa fa-truck"></i> -->
+						<li class="dropdown dropdown-submenu"><a
+							class="dropdown-toggle" data-toggle="dropdown"
+							th:text="#{camiones}" th:href="@{#{menu.trabajadores}}"> </a>
+							<ul class="dropdown-menu">
+								<li><a th:href="@{#{link.camiones.registro}}"><i
+										class="glyphicon glyphicon-plus"></i> &nbsp; <label
+										th:text="#{lbl_registrar}"></label> </a></li>
+								<li><a th:href="@{#{link.camiones}}"> <i
+										class="glyphicon glyphicon-list"></i> &nbsp; <label
+										th:text="#{lbl_listado}"></label>
+								</a></li>
+							</ul></li>
+						<!-- contenedores -->
+						<li class="dropdown dropdown-submenu"><a
+							class="dropdown-toggle" data-toggle="dropdown"
+							th:text="#{contenedores}" th:href="@{#{menu.trabajadores}}">
+						</a>
+							<ul class="dropdown-menu">
+								<li><a th:href="@{#{link.contenedores.registro}}"> <i
+										class="glyphicon glyphicon-plus"></i> &nbsp; <label
+										th:text="#{lbl_registrar}"></label></a></li>
+								<li><a th:href="@{#{link.contenedores}}"><i
+										class="glyphicon glyphicon-list"></i> &nbsp; <label
+										th:text="#{lbl_listado}"></label> </a></li>
+							</ul></li>
+						<!-- sensores -->
+						<li class="dropdown dropdown-submenu"><a
+							class="dropdown-toggle" data-toggle="dropdown"
+							th:text="#{sensores}" th:href="@{#{menu.trabajadores}}"> </a>
+							<ul class="dropdown-menu">
+								<li><a th:href="@{#{link.sensores.registro}}"> <i
+										class="glyphicon glyphicon-plus"></i> &nbsp; <label
+										th:text="#{lbl_registrar}"></label></a></li>
+								<li><a th:href="@{#{link.sensores}}"> <i
+										class="glyphicon glyphicon-list"></i> &nbsp; <label
+										th:text="#{lbl_listado}"></label>
+								</a></li>
+							</ul></li>
+
+					</ul></li>
+			</ul>
+
+
+
+			<ul id="menuUsuarioAutenticado" class="nav navbar-nav navbar-right"
+				sec:authorize="isAuthenticated()">
+
+				<li th:classappend="${currentPage == 'alertas'} ? 'active'"
+					th:if="${#authorization.expression('hasRole(''ROLE_USER'')')}"
+					th:class="${classActiveSettings}"><a href="#"> <label
+						th:text="#{alertas}"> </label> <span class="badge pull-right">
+							4 </span>
+				</a></li>
+
+				<li th:classappend="${currentPage == 'cuenta'} ? 'active'"
+					class="dropdown"><a id="user-menu" href="#"
+					class="dropdown-toggle glyphicon glyphicon-user"
+					data-toggle="dropdown" role="button" aria-haspopup="true"
+					aria-expanded="false"> <span class="caret"> </span>
+				</a>
+
+					<ul id="cuenta" class="dropdown-menu">
+						<!-- th:text="#{navbar.welcome(${#authentication.getName()})}" -->
+						<li id="usuarioAutenticado" class="dropdown-header"
+							style="font-size: 18px" th:usuario="${#authentication.getName()}"
+							th:text="${#authentication.getName()}"></li>
+						<!-- separador -->
+						<li><a id="cambioPassword" th:href="@{#{link.cuenta.perfil}}">
+								<i class="material-icons" style="font-size: 14px">account_circle</i>
+								&nbsp; <label th:text="#{lbl_perfil}"></label>
+						</a></li>
+
+						<li><a id="cambioIdioma"
+							th:href="@{#{link.cuenta.idiomaPreferencia}}"> <i
+								class="material-icons" style="font-size: 14px">language</i>&nbsp;
+								<label th:text="#{lang.preferencia}"></label>
+						</a></li>
+
+						<li><a id="cambioPassword"
+							th:href="@{#{link.cuenta.cambiar-password}}"> <i class="fa"
+								style="font-size: 14px">&#xf23e;</i> &nbsp; <label
+								th:text="#{lbl_cambiarpassword}"></label>
+						</a></li>
+
+						<!-- separador -->
+
+						<li><a id="logout" th:href="@{#{link.logout}}"> <span
+								class="glyphicon glyphicon-log-out" style="font-size: 20px"
+								aria-hidden="true"> </span>&nbsp; <label th:text="#{logout}"></label>
+						</a></li>
+					</ul></li>
+			</ul>
+
+			<ul id="menuUsuarioNoAutenticado"
+				th:if="${#authorization.expression('!isAuthenticated()')}"
+				class="nav navbar-nav navbar-right">
+
+				<li class="dropdown"><a class="dropdown-toggle"
+					aria-haspopup="true" aria-expanded="false" data-toggle="dropdown"
+					href="#"> <i class="material-icons" style="font-size: 14px">language</i>&nbsp;
+						<label th:text="#{lang.change}"> </label> <span class="caret">
+					</span>
+				</a>
+					<ul class="dropdown-menu" id="locales">
+						<li
+							th:each="tipo :${T(es.udc.citytrash.business.entity.idioma.Idioma).values()}">
+							<a href="#" th:href="@{'?lang=' + ${tipo}}" th:value="${tipo}"
+							th:text="#{${'lang.' + tipo}}"> </a>
+						</li>
+					</ul></li>
+
+				<li th:classappend="${currentPage == 'login'} ? 'active'" id="login"><a
+					th:href="@{#{link.signin}}"> <span
+						class="glyphicon glyphicon-log-in" aria-hidden="true"></span>&nbsp;
+						<label th:text="#{signin}"></label>
+				</a></li>
+			</ul>
+		</div>
+	</div>
+</nav>
+
 </html>

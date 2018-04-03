@@ -1,5 +1,8 @@
 package es.udc.citytrash.controller;
 
+import java.util.Locale;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
@@ -12,18 +15,24 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.servlet.LocaleResolver;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
+import es.udc.citytrash.business.entity.idioma.Idioma;
 import es.udc.citytrash.business.service.cuenta.UserService;
 import es.udc.citytrash.business.service.trabajador.TrabajadorService;
 import es.udc.citytrash.business.util.excepciones.InactiveCountException;
 import es.udc.citytrash.business.util.excepciones.InstanceNotFoundException;
 import es.udc.citytrash.business.util.excepciones.TokenInvalidException;
+import es.udc.citytrash.controller.cuenta.CustomUserDetails;
 import es.udc.citytrash.controller.util.WebUtils;
+import es.udc.citytrash.controller.util.anotaciones.UsuarioActual;
 
 @Controller
 public class PublicController {
@@ -38,8 +47,22 @@ public class PublicController {
 
 	/* HOME */
 	@RequestMapping(value = { WebUtils.URL_HOME, WebUtils.URL_HOME1, WebUtils.URL_HOME2 }, method = RequestMethod.GET)
-	public String index(@RequestParam(value = "expired", required = false) String expired,
-			@RequestParam(value = "invalid", required = false) String invalid) {
+	public String index(@UsuarioActual CustomUserDetails usuario, HttpServletRequest request,
+			HttpServletResponse response) {
+
+		/* Usuario autenticado */
+		if (usuario != null) {
+			String lang = request.getLocale().toLanguageTag();
+			Idioma idioma;
+			try {
+				idioma = userService.obtenerIdiomaPreferencia(usuario.getPerfil().getId());
+			} catch (es.udc.citytrash.business.util.excepciones.InstanceNotFoundException e) {
+				idioma = Idioma.es;
+			}
+			lang = idioma.toString().toLowerCase();
+			RequestContextUtils.getLocaleResolver(request).setLocale(request, response, new Locale(lang));
+			logger.info("HOME IDIOMA lang =>" + lang);
+		}
 		return WebUtils.VISTA_HOME;
 	}
 

@@ -18,76 +18,84 @@ import es.udc.citytrash.controller.util.anotaciones.DocumentoNoDuplicado;
 import es.udc.citytrash.controller.util.anotaciones.EmailNoDuplicado;
 
 /*https://spring.io/guides/gs/validating-form-input/*/
-@CamposIguales(primerCampo = "email", segundoCampo = "confirmarEmail", message = "{fieldMatch_email_alerta}")
+@CamposIguales(primerCampo = "email", segundoCampo = "confirmarEmail", message = "{constraints.fieldmatch.email}")
 public class TrabajadorFormDto {
 
-	private static final String NO_BLACK_MENSAJE = "{notBlank_alerta}";
-	private static final String SIZE_MENSAJE = "{size_alerta}";
-	private static final String EMAIL_MENSAJE = "{email_alerta}";
-	private static final String CP_MENSAJE = "{frm_registro_cp_alerta}";
-	private static final String FECHA_NACIMIENTO_MENSAJE = "{frm_registro_fecha_nac_pas_alerta}";
-	private static final String DATE_FORMAT_MENSAJE = "dd/mm/yyyy";
-	private static final String DNI_NIE_MENSAJE = "{dni_nie_invalido}";
-	private static final String EMAIL_DUPLICADO_MENSAJE = "{frm_registro_email_duplicado}";
-	private static final String DOCUMENTO_DUPLICADO_MENSAJE = "{frm_registro_documento_duplicado}";
-	private static final String NUMERO_MENSAJE = "{frm_registro_numero_calle}";
-	private static final String NUMERO_PISO_MENSAJE = "{frm_registro_numero_piso}";
+	public TrabajadorFormDto() {
 
-	@NotBlank(message = TrabajadorFormDto.NO_BLACK_MENSAJE)
-	@Size(min = 2, max = 50, message = TrabajadorFormDto.SIZE_MENSAJE)
+	}
+
+	public TrabajadorFormDto(String documento, String nombre, String apellidos, String email, Date fechaNacimiento,
+			TipoTrabajador tipo, Idioma idioma) {
+		this.documento = documento;
+		this.nombre = nombre;
+		this.apellidos = apellidos;
+		this.email = email;
+		this.confirmarEmail = email;
+		this.tipo = tipo;
+		this.fechaNacimiento = fechaNacimiento;
+		this.idioma = idioma;
+	}
+
+	@NotBlank
+	@Size(min = 2, max = 50)
 	private String nombre;
 
-	@NotBlank(message = TrabajadorFormDto.NO_BLACK_MENSAJE)
-	@Size(min = 2, max = 50, message = TrabajadorFormDto.SIZE_MENSAJE)
+	@NotBlank
+	@Size(min = 2, max = 50)
 	private String apellidos;
 
-	@NotBlank(message = TrabajadorFormDto.NO_BLACK_MENSAJE)
-	@Email(message = TrabajadorFormDto.EMAIL_MENSAJE)
-	@EmailNoDuplicado(message = TrabajadorFormDto.EMAIL_DUPLICADO_MENSAJE)
+	@NotBlank
+	@Email
+	@EmailNoDuplicado
 	private String email;
 
-	@NotBlank(message = TrabajadorFormDto.NO_BLACK_MENSAJE)
-	@Email(message = TrabajadorFormDto.EMAIL_MENSAJE)
+	@NotBlank
+	@Email
 	private String confirmarEmail;
 
+	// @NotNull
 	private TipoTrabajador tipo;
 
-	@Size(min = 9, max = 9, message = TrabajadorFormDto.SIZE_MENSAJE)
-	@DocumentoNoDuplicado(message = TrabajadorFormDto.DOCUMENTO_DUPLICADO_MENSAJE)
-	@Pattern(regexp = "[0-9X-Z][0-9]{7}[A-Z]", message = TrabajadorFormDto.DNI_NIE_MENSAJE)
+	@Size(min = 9, max = 9)
+	@DocumentoNoDuplicado
+	@Pattern(regexp = "[0-9X-Z][0-9]{7}[A-Z]", message = "{constraints.pattern.documentoId}")
 	private String documento;
 
-	@Size(min = 0, max = 50, message = TrabajadorFormDto.SIZE_MENSAJE)
+	@Size(min = 0, max = 50)
 	private String via;
 
-	@Pattern(regexp = "^(?:[0-9]{1}|[0-9]{2}|[0-9]{3}|)$", message = TrabajadorFormDto.NUMERO_MENSAJE)
+	@Pattern(regexp = "^(?:[0-9]{1}|[0-9]{2}|[0-9]{3}|)$", message = "{constraints.pattern}")
 	private String numero;
 
-	@Pattern(regexp = "^(?:[0-9]{1}|[0-9]{2}|[0-9]{3}|)$", message = TrabajadorFormDto.NUMERO_PISO_MENSAJE)
+	@Pattern(regexp = "^(?:[0-9]{1}|[0-9]{2}|[0-9]{3}|)$", message = "{constraints.pattern}")
 	private String piso;
 
-	@Size(min = 0, max = 50, message = TrabajadorFormDto.SIZE_MENSAJE)
+	@Size(min = 0, max = 50)
 	private String puerta;
 
-	// El código postal en España son cinco números. Los dos primeros van del 01
-	// al 52 y los tres restantes pueden ser cualquier valor numérico
-	@Pattern(regexp = "0[1-9][0-9]{3}|[1-4][0-9]{4}|5[0-2][0-9]{3}", message = TrabajadorFormDto.CP_MENSAJE)
+	@Size(min = 0, max = 5)
+	@Pattern(regexp = "^(0[1-9][0-9]{3}|[1-4][0-9]{4}|5[0-2][0-9]{3})?", message = "{constraints.pattern.cp}")
 	private String cp;
 
-	@NotBlank(message = TrabajadorFormDto.NO_BLACK_MENSAJE)
-	@Past(message = TrabajadorFormDto.FECHA_NACIMIENTO_MENSAJE)
-	@DateTimeFormat(pattern = TrabajadorFormDto.DATE_FORMAT_MENSAJE)
+	@Pattern(regexp = "^([9|6|7][0-9]{8})?", message = "{constraints.pattern.telefono}")
+	@Size(min = 0, max = 9)
+	private String telefono;
+
+	@NotNull
+	@Past
+	@DateTimeFormat(pattern = "dd/mm/yyyy")
 	private Date fechaNacimiento;
 
-	@Size(min = 0, max = 255, message = TrabajadorFormDto.SIZE_MENSAJE)
+	@Size(min = 0, max = 255)
 	private String localidad;
 
-	@Size(min = 0, max = 255, message = TrabajadorFormDto.SIZE_MENSAJE)
+	@Size(min = 0, max = 255)
 	private String provincia;
 
 	private String restoDireccion;
 
-	@NotNull(message = TrabajadorFormDto.NO_BLACK_MENSAJE)
+	@NotNull
 	private Idioma idioma;
 
 	public String getNombre() {
@@ -218,12 +226,20 @@ public class TrabajadorFormDto {
 		this.idioma = idioma;
 	}
 
+	public String getTelefono() {
+		return telefono;
+	}
+
+	public void setTelefono(String telefono) {
+		this.telefono = telefono;
+	}
+
 	@Override
 	public String toString() {
-		return "RegistroForm [nombre=" + nombre + ", apellidos=" + apellidos + ", email=" + email + ", confirmarEmail="
-				+ confirmarEmail + ",lang = " + idioma + " tipo=" + tipo + ", documento=" + documento + ", via=" + via
-				+ ", numero=" + numero + ", piso=" + piso + ", puerta=" + puerta + ", cp=" + cp + ", fechaNacimiento="
-				+ fechaNacimiento + ", localidad=" + localidad + ", provincia=" + provincia + ", restoDireccion="
-				+ restoDireccion + "]";
+		return "TrabajadorFormDto [nombre=" + nombre + ", apellidos=" + apellidos + ", email=" + email
+				+ ", confirmarEmail=" + confirmarEmail + ", telefono=" + telefono + ", tipo=" + tipo + ", documento="
+				+ documento + ", via=" + via + ", numero=" + numero + ", piso=" + piso + ", puerta=" + puerta + ", cp="
+				+ cp + ", fechaNacimiento=" + fechaNacimiento + ", localidad=" + localidad + ", provincia=" + provincia
+				+ ", restoDireccion=" + restoDireccion + ", idioma=" + idioma + "]";
 	}
 }

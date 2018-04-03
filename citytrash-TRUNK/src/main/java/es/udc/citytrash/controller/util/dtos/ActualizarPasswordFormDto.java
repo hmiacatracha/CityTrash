@@ -1,18 +1,19 @@
 package es.udc.citytrash.controller.util.dtos;
 
+import javax.validation.constraints.Pattern;
+
 import org.hibernate.validator.constraints.NotBlank;
 
 import es.udc.citytrash.controller.util.anotaciones.CamposIguales;
 
-@CamposIguales(primerCampo = "password", segundoCampo = "repetirPassword", message = "{fieldMatch_password_alerta}")
-public class CambiarPasswordFormDto {
+@CamposIguales(primerCampo = "password", segundoCampo = "repetirPassword", message = "{constraints.fieldmatch.password}")
+public class ActualizarPasswordFormDto {
 
-	private static final String NO_BLACK_MENSAJE = "{notBlank_alerta}";
-
-	@NotBlank(message = NO_BLACK_MENSAJE)
+	@Pattern(regexp = "(?=^.{8,}$)((?=.*\\d)|(?=.*\\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$", message = "{constraints.pattern.password}")
+	@NotBlank
 	private String password;
 
-	@NotBlank(message = NO_BLACK_MENSAJE)
+	@NotBlank
 	private String repetirPassword;
 
 	public String getPassword() {

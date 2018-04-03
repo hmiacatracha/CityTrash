@@ -13,7 +13,7 @@
 				<th:block th:if="${#fields.hasErrors('${registro.*}')}">
 					<br />
 					<div
-						th:replace="fragments/alert :: alert (type='danger', message=#{frm_registro_verificar_alerta})">Alert</div>
+						th:replace="fragments/alert :: alert (type='danger', message=#{verificar_campos_alerta})">Alert</div>
 
 					<ul class="list-group">
 						<li class="list-group-item" th:each="err : ${#fields.errors('*')}"><span
@@ -32,7 +32,8 @@
 							th:text="#{lbl_documento} + '*' "></label>
 
 						<div class="col-sm-9">
-							<input type="text" class="col-sm-6 form-control" id="documento"
+							<input type="text" pattern="[0-9X-Z][0-9]{7}[A-Z]"
+								class="mayusculas col-sm-6 form-control" id="documento"
 								th:placeholder="#{frm_registro_pholder_documento}"
 								th:field="*{documento}" required="required" /> <span
 								class="help-block" th:if="${#fields.hasErrors('documento')}"
@@ -54,7 +55,6 @@
 									class="form-control" id="fechaNacimiento"
 									th:field="*{fechaNacimiento}" th:data-provide="datepicker"
 									th:data-date-format="#{fecha_formato}"
-									th:data-date-language="#{frm_registro_lenguage}"
 									th:data-date-autoclose="true"
 									th:data-date-today-highlight="true"
 									th:data-date-orientation="bottom" required="required" /> <span
@@ -77,8 +77,8 @@
 							th:text="#{lbl_nombre} + '*'"></label>
 
 						<div class="col-sm-9">
-							<input type="text" class="col-sm-6 form-control" id="nombre"
-								th:placeholder="#{frm_registro_pholder_nombre}"
+							<input type="text" class="mayusculas col-sm-6 form-control"
+								id="nombre" th:placeholder="#{frm_registro_pholder_nombre}"
 								th:field="*{nombre}" required="required" /> <span
 								class="help-block" th:if="${#fields.hasErrors('nombre')}"
 								th:errors="*{nombre}"></span>
@@ -89,7 +89,8 @@
 						<label for="apellidos" class="col-sm-3 col-form-label"
 							th:text="#{lbl_apellidos} + '*'"></label>
 						<div class="col-sm-9">
-							<input type="text" class="col-sm-6 form-control" id="apellidos"
+							<input type="text" class="mayusculas col-sm-6 form-control"
+								id="apellidos"
 								th:placeholder="#{frm_registro_pholder_apellidos}"
 								th:field="*{apellidos}" required="required" /> <span
 								class="help-block" th:if="${#fields.hasErrors('apellidos')}"
@@ -103,8 +104,8 @@
 								th:text="#{lbl_email}+ '*'"></label>
 							<div class="col-sm-9">
 								<div class="has-feedback">
-									<input type="email" class="col-sm-6 form-control" id="email"
-										th:placeholder="#{frm_registro_pholder_email}"
+									<input type="email" class="minusculas col-sm-6 form-control"
+										id="email" th:placeholder="#{frm_registro_pholder_email}"
 										th:field="*{email}" required="required" /> <span
 										class="glyphicon glyphicon-envelope form-control-feedback">
 									</span>
@@ -121,7 +122,7 @@
 								th:text="#{lbl_confirmarEmail}+ '*'"></label>
 							<div class="col-sm-9">
 								<div class="has-feedback">
-									<input type="email" class="col-sm-6 form-control"
+									<input type="email" class="minusculas col-sm-6 form-control"
 										id="confirmarEmail"
 										th:placeholder="#{frm_registro_pholder_confirmarEmail}"
 										th:field="*{confirmarEmail}" required="required"
@@ -139,6 +140,24 @@
 					</div>
 
 
+
+					<div class="form-group row">
+						<div
+							th:classappend="${#fields.hasErrors('telefono')}? 'has-error'">
+							<label for="telefono" class="col-sm-3 col-form-label"
+								th:text="#{lbl_telefono}"></label>
+
+							<div class="col-sm-9">
+								<input type="number" maxlength="9" pattern="^([9|6|7][0-9]{8})?"
+									class="mayusculas col-sm-6 form-control" id="telefono"
+									th:placeholder="#{frm_registro_pholder_telefono}"
+									th:field="*{telefono}" /> <span class="help-block"
+									th:if="${#fields.hasErrors('telefono')}"
+									th:errors="*{telefono}"></span>
+							</div>
+						</div>
+					</div>
+
 					<div class="form-group row">
 						<label for="tipoTrabajador" class="col-sm-3 col-form-label"
 							th:text="#{lbl_trabajador_tipo}+ '*'"></label>
@@ -148,8 +167,7 @@
 								<option
 									th:each="tipoTrabajador : ${T(es.udc.citytrash.business.entity.trabajador.TipoTrabajador).values()}"
 									th:value="${tipoTrabajador}"
-									th:text="#{${'trabajador.tipo.' + tipoTrabajador}}">
-   										</option>
+									th:text="#{${'trabajador.tipo.' + tipoTrabajador}}"></option>
 							</select>
 						</div>
 					</div>
@@ -163,8 +181,7 @@
 								id="idioma">
 								<option
 									th:each="lang : ${T(es.udc.citytrash.business.entity.idioma.Idioma).values()}"
-									th:value="${lang}" th:text="#{${'lang.' + lang}}">
-   										</option>
+									th:value="${lang}" th:text="#{${'lang.' + lang}}"></option>
 							</select> <span class="help-block" th:if="${#fields.hasErrors('idioma')}"
 								th:errors="*{idioma}"></span>
 						</div>
@@ -178,9 +195,10 @@
 							<label for="via" class="col-sm-3 col-form-label"
 								th:text="#{lbl_via}"></label>
 							<div class="col-sm-9">
-								<input type="text" class="col-sm-6 form-control" id="via"
-									th:placeholder="#{frm_registro_pholder_via}" th:field="*{via}" />
-								<span class="help-block" th:text="#{frm_registro_via_alerta}"
+								<input type="text" class="mayusculas col-sm-6 form-control"
+									id="via" th:placeholder="#{frm_registro_pholder_via}"
+									th:field="*{via}" /> <span class="help-block"
+									th:text="#{frm_registro_via_alerta}"
 									th:if="${#fields.hasErrors('via')}" th:errors="*{via}"></span>
 							</div>
 						</div>
@@ -191,8 +209,8 @@
 							<label for="numero" class="col-sm-3 col-form-label"
 								th:text="#{lbl_dir_numero}"></label>
 							<div class="col-sm-9">
-								<input type="number" class="col-sm-6 form-control" id="numero"
-									th:placeholder="#{frm_registro_pholder_dir_numero}"
+								<input type="number" class="mayusculas col-sm-6 form-control"
+									id="numero" th:placeholder="#{frm_registro_pholder_dir_numero}"
 									th:field="*{numero}" /> <span class="help-block"
 									th:text="#{frm_registro_numero_alerta}"
 									th:if="${#fields.hasErrors('numero')}" th:errors="*{numero}"></span>
@@ -204,8 +222,8 @@
 							<label for="piso" class="col-sm-3 col-form-label"
 								th:text="#{lbl_dir_piso}"></label>
 							<div class="col-sm-9">
-								<input type="number" class="col-sm-6 form-control" id="piso"
-									th:placeholder="#{frm_registro_pholder_dir_piso}"
+								<input type="number" class="mayusculas col-sm-6 form-control"
+									id="piso" th:placeholder="#{frm_registro_pholder_dir_piso}"
 									th:field="*{piso}" /> <span class="help-block"
 									th:text="#{frm_registro_piso_alerta}"
 									th:if="${#fields.hasErrors('piso')}" th:errors="*{piso}"></span>
@@ -218,8 +236,8 @@
 							<label for="puerta" class="col-sm-3 col-form-label"
 								th:text="#{lbl_puerta}"></label>
 							<div class="col-sm-9">
-								<input type="text" class="col-sm-6 form-control" id="puerta"
-									th:placeholder="#{frm_registro_pholder_puerta}"
+								<input type="text" class="mayusculas col-sm-6 form-control"
+									id="puerta" th:placeholder="#{frm_registro_pholder_puerta}"
 									th:field="*{puerta}" /> <span class="help-block"
 									th:text="#{frm_registro_puerta_alerta}"
 									th:if="${#fields.hasErrors('puerta')}" th:errors="*{puerta}"></span>
@@ -233,7 +251,7 @@
 							<label for="puerta" class="col-sm-3 col-form-label"
 								th:text="#{lbl_restoDireccion}"></label>
 							<div class="col-sm-9">
-								<input type="text" class="col-sm-6 form-control"
+								<input type="text" class="mayusculas col-sm-6 form-control"
 									id="restoDireccion"
 									th:placeholder="#{frm_registro_pholder_restoDireccion}"
 									th:field="*{restoDireccion}" /> <span class="help-block"
@@ -245,6 +263,21 @@
 					</div>
 
 
+					<div class="form-group row">
+						<div th:classappend="${#fields.hasErrors('cp')}? 'has-error'">
+							<label for="cp" class="col-sm-3 col-form-label"
+								th:text="#{lbl_cp}"></label>
+
+							<div class="col-sm-9">
+								<input type="number" maxlength="5"
+									pattern="^(0[1-9][0-9]{3}|[1-4][0-9]{4}|5[0-2][0-9]{3})?"
+									class="mayusculas col-sm-6 form-control" id="cp"
+									th:placeholder="#{frm_registro_pholder_cp}" th:field="*{cp}" />
+								<span class="help-block" th:if="${#fields.hasErrors('cp')}"
+									th:errors="*{cp}"></span>
+							</div>
+						</div>
+					</div>
 
 					<div class="form-group row">
 						<div
@@ -252,7 +285,8 @@
 							<label for="localidad" class="col-sm-3 col-form-label"
 								th:text="#{lbl_localidad}"></label>
 							<div class="col-sm-9">
-								<input type="text" class="col-sm-6 form-control" id="localidad"
+								<input type="text" class="mayusculas col-sm-6 form-control"
+									id="localidad"
 									th:placeholder="#{frm_registro_pholder_localidad}"
 									th:field="*{localidad}" /> <span class="help-block"
 									th:text="#{frm_registro_localidad_alerta}"
@@ -268,7 +302,8 @@
 							<label for="provincia" class="col-sm-3 col-form-label"
 								th:text="#{lbl_provincia}"></label>
 							<div class="col-sm-9">
-								<input type="text" class="col-sm-6 form-control" id="provincia"
+								<input type="text" class="mayusculas col-sm-6 form-control"
+									id="provincia"
 									th:placeholder="#{frm_registro_pholder_provincia}"
 									th:field="*{provincia}" /> <span class="help-block"
 									th:text="#{frm_registro_provincia_alerta}"

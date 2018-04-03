@@ -25,6 +25,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import es.udc.citytrash.business.entity.idioma.Idioma;
 import es.udc.citytrash.business.entity.trabajador.Trabajador;
 import es.udc.citytrash.business.service.trabajador.TrabajadorService;
 import es.udc.citytrash.business.util.excepciones.DuplicateInstanceException;
@@ -33,6 +35,8 @@ import es.udc.citytrash.controller.error.EmployeeNotFoundException;
 import es.udc.citytrash.controller.error.PageNotFoundException;
 import es.udc.citytrash.controller.util.AjaxUtils;
 import es.udc.citytrash.controller.util.WebUtils;
+import es.udc.citytrash.controller.util.anotaciones.UsuarioActual;
+import es.udc.citytrash.controller.util.dtos.TrabajadoDto;
 import es.udc.citytrash.controller.util.dtos.TrabajadorFormDto;
 
 @Controller
@@ -106,12 +110,15 @@ public class TrabajadoresController {
 		logger.info("POST REGISTRO TRABAJADORES");
 
 		if (result.hasErrors()) {
-			if (AjaxUtils.isAjaxRequest(requestedWith))
+			logger.info("POST REGISTRO TRABAJADORES has errores");
+			if (AjaxUtils.isAjaxRequest(requestedWith)) {
 				return WebUtils.VISTA_TRABAJADORES_REGISTRO.concat(" :: registroForm");
+			}
+			logger.info("POST REGISTRO TRABAJADORES has errores no ajax");
 			return WebUtils.VISTA_TRABAJADORES_REGISTRO;
 		}
 		try {
-			tservicio.registrar(user, WebUtils.getURLWithContextPath(request));
+			tservicio.registrar(user, WebUtils.getUrlWithContextPath(request));
 		} catch (DuplicateInstanceException e) {
 			model = duplicateInstanceException(model, e);
 			logger.info(model.toString());
@@ -128,6 +135,15 @@ public class TrabajadoresController {
 		redirectAttributes.addFlashAttribute("success", "ok");
 		redirectAttributes.addFlashAttribute("userAdd", user);
 		return "redirect:/" + WebUtils.URL_TRABAJADORES;
+	}
+
+	/* CAMBIO DE IDIOMA */
+	@ModelAttribute("idiomaPreferencia")
+	public String getIdiomaPreferencia(@UsuarioActual TrabajadoDto perfil) {
+		logger.info("IdiomaPreferenciaControler");
+		Idioma idioma;
+		idioma = Idioma.en;
+		return idioma.name();
 	}
 
 	/* FIN TRABAJADORES */

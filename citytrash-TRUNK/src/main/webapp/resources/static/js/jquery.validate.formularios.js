@@ -9,9 +9,7 @@
 /* http://formvalidation.io/addons/i18n/  => internalizacion de mensajes*/
 
 
-/*$("#testlog").html("PRUEBA")*/
-
-
+/*
 $(document).ready(function() {
 
 
@@ -112,3 +110,6 @@ $(document).ready(function() {
 		},
 	});
 });
+
+
+*/

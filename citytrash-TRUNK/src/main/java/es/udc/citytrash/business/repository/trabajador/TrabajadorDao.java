@@ -41,7 +41,7 @@ public interface TrabajadorDao extends GenericDAO<Trabajador, Long> {
 	/**
 	 * Busca la lista de trabajadores
 	 * 
-	 * @param pageable
+	 * @param pageable pageable
 	 * @return
 	 */
 	Page<Trabajador> buscarTrabajadores(Pageable pageable);

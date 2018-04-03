@@ -12,14 +12,14 @@ public interface EmailNotificacionesService {
 	/**
 	 * Enviar email para activar la cuenta
 	 * 
-	 * @param id
-	 * @param nombre
-	 * @param apellidos
-	 * @param email
-	 * @param token
-	 * @param lang
-	 * @param appUrl
-	 * @param fechaExpiracionToken
+	 * @param id del trabajador
+	 * @param nombre del trabajador
+	 * @param apellidos del trabajador
+	 * @param email del trabajador
+	 * @param token del trabajador
+	 * @param lang idioma de preferncia
+	 * @param appUrl url de la aplicacion
+	 * @param fechaExpiracionToken fecha de expiracion del token
 	 * @return
 	 */
 	public void activacionCuentaEmail(long id, String nombre, String apellidos, String email, String token,
@@ -28,14 +28,14 @@ public interface EmailNotificacionesService {
 	/**
 	 * Enviar email para recuperar cuenta
 	 * 
-	 * @param id
-	 * @param nombre
-	 * @param apellidos
-	 * @param email
-	 * @param token
-	 * @param fechaExpiracionToken
-	 * @param lang
-	 * @param appUrl
+	 * @param id trabajador id
+	 * @param nombre nombre del trabajador
+	 * @param apellidos apellido del trabajador
+	 * @param email email electrónico
+	 * @param token token del trabajador
+	 * @param fechaExpiracionToken fecha de expiracion
+	 * @param lang idioma de preferencia
+	 * @param appUrl url de la aplicacion
 	 */
 
 	public void recuperarCuentaEmail(long id, String nombre, String apellidos, String email, String token,

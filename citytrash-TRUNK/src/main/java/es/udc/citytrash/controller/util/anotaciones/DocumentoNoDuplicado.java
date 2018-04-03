@@ -26,7 +26,7 @@ import es.udc.citytrash.controller.util.validadores.DocumentoNoDuplicadoImpl;
 @Documented
 public @interface DocumentoNoDuplicado {
 
-	String message() default "{validador.notDuplicatedDocumento}";
+	String message() default "{constraints.duplicated.documentoId}";
 
 	Class<?>[] groups() default {};
 

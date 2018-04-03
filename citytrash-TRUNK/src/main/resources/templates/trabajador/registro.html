@@ -3,7 +3,7 @@
 	xmlns:th="http://www.thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{layouts/default}">
+	layout:decorate="~{layouts/default}" th:with="currentPage='recursos'">
 <head>
 <title th:text="#{page_registro}"></title>
 </head>

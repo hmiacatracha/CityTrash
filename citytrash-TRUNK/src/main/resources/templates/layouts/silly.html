@@ -4,12 +4,10 @@
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 
-<head>
 <meta charset="utf-8"></meta>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
 <meta name="description" content=""></meta>
 <meta name="author" content=""></meta>
-
 <link rel="shortcut icon" type="image/png"
 	th:href="@{/resources/static/img/icon.png}"></link>
 <link rel="stylesheet" media="screen"
@@ -17,13 +15,29 @@
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css" />
 
+<!-- fonts -->
 <link rel="stylesheet"
-	th:href="@{/webjars/animate.css/3.5.2/animate.min.css}">
+	href="https://fonts.googleapis.com/css?family=Tangerine">
+<!--fonts -->
+<link href="https://fonts.googleapis.com/css?family=Lustria"
+	rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Merienda+One"
+	rel="stylesheet">
+
+<!-- icons -->
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+	rel="stylesheet">
+
+<!-- owner -->
 <link th:href="@{/resources/static/css/styles.css}" rel="stylesheet"></link>
+
+
 <meta name="author" content="heidy">
 
 <title layout:title-pattern="$LAYOUT_TITLE - $CONTENT_TITLE"></title>
-</head>
+
 
 <body>
 	<div th:replace="fragments/navigation_2 :: nav(${menu})"></div>

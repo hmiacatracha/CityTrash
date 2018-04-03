@@ -49,8 +49,8 @@ public interface UserService {
 	/**
 	 * Recuperar cuenta
 	 * 
-	 * @param email
-	 * @param appUrl
+	 * @param email email del trabajador
+	 * @param appUrl url root de la app
 	 * @throws InstanceNotFoundException
 	 *             No existe ninguna cuenta con el email
 	 */
@@ -74,4 +74,11 @@ public interface UserService {
 	 */
 	void cambiarIdioma(String email, Idioma lang) throws InstanceNotFoundException;
 
+	/**
+	 * obtener idioma de preferencia
+	 * @param trabajadorId
+	 * @return
+	 * @throws InstanceNotFoundException
+	 */
+	Idioma obtenerIdiomaPreferencia(long trabajadorId) throws InstanceNotFoundException;
 }

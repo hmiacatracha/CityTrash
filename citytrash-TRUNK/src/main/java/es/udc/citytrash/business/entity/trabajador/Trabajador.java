@@ -1,6 +1,9 @@
 package es.udc.citytrash.business.entity.trabajador;
 
+import es.udc.citytrash.business.entity.idioma.Idioma;
+
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Calendar;
 
 import javax.persistence.Column;
@@ -17,17 +20,15 @@ import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
+import javax.validation.constraints.Digits;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
-import es.udc.citytrash.business.entity.idioma.Idioma;
-
 @Entity
 @Table(name = "TBL_TRABAJADORES")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "TRABAJADOR_TYPE", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorColumn(name = "TRABAJADOR_TYPE", discriminatorType = DiscriminatorType.INTEGER)
 public abstract class Trabajador implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -40,13 +41,21 @@ public abstract class Trabajador implements Serializable {
 	 * Trabajador
 	 * 
 	 * @param documento
+	 *            documento id del trabajador
 	 * @param nombre
+	 *            nombre del trabajador
 	 * @param apellidos
+	 *            apellidos del trabajador
 	 * @param rol
+	 *            tipo de rol del trabajador
 	 * @param email
+	 *            email del trabajador
 	 * @param fechaNacimiento
+	 *            fecha nacimiento con formato dd/mm/yyyy
 	 * @param token
+	 *            token de activacion de la cuenta o recuperacion de la cuenta
 	 * @param fechaExpiracionToken
+	 *            fecha de expiracion del token
 	 */
 	Trabajador(String documento, String nombre, String apellidos, String rol, String email, Calendar fechaNacimiento,
 			String token, Calendar fechaExpiracionToken) {
@@ -54,7 +63,7 @@ public abstract class Trabajador implements Serializable {
 		this.nombre = nombre;
 		this.rol = rol;
 		this.email = email;
-		this.fecNac = fechaNacimiento;
+		this.fechaNacimiento = fechaNacimiento;
 		this.apellidos = apellidos;
 		this.token = token;
 		this.trabajadorActivo = true;
@@ -114,11 +123,11 @@ public abstract class Trabajador implements Serializable {
 	@Temporal(TemporalType.DATE)
 	@Column(name = "FEC_NAC")
 	public Calendar getFecNac() {
-		return fecNac;
+		return fechaNacimiento;
 	}
 
 	public void setFecNac(Calendar fecNac) {
-		this.fecNac = fecNac;
+		this.fechaNacimiento = fecNac;
 	}
 
 	@Column(name = "EMAIL")
@@ -189,13 +198,24 @@ public abstract class Trabajador implements Serializable {
 		this.puerta = puerta;
 	}
 
+	@Digits(integer = 5, fraction = 0)
 	@Column(name = "CP")
-	public Integer getCp() {
+	public BigDecimal getCp() {
 		return cp;
 	}
 
-	public void setCp(Integer cp) {
+	public void setCp(BigDecimal cp) {
 		this.cp = cp;
+	}
+
+	@Digits(integer = 9, fraction = 0)
+	@Column(name = "TELEFONO")
+	public BigDecimal getTelefono() {
+		return telefono;
+	}
+
+	public void setTelefono(BigDecimal telefono) {
+		this.telefono = telefono;
 	}
 
 	@Column(name = "CUENTA_HABILITADA", nullable = false)
@@ -293,12 +313,21 @@ public abstract class Trabajador implements Serializable {
 		this.fechaExpiracionToken = fechaToken;
 	}
 
+	@Column(name = "TRABAJADOR_TYPE", nullable = false, updatable = false, insertable = false)
+	public int getTrabajadorType() {
+		return trabajadorType;
+	}
+
+	public void setTrabajadorType(int trabajadorType) {
+		this.trabajadorType = trabajadorType;
+	}
+
 	/* Atributos */
 	private long id;
 	private String docId;
 	private String nombre;
 	private String apellidos;
-	private Calendar fecNac;
+	private Calendar fechaNacimiento;
 	private String email;
 	private String password;
 	private String token;
@@ -310,11 +339,14 @@ public abstract class Trabajador implements Serializable {
 	private String puerta;
 	private String Provincia;
 	private String Localidad;
-	private Integer cp;
+	private BigDecimal cp;
+	private BigDecimal telefono;
 	private String restoDireccion;
 	private Boolean cuentaActiva;
 	private Boolean trabajadorActivo;
 	public Calendar fechaCreacion;
 	public Calendar fechaActivacion;
 	private String rol;
+	private int trabajadorType;
+
 }

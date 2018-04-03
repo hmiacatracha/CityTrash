@@ -5,14 +5,11 @@ import org.hibernate.validator.constraints.NotBlank;
 
 public class LoginFormDto {
 
-	private static final String NO_BLACK_MENSAJE = "{notBlank_alerta}";
-	private static final String EMAIL_MENSAJE = "{email_alerta}";
-
-	@NotBlank(message = NO_BLACK_MENSAJE)
-	@Email(message = EMAIL_MENSAJE)
+	@NotBlank
+	@Email
 	private String email;
 
-	@NotBlank(message = NO_BLACK_MENSAJE)
+	@NotBlank
 	private String password;
 
 	public String getEmail() {

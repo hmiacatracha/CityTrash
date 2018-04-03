@@ -7,14 +7,14 @@ import es.udc.citytrash.business.util.excepciones.InstanceNotFoundException;
 
 public interface GenericDAO<T, ID extends Serializable> {
 
-	T findById(ID id) throws InstanceNotFoundException;
+	T buescarById(ID id) throws InstanceNotFoundException;
 
-	List<T> findAll();
+	List<T> buscarTodos();
 
-	T save(T entity);
+	T guardar(T entity);
 
-	void delete(T entity);
+	void eliminar(T entity);
 
-	boolean exists(ID id);
+	boolean existe(ID id);
 
 }

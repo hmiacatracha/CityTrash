@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import es.udc.citytrash.business.entity.trabajador.Trabajador;
 import es.udc.citytrash.business.service.trabajador.TrabajadorService;
 import es.udc.citytrash.business.util.excepciones.InstanceNotFoundException;
 import es.udc.citytrash.controller.util.anotaciones.DocumentoNoDuplicado;

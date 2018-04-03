@@ -3,6 +3,7 @@ package es.udc.citytrash.business.entity.mail;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
 /*http://www.technicalkeeda.com/spring-tutorials/spring-4-sending-email-with-freemarker-template*/
 public class Mail {
 

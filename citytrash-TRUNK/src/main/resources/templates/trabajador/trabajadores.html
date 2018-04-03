@@ -4,7 +4,7 @@
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	xmlns:sd="http://www.thymeleaf.org/spring-data"
-	layout:decorate="~{layouts/default}">
+	layout:decorate="~{layouts/default}" th:with="currentPage='recursos'">
 <head>
 <title th:text="#{page_registro}"></title>
 </head>
@@ -47,6 +47,8 @@
 								th:text="#{frm_trabajadores_apellidos}">Apellidos</a></th>
 							<th><a class="sorted" sd:pagination-sort="rol"
 								th:text="#{frm_trabajadores_rol}">Rol</a></th>
+							<th><a class="sorted" sd:pagination-sort="tipo"
+								th:text="#{lbl_trabajador_tipo}">Tipo Trabajador</a></th>
 							<th>&nbsp;</th>
 						</tr>
 						<tr th:each="trabajador : ${trabajadores.content}">
@@ -56,20 +58,25 @@
 								th:text="${trabajador.id}"> </span></td>
 
 							<td class="align-middle"
-								th:text="${#strings.capitalize(
-                  #strings.replace(trabajador.nombre, '_', ' '))}">
+								th:text="${#strings.capitalizeWords(#strings.toLowerCase(trabajador.nombre))}">
 								nombre</td>
 
 							<td class="align-middle"
-								th:text="${#strings.capitalize(
-                  #strings.replace(trabajador.apellidos, '_', ' '))}">
+								th:text="${#strings.capitalizeWords(#strings.toLowerCase(trabajador.apellidos))}">
 								apellidos</td>
 
 							<td class="align-middle"
 								th:text="${#strings.toUpperCase(
                   #strings.replace(trabajador.rol, '_', ' '))}">
 								rol</td>
+							<!-- 	
+							<td class="align-middle"
+								th:text="${#strings.toUpperCase(
+                  #strings.replace(trabajador.trabajadorType, '_', ' '))}">
+								tipo</td>  -->
 
+							<td class="align-middle"
+								th:text="#{${'trabajador.tipo.' + trabajador.trabajadorType}}">tipo</td>
 							<td>
 								<div class="btn-group text-center">
 									<!-- view details -->
@@ -79,10 +86,7 @@
 									<!-- edit -->
 									<a th:href="@{/auth/trabajadores/editar(id=${trabajador.id})}"
 										class="btn-sm"><i class="glyphicon glyphicon-pencil"></i></a>
-									<!--  print -->
-									<a
-										th:href="@{/auth/trabajadores/imprimir(id=${trabajador.id})}"
-										class="btn-sm"><i class="glyphicon glyphicon-print"></i></a>
+
 									<!-- eliminar -->
 									<a
 										th:href="@{/auth/trabajadores/eliminar(id=${trabajador.id})}"

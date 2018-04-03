@@ -4,7 +4,7 @@
 	xmlns:th="http://www.thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{layouts/default}">
+	layout:decorate="~{layouts/default}" th:with="currentPage='home'">
 <head>
 <title th:text="#{page_index}"></title>
 </head>
@@ -13,9 +13,11 @@
 		<div class="row">
 			<div class="fondoBlanco">
 
-				<th:block th:if="${login!=null}">
+				<span class="lang-sm lang-lbl" lang="en"></span> language.
+
+				<th:block th:if="${cambioCredenciales!=null}">
 					<div
-						th:replace="fragments/alert :: alert (type='success',  message=#{login_ok(${#authentication.getName()})})"></div>
+						th:replace="fragments/alert :: alert (type='success',  message=#{credenciales_ok(${#authentication.getName()})})"></div>
 				</th:block>
 
 				<h3 class="text-center" th:text="#{welcome_header}"></h3>

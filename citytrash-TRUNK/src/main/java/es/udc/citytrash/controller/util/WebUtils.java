@@ -30,10 +30,11 @@ public class WebUtils {
 
 	/* Paquete cuenta */
 	private static final String VISTA_CUENTA_PREFIX = "cuenta/";
-	public static final String VISTA_REINICIAR_CONTRASENA = VISTA_CUENTA_PREFIX + "cambiar-password";
+	public static final String VISTA_REINICIAR_CONTRASENA = VISTA_CUENTA_PREFIX + "reiniciarPassword";
+	public static final String VISTA_CAMBIAR_CONTRASENA = VISTA_CUENTA_PREFIX + "cambiarPassword";
 	public static final String VISTA_LOGIN = VISTA_CUENTA_PREFIX + "login";
 	public static final String VISTA_RECUPERAR_CUENTA = VISTA_CUENTA_PREFIX + "recuperarCuenta";
-	public static final String VISTA_CAMBIAR_IDIOMA = VISTA_CUENTA_PREFIX + "cambiar-idioma";
+	public static final String VISTA_CAMBIAR_IDIOMA = VISTA_CUENTA_PREFIX + "cambiarIdioma";
 
 	/* Paquete about us */
 	private static final String VISTA_ABOUT_PREFIX = "about/";
@@ -70,6 +71,9 @@ public class WebUtils {
 	public static final String URL_CUENTA_RECUPERAR = "/cuenta/recuperar";
 	public static final String REQUEST_MAPPING_CUENTA_RECUPERAR = "recuperar";
 
+	public static final String URL_CAMBIAR_PASSWORD = "/cuenta/cambiarPassword";
+	public static final String REQUEST_MAPPING_CAMBIAR_PASSWORD = "cambiarPassword";
+
 	public static final String URL_CUENTA_RESET_PASSWORD = "/cuenta/reset-password";
 	public static final String REQUEST_MAPPING_CUENTA_RESET_PASSWORD = "reset-password";
 
@@ -82,7 +86,7 @@ public class WebUtils {
 	public static final String URL_CUENTA_CAMBIAR_CONTRASENA = "/cambiarPassword";
 	public static final String REQUEST_MAPPING_CAMBIAR_CONTRASENA = "cuenta/cambiarPassword";
 
-	public static String getURLWithContextPath(HttpServletRequest request) {
+	public static String getUrlWithContextPath(HttpServletRequest request) {
 		return request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
 				+ request.getContextPath();
 	}

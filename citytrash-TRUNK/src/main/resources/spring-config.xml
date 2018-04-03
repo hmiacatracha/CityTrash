@@ -35,7 +35,7 @@
 	<context:component-scan base-package="es.udc.citytrash.business.repository" />
 	<context:component-scan base-package="es.udc.citytrash.business.service" />
 
-	<!-- For translating native persistence exceptions to Spring's DataAccessException 
+	<!-- For transngting native persistence exceptions to Spring's DataAccessException 
 		hierarchy. -->
 	<bean
 		class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />

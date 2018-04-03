@@ -1,5 +1,7 @@
 package es.udc.citytrash.business.service.trabajador;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
@@ -41,10 +43,7 @@ public class TrabajadorServiceImpl implements TrabajadorService {
 		String token = UUID.randomUUID().toString();
 		Calendar fechaExpiracionToken = Calendar.getInstance();
 		fechaExpiracionToken.add(Calendar.HOUR, 24);
-		String rol = "";
 
-		logger.info("Register controller 0");
-		logger.info("Register URL-> " + appUrl);
 		/* Check if the email and the documentoId are not duplicate */
 		try {
 			trabajadorProfileDao.buscarTrabajadorPorEmail(user.getEmail());
@@ -62,57 +61,69 @@ public class TrabajadorServiceImpl implements TrabajadorService {
 			logger.info("Register documento no duplicado");
 		}
 
+		logger.info("trabajadorService paso1");
 		switch (user.getTipo()) {
 		/* ADMINISTRADOR */
 		case ADMIN:
-			rol = "ROLE_ADMIN";
-			Administrador admin = new Administrador(user.getDocumento(), user.getNombre(), user.getApellidos(), rol,
-					user.getEmail(), toCalendar(user.getFechaNacimiento()), token, fechaExpiracionToken);
+			Administrador admin = new Administrador(user.getDocumento(), user.getNombre(), user.getApellidos(),
+					user.getEmail(), dateToCalendar(user.getFechaNacimiento()), token, fechaExpiracionToken);
 			admin.setIdioma(user.getIdioma());
 			admin.setNombreVia(user.getVia());
-			admin.setNumero(esNumero(user.getNumero()) ? Integer.parseInt(user.getNumero()) : null);
-			admin.setPiso(esNumero(user.getPiso()) ? Integer.parseInt(user.getPiso()) : null);
+			admin.setNumero(esInteger(user.getNumero()) ? Integer.parseInt(user.getNumero()) : null);
+			admin.setPiso(esInteger(user.getPiso()) ? Integer.parseInt(user.getPiso()) : null);
 			admin.setPuerta(user.getPuerta());
 			admin.setLocalidad(user.getLocalidad());
 			admin.setProvincia(user.getProvincia());
 			admin.setRestoDireccion(user.getRestoDireccion());
-			trabajadorProfileDao.save(admin);
+			logger.info("trabajadorService paso2");
+			admin.setTelefono(esBigDecimal(user.getTelefono()) ? truncateToBigDecimaRouding(user.getTelefono()) : null);
+			admin.setCp(esBigDecimal(user.getCp()) ? truncateToBigDecimaRouding(user.getCp()) : null);
+			logger.info("trabajadorService paso3");
+			trabajadorProfileDao.guardar(admin);
 			emailService.activacionCuentaEmail(admin.getId(), admin.getNombre(), admin.getApellidos(), admin.getEmail(),
 					token, fechaExpiracionToken, user.getIdioma(), appUrl);
 			trabajador = (Trabajador) admin;
 			break;
 		/* CONDUCTOR */
 		case CONDUCT:
-			rol = "ROLE_USER";
-			Conductor conductor = new Conductor(user.getDocumento(), user.getNombre(), user.getApellidos(), rol,
-					user.getEmail(), toCalendar(user.getFechaNacimiento()), token, fechaExpiracionToken);
+			Conductor conductor = new Conductor(user.getDocumento(), user.getNombre(), user.getApellidos(),
+					user.getEmail(), dateToCalendar(user.getFechaNacimiento()), token, fechaExpiracionToken);
 			conductor.setIdioma(user.getIdioma());
 			conductor.setNombreVia(user.getVia());
-			conductor.setNumero(esNumero(user.getNumero()) ? Integer.parseInt(user.getNumero()) : null);
-			conductor.setPiso(esNumero(user.getPiso()) ? Integer.parseInt(user.getPiso()) : null);
+			conductor.setNumero(esInteger(user.getNumero()) ? Integer.parseInt(user.getNumero()) : null);
+			conductor.setPiso(esInteger(user.getPiso()) ? Integer.parseInt(user.getPiso()) : null);
 			conductor.setPuerta(user.getPuerta());
 			conductor.setLocalidad(user.getLocalidad());
 			conductor.setProvincia(user.getProvincia());
 			conductor.setRestoDireccion(user.getRestoDireccion());
-			trabajadorProfileDao.save(conductor);
+			logger.info("trabajadorService paso2");
+			conductor.setTelefono(
+					esBigDecimal(user.getTelefono()) ? truncateToBigDecimaRouding(user.getTelefono()) : null);
+			conductor.setCp(esBigDecimal(user.getCp()) ? truncateToBigDecimaRouding(user.getCp()) : null);
+			logger.info("trabajadorService paso3");
+			trabajadorProfileDao.guardar(conductor);
 			emailService.activacionCuentaEmail(conductor.getId(), conductor.getNombre(), conductor.getApellidos(),
 					conductor.getEmail(), token, fechaExpiracionToken, conductor.getIdioma(), appUrl);
 			trabajador = (Trabajador) conductor;
 			break;
 		/* RECOLECTOR */
 		default:
-			rol = "ROLE_USER";
-			Recolector recolector = new Recolector(user.getDocumento(), user.getNombre(), user.getApellidos(), rol,
-					user.getEmail(), toCalendar(user.getFechaNacimiento()), token, fechaExpiracionToken);
+			Recolector recolector = new Recolector(user.getDocumento(), user.getNombre(), user.getApellidos(),
+					user.getEmail(), dateToCalendar(user.getFechaNacimiento()), token, fechaExpiracionToken);
 			recolector.setIdioma(user.getIdioma());
 			recolector.setNombreVia(user.getVia());
-			recolector.setNumero(esNumero(user.getNumero()) ? Integer.parseInt(user.getNumero()) : null);
-			recolector.setPiso(esNumero(user.getPiso()) ? Integer.parseInt(user.getPiso()) : null);
+			recolector.setNumero(esInteger(user.getNumero()) ? Integer.parseInt(user.getNumero()) : null);
+			recolector.setPiso(esInteger(user.getPiso()) ? Integer.parseInt(user.getPiso()) : null);
 			recolector.setPuerta(user.getPuerta());
 			recolector.setLocalidad(user.getLocalidad());
 			recolector.setProvincia(user.getProvincia());
 			recolector.setRestoDireccion(user.getRestoDireccion());
-			trabajadorProfileDao.save(recolector);
+			logger.info("trabajadorService paso2");
+			recolector.setTelefono(
+					esBigDecimal(user.getTelefono()) ? truncateToBigDecimaRouding(user.getTelefono()) : null);
+			recolector.setCp(esBigDecimal(user.getCp()) ? truncateToBigDecimaRouding(user.getCp()) : null);
+			logger.info("trabajadorService paso3");
+			trabajadorProfileDao.guardar(recolector);
 			emailService.activacionCuentaEmail(recolector.getId(), user.getNombre(), user.getApellidos(),
 					user.getEmail(), token, fechaExpiracionToken, user.getIdioma(), appUrl);
 			trabajador = (Trabajador) recolector;
@@ -122,7 +133,7 @@ public class TrabajadorServiceImpl implements TrabajadorService {
 
 	@Override
 	public Trabajador buscarTrabajador(long id) throws InstanceNotFoundException {
-		Trabajador t = trabajadorProfileDao.findById(id);
+		Trabajador t = trabajadorProfileDao.buescarById(id);
 		return t;
 	}
 
@@ -142,7 +153,7 @@ public class TrabajadorServiceImpl implements TrabajadorService {
 		return trabajadores;
 	}
 
-	private static boolean esNumero(String cadena) {
+	private static boolean esInteger(String cadena) {
 		try {
 			Integer.parseInt(cadena);
 			return true;
@@ -151,10 +162,35 @@ public class TrabajadorServiceImpl implements TrabajadorService {
 		}
 	}
 
-	public static Calendar toCalendar(Date date) {
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(date);
-		return cal;
+	private static boolean esBigDecimal(String cadena) {
+		if (cadena.isEmpty())
+			return false;
+		try {
+			Double.parseDouble(cadena);
+			BigDecimal bigDecimal = new BigDecimal(cadena);
+			return true;
+		} catch (NumberFormatException e) {
+			return false;
+		}
 	}
 
+	// Convert Date to Calendar
+	private static Calendar dateToCalendar(Date date) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		return calendar;
+
+	}
+
+	// Convert Calendar to Date
+	private static Date calendarToDate(Calendar calendar) {
+		return calendar.getTime();
+	}
+
+	private static BigDecimal truncateToBigDecimaRouding(String text) {
+		BigDecimal bigDecimal = new BigDecimal(text);
+		if (bigDecimal.scale() > 2)
+			bigDecimal = new BigDecimal(text).setScale(2, RoundingMode.HALF_UP);
+		return bigDecimal.stripTrailingZeros();
+	}
 }
