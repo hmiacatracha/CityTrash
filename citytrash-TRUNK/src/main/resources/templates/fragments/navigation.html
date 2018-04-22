@@ -134,7 +134,7 @@
 				sec:authorize="isAuthenticated()">
 
 				<li th:classappend="${currentPage == 'alertas'} ? 'active'"
-					th:if="${#authorization.expression('hasRole(''ROLE_USER'')')}"
+					th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}"
 					th:class="${classActiveSettings}"><a href="#"> <label
 						th:text="#{alertas}"> </label> <span class="badge pull-right">
 							4 </span>
@@ -150,17 +150,17 @@
 					<ul id="cuenta" class="dropdown-menu">
 						<!-- th:text="#{navbar.welcome(${#authentication.getName()})}" -->
 						<li id="usuarioAutenticado" class="dropdown-header"
-							style="font-size: 18px" th:usuario="${#authentication.getName()}"
+							th:usuario="${#authentication.getName()}"
 							th:text="${#authentication.getName()}"></li>
 						<!-- separador -->
 						<li><a id="cambioPassword" th:href="@{#{link.cuenta.perfil}}">
-								<i class="material-icons" style="font-size: 14px">account_circle</i>
+								<i class="material-icons fa-lg" style="font-size: 14px">account_circle</i>
 								&nbsp; <label th:text="#{lbl_perfil}"></label>
 						</a></li>
 
 						<li><a id="cambioIdioma"
 							th:href="@{#{link.cuenta.idiomaPreferencia}}"> <i
-								class="material-icons" style="font-size: 14px">language</i>&nbsp;
+								class="material-icons fa-lg" style="font-size: 14px">language</i>&nbsp;
 								<label th:text="#{lang.preferencia}"></label>
 						</a></li>
 
@@ -171,10 +171,10 @@
 						</a></li>
 
 						<!-- separador -->
-
 						<li><a id="logout" th:href="@{#{link.logout}}"> <span
-								class="glyphicon glyphicon-log-out" style="font-size: 20px"
-								aria-hidden="true"> </span>&nbsp; <label th:text="#{logout}"></label>
+								class="glyphicon glyphicon-log-out text-success"
+								style="font-size: 18px" aria-hidden="true"> </span>&nbsp; <label
+								class="text-success" th:text="#{logout}"></label>
 						</a></li>
 					</ul></li>
 			</ul>
@@ -191,7 +191,7 @@
 				</a>
 					<ul class="dropdown-menu" id="locales">
 						<li
-							th:each="tipo :${T(es.udc.citytrash.business.entity.idioma.Idioma).values()}">
+							th:each="tipo :${T(es.udc.citytrash.util.enums.Idioma).values()}">
 							<a href="#" th:href="@{'?lang=' + ${tipo}}" th:value="${tipo}"
 							th:text="#{${'lang.' + tipo}}"> </a>
 						</li>

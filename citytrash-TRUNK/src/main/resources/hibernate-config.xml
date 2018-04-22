@@ -17,10 +17,10 @@
 		<property name="hibernate.connection.useUnicode">${hibernate.useunicode}</property>
 
 		<!-- mapping -->
-		<mapping class="es.udc.citytrash.business.entity.prioridad.Prioridad" />
-		<mapping class="es.udc.citytrash.business.entity.trabajador.Trabajador" />
-		<mapping class="es.udc.citytrash.business.entity.trabajador.Conductor" />
-		<mapping class="es.udc.citytrash.business.entity.trabajador.Recolector" />
-		<mapping class="es.udc.citytrash.business.entity.trabajador.Administrador" />
+		<mapping class="es.udc.citytrash.model.prioridad.Prioridad" />
+		<mapping class="es.udc.citytrash.model.trabajador.Trabajador" />
+		<mapping class="es.udc.citytrash.model.trabajador.Conductor" />
+		<mapping class="es.udc.citytrash.model.trabajador.Recolector" />
+		<mapping class="es.udc.citytrash.model.trabajador.Administrador" />
 	</session-factory>
 </hibernate-configuration>

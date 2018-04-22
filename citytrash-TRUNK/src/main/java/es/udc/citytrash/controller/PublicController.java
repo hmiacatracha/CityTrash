@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -24,15 +25,14 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
-import es.udc.citytrash.business.entity.idioma.Idioma;
-import es.udc.citytrash.business.service.cuenta.UserService;
-import es.udc.citytrash.business.service.trabajador.TrabajadorService;
-import es.udc.citytrash.business.util.excepciones.InactiveCountException;
-import es.udc.citytrash.business.util.excepciones.InstanceNotFoundException;
-import es.udc.citytrash.business.util.excepciones.TokenInvalidException;
 import es.udc.citytrash.controller.cuenta.CustomUserDetails;
 import es.udc.citytrash.controller.util.WebUtils;
 import es.udc.citytrash.controller.util.anotaciones.UsuarioActual;
+import es.udc.citytrash.model.trabajadorService.TrabajadorService;
+import es.udc.citytrash.model.usuarioService.UsuarioService;
+import es.udc.citytrash.model.util.excepciones.InstanceNotFoundException;
+import es.udc.citytrash.model.util.excepciones.TokenInvalidException;
+import es.udc.citytrash.util.enums.Idioma;
 
 @Controller
 public class PublicController {
@@ -41,7 +41,7 @@ public class PublicController {
 	TrabajadorService tservicio;
 
 	@Autowired
-	UserService userService;
+	UsuarioService usuarioService;
 
 	final Logger logger = LoggerFactory.getLogger(PublicController.class);
 
@@ -55,8 +55,8 @@ public class PublicController {
 			String lang = request.getLocale().toLanguageTag();
 			Idioma idioma;
 			try {
-				idioma = userService.obtenerIdiomaPreferencia(usuario.getPerfil().getId());
-			} catch (es.udc.citytrash.business.util.excepciones.InstanceNotFoundException e) {
+				idioma = usuarioService.obtenerIdiomaPreferencia(usuario.getPerfil().getId());
+			} catch (es.udc.citytrash.model.util.excepciones.InstanceNotFoundException e) {
 				idioma = Idioma.es;
 			}
 			lang = idioma.toString().toLowerCase();
@@ -126,11 +126,11 @@ public class PublicController {
 	}
 
 	@ResponseStatus(HttpStatus.FORBIDDEN)
-	@ExceptionHandler(InactiveCountException.class)
-	public Model InactiveCountException(Model model, InactiveCountException ex) {
-		logger.info("ExceptionHandler TokenInvalidoException");
+	@ExceptionHandler(DisabledException.class)
+	public Model InactiveCountException(Model model, DisabledException ex) {
+		logger.info("ExceptionHandler DisabledException");
 		model.addAttribute("error", ex);
-		model.addAttribute("type", "TokenInvalidoException");
+		model.addAttribute("type", "DisabledException");
 		model.addAttribute("key", ex.getMessage());
 		return model;
 	}

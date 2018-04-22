@@ -29,11 +29,9 @@
 		resources are still served by the containers default servlet. Requires Spring 
 		Framework 3.0 or higher. -->
 	<mvc:default-servlet-handler />
-
 	<!-- Enable component scanning for defining beans with annotations. -->
-	<context:component-scan base-package="es.udc.citytrash.business.entity" />
-	<context:component-scan base-package="es.udc.citytrash.business.repository" />
-	<context:component-scan base-package="es.udc.citytrash.business.service" />
+	<context:component-scan base-package="es.udc.citytrash.model" />
+	<!-- <context:component-scan base-package="es.udc.citytrash.service" /> -->
 
 	<!-- For transngting native persistence exceptions to Spring's DataAccessException 
 		hierarchy. -->

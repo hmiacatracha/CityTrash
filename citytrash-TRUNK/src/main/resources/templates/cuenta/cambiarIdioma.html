@@ -27,16 +27,15 @@
 
 		<form id="cambiarIdiomaForm" role="form"
 			class="form-narrow form-horizontal" method="post" action="#"
-			th:action="@{#{link.cuenta.idiomaPreferencia}}" th:object="${idiomaForm}"
-			th:fragment="idiomaPreferencia">
+			th:action="@{#{link.cuenta.idiomaPreferencia}}"
+			th:object="${idiomaForm}" th:fragment="idiomaPreferencia">
 
 			<fieldset>
 				<div th:classappend="${#fields.hasErrors('idioma')}? 'has-error'">
 					<select th:field="*{idioma}" class="form-control" id="idioma">
 						<option
-							th:each="lang : ${T(es.udc.citytrash.business.entity.idioma.Idioma).values()}"
-							th:value="${lang}" th:text="#{${'lang.' + lang}}">
-   										</option>
+							th:each="lang : ${T(es.udc.citytrash.util.enums.Idioma).values()}"
+							th:value="${lang}" th:text="#{${'lang.' + lang}}"></option>
 					</select> <br> <span class="help-block"
 						th:if="${#fields.hasErrors('idioma')}" th:errors="*{idioma}"></span>
 				</div>

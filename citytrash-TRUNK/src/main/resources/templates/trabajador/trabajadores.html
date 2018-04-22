@@ -6,119 +6,194 @@
 	xmlns:sd="http://www.thymeleaf.org/spring-data"
 	layout:decorate="~{layouts/default}" th:with="currentPage='recursos'">
 <head>
-<title th:text="#{page_registro}"></title>
+<title th:text="#{page_trabajadores}"></title>
 </head>
 
 <body class="blanco">
-	<div id="viewBody" class="container" th:fragment="content">
+	<div id="content" class="container" th:fragment="content">
+		<!-- pagination size and add button -->
+		<div class="form-group row">
+			<div class="col-xs-6">
+				<div class="pull-left">
+					<button id="registrarBtn" type="button" class="btn btn-default"
+						data-toggle="modal" data-target="#registroDialog">
+						<i class="glyphicon glyphicon-plus" data-toggle="tooltip"
+							th:title="#{frm_trabajadores_registro}"></i>
+					</button>
+				</div>
+			</div>
+			<div class="col-xs-6">
+				<div class="pull-right">
+					<!-- page size selector (dropdown) -->
+					<div id="size_page_selector" class="dbtn-group dropup"
+						sd:page-size-selector="dropdown" data-toggle="tooltip"
+						th:title="#{page_size}"></div>
+					<!-- //page size selector -->
+				</div>
+			</div>
+		</div>
+		<!-- FIN pagination size and add button -->
+
+		<h2 class="text-success text-center" th:text="#{page_trabajadores}"></h2>
+
 		<div class="row">
-			<div class="col-sm-10 col-sm-offset-1">
-				<h1 class="text-center" th:text="#{frm_trabajadores_header}"></h1>
-				<div th:fragment="register-success">
-					<th:block th:if="${success!=null}">
-						<div
-							th:replace="fragments/alert :: alert (type='success', message=#{frm_registro_ok(${userAdd.nombre})})">Alert</div>
-						<p></p>
-					</th:block>
-				</div>
+			<!-- search form -->
+			<div id="searchForm" class="col-xs-12 col-sm-12">
+				<form id="busquedaTrabajadoresForm" role="form"
+					class="form-narrow form-horizontal" method="post" action="#"
+					th:action="@{#{link.trabajadores}}"
+					th:object="${busquedaTrabajadoresForm}"
+					th:fragment="busquedaTrabajadoresForm">
+					<fieldset>
+						<div class="form-group row">
+							<!-- tipo de trabajador -->
+							<div class="col-xs-12 col-sm-2">
+								<select th:field="*{tipo}" class="form-control mySelect"
+									data-style="btn-default" id="tipoTrabajador">
+									<option
+										th:each="tipoTrabajador : ${T(es.udc.citytrash.util.enums.TipoTrabajador).values()}"
+										th:value="${tipoTrabajador}"
+										th:text="#{${'trabajador.tipo.withNone.' + tipoTrabajador}}"></option>
+								</select>
+							</div>
 
-				<div class="pull-left row">
-					<a id="registro" data-toggle="modal" href="#registroDialog"><span
-						class="glyphicon glyphicon-plus"></span><label
-						th:text="#{frm_trabajadores_registro}"></label></a>
-				</div>
+							<!-- tipo de field -->
+							<div class="col-xs-12 col-sm-2">
+								<select th:field="*{campo}" class="form-control mySelect"
+									data-style="btn-default" id="tipoTrabajador">
+									<option
+										th:each="campo : ${T(es.udc.citytrash.util.enums.CampoBusqTrabajador).values()}"
+										th:value="${campo}" th:text="#{${'lbl_' + campo}}"></option>
+								</select>
+							</div>
+							<div class="col-xs-10 col-sm-8">
+								<div class=" input-group">
+									<input type="text" class="form-control"
+										th:placeholder="#{lbl_pholder_search}" th:field="*{buscar}">
+									<span class="input-group-btn">
+										<button class="btn btn-success" type="submit"
+											th:text="#{btn_buscar}" th:value="#{btn_buscar_trabajador}">Go!</button>
+									</span>
+								</div>
+							</div>
+						</div>
+					</fieldset>
+				</form>
+			</div>
 
-				<br />
-				<hr>
-				<!-- trabajadores list -->
-				<th:block id="lista" th:if="${trabajadores}"
-					th:fragment="listaTrabajadores">
-				Show <span sd:page-size-selector="default"></span> entries
-					<div class="btn-group dropup" sd:page-size-selector="dropdown"></div>
-
-					<!-- tabla -->
-					<table class="table table-bordered table-striped table-hover">
+			<!-- trabajadores list -->
+			<div id="listaTrabajadoresContent"
+				th:fragment="listaTrabajadoresContent" class="col-xs-12">
+				<!-- tabla -->
+				<table class="table">
+					<thead class="thead-dark">
 						<tr>
 							<th><a class="sorted" sd:pagination-sort="id"
 								th:text="#{frm_trabajadores_id}"> </a></th>
+
+							<th th:text="#{lbl_documento}"></th>
+
 							<th><a class="sorted" sd:pagination-sort="nombre"
 								th:text="#{frm_trabajadores_nombre}"> Name</a></th>
+
 							<th><a class="sorted" sd:pagination-sort="apellidos"
 								th:text="#{frm_trabajadores_apellidos}">Apellidos</a></th>
-							<th><a class="sorted" sd:pagination-sort="rol"
-								th:text="#{frm_trabajadores_rol}">Rol</a></th>
-							<th><a class="sorted" sd:pagination-sort="tipo"
-								th:text="#{lbl_trabajador_tipo}">Tipo Trabajador</a></th>
+
+							<th><a class="sorted" sd:pagination-sort="email"
+								th:text="#{lbl_email}">email</a></th>
+
+							<th><a class="sorted" sd:pagination-sort="trabajadorType"
+								th:text="#{lbl_tipo}">Tipo Trabajador</a></th>
+
+							<th th:text="#{lbl_cp_abr}"></th>
+
+							<th th:text="#{lbl_telefono}"></th>
+
 							<th>&nbsp;</th>
 						</tr>
-						<tr th:each="trabajador : ${trabajadores.content}">
+					</thead>
+
+					<tbody>
+						<tr th:each="trabajador : ${listaTrabajadores.content}">
 							<td class="align-middle"><span
 								class="articleTitle truncated" data-toggle="tooltip"
 								data-placement="bottom" th:title="${trabajador.id}"
 								th:text="${trabajador.id}"> </span></td>
 
 							<td class="align-middle"
+								th:text="${#strings.toUpperCase(trabajador.documento)}">
+								documento</td>
+
+
+							<td class="align-middle"
 								th:text="${#strings.capitalizeWords(#strings.toLowerCase(trabajador.nombre))}">
 								nombre</td>
+
 
 							<td class="align-middle"
 								th:text="${#strings.capitalizeWords(#strings.toLowerCase(trabajador.apellidos))}">
 								apellidos</td>
 
-							<td class="align-middle"
-								th:text="${#strings.toUpperCase(
-                  #strings.replace(trabajador.rol, '_', ' '))}">
-								rol</td>
-							<!-- 	
-							<td class="align-middle"
-								th:text="${#strings.toUpperCase(
-                  #strings.replace(trabajador.trabajadorType, '_', ' '))}">
-								tipo</td>  -->
 
 							<td class="align-middle"
-								th:text="#{${'trabajador.tipo.' + trabajador.trabajadorType}}">tipo</td>
+								th:text="${#strings.toLowerCase(trabajador.email)}">email</td>
+
+							<td class="align-middle"
+								th:text="#{${'trabajador.tipo.' + trabajador.tipo}}">tipo</td>
+
+							<td class="align-middle"
+								th:text="${#strings.toLowerCase(trabajador.cp)}">cp</td>
+
+							<td class="align-middle"
+								th:text="${#strings.toLowerCase(trabajador.telefono)}">telefono</td>
 							<td>
 								<div class="btn-group text-center">
 									<!-- view details -->
 									<a
-										th:href="@{#{link.trabajadores.detalle}(id=${trabajador.id})}"
+										th:href="@{#{link.trabajadores.detalles}(id=${trabajador.id})}"
 										class="btn-sm"><i class="glyphicon glyphicon-eye-open"></i></a>
 									<!-- edit -->
-									<a th:href="@{/auth/trabajadores/editar(id=${trabajador.id})}"
+									<a
+										th:href="@{#{link.trabajadores.editar}(id=${trabajador.id})}"
 										class="btn-sm"><i class="glyphicon glyphicon-pencil"></i></a>
 
 									<!-- eliminar -->
 									<a
-										th:href="@{/auth/trabajadores/eliminar(id=${trabajador.id})}"
+										th:href="@{#{link.trabajadores.eliminar}(id=${trabajador.id})}"
 										class="btn-sm"><i class="glyphicon glyphicon-minus"></i></a>
-
 								</div>
 							</td>
 						</tr>
-					</table>
+					</tbody>
+				</table>
 
-					<!-- fin table -->
+				<!-- fin table -->
 
-					<!-- paginacion -->
-
-					<div class="col-sm-6">
-						<div sd:pagination-summary="compact">info</div>
+				<!-- paginacion -->
+				<div id="pagionationInformation" class="col-xs-12">
+					<div class="col-xs-12">
+						<div class="text-left">
+							<div sd:pagination-summary="info">info</div>
+						</div>
 					</div>
-					<div class="col-sm-6">
-						<nav class="pull-right">
+					<div class="col-xs-12">
+						<nav class="text-right">
 							<ul class="pagination" sd:pagination="full">
-								<!-- Pagination created by SpringDataDialect, this content is just for mockup -->
-								<li class="disabled"><a href="#" aria-label="Previous"><span
+								<li class="btn disabled"><a href="#" aria-label="Previous"><span
 										aria-hidden="true">&laquo;</span></a></li>
-								<li class="active"><a href="#">1 <span class="sr-only">(current)</span></a></li>
+								<li class="btn active"><a href="#">1 <span
+										class="sr-only">(current)</span></a></li>
 							</ul>
 						</nav>
 					</div>
-				</th:block>
+				</div>
+
 				<!-- fin paginacion -->
-				<p th:unless="${trabajadores}">No worker have been created yet.</p>
+				<p th:unless="${listaTrabajadores!=null}">No worker have been
+					created yet.</p>
 				<!-- fin trabajadores list -->
 			</div>
+
 
 			<!-- Registro Modal -->
 			<div id="registroDialog" class="modal fade" role="dialog">
@@ -136,7 +211,7 @@
 						</div>
 						<div class="modal-body" id="registroDialogBody">
 							<div
-								th:replace="trabajador/registroForm :: registroForm(${registro})">
+								th:replace="trabajador/registroForm :: registroForm(${registro}, ${error})">
 							</div>
 						</div>
 						<div class="modal-footer">

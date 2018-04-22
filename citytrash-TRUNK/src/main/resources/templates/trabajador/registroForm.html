@@ -3,13 +3,25 @@
 	xmlns:th="http://www.thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <body>
-	<div th:fragment="registroForm(registro)">
+	<div th:fragment="registroForm(registro, error)">
 		<form id="registroForm" role="form"
 			class="form-narrow form-horizontal" method="post" action="#"
 			th:action="@{#{link.trabajadores.registro}}" th:object="${registro}"
 			th:fragment="registroForm">
-
 			<fieldset>
+
+				<!-- mensaje ok -->
+				<th:block th:if="${msg!=null}">
+					<div th:if="${type!=null}"
+						th:replace="fragments/alert :: alert (type='success',  message=#{${type}(${key})})"></div>
+				</th:block>
+
+				<!-- mensaje error -->
+				<th:block th:if="${error!=null and msg==null}">
+					<div th:if="${type!=null}"
+						th:replace="fragments/alert :: alert (type='danger',  message=#{${type}(${key})})"></div>
+				</th:block>
+
 				<th:block th:if="${#fields.hasErrors('${registro.*}')}">
 					<br />
 					<div
@@ -54,8 +66,7 @@
 								<input th:placeholder="#{fecha_formato}" type="text"
 									class="form-control" id="fechaNacimiento"
 									th:field="*{fechaNacimiento}" th:data-provide="datepicker"
-									th:data-date-format="#{fecha_formato}"
-									th:data-date-autoclose="true"
+									data-date-format="dd/mm/yyyy" th:data-date-autoclose="true"
 									th:data-date-today-highlight="true"
 									th:data-date-orientation="bottom" required="required" /> <span
 									class="glyphicon glyphicon-calendar form-control-feedback"></span>
@@ -165,7 +176,7 @@
 							<select th:field="*{tipo}" class="form-control mySelect"
 								data-style="btn-default" id="tipoTrabajador">
 								<option
-									th:each="tipoTrabajador : ${T(es.udc.citytrash.business.entity.trabajador.TipoTrabajador).values()}"
+									th:each="tipoTrabajador : ${T(es.udc.citytrash.util.enums.TipoTrabajador).values()}"
 									th:value="${tipoTrabajador}"
 									th:text="#{${'trabajador.tipo.' + tipoTrabajador}}"></option>
 							</select>
@@ -180,7 +191,7 @@
 							<select th:field="*{idioma}" class="form-control mySelect"
 								id="idioma">
 								<option
-									th:each="lang : ${T(es.udc.citytrash.business.entity.idioma.Idioma).values()}"
+									th:each="lang : ${T(es.udc.citytrash.util.enums.Idioma).values()}"
 									th:value="${lang}" th:text="#{${'lang.' + lang}}"></option>
 							</select> <span class="help-block" th:if="${#fields.hasErrors('idioma')}"
 								th:errors="*{idioma}"></span>

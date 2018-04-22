@@ -1,8 +1,16 @@
 package es.udc.citytrash.controller.util.dtos;
 
-import es.udc.citytrash.business.entity.idioma.Idioma;
+import es.udc.citytrash.util.enums.Idioma;
 
 public class IdiomaFormDto {
+	
+	public IdiomaFormDto(){
+		
+	}
+	
+	public IdiomaFormDto(Idioma idioma){
+		this.idioma = idioma;
+	}
 	
 	private Idioma idioma;
 

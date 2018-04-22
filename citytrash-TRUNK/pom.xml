@@ -52,7 +52,7 @@
 		<animate.version>3.5.2</animate.version>
 		<guava.version>22.0</guava.version>
 		<jackson.version>2.9.4</jackson.version>
-
+		<modelmap.version>0.7.4</modelmap.version>
 		<!-- Plugin versions -->
 		<mavenCompilerPlugin.version>3.5.1</mavenCompilerPlugin.version>
 		<mavenResourcesPlugin.version>2.6</mavenResourcesPlugin.version>
@@ -382,8 +382,16 @@
 			<artifactId>jackson-annotations</artifactId>
 			<version>${jackson.version}</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.modelmapper/modelmapper mapper 
+			to entity to dto -->
+		<dependency>
+			<groupId>org.modelmapper</groupId>
+			<artifactId>modelmapper</artifactId>
+			<version>${modelmap.version}</version>
+		</dependency>
 		<!-- fin dependencias json -->
 	</dependencies>
+
 
 	<build>
 		<finalName>${project.artifactId}</finalName>

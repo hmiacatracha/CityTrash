@@ -91,6 +91,6 @@
 				max-sessions="1" error-if-maximum-exceeded="true" />
 		</session-management>
 		<csrf disabled="true" />
-		<access-denied-handler error-page="/error/403" />
+		<access-denied-handler error-page="/error/401" />
 	</http>
 </beans:beans>

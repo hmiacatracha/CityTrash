@@ -12,21 +12,18 @@
 	<div id="viewBody" class="container" th:fragment="content">
 		<div class="row">
 			<div class="fondoBlanco">
-
-				<span class="lang-sm lang-lbl" lang="en"></span> language.
-
 				<th:block th:if="${cambioCredenciales!=null}">
 					<div
 						th:replace="fragments/alert :: alert (type='success',  message=#{credenciales_ok(${#authentication.getName()})})"></div>
 				</th:block>
-
+				<!-- 
 				<h3 class="text-center" th:text="#{welcome_header}"></h3>
 
 				<p class="text-center" th:utext="#{description_text}"></p>
 				<br />
 
 				<h3 class="text-center" th:text="#{project_header}"></h3>
-
+				 -->
 			</div>
 		</div>
 	</div>

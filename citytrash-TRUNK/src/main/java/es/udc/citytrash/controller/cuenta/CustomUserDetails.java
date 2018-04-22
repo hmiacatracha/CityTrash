@@ -5,7 +5,7 @@ import java.util.Collection;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import es.udc.citytrash.controller.util.dtos.TrabajadoDto;
+import es.udc.citytrash.controller.util.dtos.PerfilDto;
 
 /**
  * https://www.boraji.com/spring-security-5-custom-userdetailsservice-example,
@@ -19,18 +19,18 @@ public class CustomUserDetails implements UserDetails {
 	 */
 	private static final long serialVersionUID = 1L;
 	private Collection<? extends GrantedAuthority> authorities;
-	private TrabajadoDto perfil;
+	private PerfilDto perfil;
 
 	public CustomUserDetails() {
 
 	}
 
-	public CustomUserDetails(TrabajadoDto perfil, Collection<? extends GrantedAuthority> authorities) {
+	public CustomUserDetails(PerfilDto perfil, Collection<? extends GrantedAuthority> authorities) {
 		this.perfil = perfil;
 		this.authorities = authorities;
 	}
 
-	public TrabajadoDto getPerfil() {
+	public PerfilDto getPerfil() {
 		return this.perfil;
 	}
 

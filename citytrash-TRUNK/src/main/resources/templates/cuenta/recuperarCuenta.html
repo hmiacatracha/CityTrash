@@ -13,7 +13,7 @@
 		<div class="row">
 
 			<th:block th:if="${success!=null}">
-				<div
+				<div id="msgOk"
 					th:replace="fragments/alert :: alert (type='success ', message=#{recuperar_cuenta_ok(${email})})">Alert</div>
 			</th:block>
 
@@ -23,12 +23,13 @@
 					<div class="panel-heading ">
 						<h3 class="text-center" th:text="#{label_recuperar_cuenta_header}"></h3>
 					</div>
-					
+
 					<div class="panel-body">
 
-						<th:block th:if="${err!=null}">
-							<div
-								th:replace="fragments/alert :: alert (type='danger', message=#{InstanceNotFoundException_cuenta(${err.key})})">Alert</div>
+						<!-- mensaje error -->
+						<th:block id="msgError" th:if="${error!=null and msg==null}">
+							<div th:if="${type!=null}"
+								th:replace="fragments/alert :: alert (type='danger',  message=#{${type}(${key})})"></div>
 						</th:block>
 
 						<form action="forgotPwd" th:action="@{#{link.cuenta.reset}}"

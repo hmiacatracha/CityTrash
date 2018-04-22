@@ -9,7 +9,6 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
-
 /**
  * Validar que el dni que se está registrando no esté asignado a otro trabajador
  * 

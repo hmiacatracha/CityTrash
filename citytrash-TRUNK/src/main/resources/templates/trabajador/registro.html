@@ -20,13 +20,20 @@
 				</div>
 
 				<div class="panel-body">
+
 					<div class="row">
+						<a th:href="@{#{link.trabajadores}}"> <i
+							class="glyphicon glyphicon-list"></i> &nbsp; <label
+							th:text="#{lbl_listado_trabajadores}"></label>
+						</a>
+						<!-- 		
 						<a class="btn" href="javascript:window.history.back();"
 							role="button"> <span class="glyphicon glyphicon-arrow-left"></span>&nbsp;
 							<label th:text="#{btn_atras}"></label></a>
+					 -->
 					</div>
 					<div th:fragment="registroForm"
-						th:replace="trabajador/registroForm :: registroForm(${registro})"></div>
+						th:replace="trabajador/registroForm :: registroForm(${registro}, ${error})"></div>
 				</div>
 			</div>
 			<div class="panel-footer"></div>

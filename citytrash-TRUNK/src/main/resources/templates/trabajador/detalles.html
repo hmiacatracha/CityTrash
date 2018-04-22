@@ -1,0 +1,80 @@
+<!DOCTYPE>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/default}" th:with="currentPage='recursos'">
+<head>
+<title th:text="#{page_trabajadores_detalle}"></title>
+</head>
+
+<body class="blanco">
+	<div id="content" class="container" th:fragment="content"
+		th:remove="tag">
+		<div class="row container">
+			<div class="col-offset-lg-2 col-lg-10 col-md-10 text-left">
+				<h3 class="text-warning"
+					th:text="${#strings.toUpperCase(trabajador_nombre_completo)}"></h3>
+			</div>
+		</div>
+
+		<div id="tabs" class="container">
+			<ul class="nav nav-tabs" id="detallesTrabajadorTab" role="tablist">
+				<!-- para contenido remoto hay que añadir data-target con 
+				el id del div sino href seria el id del div y sin el data-target -->
+
+				<li role="infopersonal"><a class="nav-link active"
+					data-target="#welcome" aria-controls="welcome" role="tab"
+					data-toggle="tab" id="welcomeTab"
+					th:href="@{#{link.trabajadores.detalle.infopersonal}(id=${trabajadorId})}"
+					aria-selected="true"> <i class="fa fa-id-card-o"></i> <label
+						th:text="#{frm_registro_subHeader1}"> </label>
+				</a></li>
+
+				<li role="infocuenta"><a data-target="#infocuenta"
+					aria-controls="infocuenta" role="tab" data-toggle="tab"
+					id="cuentaTab"
+					th:href="@{#{link.trabajadores.detalle.cuenta}(id=${trabajadorId})}"
+					aria-selected="false"> <i class="fa fa-user-circle-o"></i> <label
+						th:text="#{lbl_cuenta_detalle}"> </label>
+				</a></li>
+
+				<li role="historialRutas"><a data-target="#historialRutas"
+					aria-controls="historialRutas" role="tab" data-toggle="tab"
+					id="historialRutasTab"
+					th:href="@{#{link.trabajadores.detalle.rutas}(id=${trabajadorId})}"
+					aria-selected="false"> <i class="fa fa-truck"></i> <label
+						th:text="#{lbl_historial_rutas}"> </label>
+				</a></li>
+
+				<!-- 
+				<li role="settings"><a id="id_tab" data-toggle="tab"
+					href="#settings" role="tab" aria-controls="settings"
+					aria-selected="true">Settings</a></li>
+		 -->
+
+			</ul>
+
+			<div class="tab-content" id="detallesTrabajadorTabContent">
+
+				<div role="tabpanel" class="tab-pane" id="welcome"
+					aria-labelledby="info-tab"></div>
+
+				<div role="tabpanel" class="tab-pane" id="infocuenta"
+					aria-labelledby="infocuenta-tab"></div>
+
+				<div role="tabpanel" class="tab-pane" id="historialRutas"
+					aria-labelledby="historial-rutas-tab"></div>
+
+				<!-- 
+				<div role="tabpanel" class="tab-pane" id="settings"
+					aria-labelledby="setting-tab">
+					<h1>hola</h1>
+				</div>
+			 -->
+			</div>
+
+		</div>
+	</div>
+</body>
+</html>

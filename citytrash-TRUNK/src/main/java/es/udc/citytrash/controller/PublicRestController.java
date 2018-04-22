@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import es.udc.citytrash.business.service.cuenta.UserService;
-import es.udc.citytrash.business.service.trabajador.TrabajadorService;
-import es.udc.citytrash.business.util.excepciones.InstanceNotFoundException;
+import es.udc.citytrash.model.trabajadorService.TrabajadorService;
+import es.udc.citytrash.model.usuarioService.UsuarioService;
+import es.udc.citytrash.model.util.excepciones.InstanceNotFoundException;
 
 @Controller
 public class PublicRestController {
@@ -26,7 +26,7 @@ public class PublicRestController {
 	TrabajadorService tservicio;
 
 	@Autowired
-	UserService userService;
+	UsuarioService usuarioService;
 
 	final Logger logger = LoggerFactory.getLogger(PublicRestController.class);
 

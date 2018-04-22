@@ -13,7 +13,7 @@
 	<!-- **************************************************************** -->
 	<!-- SPRING ANNOTATION PROCESSING -->
 	<!-- **************************************************************** -->
-	<!-- <mvc:annotation-driven /> declares explicit support for annotation-driven 
+	<!-- <mvc:notation-driven /> declares explicit support for annotation-driven 
 		MVC controllers (i.e. @RequestMapping, @Controller, although support for 
 		those is the default behaviour), as well as adding support for declarative 
 		validation via @Valid and message body marshalling with @RequestBody/ResponseBody. -->
@@ -48,31 +48,19 @@
 	<!-- TemplateResolver <- TemplateEngine <- ViewResolver -->
 	<!-- **************************************************************** -->
 	<!-- Thymeleaf Template Resolver -->
-	<bean id="templateResolver"
-		class="org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver">
-		<property name="prefix" value="classpath:/templates/" />
-		<property name="suffix" value=".html" />
-		<property name="templateMode" value="HTML" />
-		<!-- Template cache is set to false (default is true). -->
-		<property name="cacheable" value="false" />
-		<property name="characterEncoding" value="UTF-8" />
-	</bean>
 
+	<!-- <bean id="templateResolver" class="org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver"> 
+		<property name="prefix" value="classpath:/templates/" /> <property name="suffix" 
+		value=".html" /> <property name="templateMode" value="HTML" /> <property 
+		name="cacheable" value="false" /> <property name="characterEncoding" value="UTF-8" 
+		/> </bean> -->
 
-	<bean id="templateEngine" class="org.thymeleaf.spring4.SpringTemplateEngine">
-		<property name="templateResolver" ref="templateResolver" />
-		<!-- https://devhub.io/repos/thymeleaf-thymeleaf-extras-springsecurity -->
-		<property name="additionalDialects">
-			<!-- layout -->
-			<!-- https://libraries.io/github/kamaq/thymeleaf-layout-dialect -->
-			<set>
-				<bean class="nz.net.ultraq.thymeleaf.LayoutDialect" />
-				<!-- segurity dialect -->
-				<bean
-					class="org.thymeleaf.extras.springsecurity4.dialect.SpringSecurityDialect" />
-			</set>
-		</property>
-	</bean>
+	<!-- https://devhub.io/repos/thymeleaf-thymeleaf-extras-springsecurity -->
+	<!-- https://libraries.io/github/kamaq/thymeleaf-layout-dialect -->
+	<!-- <bean id="templateEngine" class="org.thymeleaf.spring4.SpringTemplateEngine"> 
+		<property name="templateResolver" ref="templateResolver" /> <property name="additionalDialects"> 
+		<set> <bean class="nz.net.ultraq.thymeleaf.LayoutDialect" /> <bean class="org.thymeleaf.extras.springsecurity4.dialect.SpringSecurityDialect" 
+		/> </set> </property> </bean> -->
 
 	<bean class="org.thymeleaf.spring4.view.ThymeleafViewResolver">
 		<property name="templateEngine" ref="templateEngine" />
@@ -184,12 +172,8 @@
 		<property name="messageInterpolator" ref="resourceBundleMessageInterpolator" />
 	</bean>
 
-	<!-- **************************************************************** -->
-	<!-- **************************************************************** -->
+	<!-- bean para modelmapper, esta libreria convierte objetos a dtos -->
+	<bean id="modelMapper" class="org.modelmapper.ModelMapper"></bean>
 
-	<!-- Beans validators -->
-	<!-- Bean para el envio de correos -->
-	<!-- **************************************************************** -->
-	<!-- **************************************************************** -->
 </beans:beans>
 		

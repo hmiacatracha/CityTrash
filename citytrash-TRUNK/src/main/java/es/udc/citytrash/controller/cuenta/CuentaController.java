@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -31,23 +32,29 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
-import es.udc.citytrash.business.entity.idioma.Idioma;
-import es.udc.citytrash.business.service.cuenta.UserService;
-import es.udc.citytrash.business.util.excepciones.ExpiredTokenException;
-import es.udc.citytrash.business.util.excepciones.InstanceNotFoundException;
-import es.udc.citytrash.business.util.excepciones.TokenInvalidException;
 import es.udc.citytrash.controller.util.WebUtils;
 import es.udc.citytrash.controller.util.anotaciones.UsuarioActual;
 import es.udc.citytrash.controller.util.dtos.ActualizarPasswordFormDto;
 import es.udc.citytrash.controller.util.dtos.IdiomaFormDto;
-import es.udc.citytrash.controller.util.dtos.TrabajadoDto;
+import es.udc.citytrash.controller.util.dtos.PerfilDto;
+import es.udc.citytrash.model.emailService.EmailNotificacionesService;
+import es.udc.citytrash.model.trabajador.Trabajador;
+import es.udc.citytrash.model.usuarioService.UsuarioService;
+import es.udc.citytrash.model.util.excepciones.ExpiredTokenException;
+import es.udc.citytrash.model.util.excepciones.InstanceNotFoundException;
+import es.udc.citytrash.model.util.excepciones.TokenInvalidException;
+import es.udc.citytrash.util.GlobalNames;
+import es.udc.citytrash.util.enums.Idioma;
 
 @Controller
 @RequestMapping("cuenta")
 public class CuentaController {
 
 	@Autowired
-	UserService cuentaServicio;
+	UsuarioService cuentaServicio;
+
+	@Autowired
+	EmailNotificacionesService emailService;
 
 	final Logger logger = LoggerFactory.getLogger(CuentaController.class);
 
@@ -64,7 +71,7 @@ public class CuentaController {
 	/* ACTIVAR CUENTA */
 	@PreAuthorize("isAnonymous()")
 	@RequestMapping(value = { WebUtils.REQUEST_MAPPING_CUENTA_ACTIVAR,
-			WebUtils.URL_CUENTA_RECUPERAR }, method = RequestMethod.GET)
+			WebUtils.REQUEST_MAPPING_CUENTA_RECUPERAR }, method = RequestMethod.GET)
 	public String activarCuenta(@RequestParam(value = "id", required = true) long id,
 			@RequestParam(value = "token", required = true) String token, Model model,
 			RedirectAttributes redirectAttributes) {
@@ -80,6 +87,9 @@ public class CuentaController {
 		} catch (ExpiredTokenException e) {
 			redirectAttributes.addFlashAttribute("msg", "ExpiredTokenException");
 			return "redirect:" + WebUtils.URL_LOGIN;
+		} catch (DisabledException e) {
+			redirectAttributes.addFlashAttribute("msg", "DisabledException");
+			return "redirect:" + WebUtils.URL_LOGIN;
 		}
 		logger.info("TOKEN activar cuenta DESPUES2=> " + token);
 		logger.info("TOKEN activar cuenta DESPUES2 url=> " + WebUtils.URL_CUENTA_CAMBIAR_CONTRASENA);
@@ -90,15 +100,28 @@ public class CuentaController {
 	@RequestMapping(value = WebUtils.REQUEST_MAPPING_CUENTA_RESET_PASSWORD, method = RequestMethod.POST)
 	public String recuperarCuenta(HttpServletRequest request, RedirectAttributes redirectAttributes, Model model) {
 		String email = request.getParameter("email");
+		Trabajador t = null;
 		logger.info("PASO1 URL:" + WebUtils.URL_CUENTA_RESET_PASSWORD);
 		try {
-			cuentaServicio.recuperarCuenta(email, WebUtils.getUrlWithContextPath(request));
+
+			/* Recuperamos la cuenta */
+			cuentaServicio.recuperarCuenta(email);
+
+			/* Enviamos un correo de recuperacion */
+			t = cuentaServicio.buscarTrabajadorPorEmail(email);
+			emailService.recuperarCuentaEmail(t.getId(), t.getNombre(), t.getApellidos(), t.getEmail(), t.getToken(),
+					t.getFechaExpiracionToken(), t.getIdioma(), WebUtils.getUrlWithContextPath(request));
+
 			redirectAttributes.addFlashAttribute("titulo", "title_recuperar_cuenta");
 			redirectAttributes.addFlashAttribute("mensaje", "mensaje_recuperar_cuenta(" + email + ")");
 			redirectAttributes.addFlashAttribute("tipoAlerta", "success");
 
 		} catch (InstanceNotFoundException e) {
-			model.addAttribute("err", e);
+			// model.addAttribute("err", e);
+			model = InstanceNotFoundException(model, e);
+			return WebUtils.VISTA_RECUPERAR_CUENTA;
+		} catch (DisabledException e1) {
+			model = DisabledException(model, e1);
 			return WebUtils.VISTA_RECUPERAR_CUENTA;
 		}
 		redirectAttributes.addFlashAttribute("success", "ok");
@@ -120,14 +143,16 @@ public class CuentaController {
 	}
 
 	/* REINICIAR PASSWORD GET */
-	@PreAuthorize("hasRole('ROLE_CHANGE_PASSWORD')")
+	// @PreAuthorize("hasRole('ROLE_CHANGE_PASSWORD')")
+	@PreAuthorize("hasRole('" + GlobalNames.ROL_CAMBIAR_PASSWORD + "')")
 	@RequestMapping(value = WebUtils.REQUEST_MAPPING_CUENTA_ACTUALIZAR_CONTRASENA, method = RequestMethod.GET)
 	public String reiniciarPassword(Model model) {
 		return WebUtils.VISTA_REINICIAR_CONTRASENA;
 	}
 
 	/* REINICIAR PASSWORD POST */
-	@PreAuthorize("hasRole('ROLE_CHANGE_PASSWORD')")
+	// @PreAuthorize("hasRole('ROLE_CHANGE_PASSWORD')")
+	@PreAuthorize("hasRole('" + GlobalNames.ROL_CAMBIAR_PASSWORD + "')")
 	@RequestMapping(value = { WebUtils.REQUEST_MAPPING_CUENTA_ACTUALIZAR_CONTRASENA }, method = RequestMethod.POST)
 	public String reiniciarPassword(@UsuarioActual CustomUserDetails usuario, Model model,
 			@ModelAttribute("reiniciarPasswordForm") @Valid ActualizarPasswordFormDto form, BindingResult result,
@@ -144,9 +169,7 @@ public class CuentaController {
 			return "redirect:" + WebUtils.URL_HOME;
 
 		} catch (InstanceNotFoundException e) {
-			logger.info("POST ACTIVAR CUENTA3");
 			model = InstanceNotFoundException(model, e);
-			logger.info("PAGINA VISTA => " + WebUtils.VISTA_REINICIAR_CONTRASENA);
 			return WebUtils.VISTA_REINICIAR_CONTRASENA;
 		}
 	}
@@ -159,7 +182,9 @@ public class CuentaController {
 
 		if (auth.isAuthenticated()) {
 			List<GrantedAuthority> updatedAuthorities = new ArrayList<>(auth.getAuthorities());
-			GrantedAuthority g = new SimpleGrantedAuthority("ROLE_CHANGE_PASSWORD");
+			// GrantedAuthority g = new
+			// SimpleGrantedAuthority("ROLE_CHANGE_PASSWORD");
+			GrantedAuthority g = new SimpleGrantedAuthority(GlobalNames.ROL_ADMINISTRADOR);
 			updatedAuthorities.add(g);
 			Authentication newAuth = new UsernamePasswordAuthenticationToken(auth.getPrincipal(), auth.getCredentials(),
 					updatedAuthorities);
@@ -168,14 +193,24 @@ public class CuentaController {
 		return WebUtils.VISTA_CAMBIAR_CONTRASENA;
 	}
 
+	/* CAMBIO DE IDIOMA */
 	@ModelAttribute("idiomaForm")
-	public IdiomaFormDto idiomaForm() {
-		return new IdiomaFormDto();
+	public IdiomaFormDto idiomaForm(@UsuarioActual CustomUserDetails perfil) {
+		Idioma idioma;
+		if (perfil != null) {
+			try {
+				idioma = cuentaServicio.obtenerIdiomaPreferencia(perfil.getPerfil().getId());
+			} catch (InstanceNotFoundException e) {
+				idioma = Idioma.es;
+			}
+		} else
+			idioma = Idioma.es;
+		return new IdiomaFormDto(idioma);
 	}
 
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(value = { WebUtils.REQUEST_MAPPING_CUENTA_CAMBIO_IDIOMA }, method = RequestMethod.GET)
-	public String cambiarIdioma(@UsuarioActual TrabajadoDto perfil, Model model) {
+	public String cambiarIdioma(Model model) {
 		return WebUtils.VISTA_CAMBIAR_IDIOMA;
 	}
 
@@ -212,6 +247,15 @@ public class CuentaController {
 		model.addAttribute("error", ex);
 		model.addAttribute("type", "InstanceNotFoundException");
 		model.addAttribute("key", ex.getKey());
+		return model;
+	}
+
+	@ResponseStatus(HttpStatus.FORBIDDEN)
+	@ExceptionHandler(DisabledException.class)
+	public Model DisabledException(Model model, DisabledException ex) {
+		model.addAttribute("error", ex);
+		model.addAttribute("type", "DisabledException");
+		model.addAttribute("key", "");
 		return model;
 	}
 }
