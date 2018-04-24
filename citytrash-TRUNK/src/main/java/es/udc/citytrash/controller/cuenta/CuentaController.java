@@ -34,14 +34,15 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 
 import es.udc.citytrash.controller.util.WebUtils;
 import es.udc.citytrash.controller.util.anotaciones.UsuarioActual;
-import es.udc.citytrash.controller.util.dtos.ActualizarPasswordFormDto;
+import es.udc.citytrash.controller.util.dtos.ReiniciarPasswordFormDto;
+import es.udc.citytrash.controller.util.dtos.CambiarPasswordFormDto;
 import es.udc.citytrash.controller.util.dtos.IdiomaFormDto;
-import es.udc.citytrash.controller.util.dtos.PerfilDto;
 import es.udc.citytrash.model.emailService.EmailNotificacionesService;
 import es.udc.citytrash.model.trabajador.Trabajador;
 import es.udc.citytrash.model.usuarioService.UsuarioService;
 import es.udc.citytrash.model.util.excepciones.ExpiredTokenException;
 import es.udc.citytrash.model.util.excepciones.InstanceNotFoundException;
+import es.udc.citytrash.model.util.excepciones.PasswordInvalidException;
 import es.udc.citytrash.model.util.excepciones.TokenInvalidException;
 import es.udc.citytrash.util.GlobalNames;
 import es.udc.citytrash.util.enums.Idioma;
@@ -75,7 +76,7 @@ public class CuentaController {
 	public String activarCuenta(@RequestParam(value = "id", required = true) long id,
 			@RequestParam(value = "token", required = true) String token, Model model,
 			RedirectAttributes redirectAttributes) {
-		ActualizarPasswordFormDto activarCuentaForm = new ActualizarPasswordFormDto();
+		ReiniciarPasswordFormDto activarCuentaForm = new ReiniciarPasswordFormDto();
 		model.addAttribute("activarCuentaForm", activarCuentaForm);
 		model.addAttribute("token", token);
 
@@ -138,24 +139,23 @@ public class CuentaController {
 
 	/* REINICIAR Y CAMBIAR CONTRASEÑA */
 	@ModelAttribute("reiniciarPasswordForm")
-	public ActualizarPasswordFormDto reiniciarPasswordForm() {
-		return new ActualizarPasswordFormDto();
+	public ReiniciarPasswordFormDto reiniciarPasswordForm() {
+		return new ReiniciarPasswordFormDto();
 	}
 
 	/* REINICIAR PASSWORD GET */
 	// @PreAuthorize("hasRole('ROLE_CHANGE_PASSWORD')")
-	@PreAuthorize("hasRole('" + GlobalNames.ROL_CAMBIAR_PASSWORD + "')")
+	@PreAuthorize("hasRole('" + GlobalNames.ROL_REINICIAR_PASSWORD + "')")
 	@RequestMapping(value = WebUtils.REQUEST_MAPPING_CUENTA_ACTUALIZAR_CONTRASENA, method = RequestMethod.GET)
 	public String reiniciarPassword(Model model) {
 		return WebUtils.VISTA_REINICIAR_CONTRASENA;
 	}
 
 	/* REINICIAR PASSWORD POST */
-	// @PreAuthorize("hasRole('ROLE_CHANGE_PASSWORD')")
-	@PreAuthorize("hasRole('" + GlobalNames.ROL_CAMBIAR_PASSWORD + "')")
+	@PreAuthorize("hasRole('" + GlobalNames.ROL_REINICIAR_PASSWORD + "')")
 	@RequestMapping(value = { WebUtils.REQUEST_MAPPING_CUENTA_ACTUALIZAR_CONTRASENA }, method = RequestMethod.POST)
 	public String reiniciarPassword(@UsuarioActual CustomUserDetails usuario, Model model,
-			@ModelAttribute("reiniciarPasswordForm") @Valid ActualizarPasswordFormDto form, BindingResult result,
+			@ModelAttribute("reiniciarPasswordForm") @Valid ReiniciarPasswordFormDto form, BindingResult result,
 			RedirectAttributes redir) {
 		logger.info("POST ACTIVAR CUENTA1");
 		if (result.hasErrors()) {
@@ -163,8 +163,18 @@ public class CuentaController {
 			return WebUtils.VISTA_REINICIAR_CONTRASENA;
 		}
 		try {
-			cuentaServicio.cambiarPassword(usuario.getPerfil().getEmail(), form.getPassword());
+
+			cuentaServicio.reiniciarPassword(usuario.getPerfil().getId(), form.getPassword());
+			/* Eliminar el rol REINICIAR PASSWORDPASSWORD */
+			List<GrantedAuthority> updatedAuthorities = new ArrayList<>(usuario.getAuthorities());
+			GrantedAuthority g = new SimpleGrantedAuthority(GlobalNames.ROL_REINICIAR_PASSWORD);
+			updatedAuthorities.remove(g);
+			Authentication newAuth = new UsernamePasswordAuthenticationToken(
+					SecurityContextHolder.getContext().getAuthentication().getPrincipal(),
+					SecurityContextHolder.getContext().getAuthentication().getCredentials(), updatedAuthorities);
+			SecurityContextHolder.getContext().setAuthentication(newAuth);
 			redir.addFlashAttribute("cambioCredenciales", "ok");
+
 			logger.info("PAGINA REDIRECT => " + WebUtils.URL_HOME);
 			return "redirect:" + WebUtils.URL_HOME;
 
@@ -174,23 +184,44 @@ public class CuentaController {
 		}
 	}
 
+	/* REINICIAR Y CAMBIAR CONTRASEÑA */
+	@ModelAttribute("cambiarPasswordForm")
+	public CambiarPasswordFormDto cambiarPasswordForm() {
+		return new CambiarPasswordFormDto();
+	}
+
 	/* Cambiar contraseña GET */
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(value = WebUtils.REQUEST_MAPPING_CAMBIAR_PASSWORD, method = RequestMethod.GET)
 	public String cambiarPassword(Model model) {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-		if (auth.isAuthenticated()) {
-			List<GrantedAuthority> updatedAuthorities = new ArrayList<>(auth.getAuthorities());
-			// GrantedAuthority g = new
-			// SimpleGrantedAuthority("ROLE_CHANGE_PASSWORD");
-			GrantedAuthority g = new SimpleGrantedAuthority(GlobalNames.ROL_ADMINISTRADOR);
-			updatedAuthorities.add(g);
-			Authentication newAuth = new UsernamePasswordAuthenticationToken(auth.getPrincipal(), auth.getCredentials(),
-					updatedAuthorities);
-			SecurityContextHolder.getContext().setAuthentication(newAuth);
-		}
 		return WebUtils.VISTA_CAMBIAR_CONTRASENA;
+	}
+
+	@PreAuthorize("isAuthenticated()")
+	@RequestMapping(value = { WebUtils.REQUEST_MAPPING_CAMBIAR_PASSWORD }, method = RequestMethod.POST)
+	public String cambiarPassword(@UsuarioActual CustomUserDetails usuario, Model model,
+			@ModelAttribute("cambiarPasswordForm") @Valid CambiarPasswordFormDto form, BindingResult result,
+			RedirectAttributes redir) {
+		logger.info("POST cambiar contraseña");
+		model.addAttribute("cambiarPasswordForm", form);
+		if (result.hasErrors()) {
+			logger.info("PAGINA vista => " + WebUtils.VISTA_REINICIAR_CONTRASENA);
+			return WebUtils.VISTA_CAMBIAR_CONTRASENA;
+		}
+		try {
+
+			cuentaServicio.cambiarPassword(usuario.getPerfil().getId(), form.getPasswordAntigua(), form.getPassword());
+			model.addAttribute("cambiarPasswordForm", new CambiarPasswordFormDto());
+			model.addAttribute("cambioCredenciales", "ok");
+			return WebUtils.VISTA_CAMBIAR_CONTRASENA;
+
+		} catch (InstanceNotFoundException e) {
+			model = InstanceNotFoundException(model, e);
+			return WebUtils.VISTA_CAMBIAR_CONTRASENA;
+		} catch (PasswordInvalidException e) {
+			model = PasswordInvalidException(model, e);
+			return WebUtils.VISTA_CAMBIAR_CONTRASENA;
+		}
 	}
 
 	/* CAMBIO DE IDIOMA */
@@ -247,6 +278,16 @@ public class CuentaController {
 		model.addAttribute("error", ex);
 		model.addAttribute("type", "InstanceNotFoundException");
 		model.addAttribute("key", ex.getKey());
+		return model;
+	}
+
+	@ResponseStatus(HttpStatus.FORBIDDEN)
+	@ExceptionHandler(PasswordInvalidException.class)
+	public Model PasswordInvalidException(Model model, PasswordInvalidException ex) {
+		logger.info("ExceptionHandler PasswordInvalidException");
+		model.addAttribute("error", ex);
+		model.addAttribute("type", "PasswordInvalidException");
+		model.addAttribute("key", ex.getMessage());
 		return model;
 	}
 

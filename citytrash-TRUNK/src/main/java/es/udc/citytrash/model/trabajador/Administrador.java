@@ -28,8 +28,8 @@ public class Administrador extends Trabajador implements Serializable {
 	 * @param apellidos
 	 * @param email
 	 */
-	public Administrador(String documento, String nombre, String apellidos, String email) {
-		super(documento, nombre, apellidos, email);
+	public Administrador(String documento, String nombre, String apellidos, String email, Idioma idioma) {
+		super(documento, nombre, apellidos, email, idioma);
 	}
 
 	/**

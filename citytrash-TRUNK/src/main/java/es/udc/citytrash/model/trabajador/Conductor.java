@@ -32,9 +32,11 @@ public class Conductor extends Trabajador implements Serializable {
 	 *            apellidos
 	 * @param email
 	 *            email
+	 * @param idioma
+	 *            idioma
 	 */
-	public Conductor(String documento, String nombre, String apellidos, String rol, String email) {
-		super(documento, nombre, apellidos, email);
+	public Conductor(String documento, String nombre, String apellidos, String email, Idioma idioma) {
+		super(documento, nombre, apellidos, email, idioma);
 	}
 
 	/**

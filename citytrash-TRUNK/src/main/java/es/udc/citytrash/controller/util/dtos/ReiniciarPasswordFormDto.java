@@ -7,7 +7,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import es.udc.citytrash.controller.util.anotaciones.CamposIguales;
 
 @CamposIguales(primerCampo = "password", segundoCampo = "repetirPassword", message = "{constraints.fieldmatch.password}")
-public class ActualizarPasswordFormDto {
+public class ReiniciarPasswordFormDto {
 
 	@Pattern(regexp = "(?=^.{8,}$)((?=.*\\d)|(?=.*\\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$", message = "{constraints.pattern.password}")
 	@NotBlank
@@ -34,6 +34,6 @@ public class ActualizarPasswordFormDto {
 
 	@Override
 	public String toString() {
-		return "ActivarCuentaForm [password=" + password + ", repetirPassword=" + repetirPassword + "]";
+		return "ActualizarPasswordFormDto [password=" + password + ", repetirPassword=" + repetirPassword + "]";
 	}
 }

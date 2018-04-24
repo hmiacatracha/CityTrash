@@ -9,7 +9,7 @@ public class PasswordInvalidException extends Exception {
 	private String loginName;
 
 	public PasswordInvalidException(String loginName) {
-		super("Incorrect password exception => loginName = " + loginName);
+		super(loginName);
 		this.loginName = loginName;
 	}
 

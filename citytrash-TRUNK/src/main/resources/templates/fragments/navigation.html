@@ -153,6 +153,7 @@
 							th:usuario="${#authentication.getName()}"
 							th:text="${#authentication.getName()}"></li>
 						<!-- separador -->
+
 						<li><a id="cambioPassword" th:href="@{#{link.cuenta.perfil}}">
 								<i class="material-icons fa-lg" style="font-size: 14px">account_circle</i>
 								&nbsp; <label th:text="#{lbl_perfil}"></label>
@@ -164,9 +165,10 @@
 								<label th:text="#{lang.preferencia}"></label>
 						</a></li>
 
-						<li><a id="cambioPassword"
-							th:href="@{#{link.cuenta.cambiar-password}}"> <i class="fa"
-								style="font-size: 14px">&#xf23e;</i> &nbsp; <label
+						<li
+							th:unless="${#authorization.expression('hasRole(''ROLE_CHANGE_PASSWORD'')')}"><a
+							id="cambioPassword" th:href="@{#{link.cuenta.cambiar-password}}">
+								<i class="fa" style="font-size: 14px">&#xf23e;</i> &nbsp; <label
 								th:text="#{lbl_cambiarpassword}"></label>
 						</a></li>
 

@@ -42,16 +42,32 @@ public interface UsuarioService {
 	 */
 	void recuperarCuenta(String email) throws InstanceNotFoundException, DisabledException;
 
-	/***
-	 * Actualizar la contrasena por token
+	/**
+	 * Reiniciar password => Se utiliza cuando se activa o se recupera la cuenta
+	 * del usuario
 	 * 
-	 * @param email
-	 * @param token
-	 * @param password
+	 * @param trabajadorId
+	 *            id del trabajado
+	 * @param nuevaPassword
+	 *            password
 	 * @throws InstanceNotFoundException
-	 *             en caso que no exista una cuenta con ese email
 	 */
-	void cambiarPassword(String email, String password) throws InstanceNotFoundException;
+	void reiniciarPassword(long trabajadorId, String nuevaPassword) throws InstanceNotFoundException;
+
+	/**
+	 * Se utiliza para cambiar las credenciales del usuario autenticado
+	 * 
+	 * @param trabajadorId
+	 *            id del trabajador
+	 * @param antiguaPassword
+	 *            password antigua
+	 * @param nuevaPassword
+	 *            nueva password
+	 * @throws InstanceNotFoundException
+	 * @throws PasswordInvalidException
+	 */
+	void cambiarPassword(long trabajadorId, String antiguaPassword, String nuevaPassword)
+			throws InstanceNotFoundException, PasswordInvalidException;
 
 	/**
 	 * 

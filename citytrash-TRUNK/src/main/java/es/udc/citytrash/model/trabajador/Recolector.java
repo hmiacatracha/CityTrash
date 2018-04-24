@@ -35,9 +35,11 @@ public class Recolector extends Trabajador implements Serializable {
 	 *            apellidos del trabajador
 	 * @param email
 	 *            email
+	 * @param idioma
+	 *            idioma
 	 */
-	public Recolector(String documento, String nombre, String apellidos, String email) {
-		super(documento, nombre, apellidos, email);
+	public Recolector(String documento, String nombre, String apellidos, String email, Idioma idioma) {
+		super(documento, nombre, apellidos, email, idioma);
 	}
 
 	/**

@@ -1,6 +1,5 @@
 package es.udc.citytrash.model.usuarioService;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -29,6 +28,7 @@ import es.udc.citytrash.model.trabajador.Trabajador;
 import es.udc.citytrash.model.trabajador.TrabajadorDao;
 import es.udc.citytrash.model.util.excepciones.ExpiredTokenException;
 import es.udc.citytrash.model.util.excepciones.InstanceNotFoundException;
+import es.udc.citytrash.model.util.excepciones.PasswordInvalidException;
 import es.udc.citytrash.model.util.excepciones.TokenInvalidException;
 import es.udc.citytrash.util.GlobalNames;
 import es.udc.citytrash.util.enums.Idioma;
@@ -52,7 +52,6 @@ public class UsuarioServiceImpl implements UserDetailsService, UsuarioService {
 		 * https://www.boraji.com/spring-security-5-custom-userdetailsservice-
 		 * example
 		 */
-		logger.debug("PASA POR CustomUserDetailsService metodo loadUserByUsername");
 		Trabajador t;
 
 		try {
@@ -101,37 +100,34 @@ public class UsuarioServiceImpl implements UserDetailsService, UsuarioService {
 	}
 
 	@Override
-	public void cambiarPassword(String email, String password) throws InstanceNotFoundException {
-		Trabajador t = trabajadorProfileDao.buscarTrabajadorPorEmail(email);
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		Calendar ahora = Calendar.getInstance();
+	public void cambiarPassword(long trabajadorId, String antiguaPassword, String nuevaPassword)
+			throws InstanceNotFoundException, PasswordInvalidException {
 
-		logger.info("password => " + password);
-		t.setPassword(passwordEncoder.encode(password));
-		t.setEnabledCount(true);
-		logger.info("password encode => " + t.getPassword());
-		logger.info("password encode => " + t.getPassword());
+		Trabajador t = trabajadorProfileDao.buscarById(trabajadorId);
+
+		if (!passwordEncoder.matches(antiguaPassword, t.getPassword())) {
+			throw new PasswordInvalidException(t.getEmail());
+		}
+
+		t.setPassword(passwordEncoder.encode(nuevaPassword));
+		trabajadorProfileDao.guardar(t);
+	}
+
+	@Override
+	public void reiniciarPassword(long trabajadorId, String nuevaPassword) throws InstanceNotFoundException {
+		Trabajador t = trabajadorProfileDao.buscarById(trabajadorId);
+		Calendar ahora = Calendar.getInstance();
 
 		/* Actualizamos la fecha de activacion, en caso de ser la primera vez */
 		if (t.getFechaActivacion() == null) {
 			logger.info("fecha activacion null = true => ");
 			t.setFechaActivacion(ahora);
 		}
-		/* Si la fecha de actualizacion no ha expirado => hacemos que expire. */
-		if (t.getFechaExpiracionToken().after(ahora)) {
-			logger.info("SET FECHA DE EXPIRACION = FECHA => " + ahora.toString());
-			t.setFechaExpiracionToken(ahora);
-		}
+
+		t.setPassword(passwordEncoder.encode(nuevaPassword));
+		t.setEnabledCount(true);
+		t.setFechaExpiracionToken(ahora);
 		trabajadorProfileDao.guardar(t);
-		/* Volvemos a autenticarnos sin el rol cambiar contraseña */
-		if (auth.isAuthenticated()) {
-			List<GrantedAuthority> updatedAuthorities = new ArrayList<>(auth.getAuthorities());
-			GrantedAuthority g = new SimpleGrantedAuthority(GlobalNames.ROL_CAMBIAR_PASSWORD);
-			updatedAuthorities.remove(g);
-			Authentication newAuth = new UsernamePasswordAuthenticationToken(auth.getPrincipal(), auth.getCredentials(),
-					updatedAuthorities);
-			SecurityContextHolder.getContext().setAuthentication(newAuth);
-		}
 	}
 
 	@Override
@@ -147,14 +143,9 @@ public class UsuarioServiceImpl implements UserDetailsService, UsuarioService {
 
 			if (!t.isActiveWorker()) {
 				throw new DisabledException("User has been disabled.");
-			} /*
-				 * else if (!t.isEnabledCount()) { throw new
-				 * DisabledException("User has been disabled."); }
-				 */
-
+			}
 			t.setToken(token);
 			t.setFechaExpiracionToken(fechaExpiracion);
-
 			trabajadorProfileDao.guardar(t);
 
 		} catch (InstanceNotFoundException e) {
@@ -191,7 +182,7 @@ public class UsuarioServiceImpl implements UserDetailsService, UsuarioService {
 		}
 
 		if (loginPorToken == true) {
-			authList.add(new SimpleGrantedAuthority(GlobalNames.ROL_CAMBIAR_PASSWORD));
+			authList.add(new SimpleGrantedAuthority(GlobalNames.ROL_REINICIAR_PASSWORD));
 		}
 
 		logger.info("getAuthorities:" + authList.toString());

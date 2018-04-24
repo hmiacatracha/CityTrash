@@ -21,6 +21,6 @@ public class GlobalNames {
 	public static final String ROL_ADMINISTRADOR = "ROLE_ADMIN";
 	public static final String ROL_RECOLECTOR = "ROLE_USER";
 	public static final String ROL_CONDUCTOR = "ROLE_USER";
-	public static final String ROL_CAMBIAR_PASSWORD = "ROLE_CHANGE_PASSWORD";
+	public static final String ROL_REINICIAR_PASSWORD = "ROLE_CHANGE_PASSWORD";
 
 }

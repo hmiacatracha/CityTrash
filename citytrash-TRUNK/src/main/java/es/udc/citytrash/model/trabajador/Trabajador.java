@@ -68,12 +68,13 @@ public abstract class Trabajador implements Serializable {
 	 * @param apellidos
 	 * @param email
 	 */
-	Trabajador(String documento, String nombre, String apellidos, String email) {
+	Trabajador(String documento, String nombre, String apellidos, String email, Idioma idioma) {
 		this.docId = documento;
 		this.nombre = nombre;
 		this.email = email;
 		this.apellidos = apellidos;
 		this.trabajadorActivo = true;
+		this.idioma = idioma;
 		this.cuentaActiva = false;
 	}
 
@@ -136,7 +137,7 @@ public abstract class Trabajador implements Serializable {
 		this.id = id;
 	}
 
-	@Column(name = "DOC_ID")
+	@Column(name = "DOC_ID", unique = true)
 	@Size(min = 0, max = 15)
 	public String getDocId() {
 		return docId;
@@ -180,7 +181,7 @@ public abstract class Trabajador implements Serializable {
 
 	@NotBlank
 	@Size(min = 1, max = 100)
-	@Column(name = "EMAIL")
+	@Column(name = "EMAIL", unique = true)
 	public String getEmail() {
 		return email;
 	}
