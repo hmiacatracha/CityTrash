@@ -15,18 +15,28 @@
 		<div class="col-md-offset-3 col-md-6">
 			<div class="panel panel-default">
 
-				<div class="panel-heading ">
+				<div class="panel-heading" th:if="${updateForm}">
 					<!-- <h3 class="text-center" th:text="#{frm_registro_header}"></h3> -->
 					<h3 class="text-warning"
 						th:text="${#strings.toUpperCase(updateForm.nombre + ' '+ updateForm.apellidos)}"></h3>
 				</div>
 
 				<div class="panel-body">
-					<div class="row">
-						<a th:href="@{#{link.trabajadores}}"> <i
-							class="glyphicon glyphicon-list"></i> &nbsp; <label
-							th:text="#{lbl_listado_trabajadores}"></label>
-						</a>
+					<div class="row">					
+						<div class="col-xs-11 text-right">
+							<div class="btn-group">
+								<a id="link_ver_detalles"
+									th:href="@{#{link.trabajadores.detalles}(id=${updateForm.id})}"
+									class="btn-sm"><i class="glyphicon glyphicon-eye-open"
+									data-toggle="tooltip" th:title="#{lbl_ver_detalle}"></i></a> <a
+									th:href="@{#{link.trabajadores.registro}}" class="btn-sm"><i
+									class="glyphicon glyphicon-plus"></i> </a> <a
+									th:href="@{#{link.trabajadores}}" class="btn-sm"> <i
+									class="glyphicon glyphicon-list"></i>
+								</a>
+							</div>
+						</div>
+
 					</div>
 					<div th:fragment="updateForm"
 						th:replace="trabajador/updateForm :: update(updateForm)"></div>

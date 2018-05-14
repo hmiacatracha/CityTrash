@@ -1,0 +1,20 @@
+<!DOCTYPE>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/default}">
+<head>
+<title th:text="#{page_error}"></title>
+</head>
+
+<body class="formularios">
+	<div th:if="${errCode}">
+		<h1>${errCode} : System Errors</h1>
+	</div>
+
+	<div th:if="${errMsg}">
+		<h2>${errMsg}</h2>
+	</div>
+</body>
+</html>

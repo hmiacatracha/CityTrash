@@ -28,7 +28,7 @@ public class EmailExistenteImpl implements ConstraintValidator<EmailExistente, S
 	@Override
 	public boolean isValid(String email, ConstraintValidatorContext context) {
 		try {
-			tservicio.buscarTrabajadorEmail(email);
+			tservicio.buscarTrabajadorByEmail(email);
 			logger.info("email existente");
 			return true;
 		} catch (InstanceNotFoundException e) {

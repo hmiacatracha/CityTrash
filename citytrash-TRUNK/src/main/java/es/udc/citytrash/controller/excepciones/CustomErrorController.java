@@ -4,8 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.servlet.ModelAndView;
 
 import es.udc.citytrash.controller.util.WebUtils;
 
@@ -37,5 +39,12 @@ public class CustomErrorController {
 	@ResponseStatus(HttpStatus.UNAUTHORIZED)
 	public String conflicException() {
 		return "error/400";
+	}
+
+	@ExceptionHandler(Exception.class)
+	public ModelAndView handleAllException(Exception ex) {
+		ModelAndView model = new ModelAndView("error/genericError");
+		model.addObject("errMsg", ex.getMessage());
+		return model;
 	}
 }

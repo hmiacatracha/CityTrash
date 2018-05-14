@@ -1,0 +1,63 @@
+<!DOCTYPE>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/default}" th:with="currentPage='cuenta'">
+<head>
+<title th:text="#{page_trabajadores_detalle}"></title>
+</head>
+
+<body class="blanco">
+	<div id="content" class="container" th:fragment="content"
+		th:remove="tag">
+
+		<!--
+		<div class="row container">
+			<div class="col-offset-lg-2 col-lg-10 col-md-10 text-left">
+				<h3 th:if="${trabajador_nombre_completo!=null}" class="text-warning"
+					th:text="${#strings.toUpperCase(trabajador_nombre_completo)}"></h3>
+			</div>
+		</div>
+ -->
+		<div id="tabs" class="container">
+			<ul class="nav nav-tabs" id="perfilTab" role="tablist">
+				<!-- para contenido remoto hay que añadir data-target con 
+				el id del div sino href seria el id del div y sin el data-target -->
+
+				<li role="infocuenta"><a class="nav-link active"
+					data-target="#welcome" aria-controls="welcome" role="tab"
+					data-toggle="tab" id="welcomeTab"
+					th:href="@{#{link.cuenta.perfil.detalles}}" aria-selected="true">
+						<i class="fa fa-id-card-o"></i> <label th:text="#{lbl_perfil}">
+					</label>
+				</a></li>
+
+				<li role="cambiarIdioma"><a data-target="#cambiarIdioma"
+					aria-controls="infocuenta" role="tab" data-toggle="tab"
+					id="cambiarIdiomaTab" th:href="@{#{link.cuenta.idiomaPreferencia}}"
+					aria-selected="false"> <i class="fa fa-user-circle-o"></i> <label
+						th:text="#{lang.preferencia}"> </label>
+				</a></li>
+
+				<li role="cambiarCredenciales"><a
+					data-target="#cambiarCredenciales" aria-controls="historialRutas"
+					role="tab" data-toggle="tab" id="cambiarCredencialesTab"
+					th:href="@{#{link.cuenta.cambiar-password}}" aria-selected="false">
+						<i class="fa fa-truck"></i> <label
+						th:text="#{lbl_cambiarpassword}"> </label>
+				</a></li>
+			</ul>
+
+			<div class="tab-content" id="perfilTabContent">
+				<div role="tabpanel" class="tab-pane" id="welcome"
+					aria-labelledby="info-tab"></div>
+				<div role="tabpanel" class="tab-pane" id="cambiarIdioma"
+					aria-labelledby="cambiarIdioma-tab"></div>
+				<div role="tabpanel" class="tab-pane" id="cambiarCredenciales"
+					aria-labelledby="cambiarCredenciales-tab"></div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

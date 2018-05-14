@@ -10,127 +10,127 @@
 <body class="blanco">
 	<div id="container" class="container" th:fragment="content">
 		</br>
-		<div class="panel panel-default">
-			<div class="panel-heading ">
 
-				<div class="col-lg-8 col-md-8">
-					<i class="fa fa-user-circle-o fa-2x"></i> <label class="mayusculas"
-						th:text="#{lbl_cuenta_detalle}"> </label>
-					<h4 class="text-warning"
-						th:text="${#strings.capitalizeWords(#strings.toLowerCase(trabajador.nombre + ' ' + trabajador.apellidos))}"></h4>
-				</div>
 
-				<div class="col-lg-4 col-md-4 text-right">
-					<div class="btn-group text-center">
-						<a th:href="@{#{link.trabajadores.editar}(id=${trabajador.id})}"
-							class="btn-sm"><i class="glyphicon glyphicon-pencil"></i></a> <a
-							th:href="@{#{link.trabajadores.eliminar}(id=${trabajador.id})}"
-							class="btn-sm"><i class="glyphicon glyphicon-minus"></i></a> <a
-							th:href="@{#{link.trabajadores.registro}}" class="btn-sm"><i
-							class="glyphicon glyphicon-plus"></i> </a> <a
-							th:href="@{#{link.trabajadores}}" class="btn-sm"> <i
-							class="glyphicon glyphicon-list"></i>
-						</a>
-					</div>
-				</div>
+		<!-- <div class="panel panel-default"> -->
+
+		<div class="panel-heading ">
+
+			<div class="col-lg-8 col-md-8">
+				<i class="fa fa-user-circle-o fa-2x"></i> <label class="mayusculas"
+					th:text="#{lbl_cuenta_detalle}"> </label>
+				<h4 class="text-warning"
+					th:text="${#strings.capitalizeWords(#strings.toLowerCase(trabajador.nombre + ' ' + trabajador.apellidos))}"></h4>
 			</div>
 
-			<div class="panel-body">
-				<table class="table table-hover">
-					<tbody>
-						<!-- dtos del trabajador -->
-						<tr>
-							<td class="text-success"><label
-								th:text="#{lbl_trabajador_tipo}"></label></td>
-							<td th:if="${trabajador.tipo}"
-								th:text="#{${'trabajador.tipo.' + trabajador.tipo}}"></td>
-						</tr>
-
-						<tr>
-							<td class="text-success"><label th:text="#{lbl_rol}"></label></td>
-							<td th:if="${trabajador.rol}" th:text="#{${trabajador.rol}}"></td>
-						</tr>
-
-						<tr>
-							<td class="text-success"><label
-								th:text="#{lbl_trabajador_cuenta_habilitada}"> </label></td>
-
-							<td th:if="${trabajador.cuentaActiva == true}"><i
-								class="glyphicon glyphicon-ok"> </i></td>
-
-							<td th:unless="${trabajador.cuentaActiva == true}"><i
-								class="glyphicon glyphicon-remove"> </i></td>
-						</tr>
-
-						<tr>
-							<td class="text-success"><label
-								th:text="#{lbl_trabajador_trabajador_habilitado}"> </label></td>
-
-							<td th:if="${trabajador.trabajadorActivo == true}"><i
-								class="glyphicon glyphicon-ok"> </i></td>
-
-							<td th:unless="${trabajador.trabajadorActivo == true}"><i
-								class="glyphicon glyphicon-remove"> </i></td>
-						</tr>
-
-						<tr>
-							<td class="text-success"><i class="material-icons"
-								style="font-size: 14px">language</i>&nbsp; <label
-								th:text="#{lbl_trabajador_idioma}"> </label></td>
-
-							<td th:if="${trabajador.idioma}"
-								th:text="#{${'lang.' + trabajador.idioma}}"></td>
-						</tr>
-
-						<tr>
-							<td class="text-success"><i
-								class="glyphicon glyphicon-calendar"></i> <label
-								class="mayusculas" th:text="#{lbl_trabajador_fecha_creacion}"></label></td>
-							<td>
-								<!-- http://www.baeldung.com/dates-in-thymeleaf -->
-								<p th:if="${trabajador.fechaCreacion != null}"
-									th:with="df=#{fecha_formato_completo}"
-									th:text="${#dates.format(trabajador.fechaCreacion, df)}"></p>
-							</td>
-						</tr>
-
-						<tr>
-							<td class="text-success"><i
-								class="glyphicon glyphicon-calendar"></i> <label
-								class="mayusculas" th:text="#{lbl_trabajador_fecha_activacion}"></label></td>
-							<td>
-								<!-- http://www.baeldung.com/dates-in-thymeleaf -->
-								<p th:if="${trabajador.fechaActivacion != null}"
-									th:with="df=#{fecha_formato_completo}"
-									th:text="${#dates.format(trabajador.fechaActivacion, df)}"></p>
-							</td>
-						</tr>
-
-						<tr>
-							<td class="text-success"><i
-								class="glyphicon glyphicon-calendar"></i> <label
-								class="mayusculas"
-								th:text="#{lbl_trabajador_fecha_ultimo_token}"></label></td>
-							<td>
-								<!-- http://www.baeldung.com/dates-in-thymeleaf -->
-								<p th:if="${trabajador.fechaExpiracionToken != null}"
-									th:with="df=#{fecha_formato_completo}"
-									th:text="${#dates.format(trabajador.fechaExpiracionToken, df)}"></p>
-							</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-			<div class="panel-footer">
-				<div class="pull-left">
-					<a th:href="@{#{link.trabajadores}}"> <i
-						class="glyphicon glyphicon-list"></i> &nbsp; <label
-						th:text="#{lbl_listado_trabajadores}"></label>
+			<div class="col-lg-4 col-md-4 text-right">
+				<div class="btn-group text-center">
+					<a th:href="@{#{link.trabajadores.editar}(id=${trabajador.id})}"
+						class="btn-sm"><i class="glyphicon glyphicon-pencil"></i></a> <a
+						th:href="@{#{link.trabajadores.registro}}" class="btn-sm"><i
+						class="glyphicon glyphicon-plus"></i> </a> <a
+						th:href="@{#{link.trabajadores}}" class="btn-sm"> <i
+						class="glyphicon glyphicon-list"></i>
 					</a>
 				</div>
-				<br />
 			</div>
 		</div>
+
+		<div class="panel-body">
+			<table class="table table-hover">
+				<tbody>
+					<!-- dtos del trabajador -->
+					<tr>
+						<td class="text-success"><label
+							th:text="#{lbl_trabajador_tipo}"></label></td>
+						<td th:if="${trabajador.tipo}"
+							th:text="#{${'trabajador.tipo.' + trabajador.tipo}}"></td>
+					</tr>
+
+					<tr>
+						<td class="text-success"><label th:text="#{lbl_rol}"></label></td>
+						<td th:if="${trabajador.rol}" th:text="#{${trabajador.rol}}"></td>
+					</tr>
+
+					<tr>
+						<td class="text-success"><label
+							th:text="#{lbl_trabajador_cuenta_habilitada}"> </label></td>
+
+						<td th:if="${trabajador.cuentaActiva == true}"><i
+							class="glyphicon glyphicon-ok"> </i></td>
+
+						<td th:unless="${trabajador.cuentaActiva == true}"><i
+							class="glyphicon glyphicon-remove"> </i></td>
+					</tr>
+
+					<tr>
+						<td class="text-success"><label
+							th:text="#{lbl_trabajador_trabajador_habilitado}"> </label></td>
+
+						<td th:if="${trabajador.trabajadorActivo == true}"><i
+							class="glyphicon glyphicon-ok"> </i></td>
+
+						<td th:unless="${trabajador.trabajadorActivo == true}"><i
+							class="glyphicon glyphicon-remove"> </i></td>
+					</tr>
+
+					<tr>
+						<td class="text-success"><i class="material-icons"
+							style="font-size: 14px">language</i>&nbsp; <label
+							th:text="#{lbl_trabajador_idioma}"> </label></td>
+
+						<td th:if="${trabajador.idioma}"
+							th:text="#{${'lang.' + trabajador.idioma}}"></td>
+					</tr>
+
+					<tr>
+						<td class="text-success"><i
+							class="glyphicon glyphicon-calendar"></i> <label
+							class="mayusculas" th:text="#{lbl_trabajador_fecha_creacion}"></label></td>
+						<td>
+							<!-- http://www.baeldung.com/dates-in-thymeleaf -->
+							<p th:if="${trabajador.fechaCreacion != null}"
+								th:with="df=#{fecha_formato_completo}"
+								th:text="${#dates.format(trabajador.fechaCreacion, df)}"></p>
+						</td>
+					</tr>
+
+					<tr>
+						<td class="text-success"><i
+							class="glyphicon glyphicon-calendar"></i> <label
+							class="mayusculas" th:text="#{lbl_trabajador_fecha_activacion}"></label></td>
+						<td>
+							<!-- http://www.baeldung.com/dates-in-thymeleaf -->
+							<p th:if="${trabajador.fechaActivacion != null}"
+								th:with="df=#{fecha_formato_completo}"
+								th:text="${#dates.format(trabajador.fechaActivacion, df)}"></p>
+						</td>
+					</tr>
+
+					<tr>
+						<td class="text-success"><i
+							class="glyphicon glyphicon-calendar"></i> <label
+							class="mayusculas" th:text="#{lbl_trabajador_fecha_ultimo_token}"></label></td>
+						<td>
+							<!-- http://www.baeldung.com/dates-in-thymeleaf -->
+							<p th:if="${trabajador.fechaExpiracionToken != null}"
+								th:with="df=#{fecha_formato_completo}"
+								th:text="${#dates.format(trabajador.fechaExpiracionToken, df)}"></p>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="panel-footer">
+			<div class="pull-left">
+				<a th:href="@{#{link.trabajadores}}"> <i
+					class="glyphicon glyphicon-list"></i> &nbsp; <label
+					th:text="#{lbl_listado_trabajadores}"></label>
+				</a>
+			</div>
+			<br />
+		</div>
 	</div>
+	<!-- </div>-->
 </body>
 </html>

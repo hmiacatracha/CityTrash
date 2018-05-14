@@ -43,6 +43,24 @@ input.capitalize {
 	text-transform: capitalize;
 }
 
+.basura_color_cuadro {
+	width: 25;
+	height: 25;
+	border-radius: 20%;
+	color: #fff;
+	text-align: center;
+	background: #000
+}
+
+.basura_color_circulo {
+	width: 25;
+	height: 25;
+	border-radius: 50%;
+	color: #fff;
+	text-align: center;
+	background: #000
+}
+
 .navbar {
 	font-family: 'Merienda One', cursive;
 }
@@ -249,7 +267,6 @@ a:hover, a:active {
 	background-color: #fff;
 	color: #000;
 }
-
 
 select.form-control, input.form-control, option.form-control {
 	cursor: pointer;

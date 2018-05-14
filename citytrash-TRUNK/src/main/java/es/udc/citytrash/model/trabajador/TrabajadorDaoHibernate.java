@@ -67,16 +67,20 @@ public class TrabajadorDaoHibernate extends GenericHibernateDAOImpl<Trabajador, 
 	}
 
 	@Override
-	public List<Trabajador> buscarTrabajadores() {
+	public List<Trabajador> buscarTrabajadoresOrderByApellidos(boolean mostrarActivos) {
 		List<Trabajador> trabajadores = new ArrayList<Trabajador>();
 		String alias = "t";
-		String hql = String.format("Select " + alias + " FROM Trabajador " + alias + " ORDER BY " + alias + ".id");
-		trabajadores = getSession().createQuery(hql, Trabajador.class).list();
+		StringBuilder hql = new StringBuilder("Select " + alias + " FROM Trabajador " + alias);
+		/* Filtro tipo de trabajador */
+		if (mostrarActivos)
+			hql.append(" WHERE (" + alias + ".activeWorker = :activo) ");
+		hql.append(" ORDER BY " + alias + ".apellidos");
+		trabajadores = getSession().createQuery(hql.toString(), Trabajador.class).list();
 		return trabajadores;
 	}
 
 	@Override
-	public Page<Trabajador> buscarTrabajadores(Pageable pageable, TipoTrabajador tipo) {
+	public Page<Trabajador> buscarTrabajadores(Pageable pageable, TipoTrabajador tipo, Boolean mostrarTodos) {
 
 		Query<Trabajador> query;
 		List<Trabajador> trabajadores = new ArrayList<Trabajador>();
@@ -84,8 +88,15 @@ public class TrabajadorDaoHibernate extends GenericHibernateDAOImpl<Trabajador, 
 		String alias = "t";
 		StringBuilder hql = new StringBuilder("Select " + alias + " FROM Trabajador " + alias);
 		/* Filtro tipo de trabajador */
+
+		if (!mostrarTodos)
+			hql.append(" WHERE (" + alias + ".activeWorker = :activo) ");
+
 		if (tipo != TipoTrabajador.NONE && tipo != null) {
-			hql.append(" WHERE " + alias + ".trabajadorType = :tipo");
+			if (!mostrarTodos)
+				hql.append(" AND " + alias + ".trabajadorType = :tipo");
+			else
+				hql.append(" WHERE " + alias + ".trabajadorType = :tipo");
 		}
 
 		/* Sorted */
@@ -95,6 +106,9 @@ public class TrabajadorDaoHibernate extends GenericHibernateDAOImpl<Trabajador, 
 		hql.append(" ORDER BY " + order);
 
 		query = getSession().createQuery(hql.toString(), Trabajador.class);
+
+		if (!mostrarTodos)
+			query.setParameter("activo", true);
 
 		if (tipo != TipoTrabajador.NONE && tipo != null) {
 			query.setParameter("tipo", tipo.name());
@@ -117,7 +131,7 @@ public class TrabajadorDaoHibernate extends GenericHibernateDAOImpl<Trabajador, 
 
 	@Override
 	public Page<Trabajador> buscarTrabajadoresPorNombreApellidosYTipo(Pageable pageable, String palabrasClaves,
-			TipoTrabajador tipo) {
+			TipoTrabajador tipo, Boolean mostrarTodos) {
 		String[] palabras = palabrasClaves.split(" ");
 		Query<Trabajador> query;
 		List<Trabajador> trabajadores = new ArrayList<Trabajador>();
@@ -128,17 +142,23 @@ public class TrabajadorDaoHibernate extends GenericHibernateDAOImpl<Trabajador, 
 
 		/* Palabras claves */
 		for (int i = 0; i < palabras.length; i++) {
-			if (i != 0) {
-				hql.append(" and (LOWER(" + alias + ".nombre) LIKE  LOWER (?) or  LOWER(" + alias
+			if (i != 0)
+				hql.append(" AND (LOWER(" + alias + ".nombre) LIKE  LOWER (?) or LOWER(" + alias
 						+ ".apellidos) LIKE  LOWER (?))");
-			} else {
+			else
 				hql.append(" WHERE (LOWER(" + alias + ".nombre) LIKE  LOWER (?) or LOWER(" + alias
 						+ ".apellidos) LIKE  LOWER (?))");
-			}
 		}
 
+		// muestra solo los trabajadores de alta, los de baja no
+		if (!mostrarTodos)
+			if (palabras.length > 0)
+				hql.append(" AND (" + alias + ".activeWorker = :activo)");
+			else
+				hql.append(" WHERE (" + alias + ".activeWorker = :activo)");
+
 		/* Filtro tipo de trabajador */
-		if (palabras.length > 0 && (tipo != null && tipo != TipoTrabajador.NONE)) {
+		if ((palabras.length > 0 || mostrarTodos == false) && (tipo != null && tipo != TipoTrabajador.NONE)) {
 			hql.append(" AND " + alias + ".trabajadorType = :tipo");
 		} else if (tipo != null && tipo != TipoTrabajador.NONE) {
 			hql.append(" WHERE " + alias + ".trabajadorType = :tipo");
@@ -150,7 +170,6 @@ public class TrabajadorDaoHibernate extends GenericHibernateDAOImpl<Trabajador, 
 						.map(o -> alias + "." + o.getProperty() + " " + o.getDirection()).collect(Collectors.toList()));
 		hql.append(" ORDER BY " + order);
 
-		logger.info("CONSULTA HQL1 =>" + hql);
 		query = getSession().createQuery(hql.toString(), Trabajador.class);
 
 		/* set parameters */
@@ -161,11 +180,15 @@ public class TrabajadorDaoHibernate extends GenericHibernateDAOImpl<Trabajador, 
 			j++;
 		}
 
+		if (!mostrarTodos)
+			query.setParameter("activo", true);
+
 		if (tipo != null && tipo != TipoTrabajador.NONE) {
 			query.setParameter("tipo", tipo.name());
 		}
 
 		trabajadores = query.list();
+
 		int start = pageable.getOffset();
 		int end = (start + pageable.getPageSize()) > trabajadores.size() ? trabajadores.size()
 				: (start + pageable.getPageSize());
@@ -182,7 +205,7 @@ public class TrabajadorDaoHibernate extends GenericHibernateDAOImpl<Trabajador, 
 
 	@Override
 	public Page<Trabajador> buscarTrabajadoresPorDocumentoYTipo(Pageable pageable, String documento,
-			TipoTrabajador tipo) {
+			TipoTrabajador tipo, Boolean mostrarTodos) {
 
 		String[] palabras = documento.split(" ");
 		Query<Trabajador> query;
@@ -194,15 +217,20 @@ public class TrabajadorDaoHibernate extends GenericHibernateDAOImpl<Trabajador, 
 
 		/* Palabras claves */
 		for (int i = 0; i < palabras.length; i++) {
-			if (i != 0) {
+			if (i != 0)
 				hql.append(" AND LOWER(" + alias + ".docId) LIKE  LOWER (?)");
-			} else {
+			else
 				hql.append(" WHERE LOWER(" + alias + ".docId) LIKE  LOWER (?)");
-			}
 		}
 
+		if (!mostrarTodos)
+			if (palabras.length > 0)
+				hql.append(" AND (" + alias + ".activeWorker = :activo)");
+			else
+				hql.append(" WHERE (" + alias + ".activeWorker = :activo)");
+
 		/* Filtro tipo de trabajador */
-		if (palabras.length > 0 && (tipo != null && tipo != TipoTrabajador.NONE)) {
+		if ((palabras.length > 0 || mostrarTodos == false) && (tipo != null && tipo != TipoTrabajador.NONE)) {
 			hql.append(" AND " + alias + ".trabajadorType = :tipo");
 		} else if (tipo != null && tipo != TipoTrabajador.NONE) {
 			hql.append(" WHERE " + alias + ".trabajadorType = :tipo");
@@ -220,6 +248,9 @@ public class TrabajadorDaoHibernate extends GenericHibernateDAOImpl<Trabajador, 
 		for (int i = 0; i < palabras.length; i++) {
 			query.setParameter(i, "%" + palabras[i] + "%");
 		}
+
+		if (!mostrarTodos)
+			query.setParameter("activo", true);
 
 		if (tipo != null && tipo != TipoTrabajador.NONE) {
 			query.setParameter("tipo", tipo.name());
@@ -244,7 +275,7 @@ public class TrabajadorDaoHibernate extends GenericHibernateDAOImpl<Trabajador, 
 
 	@Override
 	public Page<Trabajador> buscarTrabajadoresPorApellidosYTipo(Pageable pageable, String apellidos,
-			TipoTrabajador tipo) {
+			TipoTrabajador tipo, Boolean mostrarTodos) {
 		String[] palabras = apellidos.split(" ");
 		Query<Trabajador> query;
 		List<Trabajador> trabajadores = new ArrayList<Trabajador>();
@@ -255,15 +286,20 @@ public class TrabajadorDaoHibernate extends GenericHibernateDAOImpl<Trabajador, 
 
 		/* Palabras claves */
 		for (int i = 0; i < palabras.length; i++) {
-			if (i != 0) {
+			if (i != 0)
 				hql.append(" AND LOWER(" + alias + ".apellidos) LIKE  LOWER (?)");
-			} else {
+			else
 				hql.append(" WHERE LOWER(" + alias + ".apellidos) LIKE  LOWER (?)");
-			}
 		}
 
+		if (!mostrarTodos)
+			if (palabras.length > 0)
+				hql.append(" AND (" + alias + ".activeWorker = :activo)");
+			else
+				hql.append(" WHERE (" + alias + ".activeWorker = :activo)");
+
 		/* Filtro tipo de trabajador */
-		if (palabras.length > 0 && (tipo != null && tipo != TipoTrabajador.NONE)) {
+		if ((palabras.length > 0 || mostrarTodos == false) && (tipo != null && tipo != TipoTrabajador.NONE)) {
 			hql.append(" AND " + alias + ".trabajadorType = :tipo");
 		} else if (tipo != null && tipo != TipoTrabajador.NONE) {
 			hql.append(" WHERE " + alias + ".trabajadorType = :tipo");
@@ -282,6 +318,9 @@ public class TrabajadorDaoHibernate extends GenericHibernateDAOImpl<Trabajador, 
 		for (int i = 0; i < palabras.length; i++) {
 			query.setParameter(i, "%" + palabras[i] + "%");
 		}
+
+		if (!mostrarTodos)
+			query.setParameter("activo", true);
 
 		if (tipo != TipoTrabajador.NONE && tipo != null) {
 			query.setParameter("tipo", tipo.name());
@@ -304,8 +343,8 @@ public class TrabajadorDaoHibernate extends GenericHibernateDAOImpl<Trabajador, 
 	}
 
 	@Override
-	public Page<Trabajador> buscarTrabajadoresPorTelefonoYTipo(Pageable pageable, String telefono,
-			TipoTrabajador tipo) {
+	public Page<Trabajador> buscarTrabajadoresPorTelefonoYTipo(Pageable pageable, String telefono, TipoTrabajador tipo,
+			Boolean mostrarTodos) {
 		String[] palabras = telefono.split(" ");
 		Query<Trabajador> query;
 		List<Trabajador> trabajadores = new ArrayList<Trabajador>();
@@ -313,18 +352,22 @@ public class TrabajadorDaoHibernate extends GenericHibernateDAOImpl<Trabajador, 
 		String alias = "t";
 
 		StringBuilder hql = new StringBuilder("Select " + alias + " FROM Trabajador " + alias);
-
 		/* Palabras claves */
 		for (int i = 0; i < palabras.length; i++) {
-			if (i != 0) {
+			if (i != 0)
 				hql.append(" AND LOWER(" + alias + ".telefono) LIKE  LOWER (?)");
-			} else {
+			else
 				hql.append(" WHERE LOWER(" + alias + ".telefono) LIKE  LOWER (?)");
-			}
 		}
 
+		if (!mostrarTodos)
+			if (palabras.length > 0)
+				hql.append(" AND (" + alias + ".activeWorker = :activo)");
+			else
+				hql.append(" WHERE (" + alias + ".activeWorker = :activo)");
+
 		/* Filtro tipo de trabajador */
-		if (palabras.length > 0 && (tipo != null && tipo != TipoTrabajador.NONE)) {
+		if ((palabras.length > 0 || mostrarTodos == false) && (tipo != null && tipo != TipoTrabajador.NONE)) {
 			hql.append(" AND " + alias + ".trabajadorType = :tipo");
 		} else if (tipo != null && tipo != TipoTrabajador.NONE) {
 			hql.append(" WHERE " + alias + ".trabajadorType = :tipo");
@@ -343,6 +386,9 @@ public class TrabajadorDaoHibernate extends GenericHibernateDAOImpl<Trabajador, 
 		for (int i = 0; i < palabras.length; i++) {
 			query.setParameter(i, "%" + palabras[i] + "%");
 		}
+
+		if (!mostrarTodos)
+			query.setParameter("activo", true);
 
 		if (tipo != null && tipo != TipoTrabajador.NONE) {
 			query.setParameter("tipo", tipo.name());
@@ -364,7 +410,8 @@ public class TrabajadorDaoHibernate extends GenericHibernateDAOImpl<Trabajador, 
 	}
 
 	@Override
-	public Page<Trabajador> buscarTrabajadoresPorCpYTipo(Pageable pageable, String cp, TipoTrabajador tipo) {
+	public Page<Trabajador> buscarTrabajadoresPorCpYTipo(Pageable pageable, String cp, TipoTrabajador tipo,
+			Boolean mostrarTodos) {
 		String[] palabras = cp.split(" ");
 		Query<Trabajador> query;
 		List<Trabajador> trabajadores = new ArrayList<Trabajador>();
@@ -375,15 +422,20 @@ public class TrabajadorDaoHibernate extends GenericHibernateDAOImpl<Trabajador, 
 
 		/* Palabras claves */
 		for (int i = 0; i < palabras.length; i++) {
-			if (i != 0) {
+			if (i != 0)
 				hql.append(" AND LOWER(" + alias + ".cp) LIKE  LOWER (?)");
-			} else {
+			else
 				hql.append(" WHERE LOWER(" + alias + ".cp) LIKE  LOWER (?)");
-			}
 		}
 
+		if (!mostrarTodos)
+			if (palabras.length > 0)
+				hql.append(" AND (" + alias + ".activeWorker = :activo)");
+			else
+				hql.append(" WHERE (" + alias + ".activeWorker = :activo)");
+
 		/* Filtro tipo de trabajador */
-		if (palabras.length > 0 && (tipo != null && tipo != TipoTrabajador.NONE)) {
+		if ((palabras.length > 0 || mostrarTodos == false) && (tipo != null && tipo != TipoTrabajador.NONE)) {
 			hql.append(" AND " + alias + ".trabajadorType = :tipo");
 		} else if (tipo != null && tipo != TipoTrabajador.NONE) {
 			hql.append(" WHERE " + alias + ".trabajadorType = :tipo");
@@ -402,6 +454,9 @@ public class TrabajadorDaoHibernate extends GenericHibernateDAOImpl<Trabajador, 
 		for (int i = 0; i < palabras.length; i++) {
 			query.setParameter(i, "%" + palabras[i] + "%");
 		}
+
+		if (!mostrarTodos)
+			query.setParameter("activo", true);
 
 		if (tipo != null && tipo != TipoTrabajador.NONE) {
 			query.setParameter("tipo", tipo.name());
@@ -424,7 +479,8 @@ public class TrabajadorDaoHibernate extends GenericHibernateDAOImpl<Trabajador, 
 	}
 
 	@Override
-	public Page<Trabajador> buscarTrabajadoresPorEmailYTipo(Pageable pageable, String email, TipoTrabajador tipo) {
+	public Page<Trabajador> buscarTrabajadoresPorEmailYTipo(Pageable pageable, String email, TipoTrabajador tipo,
+			Boolean mostrarTodos) {
 
 		String[] palabras = email.split(" ");
 		Query<Trabajador> query;
@@ -436,15 +492,20 @@ public class TrabajadorDaoHibernate extends GenericHibernateDAOImpl<Trabajador, 
 
 		/* Palabras claves */
 		for (int i = 0; i < palabras.length; i++) {
-			if (i != 0) {
+			if (i != 0)
 				hql.append(" AND LOWER(" + alias + ".email) LIKE  LOWER (?)");
-			} else {
+			else
 				hql.append(" WHERE LOWER(" + alias + ".email) LIKE  LOWER (?)");
-			}
 		}
 
+		if (!mostrarTodos)
+			if (palabras.length > 0)
+				hql.append(" AND (" + alias + ".activeWorker = :activo) ");
+			else
+				hql.append(" WHERE (" + alias + ".activeWorker = :activo) ");
+
 		/* Filtro tipo de trabajador */
-		if (palabras.length > 0 && (tipo != null && tipo != TipoTrabajador.NONE)) {
+		if ((palabras.length > 0 || mostrarTodos == false) && (tipo != null && tipo != TipoTrabajador.NONE)) {
 			hql.append(" AND " + alias + ".trabajadorType = :tipo");
 		} else if (tipo != null && tipo != TipoTrabajador.NONE) {
 			hql.append(" WHERE " + alias + ".trabajadorType = :tipo");
@@ -463,6 +524,9 @@ public class TrabajadorDaoHibernate extends GenericHibernateDAOImpl<Trabajador, 
 		for (int i = 0; i < palabras.length; i++) {
 			query.setParameter(i, "%" + palabras[i] + "%");
 		}
+
+		if (!mostrarTodos)
+			query.setParameter("activo", true);
 
 		if (tipo != null && tipo != TipoTrabajador.NONE) {
 			query.setParameter("tipo", tipo.name());

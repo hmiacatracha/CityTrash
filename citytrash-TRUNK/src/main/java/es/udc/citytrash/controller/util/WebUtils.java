@@ -43,11 +43,32 @@ public class WebUtils {
 	public static final String VISTA_LOGIN = VISTA_CUENTA_PREFIX + "login";
 	public static final String VISTA_RECUPERAR_CUENTA = VISTA_CUENTA_PREFIX + "recuperarCuenta";
 	public static final String VISTA_CAMBIAR_IDIOMA = VISTA_CUENTA_PREFIX + "cambiarIdioma";
+	public static final String VISTA_PERFIL = VISTA_CUENTA_PREFIX + "perfil_tabs";
+	public static final String VISTA_PERFIL_DETALLES = VISTA_CUENTA_PREFIX + "perfil_detalles";
 
 	/* Paquete about us */
 	private static final String VISTA_ABOUT_PREFIX = "about/";
 	public static final String VISTA_ABOUT_US = VISTA_ABOUT_PREFIX + "about_us";
 
+	/* paquete CAMIONES */
+	public static final String VISTA_CAMIONES_PREFIX = "camiones/";
+	public static final String VISTA_CAMIONES_MODELOS_PREFIX = "camiones/modelos/";
+	public static final String VISTA_CAMIONES = VISTA_CAMIONES_PREFIX + "camiones";
+	public static final String VISTA_CAMIONES_REGISTRO = VISTA_CAMIONES_PREFIX + "camionesRegistro";
+	public static final String VISTA_CAMIONES_EDITAR = VISTA_CAMIONES_PREFIX + "camionesModificar";
+	public static final String VISTA_CAMIONES_DETALLES = VISTA_CAMIONES_PREFIX + "detalles";
+	public static final String VISTA_CAMIONES_DETALLES_INFO = VISTA_CAMIONES_PREFIX + "detalles/informacionCamion";
+	public static final String VISTA_CAMIONES_DETALLES_RUTAS = VISTA_CAMIONES_PREFIX + "detalles/historialRutas";
+	public static final String VISTA_CAMIONES_DETALLES_MODELO = VISTA_CAMIONES_PREFIX + "detalles/informacionModelo";
+
+	public static final String VISTA_CAMIONES_MODELOS = VISTA_CAMIONES_MODELOS_PREFIX + "modelos";
+	public static final String VISTA_CAMIONES_MODELOS_FORMULARIO = VISTA_CAMIONES_MODELOS_PREFIX
+			+ "modelosRegistroYEditar";
+	public static final String VISTA_CAMIONES_MODELOS_DETALLES = VISTA_CAMIONES_MODELOS_PREFIX + "detalles";
+	public static final String VISTA_CAMIONES_MODELOS_DETALLES_INFO = VISTA_CAMIONES_MODELOS_PREFIX
+			+ "detalles/informacionModelo";
+	public static final String VISTA_CAMIONES_MODELOS_DETALLES_CAMIONES = VISTA_CAMIONES_MODELOS_PREFIX
+			+ "detalles/ListaDeCamiones";
 	/**
 	 * URLS
 	 */
@@ -77,8 +98,8 @@ public class WebUtils {
 	public static final String URL_TRABAJADOR_UPDATE = "/trabajadores/{trabajadorId}/editar";
 	public static final String REQUEST_MAPPING_TRABAJADOR_UPDATE = "/{trabajadorId}/editar";
 
-	public static final String URL_TRABAJADOR_DELETE = "/trabajadores/{trabajadorId}/eliminar";
-	public static final String REQUEST_MAPPING_TRABAJADOR_DELETE = "/{trabajadorId}/eliminar";
+	public static final String URL_TRABAJADOR_CAMBIAR_ESTADO = "/trabajadores/{trabajadorId}/cambiarEstado";
+	public static final String REQUEST_MAPPING_CAMBIAR_ESTADO = "/{trabajadorId}/cambiarEstado";
 
 	public static final String URL_TRABAJADOR_INFO_PERSONAL = "/trabajadores/{trabajadorId}/detalles/infopersonal";
 	public static final String REQUEST_MAPPING_TRABAJADOR_INFO_PERSONAL = "/{trabajadorId}/detalles/infopersonal";
@@ -108,8 +129,57 @@ public class WebUtils {
 	public static final String URL_CUENTA_ACTUALIZAR_CONTRASENA = "/cuenta/actualizarPassword";
 	public static final String REQUEST_MAPPING_CUENTA_ACTUALIZAR_CONTRASENA = "actualizarPassword";
 
-	public static final String URL_CUENTA_CAMBIAR_CONTRASENA = "/cambiarPassword";
-	public static final String REQUEST_MAPPING_CAMBIAR_CONTRASENA = "cuenta/cambiarPassword";
+	public static final String URL_CUENTA_PERFIL = "cuenta/perfil";
+	public static final String REQUEST_MAPPING_PERFIL = "perfil";
+
+	public static final String URL_CUENTA_PERFIL_DETALLES = "cuenta/perfil/detalles";
+	public static final String REQUEST_MAPPING_PERFIL_DETALLES = "perfil/detalles";
+
+	// URLS CAMIONES
+	public static final String URL_MAPPING_CAMIONES = "/camiones";
+	public static final String REQUEST_MAPPING_CAMIONES = "/";
+
+	public static final String URL_MAPPING_CAMIONES_REGISTRO = "/camiones/registro";
+	public static final String REQUEST_MAPPING_CAMIONES_REGISTRO = "/registro";
+
+	public static final String URL_MAPPING_CAMIONES_DETALLES = "/camiones/{id}/detalles";
+	public static final String REQUEST_MAPPING_CAMIONES_DETALLES = "/{id}/detalles";
+
+	public static final String URL_MAPPING_CAMIONES_DETALLES_INFO_CAMION = "/camiones/{id}/detalles/camion";
+	public static final String REQUEST_MAPPING_CAMIONES_DETALLES_INFO_CAMION = "/{id}/detalles/camion";
+
+	public static final String URL_MAPPING_CAMIONES_DETALLES_INFO_MODELO = "/camiones/{id}/detalles/modelo";
+	public static final String REQUEST_MAPPING_CAMIONES_DETALLES_INFO_MODELO = "/{id}/detalles/modelo";
+
+	public static final String URL_MAPPING_CAMIONES_DETALLES_INFO_RUTAS = "/camiones/{id}/detalles/modelo";
+	public static final String REQUEST_MAPPING_CAMIONES_DETALLES_INFO_RUTAS = "/{id}/detalles/modelo";
+
+	public static final String URL_MAPPING_CAMIONES_EDITAR = "/camiones/{id}/editar";
+	public static final String REQUEST_MAPPING_CAMIONES_EDITAR = "/{id}/editar";
+
+	public static final String URL_MAPPING_CAMIONES_ESTADO = "/camiones/{id}/estado";
+	public static final String REQUEST_MAPPING_CAMIONES_ESTADO = "/{id}/estado";
+
+	public static final String URL_MAPPING_CAMIONES_MODELOS = "/camiones/modelos";
+	public static final String REQUEST_MAPPING_CAMIONES_MODELOS = "/modelos";
+
+	public static final String URL_MAPPING_CAMIONES_REGISTRO_MODELO = "/camiones/modelos/registro";
+	public static final String REQUEST_MAPPING_CAMIONES_REGISTRO_MODELO = "/modelos/registro";
+
+	public static final String URL_MAPPING_CAMIONES_DETALLES_MODELO = "/camiones/modelos/{id}/detalles";
+	public static final String REQUEST_MAPPING_CAMIONES_DETALLES_MODELO = "/modelos/{id}/detalles";
+
+	public static final String URL_MAPPING_CAMIONES_DETALLES_MODELO_INFO_MODELO = "/camiones/modelos/{id}/detalles/modelo";
+	public static final String REQUEST_MAPPING_CAMIONES_DETALLES_MODELO_INFO_MODELO = "/modelos/{id}/detalles/modelo";
+
+	public static final String URL_MAPPING_CAMIONES_DETALLES_MODELO_INFO_CAMIONES = "/camiones/modelos/{id}/detalles/camiones";
+	public static final String REQUEST_MAPPING_CAMIONES_DETALLES_MODELO_INFO_CAMIONES = "/modelos/{id}/detalles/camiones";
+
+	public static final String URL_MAPPING_CAMIONES_EDITAR_MODELO = "/camiones/modelos/{id}/editar";
+	public static final String REQUEST_MAPPING_CAMIONES_EDITAR_MODELO = "/modelos/{id}/editar";
+
+	public static final String URL_MAPPING_CAMIONES_MODELO_REGISTRO_OR_MODIFICAR = "/camiones/modelos/guardar";
+	public static final String REQUEST_MAPPING_CAMIONES_MODELO_REGISTRO_OR_MODIFICAR = "/modelos/guardar";
 
 	public static String getUrlWithContextPath(HttpServletRequest request) {
 		return request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()

@@ -66,7 +66,19 @@
 										th:value="${campo}" th:text="#{${'lbl_' + campo}}"></option>
 								</select>
 							</div>
-							<div class="col-xs-10 col-sm-8">
+
+
+							<div class="col-xs-3 col-sm-1">
+								<div class="form-check">
+									<label> <input id="mostrar_trabajadores_de_baja"
+										type="checkbox" th:field="*{mostrarTodosLosTrabajadores}"
+										th:value="${mostrarTodosLosTrabajadores}" name="check">
+										<span class="label-text" th:text="#{lbl_mostrar_todos}"></span>
+									</label>
+								</div>
+							</div>
+
+							<div class="col-xs-9 col-sm-7">
 								<div class=" input-group">
 									<input type="text" class="form-control"
 										th:placeholder="#{lbl_pholder_search}" th:field="*{buscar}">
@@ -81,94 +93,119 @@
 				</form>
 			</div>
 
-			<!-- trabajadores list -->
 			<div id="listaTrabajadoresContent"
 				th:fragment="listaTrabajadoresContent" class="col-xs-12">
+
+				<!-- trabajadores list -->
+				<div id="resultMsgDiv">
+					<!-- mensaje ok -->
+					<th:block th:if="${msg!=null}">
+						<div th:if="${type!=null}"
+							th:replace="fragments/alert :: alert (type='success',  message=#{${type}(${key})})"></div>
+					</th:block>
+				</div>
+
 				<!-- tabla -->
-				<table class="table">
-					<thead class="thead-dark">
-						<tr>
-							<th><a class="sorted" sd:pagination-sort="id"
-								th:text="#{frm_trabajadores_id}"> </a></th>
+				<div class="table-responsive">
+					<table class="table">
+						<thead class="thead-dark">
+							<tr>
+								<th><a class="sorted" sd:pagination-sort="id"
+									th:text="${#strings.capitalize('__#{frm_trabajadores_id}__')}">
+										<!-- th:text="#{frm_trabajadores_id}"  -->
+								</a></th>
 
-							<th th:text="#{lbl_documento}"></th>
+								<th th:text="#{lbl_documento}"></th>
 
-							<th><a class="sorted" sd:pagination-sort="nombre"
-								th:text="#{frm_trabajadores_nombre}"> Name</a></th>
+								<th><a class="sorted" sd:pagination-sort="nombre"
+									th:text="${#strings.toUpperCase('__#{frm_trabajadores_nombre}__')}">
+										Name</a></th>
 
-							<th><a class="sorted" sd:pagination-sort="apellidos"
-								th:text="#{frm_trabajadores_apellidos}">Apellidos</a></th>
+								<th><a class="sorted" sd:pagination-sort="apellidos"
+									th:text="${#strings.toUpperCase('__#{frm_trabajadores_apellidos}__')}">Apellidos</a></th>
 
-							<th><a class="sorted" sd:pagination-sort="email"
-								th:text="#{lbl_email}">email</a></th>
+								<th><a class="sorted" sd:pagination-sort="email"
+									th:text="${#strings.toUpperCase('__#{lbl_email}__')}">email</a></th>
 
-							<th><a class="sorted" sd:pagination-sort="trabajadorType"
-								th:text="#{lbl_tipo}">Tipo Trabajador</a></th>
+								<th><a class="sorted" sd:pagination-sort="trabajadorType"
+									th:text="${#strings.toUpperCase('__#{lbl_tipo}__')}">Tipo
+										Trabajador</a></th>
 
-							<th th:text="#{lbl_cp_abr}"></th>
-
-							<th th:text="#{lbl_telefono}"></th>
-
-							<th>&nbsp;</th>
-						</tr>
-					</thead>
-
-					<tbody>
-						<tr th:each="trabajador : ${listaTrabajadores.content}">
-							<td class="align-middle"><span
-								class="articleTitle truncated" data-toggle="tooltip"
-								data-placement="bottom" th:title="${trabajador.id}"
-								th:text="${trabajador.id}"> </span></td>
-
-							<td class="align-middle"
-								th:text="${#strings.toUpperCase(trabajador.documento)}">
-								documento</td>
+								<th
+									th:text="${#strings.toUpperCase('__#{lbl_trabajador_cuenta}__')}">cuenta</th>
 
 
-							<td class="align-middle"
-								th:text="${#strings.capitalizeWords(#strings.toLowerCase(trabajador.nombre))}">
-								nombre</td>
+								<th
+									th:text="${#strings.toUpperCase('__#{lbl_acciones}__')}">Acciones</th>
+							</tr>
+						</thead>
+
+						<tbody>
+							<tr th:each="trabajador : ${listaTrabajadores.content}">
+								<td class="align-middle"><span
+									class="articleTitle truncated" data-toggle="tooltip"
+									data-placement="bottom" th:title="${trabajador.id}"
+									th:text="${trabajador.id}"> </span></td>
+
+								<td class="align-middle"
+									th:text="${#strings.toUpperCase(trabajador.documento)}">
+									documento</td>
 
 
-							<td class="align-middle"
-								th:text="${#strings.capitalizeWords(#strings.toLowerCase(trabajador.apellidos))}">
-								apellidos</td>
+								<td class="align-middle"
+									th:text="${#strings.capitalizeWords(#strings.toLowerCase(trabajador.nombre))}">
+									nombre</td>
 
 
-							<td class="align-middle"
-								th:text="${#strings.toLowerCase(trabajador.email)}">email</td>
+								<td class="align-middle"
+									th:text="${#strings.capitalizeWords(#strings.toLowerCase(trabajador.apellidos))}">
+									apellidos</td>
 
-							<td class="align-middle"
-								th:text="#{${'trabajador.tipo.' + trabajador.tipo}}">tipo</td>
+								<td class="align-middle"
+									th:text="${#strings.toLowerCase(trabajador.email)}">email</td>
 
-							<td class="align-middle"
-								th:text="${#strings.toLowerCase(trabajador.cp)}">cp</td>
+								<td class="align-middle"
+									th:text="#{${'trabajador.tipo.' + trabajador.tipo}}">tipo</td>
 
-							<td class="align-middle"
-								th:text="${#strings.toLowerCase(trabajador.telefono)}">telefono</td>
-							<td>
-								<div class="btn-group text-center">
-									<!-- view details -->
-									<a
-										th:href="@{#{link.trabajadores.detalles}(id=${trabajador.id})}"
-										class="btn-sm"><i class="glyphicon glyphicon-eye-open"></i></a>
-									<!-- edit -->
-									<a
-										th:href="@{#{link.trabajadores.editar}(id=${trabajador.id})}"
-										class="btn-sm"><i class="glyphicon glyphicon-pencil"></i></a>
+								<td>
+									<div id="cuenta" class="btn-group text-center">
+										<a id="link_cuenta_trabajador" th:href="@{#}" class="btn-sm"><i
+											th:if="${trabajador.cuentaActiva == true}"
+											class="fa fa-toggle-on"></i> <i
+											th:unless="${trabajador.cuentaActiva == true}"
+											class="fa fa-toggle-off"></i></a>
+									</div>
+								</td>								
+								<td>
+									<div class="btn-group text-center" id="options">
+										<!-- view details -->
+										<div id="otherOptions" class="btn-group text-center">
+											<a id="link_ver_detalles"
+												th:href="@{#{link.trabajadores.detalles}(id=${trabajador.id})}"
+												class="btn-sm"><i class="glyphicon glyphicon-eye-open"
+												data-toggle="tooltip" th:title="#{lbl_ver_detalles}"></i></a>
+											<!-- edit -->
+											<a id="link_editar"
+												th:href="@{#{link.trabajadores.editar}(id=${trabajador.id})}"
+												class="btn-sm"><i class="glyphicon glyphicon-pencil"
+												data-toggle="tooltip" th:title="#{lbl_editar}"></i></a>
 
-									<!-- eliminar -->
-									<a
-										th:href="@{#{link.trabajadores.eliminar}(id=${trabajador.id})}"
-										class="btn-sm"><i class="glyphicon glyphicon-minus"></i></a>
-								</div>
-							</td>
-						</tr>
-					</tbody>
-				</table>
-
+										</div>
+										<div id="changeState" class="btn-group text-center">
+											<a id="link_change_state"
+												th:href="@{#{link.trabajadores.estado}(id=${trabajador.id})}"
+												class="btn-sm"> <i id="iconState"
+												th:class="${trabajador.trabajadorActivo == true}? 'fa fa-toggle-on' : 'fa fa-toggle-off'"
+												data-toggle="tooltip" th:title="#{lbl_estado}"> </i>
+											</a>
+										</div>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
 				<!-- fin table -->
-
 				<!-- paginacion -->
 				<div id="pagionationInformation" class="col-xs-12">
 					<div class="col-xs-12">
@@ -224,6 +261,27 @@
 					</div>
 				</div>
 				<!--  fin de registro-modal -->
+				<div class="modal fade" id="myModal" role="dialog">
+					<div class="modal-dialog modal-sm">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal">&times;</button>
+								<h4 class="modal-title">Error</h4>
+							</div>
+							<div class="modal-body">
+								<p></p>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default"
+									data-dismiss="modal">Close</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- Inicia del dialog -->
+
+
+				<!-- fin del dialogo -->
 			</div>
 		</div>
 		<!-- row -->

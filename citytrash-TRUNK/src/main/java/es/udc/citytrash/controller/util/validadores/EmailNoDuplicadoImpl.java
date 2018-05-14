@@ -28,7 +28,7 @@ public class EmailNoDuplicadoImpl implements ConstraintValidator<EmailNoDuplicad
 	@Override
 	public boolean isValid(String email, ConstraintValidatorContext context) {
 		try {
-			tservicio.buscarTrabajadorEmail(email);
+			tservicio.buscarTrabajadorByEmail(email);
 			logger.info("email duplicado");
 			return false;
 		} catch (InstanceNotFoundException e) {

@@ -25,6 +25,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -32,11 +33,14 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
+import es.udc.citytrash.controller.excepciones.PageNotFoundException;
+import es.udc.citytrash.controller.util.AjaxUtils;
 import es.udc.citytrash.controller.util.WebUtils;
 import es.udc.citytrash.controller.util.anotaciones.UsuarioActual;
-import es.udc.citytrash.controller.util.dtos.ReiniciarPasswordFormDto;
-import es.udc.citytrash.controller.util.dtos.CambiarPasswordFormDto;
-import es.udc.citytrash.controller.util.dtos.IdiomaFormDto;
+import es.udc.citytrash.controller.util.dtos.cuenta.CambiarPasswordFormDto;
+import es.udc.citytrash.controller.util.dtos.cuenta.IdiomaFormDto;
+import es.udc.citytrash.controller.util.dtos.cuenta.ReiniciarPasswordFormDto;
+import es.udc.citytrash.controller.util.dtos.trabajador.TrabajadorDto;
 import es.udc.citytrash.model.emailService.EmailNotificacionesService;
 import es.udc.citytrash.model.trabajador.Trabajador;
 import es.udc.citytrash.model.usuarioService.UsuarioService;
@@ -92,17 +96,16 @@ public class CuentaController {
 			redirectAttributes.addFlashAttribute("msg", "DisabledException");
 			return "redirect:" + WebUtils.URL_LOGIN;
 		}
-		logger.info("TOKEN activar cuenta DESPUES2=> " + token);
-		logger.info("TOKEN activar cuenta DESPUES2 url=> " + WebUtils.URL_CUENTA_CAMBIAR_CONTRASENA);
 		return "redirect:" + WebUtils.URL_CUENTA_ACTUALIZAR_CONTRASENA;
 	}
 
 	@PreAuthorize("isAnonymous()")
 	@RequestMapping(value = WebUtils.REQUEST_MAPPING_CUENTA_RESET_PASSWORD, method = RequestMethod.POST)
-	public String recuperarCuenta(HttpServletRequest request, RedirectAttributes redirectAttributes, Model model) {
+	public String recuperarCuenta(HttpServletRequest request, Model model,
+			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
 		String email = request.getParameter("email");
 		Trabajador t = null;
-		logger.info("PASO1 URL:" + WebUtils.URL_CUENTA_RESET_PASSWORD);
+
 		try {
 
 			/* Recuperamos la cuenta */
@@ -113,27 +116,46 @@ public class CuentaController {
 			emailService.recuperarCuentaEmail(t.getId(), t.getNombre(), t.getApellidos(), t.getEmail(), t.getToken(),
 					t.getFechaExpiracionToken(), t.getIdioma(), WebUtils.getUrlWithContextPath(request));
 
-			redirectAttributes.addFlashAttribute("titulo", "title_recuperar_cuenta");
-			redirectAttributes.addFlashAttribute("mensaje", "mensaje_recuperar_cuenta(" + email + ")");
-			redirectAttributes.addFlashAttribute("tipoAlerta", "success");
+			/*
+			 * redirectAttributes.addFlashAttribute("titulo",
+			 * "title_recuperar_cuenta");
+			 * redirectAttributes.addFlashAttribute("mensaje",
+			 * "mensaje_recuperar_cuenta(" + email + ")");
+			 * redirectAttributes.addFlashAttribute("tipoAlerta", "success");
+			 */
 
 		} catch (InstanceNotFoundException e) {
 			// model.addAttribute("err", e);
 			model = InstanceNotFoundException(model, e);
+			if (AjaxUtils.isAjaxRequest(requestedWith)) {
+				return WebUtils.VISTA_RECUPERAR_CUENTA.concat("::content");
+			}
 			return WebUtils.VISTA_RECUPERAR_CUENTA;
 		} catch (DisabledException e1) {
 			model = DisabledException(model, e1);
+			if (AjaxUtils.isAjaxRequest(requestedWith)) {
+				return WebUtils.VISTA_RECUPERAR_CUENTA.concat("::content");
+			}
 			return WebUtils.VISTA_RECUPERAR_CUENTA;
 		}
-		redirectAttributes.addFlashAttribute("success", "ok");
-		redirectAttributes.addFlashAttribute("email", email);
-		return "redirect:" + WebUtils.URL_CUENTA_RESET_PASSWORD;
+		model.addAttribute("titulo", "title_recuperar_cuenta");
+		model.addAttribute("mensaje", "mensaje_recuperar_cuenta(" + email + ")");
+		model.addAttribute("tipoAlerta", "success");
+		model.addAttribute("success", "ok");
+		model.addAttribute("email", email);
+		// return "redirect:" + WebUtils.URL_CUENTA_RESET_PASSWORD;
+		if (AjaxUtils.isAjaxRequest(requestedWith)) {
+			return WebUtils.VISTA_RECUPERAR_CUENTA.concat("::content");
+		}
+		return WebUtils.VISTA_RECUPERAR_CUENTA;
 	}
 
 	@PreAuthorize("isAnonymous()")
 	@RequestMapping(value = { WebUtils.REQUEST_MAPPING_CUENTA_RESET_PASSWORD }, method = RequestMethod.GET)
-	public String recuperarCuenta() {
-		logger.info("PASO1 URL:" + WebUtils.URL_CUENTA_RESET_PASSWORD);
+	public String recuperarCuenta(@RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
+		if (AjaxUtils.isAjaxRequest(requestedWith)) {
+			return WebUtils.VISTA_RECUPERAR_CUENTA.concat("::content");
+		}
 		return WebUtils.VISTA_RECUPERAR_CUENTA;
 	}
 
@@ -147,7 +169,11 @@ public class CuentaController {
 	// @PreAuthorize("hasRole('ROLE_CHANGE_PASSWORD')")
 	@PreAuthorize("hasRole('" + GlobalNames.ROL_REINICIAR_PASSWORD + "')")
 	@RequestMapping(value = WebUtils.REQUEST_MAPPING_CUENTA_ACTUALIZAR_CONTRASENA, method = RequestMethod.GET)
-	public String reiniciarPassword(Model model) {
+	public String reiniciarPassword(Model model,
+			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
+		if (AjaxUtils.isAjaxRequest(requestedWith)) {
+			return WebUtils.VISTA_REINICIAR_CONTRASENA.concat("::content");
+		}
 		return WebUtils.VISTA_REINICIAR_CONTRASENA;
 	}
 
@@ -156,10 +182,13 @@ public class CuentaController {
 	@RequestMapping(value = { WebUtils.REQUEST_MAPPING_CUENTA_ACTUALIZAR_CONTRASENA }, method = RequestMethod.POST)
 	public String reiniciarPassword(@UsuarioActual CustomUserDetails usuario, Model model,
 			@ModelAttribute("reiniciarPasswordForm") @Valid ReiniciarPasswordFormDto form, BindingResult result,
-			RedirectAttributes redir) {
-		logger.info("POST ACTIVAR CUENTA1");
+			RedirectAttributes redir,
+			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
+
 		if (result.hasErrors()) {
-			logger.info("PAGINA vista => " + WebUtils.VISTA_REINICIAR_CONTRASENA);
+			if (AjaxUtils.isAjaxRequest(requestedWith)) {
+				return WebUtils.VISTA_REINICIAR_CONTRASENA.concat("::content");
+			}
 			return WebUtils.VISTA_REINICIAR_CONTRASENA;
 		}
 		try {
@@ -180,6 +209,9 @@ public class CuentaController {
 
 		} catch (InstanceNotFoundException e) {
 			model = InstanceNotFoundException(model, e);
+			if (AjaxUtils.isAjaxRequest(requestedWith)) {
+				return WebUtils.VISTA_REINICIAR_CONTRASENA.concat("::content");
+			}
 			return WebUtils.VISTA_REINICIAR_CONTRASENA;
 		}
 	}
@@ -193,7 +225,11 @@ public class CuentaController {
 	/* Cambiar contraseña GET */
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(value = WebUtils.REQUEST_MAPPING_CAMBIAR_PASSWORD, method = RequestMethod.GET)
-	public String cambiarPassword(Model model) {
+	public String cambiarPassword(Model model,
+			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
+		if (AjaxUtils.isAjaxRequest(requestedWith)) {
+			return WebUtils.VISTA_CAMBIAR_CONTRASENA.concat("::content");
+		}
 		return WebUtils.VISTA_CAMBIAR_CONTRASENA;
 	}
 
@@ -201,11 +237,14 @@ public class CuentaController {
 	@RequestMapping(value = { WebUtils.REQUEST_MAPPING_CAMBIAR_PASSWORD }, method = RequestMethod.POST)
 	public String cambiarPassword(@UsuarioActual CustomUserDetails usuario, Model model,
 			@ModelAttribute("cambiarPasswordForm") @Valid CambiarPasswordFormDto form, BindingResult result,
-			RedirectAttributes redir) {
+			RedirectAttributes redir,
+			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
 		logger.info("POST cambiar contraseña");
 		model.addAttribute("cambiarPasswordForm", form);
 		if (result.hasErrors()) {
-			logger.info("PAGINA vista => " + WebUtils.VISTA_REINICIAR_CONTRASENA);
+			if (AjaxUtils.isAjaxRequest(requestedWith)) {
+				return WebUtils.VISTA_CAMBIAR_CONTRASENA.concat("::content");
+			}
 			return WebUtils.VISTA_CAMBIAR_CONTRASENA;
 		}
 		try {
@@ -213,13 +252,22 @@ public class CuentaController {
 			cuentaServicio.cambiarPassword(usuario.getPerfil().getId(), form.getPasswordAntigua(), form.getPassword());
 			model.addAttribute("cambiarPasswordForm", new CambiarPasswordFormDto());
 			model.addAttribute("cambioCredenciales", "ok");
+			if (AjaxUtils.isAjaxRequest(requestedWith)) {
+				return WebUtils.VISTA_CAMBIAR_CONTRASENA.concat("::content");
+			}
 			return WebUtils.VISTA_CAMBIAR_CONTRASENA;
 
 		} catch (InstanceNotFoundException e) {
 			model = InstanceNotFoundException(model, e);
+			if (AjaxUtils.isAjaxRequest(requestedWith)) {
+				return WebUtils.VISTA_CAMBIAR_CONTRASENA.concat("::content");
+			}
 			return WebUtils.VISTA_CAMBIAR_CONTRASENA;
 		} catch (PasswordInvalidException e) {
 			model = PasswordInvalidException(model, e);
+			if (AjaxUtils.isAjaxRequest(requestedWith)) {
+				return WebUtils.VISTA_CAMBIAR_CONTRASENA.concat("::content");
+			}
 			return WebUtils.VISTA_CAMBIAR_CONTRASENA;
 		}
 	}
@@ -241,7 +289,11 @@ public class CuentaController {
 
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(value = { WebUtils.REQUEST_MAPPING_CUENTA_CAMBIO_IDIOMA }, method = RequestMethod.GET)
-	public String cambiarIdioma(Model model) {
+	public String cambiarIdioma(Model model,
+			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
+		if (AjaxUtils.isAjaxRequest(requestedWith)) {
+			return WebUtils.VISTA_CAMBIAR_IDIOMA.concat("::content");
+		}
 		return WebUtils.VISTA_CAMBIAR_IDIOMA;
 	}
 
@@ -249,10 +301,14 @@ public class CuentaController {
 	@RequestMapping(value = { WebUtils.REQUEST_MAPPING_CUENTA_CAMBIO_IDIOMA }, method = RequestMethod.POST)
 	public String cambiarIdioma(@UsuarioActual CustomUserDetails usuario,
 			@ModelAttribute("idiomaForm") @Valid IdiomaFormDto idiomaForm, BindingResult result,
-			HttpServletRequest request, Errors errors, Model model, HttpServletResponse response) {
+			HttpServletRequest request, Errors errors, Model model, HttpServletResponse response,
+			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
 
 		if (result.hasErrors()) {
 			model.addAttribute("error", true);
+			if (AjaxUtils.isAjaxRequest(requestedWith)) {
+				return WebUtils.VISTA_CAMBIAR_IDIOMA.concat("::content");
+			}
 			return WebUtils.VISTA_CAMBIAR_IDIOMA;
 		}
 
@@ -261,6 +317,9 @@ public class CuentaController {
 
 		} catch (InstanceNotFoundException e) {
 			model = InstanceNotFoundException(model, e);
+			if (AjaxUtils.isAjaxRequest(requestedWith)) {
+				return WebUtils.VISTA_CAMBIAR_IDIOMA.concat("::content");
+			}
 			return WebUtils.VISTA_CAMBIAR_IDIOMA;
 		}
 		usuario.getPerfil().setIdioma(idiomaForm.getIdioma());
@@ -268,7 +327,46 @@ public class CuentaController {
 				new Locale(idiomaForm.getIdioma().toString().toLowerCase()));
 		model.addAttribute("success", true);
 		logger.info("CAMBIO DE IDIOMA SUCCESS");
+		if (AjaxUtils.isAjaxRequest(requestedWith)) {
+			return WebUtils.VISTA_CAMBIAR_IDIOMA.concat("::content");
+		}
 		return WebUtils.VISTA_CAMBIAR_IDIOMA;
+	}
+
+	@PreAuthorize("isAuthenticated()")
+	@RequestMapping(value = { WebUtils.REQUEST_MAPPING_PERFIL }, method = RequestMethod.GET)
+	public String perfil(@UsuarioActual CustomUserDetails usuario, Model model,
+			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
+		model.addAttribute("trabajador_nombre_completo",
+				usuario.getPerfil().getNombre() + " " + usuario.getPerfil().getApellidos());
+		if (AjaxUtils.isAjaxRequest(requestedWith)) {
+			return WebUtils.VISTA_PERFIL.concat("::content");
+		}
+		return WebUtils.VISTA_PERFIL;
+	}
+
+	@PreAuthorize("isAuthenticated()")
+	@RequestMapping(value = { WebUtils.REQUEST_MAPPING_PERFIL_DETALLES }, method = RequestMethod.GET)
+	public String perfilDetalles(@UsuarioActual CustomUserDetails usuario, Model model,
+			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
+		model.addAttribute("trabajador_nombre_completo",
+				usuario.getPerfil().getNombre() + " " + usuario.getPerfil().getApellidos());
+
+		TrabajadorDto t;
+
+		try {
+			t = new TrabajadorDto(cuentaServicio.buscarTrabajadorPorEmail(usuario.getPerfil().getEmail()));
+		} catch (InstanceNotFoundException e) {
+			throw new PageNotFoundException(
+					String.format("The requested page (%s) of the worker list was not found.", usuario.getName()));
+		}
+
+		model.addAttribute("trabajador", t);
+
+		if (AjaxUtils.isAjaxRequest(requestedWith)) {
+			return WebUtils.VISTA_PERFIL_DETALLES.concat("::content");
+		}
+		return WebUtils.VISTA_PERFIL_DETALLES;
 	}
 
 	@ResponseStatus(HttpStatus.FORBIDDEN)

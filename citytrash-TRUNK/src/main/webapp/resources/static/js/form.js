@@ -36,6 +36,10 @@ jQuery(function($) {
 			if (!data.success) {
 				console.log("UNSUCESS");
 				//alert('unsuccess');
+
+				//$("#content").text("");
+				//$("#content").html(data);
+				//$dialog.modal("hide");
 				$dialog_body.text("");
 				$dialog_body.html(data);
 				$dialog.scrollTop(0);
@@ -62,23 +66,78 @@ jQuery(function($) {
 		var url = $(this).attr("href");
 		var target = $(this).data("target"); // the target pane
 		var pane = $(this); // this tab			
-
+		//console.log("URL =>" + url);
+		//console.log("TARGET =>" + pane);
+		//console.log("RELATEDTARGET =>" + pane);
 		if (target != undefined && url != undefined) {
 			$.ajax({
 				url : url,
 				cache : false,
 				success : function(data) {
-					//alert("success target =>" + target + " url =>" + url)						
+					//alert("success target =>" + target + " url =>" + url)	
+					//console.log("DATA =>" + data);
 					$(target).html(data);
 					pane.tab('show');
 				},
 				error : function(xhr, error) {
 					//alert("error");
+					//console.log("ERROR =>" + error);
 					$(target).html("");
 					pane.tab('show');
 				}
 			});
 		}
+	});
+
+	/* Dialog*/
+
+
+	/*
+	$(document).on("click", "#link_ver_detalles", function(e) {
+		event.preventDefault();
+		var workingObject = $(this);
+		var url = $(this).attr("href");
+		$.ajax({
+			url : url,
+			type : "GET",
+			success : function(data) {
+				alert().html(data);
+			//$("#content").load(url);
+			},
+			error : function(xhr, error) {
+				alert("ERROR: ", e);
+			}
+		});
+	});*/
+
+	/*Habilita o deshabilita el estado de los trabajadores, camiones, etc  */
+	$(document).on("click", "tr #link_change_state", function(e) {
+		event.preventDefault();
+		console.log("cambiar de estado");
+		var workingObject = $(this);
+		var url = $(this).attr("href");
+		var i = $(this).children("i");
+		console.log("url=>" + url);
+		console.log("class=>" + i);
+		$.ajax({
+			url : url,
+			type : "POST",
+			success : function(data) {
+				/*Activado */
+				if (data == true) {
+					//console.log("devolvio true");
+					i.attr('class', "fa fa-toggle-on");
+				//i.attr('title', "#{lbl_desactivar}")
+				} else if (data == false) {
+					//console.log("devolvio false");
+					i.attr('class', "fa fa-toggle-off");
+				//i.attr('title', "{lbl_activar}")
+				}
+			},
+			error : function(xhr, error) {
+				//alert("ERROR AL INTENTAR CAMBIAR EL ESTADO EN EL SERVIDOR de" + url);
+			}
+		});
 	});
 
 	/*Se ejecutara cada vez que se cargue la pagina*/
@@ -94,7 +153,6 @@ jQuery(function($) {
 		$('[data-toggle="tooltip"]').tooltip();
 
 	});
-
 
 	/*Si es una venta modal y tiene un formulario, al cerrarse limpia el formulario */
 	$(document).on("submit", "#busquedaTrabajadoresForm", function(e) {

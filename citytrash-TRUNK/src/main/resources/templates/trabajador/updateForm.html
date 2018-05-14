@@ -4,7 +4,7 @@
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <body>
 	<div th:fragment="update(updateForm)">
-
+		<br>
 		<form id="registroForm" role="form"
 			class="form-narrow form-horizontal" method="post" action="#"
 			th:action="@{#{link.trabajadores.editar}(id=${id})}"
@@ -24,7 +24,6 @@
 
 			<fieldset>
 				<th:block th:if="${#fields.hasErrors('${updateForm.*}')}">
-					<br />
 					<div
 						th:replace="fragments/alert :: alert (type='danger', message=#{verificar_campos_alerta})">Alert</div>
 

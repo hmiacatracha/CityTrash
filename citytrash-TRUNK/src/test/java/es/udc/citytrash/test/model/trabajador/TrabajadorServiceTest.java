@@ -5,14 +5,11 @@ import static es.udc.citytrash.util.GlobalNames.SPRING_CONFIG_FILE;
 import static es.udc.citytrash.util.GlobalNames.SPRING_SECURITY_FILE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -32,9 +29,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.udc.citytrash.controller.util.dtos.TrabajadorBusqFormDto;
-import es.udc.citytrash.controller.util.dtos.TrabajadorRegistroFormDto;
-import es.udc.citytrash.controller.util.dtos.TrabajadorUpdateFormDto;
+import es.udc.citytrash.controller.util.dtos.trabajador.TrabajadorBusqFormDto;
+import es.udc.citytrash.controller.util.dtos.trabajador.TrabajadorRegistroFormDto;
+import es.udc.citytrash.controller.util.dtos.trabajador.TrabajadorUpdateFormDto;
 import es.udc.citytrash.model.trabajador.Conductor;
 import es.udc.citytrash.model.trabajador.Trabajador;
 import es.udc.citytrash.model.trabajador.TrabajadorDao;
@@ -254,9 +251,9 @@ public class TrabajadorServiceTest {
 		frmEditar_CONDUCT = rellenarActualizar(t);
 		frmEditar_CONDUCT.setEmail(T_EMAIL_RECOLEC);
 		frmEditar_CONDUCT.setCp(CP_CON_FORM_OK);
-		assertEquals(t, trabajadorService.buscarTrabajadorEmail(T_EMAIL_CONDUCT));
-		trabajadorService.actualizarDatosTrabajador(frmEditar_CONDUCT);
-		assertEquals(t, trabajadorService.buscarTrabajadorEmail(T_EMAIL_RECOLEC));
+		assertEquals(t, trabajadorService.buscarTrabajadorByEmail(T_EMAIL_CONDUCT));
+		trabajadorService.modificarTrabajador(frmEditar_CONDUCT);
+		assertEquals(t, trabajadorService.buscarTrabajadorByEmail(T_EMAIL_RECOLEC));
 		assertEquals(t.getCp().toString(), CP_CON_FORM_OK);
 
 		if (t instanceof Conductor)
@@ -271,14 +268,14 @@ public class TrabajadorServiceTest {
 
 		frmRegistro_CONDUCT.setEmail(T_EMAIL_CONDUCT);
 		Trabajador t = trabajadorService.registrar(frmRegistro_CONDUCT);
-		assertEquals(t, trabajadorService.buscarTrabajadorEmail(T_EMAIL_CONDUCT));
+		assertEquals(t, trabajadorService.buscarTrabajadorByEmail(T_EMAIL_CONDUCT));
 		Trabajador t1 = trabajadorService.registrar(frmRegistro_RECOLEC);
-		assertEquals(t1, trabajadorService.buscarTrabajadorEmail(T_EMAIL_RECOLEC));
+		assertEquals(t1, trabajadorService.buscarTrabajadorByEmail(T_EMAIL_RECOLEC));
 
 		frmEditar_CONDUCT = rellenarActualizar(t);
 		frmEditar_CONDUCT.setEmail(T_EMAIL_RECOLEC);
 		frmEditar_CONDUCT.setCp(CP_CON_FORM_OK);
-		trabajadorService.actualizarDatosTrabajador(frmEditar_CONDUCT);
+		trabajadorService.modificarTrabajador(frmEditar_CONDUCT);
 	}
 
 	@Test(expected = DuplicateInstanceException.class)
@@ -286,13 +283,13 @@ public class TrabajadorServiceTest {
 
 		frmRegistro_CONDUCT.setEmail(T_EMAIL_CONDUCT);
 		Trabajador t = trabajadorService.registrar(frmRegistro_CONDUCT);
-		assertEquals(t, trabajadorService.buscarTrabajadorEmail(T_EMAIL_CONDUCT));
+		assertEquals(t, trabajadorService.buscarTrabajadorByEmail(T_EMAIL_CONDUCT));
 		Trabajador t1 = trabajadorService.registrar(frmRegistro_RECOLEC);
-		assertEquals(t1, trabajadorService.buscarTrabajadorEmail(T_EMAIL_RECOLEC));
+		assertEquals(t1, trabajadorService.buscarTrabajadorByEmail(T_EMAIL_RECOLEC));
 
 		frmEditar_CONDUCT = rellenarActualizar(t);
 		frmEditar_CONDUCT.setDocumento(T_DOC_RECOLECT);
-		trabajadorService.actualizarDatosTrabajador(frmEditar_CONDUCT);
+		trabajadorService.modificarTrabajador(frmEditar_CONDUCT);
 	}
 
 	@Test
@@ -310,9 +307,9 @@ public class TrabajadorServiceTest {
 		frmEditar_CONDUCT = rellenarActualizar(t);
 		frmEditar_CONDUCT.setEmail(T_EMAIL_ADMIN);
 		frmEditar_CONDUCT.setTipo(TipoTrabajador.ADMIN);
-		assertEquals(t, trabajadorService.buscarTrabajadorEmail(T_EMAIL_CONDUCT));
-		trabajadorService.actualizarDatosTrabajador(frmEditar_CONDUCT);
-		assertEquals(t, trabajadorService.buscarTrabajadorEmail(T_EMAIL_ADMIN));
+		assertEquals(t, trabajadorService.buscarTrabajadorByEmail(T_EMAIL_CONDUCT));
+		trabajadorService.modificarTrabajador(frmEditar_CONDUCT);
+		assertEquals(t, trabajadorService.buscarTrabajadorByEmail(T_EMAIL_ADMIN));
 
 		/*
 		 * if (t instanceof Administrador) assert (true); else assert (false);
@@ -332,7 +329,7 @@ public class TrabajadorServiceTest {
 
 	public void buscarTrabajadorEmailExistente() throws InstanceNotFoundException, DuplicateInstanceException {
 		trabajadorService.registrar(frmRegistro_ADMIN);
-		trabajadorService.buscarTrabajadorEmail(T_EMAIL_ADMIN);
+		trabajadorService.buscarTrabajadorByEmail(T_EMAIL_ADMIN);
 	}
 
 	@Test(expected = InstanceNotFoundException.class)
@@ -340,7 +337,7 @@ public class TrabajadorServiceTest {
 		trabajadorService.registrar(frmRegistro_ADMIN);
 		trabajadorService.registrar(frmRegistro_CONDUCT);
 		trabajadorService.registrar(frmRegistro_RECOLEC);
-		trabajadorService.buscarTrabajadorEmail(T_EMAIL_NO_EXISTENTE);
+		trabajadorService.buscarTrabajadorByEmail(T_EMAIL_NO_EXISTENTE);
 	}
 
 	@Test
@@ -364,7 +361,7 @@ public class TrabajadorServiceTest {
 		 * Comprobamos que no haya trabajadores en la base de datos, porque aun
 		 * no hemos registrado ninguno
 		 */
-		Page<Trabajador> page = trabajadorService.buscarTrabajadores(pageable);
+		Page<Trabajador> page = trabajadorService.buscarTrabajadores(pageable, true);
 		assertTrue(page.getContent().isEmpty());
 	}
 
@@ -378,7 +375,7 @@ public class TrabajadorServiceTest {
 		 * Comprobamos que no haya trabajadores en la base de datos, porque aun
 		 * no hemos registrado ninguno
 		 */
-		Page<Trabajador> page = trabajadorService.buscarTrabajadores(pageable);
+		Page<Trabajador> page = trabajadorService.buscarTrabajadores(pageable, true);
 		List<Trabajador> trabajadores = new ArrayList<Trabajador>();
 
 		try {
@@ -394,7 +391,7 @@ public class TrabajadorServiceTest {
 		 * Comprobamos que ahora que hemos registrado trabajadores si buscamos
 		 * aparezcan
 		 */
-		page = trabajadorService.buscarTrabajadores(pageable);
+		page = trabajadorService.buscarTrabajadores(pageable, true);
 		assertFalse(page.getContent().isEmpty());
 		assertEquals(psize, page.getContent().size());
 	}
@@ -408,7 +405,7 @@ public class TrabajadorServiceTest {
 		TrabajadorBusqFormDto formBusqueda = new TrabajadorBusqFormDto();
 		Pageable pageable = createPageRequest(pnum, psize, campoSort);
 
-		Page<Trabajador> page = trabajadorService.buscarTrabajadores(pageable);
+		Page<Trabajador> page = trabajadorService.buscarTrabajadores(pageable, true);
 		List<Trabajador> trabajadores = new ArrayList<Trabajador>();
 		assertTrue(page.getContent().isEmpty());
 
@@ -426,6 +423,7 @@ public class TrabajadorServiceTest {
 		formBusqueda.setBuscar("");
 		formBusqueda.setTipo(TipoTrabajador.NONE.name());
 		formBusqueda.setCampo(CampoBusqTrabajador.nombre.name());
+		formBusqueda.setMostrarTodosLosTrabajadores(true);
 		page = trabajadorService.buscarTrabajadores(pageable, formBusqueda);
 		elementosTotales = trabajadorDao.buscarTodos().size();
 		assertFalse(page.getContent().isEmpty());
@@ -444,7 +442,7 @@ public class TrabajadorServiceTest {
 		 * Comprobamos que no haya trabajadores en la base de datos, porque aun
 		 * no hemos registrado ninguno
 		 */
-		Page<Trabajador> page = trabajadorService.buscarTrabajadores(pageable);
+		Page<Trabajador> page = trabajadorService.buscarTrabajadores(pageable, true);
 		List<Trabajador> trabajadores = new ArrayList<Trabajador>();
 
 		try {
@@ -465,7 +463,7 @@ public class TrabajadorServiceTest {
 		elementos = ((pnum + 1) * psize <= elementosTotales) ? psize
 				: ((pnum + 1) * psize - elementosTotales) >= psize ? 0 : ((pnum + 1) * psize - elementosTotales);
 		pageable = createPageRequest(pnum, psize, campoSort);
-		page = trabajadorService.buscarTrabajadores(pageable);
+		page = trabajadorService.buscarTrabajadores(pageable, true);
 		logger.error("elementos 1 => " + elementos);
 		assertEquals(elementos, page.getNumberOfElements());
 
@@ -473,7 +471,7 @@ public class TrabajadorServiceTest {
 		elementos = ((pnum + 1) * psize <= elementosTotales) ? psize
 				: ((pnum + 1) * psize - elementosTotales) >= psize ? 0 : ((pnum + 1) * psize - elementosTotales);
 		pageable = createPageRequest(pnum, psize, campoSort);
-		page = trabajadorService.buscarTrabajadores(pageable);
+		page = trabajadorService.buscarTrabajadores(pageable, true);
 		logger.error("elementos 2=> " + elementos);
 		assertEquals(elementos, page.getNumberOfElements());
 
@@ -481,7 +479,7 @@ public class TrabajadorServiceTest {
 		elementos = ((pnum + 1) * psize <= elementosTotales) ? psize
 				: ((pnum + 1) * psize - elementosTotales) >= psize ? 0 : ((pnum + 1) * psize - elementosTotales);
 		pageable = createPageRequest(pnum, psize, campoSort);
-		page = trabajadorService.buscarTrabajadores(pageable);
+		page = trabajadorService.buscarTrabajadores(pageable, true);
 		logger.error("elementos 3=> " + elementos);
 		assertEquals(elementos, page.getNumberOfElements());
 
@@ -497,7 +495,7 @@ public class TrabajadorServiceTest {
 		TrabajadorBusqFormDto formBusqueda = new TrabajadorBusqFormDto();
 		Pageable pageable = createPageRequest(pnum, psize, campoSort);
 
-		Page<Trabajador> page = trabajadorService.buscarTrabajadores(pageable);
+		Page<Trabajador> page = trabajadorService.buscarTrabajadores(pageable, true);
 		List<Trabajador> trabajadores = new ArrayList<Trabajador>();
 
 		try {
@@ -513,6 +511,7 @@ public class TrabajadorServiceTest {
 		formBusqueda.setBuscar(APELLIDO);
 		formBusqueda.setTipo(TipoTrabajador.NONE.name());
 		formBusqueda.setCampo(CampoBusqTrabajador.nombre.name());
+		formBusqueda.setMostrarTodosLosTrabajadores(true);
 		elementosTotales = 3;
 		psize = elementosTotales;
 		pnum = 0;
@@ -521,6 +520,7 @@ public class TrabajadorServiceTest {
 				: ((pnum + 1) * psize - elementosTotales) >= psize ? 0 : ((pnum + 1) * psize - elementosTotales);
 		pageable = createPageRequest(pnum, psize, campoSort);
 		page = trabajadorService.buscarTrabajadores(pageable, formBusqueda);
+
 		assertEquals(elementos, page.getNumberOfElements());
 		assertEquals(3, page.getNumberOfElements());
 
@@ -532,6 +532,20 @@ public class TrabajadorServiceTest {
 		logger.error("elementos 2=> " + elementos);
 		assertEquals(elementos, page.getNumberOfElements());
 		assertEquals(0, page.getNumberOfElements());
+
+		formBusqueda.setMostrarTodosLosTrabajadores(false);
+		elementosTotales = 3;
+		psize = elementosTotales;
+		pnum = 0;
+
+		elementos = ((pnum + 1) * psize <= elementosTotales) ? psize
+				: ((pnum + 1) * psize - elementosTotales) >= psize ? 0 : ((pnum + 1) * psize - elementosTotales);
+		pageable = createPageRequest(pnum, psize, campoSort);
+		page = trabajadorService.buscarTrabajadores(pageable, formBusqueda);
+
+		assertEquals(elementos, page.getNumberOfElements());
+		assertEquals(3, page.getNumberOfElements());
+
 	}
 
 	public void buscarTrabajadoresEnVariasPaginas() {
@@ -545,7 +559,7 @@ public class TrabajadorServiceTest {
 		 * Comprobamos que no haya trabajadores en la base de datos, porque aun
 		 * no hemos registrado ninguno
 		 */
-		Page<Trabajador> page = trabajadorService.buscarTrabajadores(pageable);
+		Page<Trabajador> page = trabajadorService.buscarTrabajadores(pageable, true);
 		List<Trabajador> trabajadores = new ArrayList<Trabajador>();
 
 		try {
@@ -566,21 +580,21 @@ public class TrabajadorServiceTest {
 		elementos = ((pnum + 1) * psize <= elementosTotales) ? psize
 				: ((pnum + 1) * psize - elementosTotales) >= psize ? 0 : ((pnum + 1) * psize - elementosTotales);
 		pageable = createPageRequest(pnum, psize, campoSort);
-		page = trabajadorService.buscarTrabajadores(pageable);
+		page = trabajadorService.buscarTrabajadores(pageable, true);
 		assertEquals(elementos, page.getNumberOfElements());
 
 		pnum = 1;
 		elementos = ((pnum + 1) * psize <= elementosTotales) ? psize
 				: ((pnum + 1) * psize - elementosTotales) >= psize ? 0 : ((pnum + 1) * psize - elementosTotales);
 		pageable = createPageRequest(pnum, psize, campoSort);
-		page = trabajadorService.buscarTrabajadores(pageable);
+		page = trabajadorService.buscarTrabajadores(pageable, true);
 		assertEquals(elementos, page.getNumberOfElements());
 
 		pnum = 2;
 		elementos = ((pnum + 1) * psize <= elementosTotales) ? psize
 				: ((pnum + 1) * psize - elementosTotales) >= psize ? 0 : ((pnum + 1) * psize - elementosTotales);
 		pageable = createPageRequest(pnum, psize, campoSort);
-		page = trabajadorService.buscarTrabajadores(pageable);
+		page = trabajadorService.buscarTrabajadores(pageable, true);
 		assertEquals(elementos, page.getNumberOfElements());
 	}
 
@@ -606,6 +620,7 @@ public class TrabajadorServiceTest {
 		formBusqueda.setBuscar(APELLIDO);
 		formBusqueda.setTipo(TipoTrabajador.NONE.name());
 		formBusqueda.setCampo(CampoBusqTrabajador.nombre.name());
+		formBusqueda.setMostrarTodosLosTrabajadores(true);
 
 		/* Varias paginas buscar por apellido */
 		elementosTotales = 3;
@@ -644,6 +659,20 @@ public class TrabajadorServiceTest {
 		assertEquals(elementos, page.getNumberOfElements());
 		assertEquals(0, page.getNumberOfElements());
 
+		/* Varias paginas buscar por apellido */
+		formBusqueda.setMostrarTodosLosTrabajadores(false);
+		elementosTotales = 3;
+		psize = 1;
+
+		pnum = 0;
+		elementos = ((pnum + 1) * psize <= elementosTotales) ? psize
+				: ((pnum + 1) * psize - elementosTotales) >= psize ? 0 : ((pnum + 1) * psize - elementosTotales);
+		pageable = createPageRequest(pnum, psize, campoSort);
+
+		page = trabajadorService.buscarTrabajadores(pageable, formBusqueda);
+		assertEquals(elementos, page.getNumberOfElements());
+		assertEquals(1, page.getNumberOfElements());
+
 	}
 
 	@Test
@@ -669,6 +698,7 @@ public class TrabajadorServiceTest {
 		formBusqueda.setBuscar("tfg");
 		formBusqueda.setTipo(TipoTrabajador.NONE.name());
 		formBusqueda.setCampo(CampoBusqTrabajador.email.name());
+		formBusqueda.setMostrarTodosLosTrabajadores(true);
 		elementosTotales = 3;
 		psize = elementosTotales;
 		pnum = 0;
@@ -710,6 +740,7 @@ public class TrabajadorServiceTest {
 		formBusqueda.setBuscar(T_TELEFONO);
 		formBusqueda.setTipo(TipoTrabajador.NONE.name());
 		formBusqueda.setCampo(CampoBusqTrabajador.telefono.name());
+		formBusqueda.setMostrarTodosLosTrabajadores(true);
 		psize = 3;
 		pnum = 0;
 
@@ -789,6 +820,7 @@ public class TrabajadorServiceTest {
 		formBusqueda.setBuscar(T_DOC_NO_EXISTENTE);
 		formBusqueda.setTipo(TipoTrabajador.NONE.name());
 		formBusqueda.setCampo(CampoBusqTrabajador.documento.name());
+		formBusqueda.setMostrarTodosLosTrabajadores(true);
 		elementosTotales = 0;
 		psize = 3;
 		pnum = 0;
@@ -823,6 +855,7 @@ public class TrabajadorServiceTest {
 		formBusqueda.setBuscar(T_DOC_ADMIN);
 		formBusqueda.setTipo(TipoTrabajador.NONE.getValue());
 		formBusqueda.setCampo(CampoBusqTrabajador.documento.toString());
+		formBusqueda.setMostrarTodosLosTrabajadores(true);
 		elementosTotales = 1;
 		psize = 3;
 		pnum = 0;

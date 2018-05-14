@@ -5,7 +5,7 @@ import java.util.Collection;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import es.udc.citytrash.controller.util.dtos.PerfilDto;
+import es.udc.citytrash.controller.util.dtos.cuenta.PerfilDto;
 
 /**
  * https://www.boraji.com/spring-security-5-custom-userdetailsservice-example,

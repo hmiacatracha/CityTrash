@@ -2,8 +2,10 @@ package es.udc.citytrash.model.trabajadorService;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -14,12 +16,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.udc.citytrash.controller.util.dtos.TrabajadorBusqFormDto;
-import es.udc.citytrash.controller.util.dtos.TrabajadorRegistroFormDto;
-import es.udc.citytrash.controller.util.dtos.TrabajadorUpdateFormDto;
+import es.udc.citytrash.controller.util.dtos.trabajador.TrabajadorBusqFormDto;
+import es.udc.citytrash.controller.util.dtos.trabajador.TrabajadorRegistroFormDto;
+import es.udc.citytrash.controller.util.dtos.trabajador.TrabajadorUpdateFormDto;
 import es.udc.citytrash.model.trabajador.Administrador;
 import es.udc.citytrash.model.trabajador.Conductor;
+import es.udc.citytrash.model.trabajador.ConductorDao;
 import es.udc.citytrash.model.trabajador.Recolector;
+import es.udc.citytrash.model.trabajador.RecolectorDao;
 import es.udc.citytrash.model.trabajador.Trabajador;
 import es.udc.citytrash.model.trabajador.TrabajadorDao;
 import es.udc.citytrash.model.util.excepciones.DuplicateInstanceException;
@@ -35,6 +39,12 @@ public class TrabajadorServiceImpl implements TrabajadorService {
 
 	@Autowired
 	private TrabajadorDao trabajadorProfileDao;
+
+	@Autowired
+	private ConductorDao conductorDao;
+
+	@Autowired
+	private RecolectorDao recolectorDao;
 
 	final Logger logger = LoggerFactory.getLogger(TrabajadorServiceImpl.class);
 
@@ -86,7 +96,6 @@ public class TrabajadorServiceImpl implements TrabajadorService {
 					esBigDecimal(user.getTelefono()) ? truncateToBigDecimaRouding(user.getTelefono()) : null,
 					user.getRestoDireccion());
 		}
-
 		/* Check if the email and the documentoId are not duplicate */
 		try {
 			trabajadorProfileDao.buscarTrabajadorPorEmail(user.getEmail());
@@ -95,7 +104,6 @@ public class TrabajadorServiceImpl implements TrabajadorService {
 		} catch (InstanceNotFoundException e) {
 			logger.debug("Register no emailDuplicado");
 		}
-
 		try {
 			trabajadorProfileDao.buscarTrabajadorPorDocumentoId(user.getDocumento());
 			logger.info("documento duplicado");
@@ -110,7 +118,7 @@ public class TrabajadorServiceImpl implements TrabajadorService {
 
 	@Transactional
 	@Override
-	public Trabajador actualizarDatosTrabajador(TrabajadorUpdateFormDto user)
+	public Trabajador modificarTrabajador(TrabajadorUpdateFormDto user)
 			throws InstanceNotFoundException, DuplicateInstanceException {
 
 		Trabajador t = trabajadorProfileDao.buscarById(user.getId());
@@ -206,7 +214,7 @@ public class TrabajadorServiceImpl implements TrabajadorService {
 	}
 
 	@Override
-	public Trabajador buscarTrabajadorEmail(String email) throws InstanceNotFoundException {
+	public Trabajador buscarTrabajadorByEmail(String email) throws InstanceNotFoundException {
 		return trabajadorProfileDao.buscarTrabajadorPorEmail(email);
 	}
 
@@ -216,9 +224,50 @@ public class TrabajadorServiceImpl implements TrabajadorService {
 	}
 
 	@Override
+	public boolean esTrabajadorRecolector(long id) {
+		try {
+			recolectorDao.buscarById(id);
+			return true;
+		} catch (InstanceNotFoundException e) {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean esTrabajadorConductor(long id) {
+		try {
+			conductorDao.buscarById(id);
+			return true;
+		} catch (InstanceNotFoundException e) {
+			return false;
+		}
+	}
+
+	@Override
+	public List<Recolector> buscarRecolectores(Boolean mostrarSoloActivos) {
+		List<Recolector> lista = new ArrayList<Recolector>();
+		lista = recolectorDao.buscarTrabajadoresOrderByApellidos(mostrarSoloActivos);
+		return lista;
+	}
+
+	@Override
+	public List<Conductor> buscarConductores(Boolean mostrarSoloActivos) {
+		List<Conductor> lista = new ArrayList<Conductor>();
+		lista = conductorDao.buscarTrabajadoresOrderByApellidos(mostrarSoloActivos);
+		return lista;
+	}
+
+	@Override
+	public List<Trabajador> buscarTrabajadores(Boolean mostrarSoloActivos) {
+		List<Trabajador> lista = new ArrayList<Trabajador>();
+		lista = trabajadorProfileDao.buscarTrabajadoresOrderByApellidos(mostrarSoloActivos);
+		return lista;
+	}
+
+	@Override
 	@Transactional(readOnly = true)
-	public Page<Trabajador> buscarTrabajadores(Pageable pageable) {
-		Page<Trabajador> trabajadores = trabajadorProfileDao.buscarTrabajadores(pageable, null);
+	public Page<Trabajador> buscarTrabajadores(Pageable pageable, Boolean mostrarTodos) {
+		Page<Trabajador> trabajadores = trabajadorProfileDao.buscarTrabajadores(pageable, null, mostrarTodos);
 		return trabajadores;
 	}
 
@@ -258,30 +307,32 @@ public class TrabajadorServiceImpl implements TrabajadorService {
 			switch (campo) {
 			case documento:
 				trabajadores = trabajadorProfileDao.buscarTrabajadoresPorDocumentoYTipo(pageable,
-						formBusqueda.getBuscar(), tipo);
+						formBusqueda.getBuscar(), tipo, formBusqueda.getMostrarTodosLosTrabajadores());
 				return trabajadores;
 			case nombre:
 				trabajadores = trabajadorProfileDao.buscarTrabajadoresPorNombreApellidosYTipo(pageable,
-						formBusqueda.getBuscar(), tipo);
+						formBusqueda.getBuscar(), tipo, formBusqueda.getMostrarTodosLosTrabajadores());
 				return trabajadores;
 			case cp:
 				trabajadores = trabajadorProfileDao.buscarTrabajadoresPorCpYTipo(pageable, formBusqueda.getBuscar(),
-						tipo);
+						tipo, formBusqueda.getMostrarTodosLosTrabajadores());
 				return trabajadores;
 			case telefono:
 				trabajadores = trabajadorProfileDao.buscarTrabajadoresPorTelefonoYTipo(pageable,
-						formBusqueda.getBuscar(), tipo);
+						formBusqueda.getBuscar(), tipo, formBusqueda.getMostrarTodosLosTrabajadores());
 				return trabajadores;
 			case email:
 				trabajadores = trabajadorProfileDao.buscarTrabajadoresPorEmailYTipo(pageable, formBusqueda.getBuscar(),
-						tipo);
+						tipo, formBusqueda.getMostrarTodosLosTrabajadores());
 				return trabajadores;
 			default:
-				trabajadores = trabajadorProfileDao.buscarTrabajadores(pageable, tipo);
+				trabajadores = trabajadorProfileDao.buscarTrabajadores(pageable, tipo,
+						formBusqueda.getMostrarTodosLosTrabajadores());
 				return trabajadores;
 			}
 		}
-		trabajadores = trabajadorProfileDao.buscarTrabajadores(pageable, tipo);
+		trabajadores = trabajadorProfileDao.buscarTrabajadores(pageable, tipo,
+				formBusqueda.getMostrarTodosLosTrabajadores());
 		return trabajadores;
 	}
 
@@ -332,11 +383,6 @@ public class TrabajadorServiceImpl implements TrabajadorService {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(date);
 		return calendar;
-	}
-
-	// Convert Calendar to Date
-	private static Date calendarToDate(Calendar calendar) {
-		return calendar.getTime();
 	}
 
 	private static BigDecimal truncateToBigDecimaRouding(String text) {

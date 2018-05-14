@@ -1,11 +1,15 @@
 package es.udc.citytrash.model.trabajadorService;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import es.udc.citytrash.controller.util.dtos.TrabajadorBusqFormDto;
-import es.udc.citytrash.controller.util.dtos.TrabajadorRegistroFormDto;
-import es.udc.citytrash.controller.util.dtos.TrabajadorUpdateFormDto;
+import es.udc.citytrash.controller.util.dtos.trabajador.TrabajadorBusqFormDto;
+import es.udc.citytrash.controller.util.dtos.trabajador.TrabajadorRegistroFormDto;
+import es.udc.citytrash.controller.util.dtos.trabajador.TrabajadorUpdateFormDto;
+import es.udc.citytrash.model.trabajador.Conductor;
+import es.udc.citytrash.model.trabajador.Recolector;
 import es.udc.citytrash.model.trabajador.Trabajador;
 import es.udc.citytrash.model.util.excepciones.ActiveCountException;
 import es.udc.citytrash.model.util.excepciones.DuplicateInstanceException;
@@ -37,7 +41,7 @@ public interface TrabajadorService {
 	 * @throws DuplicateInstanceException
 	 * @throws InstanceNotFoundException
 	 */
-	Trabajador actualizarDatosTrabajador(TrabajadorUpdateFormDto usuario)
+	Trabajador modificarTrabajador(TrabajadorUpdateFormDto usuario)
 			throws InstanceNotFoundException, DuplicateInstanceException;
 
 	/**
@@ -57,7 +61,7 @@ public interface TrabajadorService {
 	 * @throws InstanceNotFoundException
 	 *             en caso que no exista el email
 	 */
-	Trabajador buscarTrabajadorEmail(String email) throws InstanceNotFoundException;
+	Trabajador buscarTrabajadorByEmail(String email) throws InstanceNotFoundException;
 
 	/***
 	 * Buscar trabajador por email
@@ -74,10 +78,12 @@ public interface TrabajadorService {
 	 * 
 	 * @param pageable
 	 *            pageable
+	 * @param mostrar
+	 *            trabajadores de baja
 	 * @return
 	 */
 
-	Page<Trabajador> buscarTrabajadores(Pageable pageable);
+	Page<Trabajador> buscarTrabajadores(Pageable pageable, Boolean mostrarTodos);
 
 	/**
 	 * Busqueda de trabajador con un formulario de búsqueda
@@ -115,5 +121,42 @@ public interface TrabajadorService {
 	 * @throws InstanceNotFoundException
 	 */
 	boolean esUnTrabajadorActivo(long trabajadorId) throws InstanceNotFoundException;
+
+	/**
+	 * Verifica que es un trabajador recolector
+	 * 
+	 * @param id
+	 * @return
+	 */
+	boolean esTrabajadorRecolector(long id);
+
+	/**
+	 * Verifica que es un trabajador conductor
+	 * 
+	 * @param id
+	 * @return
+	 */
+	boolean esTrabajadorConductor(long id);
+	
+	/**
+	 * Obtiene la lista de recolectores ordenados por apellidos
+	 * @param mostrarSoloActivos mostrar solo los trabajadores activos o todos
+	 * @return
+	 */
+	List<Recolector> buscarRecolectores(Boolean mostrarSoloActivos);
+
+	/**
+	 * Obtiene la lista de conductores ordenados por apellidos
+	 * @param mostrarSoloActivos mostrar solo los activos o todos
+	 * @return
+	 */
+	List<Conductor> buscarConductores(Boolean mostrarSoloActivos);
+
+	/**
+	 * Buscar la lista de trabajadores ordenados por apellidos
+	 * @param mostrarSoloActivos
+	 * @return
+	 */
+	List<Trabajador> buscarTrabajadores(Boolean mostrarSoloActivos);
 
 }

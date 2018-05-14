@@ -10,124 +10,121 @@
 <body class="blanco">
 	<div id="container" class="container" th:fragment="content">
 		</br>
-		<div class="panel panel-default">
-			<div class="panel-heading ">
+		<!-- <div class="panel panel-default"> -->
+		<div class="panel-heading ">
 
-				<div class="col-lg-8 col-md-8">
-					<i class="fa fa-user fa-2x"></i> <label class="mayusculas"
-						th:text="#{frm_registro_subHeader1}"> </label>
-					<h4 class="text-warning"
-						th:text="${#strings.capitalizeWords(#strings.toLowerCase(trabajador.nombre + ' ' + trabajador.apellidos))}"></h4>
-				</div>
-
-				<div class="col-lg-4 col-md-4 text-right">
-					<div class="btn-group text-center">
-						<a th:href="@{#{link.trabajadores.editar}(id=${trabajador.id})}"
-							class="btn-sm"><i class="glyphicon glyphicon-pencil"></i></a> <a
-							th:href="@{#{link.trabajadores.eliminar}(id=${trabajador.id})}"
-							class="btn-sm"><i class="glyphicon glyphicon-minus"></i></a> <a
-							th:href="@{#{link.trabajadores.registro}}" class="btn-sm"><i
-							class="glyphicon glyphicon-plus"></i> </a> <a
-							th:href="@{#{link.trabajadores}}" class="btn-sm"> <i
-							class="glyphicon glyphicon-list"></i>
-						</a>
-					</div>
-				</div>
+			<div class="col-lg-8 col-md-8">
+				<i class="fa fa-user fa-2x"></i> <label class="mayusculas"
+					th:text="#{frm_registro_subHeader1}"> </label>
+				<h4 class="text-warning"
+					th:text="${#strings.capitalizeWords(#strings.toLowerCase(trabajador.nombre + ' ' + trabajador.apellidos))}"></h4>
 			</div>
 
-			<div class="panel-body">
-				<div class="row">
-
-					<table class="table table-hover">
-						<tbody>
-							<tr>
-								<td class="text-success"><label class="mayusculas"
-									th:text="#{lbl_documento}"></label></td>
-								<td><label
-									th:text="${#strings.toUpperCase(trabajador.documento)}">
-								</label></td>
-							</tr>
-							<tr>
-								<td class="text-success"><label class="mayusculas"
-									th:text="#{lbl_nombre}"></label></td>
-								<td
-									th:text="${#strings.capitalizeWords(#strings.toLowerCase(trabajador.nombre))}">
-								</td>
-							</tr>
-
-							<tr>
-								<td class="text-success"><label class="mayusculas"
-									th:text="#{lbl_apellidos}"></label></td>
-								<td
-									th:text="${#strings.capitalizeWords(#strings.toLowerCase(trabajador.apellidos))}">
-								</td>
-							</tr>
-
-							<tr>
-								<td class="text-success"><i
-									class="glyphicon glyphicon-calendar"></i> <label
-									class="mayusculas" th:text="#{lbl_fechaNacimiento}"></label></td>
-								<td>
-									<!-- http://www.baeldung.com/dates-in-thymeleaf -->
-									<p th:if="${trabajador.fechaNacimiento != null}"
-										th:with="df=#{fecha_formato}"
-										th:text="${#dates.format(trabajador.fechaNacimiento, df)}"></p>
-								</td>
-							</tr>
-							<tr>
-								<td class="text-success"><i
-									class="glyphicon glyphicon-envelope"></i> <label
-									th:text="#{lbl_email}"></label></td>
-								<td th:text="${#strings.toLowerCase(trabajador.email)}"></td>
-							</tr>
-							<tr>
-								<td class="text-success"><i
-									class="glyphicon glyphicon-earphone"></i> <label
-									th:text="#{lbl_telefono}"></label></td>
-								<td>
-									<p th:if="${trabajador.telefono != null}"
-										th:text="${trabajador.telefono}"></p>
-								</td>
-							</tr>
-							<tr>
-								<td class="text-success"><i class="fa fa-home"></i> <label
-									th:text="#{lbl_direccion}"></label>&nbsp;</td>
-								<td>
-									<address>
-										<strong
-											th:text="${#strings.toUpperCase(trabajador.nombreVia)}">
-										</strong> <label th:if="${trabajador.numero != null}"
-											th:text="', ' + ${trabajador.numero}"></label> <label
-											th:if="${trabajador.piso != null}"
-											th:text="', '  + ' ' + ${trabajador.piso} + 'º'"></label> <label
-											th:if="${trabajador.puerta}"
-											th:text="' ' + ${#strings.toUpperCase(trabajador.puerta)}"></label>
-										<br> <label th:if="${trabajador.restoDireccion}"
-											th:text="${#strings.toUpperCase(trabajador.restoDireccion)}">
-										</label> <br th:if="${trabajador.restoDireccion}"> <label
-											th:if="${trabajador.cp}" th:text="${trabajador.cp}">
-										</label> <label th:if="${trabajador.localidad}"
-											th:text="${#strings.toUpperCase(trabajador.localidad)}">
-										</label> <br> <label th:if="${trabajador.provincia}"
-											th:text="${#strings.toUpperCase(trabajador.provincia)}">
-										</label> <br>
-									</address>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-			</div>
-			<div class="panel-footer">
-				<div class="pull-left">
-					<a th:href="@{#{link.trabajadores}}"> <i
-						class="glyphicon glyphicon-list"></i> &nbsp; <label
-						th:text="#{lbl_listado_trabajadores}"></label>
+			<div class="col-lg-4 col-md-4 text-right">
+				<div class="btn-group text-center">
+					<a th:href="@{#{link.trabajadores.editar}(id=${trabajador.id})}"
+						class="btn-sm"><i class="glyphicon glyphicon-pencil"></i></a> <a
+						th:href="@{#{link.trabajadores.registro}}" class="btn-sm"><i
+						class="glyphicon glyphicon-plus"></i> </a> <a
+						th:href="@{#{link.trabajadores}}" class="btn-sm"> <i
+						class="glyphicon glyphicon-list"></i>
 					</a>
 				</div>
-				<br />
 			</div>
 		</div>
+
+		<div class="panel-body">
+			<div class="row">
+
+				<table class="table table-hover">
+					<tbody>
+						<tr>
+							<td class="text-success"><label class="mayusculas"
+								th:text="#{lbl_documento}"></label></td>
+							<td><label
+								th:text="${#strings.toUpperCase(trabajador.documento)}">
+							</label></td>
+						</tr>
+						<tr>
+							<td class="text-success"><label class="mayusculas"
+								th:text="#{lbl_nombre}"></label></td>
+							<td
+								th:text="${#strings.capitalizeWords(#strings.toLowerCase(trabajador.nombre))}">
+							</td>
+						</tr>
+
+						<tr>
+							<td class="text-success"><label class="mayusculas"
+								th:text="#{lbl_apellidos}"></label></td>
+							<td
+								th:text="${#strings.capitalizeWords(#strings.toLowerCase(trabajador.apellidos))}">
+							</td>
+						</tr>
+
+						<tr>
+							<td class="text-success"><i
+								class="glyphicon glyphicon-calendar"></i> <label
+								class="mayusculas" th:text="#{lbl_fechaNacimiento}"></label></td>
+							<td>
+								<!-- http://www.baeldung.com/dates-in-thymeleaf -->
+								<p th:if="${trabajador.fechaNacimiento != null}"
+									th:with="df=#{fecha_formato}"
+									th:text="${#dates.format(trabajador.fechaNacimiento, df)}"></p>
+							</td>
+						</tr>
+						<tr>
+							<td class="text-success"><i
+								class="glyphicon glyphicon-envelope"></i> <label
+								th:text="#{lbl_email}"></label></td>
+							<td th:text="${#strings.toLowerCase(trabajador.email)}"></td>
+						</tr>
+						<tr>
+							<td class="text-success"><i
+								class="glyphicon glyphicon-earphone"></i> <label
+								th:text="#{lbl_telefono}"></label></td>
+							<td>
+								<p th:if="${trabajador.telefono != null}"
+									th:text="${trabajador.telefono}"></p>
+							</td>
+						</tr>
+						<tr>
+							<td class="text-success"><i class="fa fa-home"></i> <label
+								th:text="#{lbl_direccion}"></label>&nbsp;</td>
+							<td>
+								<address>
+									<strong th:text="${#strings.toUpperCase(trabajador.nombreVia)}">
+									</strong> <label th:if="${trabajador.numero != null}"
+										th:text="', ' + ${trabajador.numero}"></label> <label
+										th:if="${trabajador.piso != null}"
+										th:text="', '  + ' ' + ${trabajador.piso} + 'º'"></label> <label
+										th:if="${trabajador.puerta}"
+										th:text="' ' + ${#strings.toUpperCase(trabajador.puerta)}"></label>
+									<br> <label th:if="${trabajador.restoDireccion}"
+										th:text="${#strings.toUpperCase(trabajador.restoDireccion)}">
+									</label> <br th:if="${trabajador.restoDireccion}"> <label
+										th:if="${trabajador.cp}" th:text="${trabajador.cp}"> </label>
+									<label th:if="${trabajador.localidad}"
+										th:text="${#strings.toUpperCase(trabajador.localidad)}">
+									</label> <br> <label th:if="${trabajador.provincia}"
+										th:text="${#strings.toUpperCase(trabajador.provincia)}">
+									</label> <br>
+								</address>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="panel-footer">
+			<div class="pull-left">
+				<a th:href="@{#{link.trabajadores}}"> <i
+					class="glyphicon glyphicon-list"></i> &nbsp; <label
+					th:text="#{lbl_listado_trabajadores}"></label>
+				</a>
+			</div>
+			<br />
+		</div>
 	</div>
+	<!-- </div> -->
 </body>
 </html>

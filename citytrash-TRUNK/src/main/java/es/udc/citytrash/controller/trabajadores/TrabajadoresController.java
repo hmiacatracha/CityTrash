@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
@@ -29,19 +30,22 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import es.udc.citytrash.controller.excepciones.EmployeeNotFoundException;
 import es.udc.citytrash.controller.excepciones.PageNotFoundException;
+import es.udc.citytrash.controller.excepciones.ResourceNotFoundException;
 import es.udc.citytrash.controller.util.AjaxUtils;
 import es.udc.citytrash.controller.util.WebUtils;
 import es.udc.citytrash.controller.util.anotaciones.UsuarioActual;
-import es.udc.citytrash.controller.util.dtos.PerfilDto;
-import es.udc.citytrash.controller.util.dtos.TrabajadorBusqFormDto;
-import es.udc.citytrash.controller.util.dtos.TrabajadorDto;
-import es.udc.citytrash.controller.util.dtos.TrabajadorRegistroFormDto;
-import es.udc.citytrash.controller.util.dtos.TrabajadorUpdateFormDto;
+import es.udc.citytrash.controller.util.dtos.cuenta.PerfilDto;
+import es.udc.citytrash.controller.util.dtos.trabajador.TrabajadorBusqFormDto;
+import es.udc.citytrash.controller.util.dtos.trabajador.TrabajadorDto;
+import es.udc.citytrash.controller.util.dtos.trabajador.TrabajadorRegistroFormDto;
+import es.udc.citytrash.controller.util.dtos.trabajador.TrabajadorUpdateFormDto;
 import es.udc.citytrash.model.emailService.EmailNotificacionesService;
 import es.udc.citytrash.model.trabajador.Trabajador;
 import es.udc.citytrash.model.trabajadorService.TrabajadorService;
@@ -55,7 +59,7 @@ import es.udc.citytrash.util.enums.TipoTrabajador;
 import es.udc.citytrash.util.GlobalNames;
 
 @Controller
-@PreAuthorize("hasRole('" + GlobalNames.ROL_ADMINISTRADOR + "')")
+// @PreAuthorize("hasRole('" + GlobalNames.ROL_ADMINISTRADOR + "')")
 @RequestMapping("trabajadores")
 public class TrabajadoresController {
 
@@ -184,7 +188,9 @@ public class TrabajadoresController {
 	}
 
 	/* Detalles del trabajador */
-	@RequestMapping(value = { WebUtils.REQUEST_MAPPING_TRABAJADOR_DETALLES }, method = RequestMethod.GET)
+
+	@RequestMapping(value = { WebUtils.REQUEST_MAPPING_TRABAJADOR_DETALLES,
+			WebUtils.REQUEST_MAPPING_TRABAJADOR_DETALLES + "/" }, method = RequestMethod.GET)
 	public String trabajadorDetalles(@PathVariable("trabajadorId") long id, Model model,
 			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith)
 			throws EmployeeNotFoundException {
@@ -275,12 +281,13 @@ public class TrabajadoresController {
 
 	@RequestMapping(value = WebUtils.REQUEST_MAPPING_TRABAJADORES_REGISTRO, method = RequestMethod.POST)
 	public String registro(@ModelAttribute("registro") @Valid TrabajadorRegistroFormDto user, BindingResult result,
-			HttpServletRequest request, Errors errors, Model model, RedirectAttributes redirectAttributes,
+			HttpServletRequest request, HttpServletResponse response, Errors errors, Model model,
+			RedirectAttributes redirectAttributes,
 			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
 		Trabajador t;
 		if (result.hasErrors()) {
 			if (AjaxUtils.isAjaxRequest(requestedWith)) {
-				return WebUtils.VISTA_TRABAJADORES_REGISTRO.concat(" :: registroForm");
+				return WebUtils.VISTA_TRABAJADORES_REGISTRO.concat("::registroForm");
 			}
 			return WebUtils.VISTA_TRABAJADORES_REGISTRO;
 		}
@@ -300,27 +307,34 @@ public class TrabajadoresController {
 			logger.info(model.toString());
 
 			if (AjaxUtils.isAjaxRequest(requestedWith))
-				return WebUtils.VISTA_TRABAJADORES_REGISTRO.concat(" :: registroForm");
+				return WebUtils.VISTA_TRABAJADORES_REGISTRO.concat("::registroForm");
 			return WebUtils.VISTA_TRABAJADORES_REGISTRO;
 		} catch (Exception e) {
 			logger.debug("error register a user => " + e.toString());
 			return WebUtils.VISTA_TRABAJADORES;
 		}
 
-		if (AjaxUtils.isAjaxRequest(requestedWith)) {
-			model.addAttribute("msg", "ok");
-			model.addAttribute("type", "frm_registro_ok");
-			model.addAttribute("linkRef", "");
-			return WebUtils.VISTA_TRABAJADORES_REGISTRO.concat(" :: registroForm");
-		}
-		return "redirect:" + WebUtils.URL_TRABAJADOR_DETALLES.replace("{trabajadorId}", String.valueOf(t.getId()));
+		redirectAttributes.addAttribute("msg", "ok");
+		redirectAttributes.addAttribute("type", "frm_registro_ok");
+		response.setHeader("X-Requested-With", requestedWith);
+
+		/*
+		 * if (AjaxUtils.isAjaxRequest(requestedWith)) {
+		 * model.addAttribute("msg", "ok"); model.addAttribute("type",
+		 * "frm_registro_ok"); model.addAttribute("key",
+		 * UriComponentsBuilder.fromUriString(WebUtils.URL_TRABAJADOR_DETALLES)
+		 * .queryParam("trabajadorId", t.getId())); return
+		 * WebUtils.VISTA_TRABAJADORES.concat("::content"); }
+		 */
+		return "redirect:" + WebUtils.URL_TRABAJADOR_UPDATE.replace("{trabajadorId}", String.valueOf(t.getId()));
 	}
 
 	/* UPDATE A WORKER */
 	@RequestMapping(value = { WebUtils.REQUEST_MAPPING_TRABAJADOR_UPDATE }, method = RequestMethod.GET)
 	public String updateTrabajador(@PathVariable("trabajadorId") long id, Model model,
-			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith)
-			throws EmployeeNotFoundException {
+			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith,
+			@RequestParam(value = "msg", required = false) String msg,
+			@RequestParam(value = "type", required = false) String type) throws EmployeeNotFoundException {
 		model.addAttribute("id", id);
 		try {
 			logger.info("UPDATE WORKER GET");
@@ -332,6 +346,10 @@ public class TrabajadoresController {
 					t.getTrabajadorType());
 			logger.info("UPDATE WORKER GET updateForm => " + updateForm.toString());
 			model.addAttribute("updateForm", updateForm);
+			model.addAttribute("msg", msg);
+			model.addAttribute("type", type);
+			model.addAttribute("key", updateForm.getEmail());
+
 			if (AjaxUtils.isAjaxRequest(requestedWith))
 				return WebUtils.VISTA_TRABAJADORES_UPDATE.concat(" :: content");
 			return WebUtils.VISTA_TRABAJADORES_UPDATE;
@@ -365,7 +383,7 @@ public class TrabajadoresController {
 			return WebUtils.VISTA_TRABAJADORES_UPDATE;
 		}
 		try {
-			t = tservicio.actualizarDatosTrabajador(updateForm);
+			t = tservicio.modificarTrabajador(updateForm);
 			model.addAttribute("msg", "ok");
 			model.addAttribute("type", "cambios_realizados_ok");
 			model.addAttribute("key", t.getEmail());
@@ -389,6 +407,25 @@ public class TrabajadoresController {
 				return WebUtils.VISTA_TRABAJADORES_UPDATE.concat(" :: content");
 			return WebUtils.VISTA_TRABAJADORES_UPDATE;
 		}
+	}
+
+	@RequestMapping(path = WebUtils.REQUEST_MAPPING_CAMBIAR_ESTADO, method = RequestMethod.POST)
+	@ResponseBody
+	public boolean cambiarEstadoActivarODesactivar(@PathVariable(name = "trabajadorId") long id)
+			throws ResourceNotFoundException {
+		boolean activo = false;
+		try {
+			activo = tservicio.esUnTrabajadorActivo(id);
+			if (activo) {
+				tservicio.desactivarTrabajador(id);
+			} else {
+				tservicio.activarTrabajador(id);
+			}
+			activo = tservicio.esUnTrabajadorActivo(id);
+		} catch (InstanceNotFoundException e) {
+			throw new ResourceNotFoundException(e.getMessage());
+		}
+		return activo;
 	}
 
 	/* CAMBIO DE IDIOMA */

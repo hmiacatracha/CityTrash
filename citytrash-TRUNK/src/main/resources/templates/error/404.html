@@ -13,8 +13,10 @@
 	<div id="viewBody" class="container" th:fragment="content"
 		th:remove="tag">
 		<h1 th:text="|${httpStatus} - ${httpStatus.reasonPhrase}|">404</h1>
+		<!-- 
 		<p th:text="#{error.404}"></p>
 		<a th:text="#{home}" th:href="@{#{menu.home_link_ref}}"> </a>
+		 -->
 	</div>
 </body>
 </html>

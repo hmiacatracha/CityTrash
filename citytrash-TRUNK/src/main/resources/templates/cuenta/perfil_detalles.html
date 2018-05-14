@@ -1,0 +1,85 @@
+<!DOCTYPE>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/default}" th:with="currentPage='cuenta'">
+<head>
+<title th:text="#{page_trabajadores_detalle}"></title>
+</head>
+<body class="blanco">
+	<div id="container" class="container" th:fragment="content">
+		</br>
+		<!-- <div class="panel panel-default"> -->
+
+		<div class="panel-heading ">
+
+			<div class="col-lg-8 col-md-8">
+				<i class="fa fa-user fa-2x"></i> <label class="mayusculas"
+					th:text="#{lbl_perfil}"> </label>
+				<h4 class="text-warning"
+					th:text="${#strings.capitalizeWords(#strings.toLowerCase(trabajador.nombre + ' ' + trabajador.apellidos))}"></h4>
+			</div>
+		</div>
+
+		<div class="panel-body">
+			<div class="row">
+
+				<table class="table table-hover">
+					<tbody>
+						<tr>
+							<td class="text-success"><label class="mayusculas"
+								th:text="#{lbl_documento}"></label></td>
+							<td><label
+								th:text="${#strings.toUpperCase(trabajador.documento)}">
+							</label></td>
+						</tr>
+						<tr>
+							<td class="text-success"><i
+								class="glyphicon glyphicon-envelope"></i> <label
+								th:text="#{lbl_email}"></label></td>
+							<td th:text="${#strings.toLowerCase(trabajador.email)}"></td>
+						</tr>
+						<!-- dtos del trabajador -->
+						<tr>
+							<td class="text-success"><label
+								th:text="#{lbl_trabajador_tipo}"></label></td>
+							<td th:if="${trabajador.tipo}"
+								th:text="#{${'trabajador.tipo.' + trabajador.tipo}}"></td>
+						</tr>
+						<tr>
+							<td class="text-success"><i class="material-icons"
+								style="font-size: 14px">language</i>&nbsp; <label
+								th:text="#{lbl_trabajador_idioma}"> </label></td>
+
+							<td th:if="${trabajador.idioma}"
+								th:text="#{${'lang.' + trabajador.idioma}}"></td>
+						</tr>
+						<tr>
+							<td class="text-success"><i
+								class="glyphicon glyphicon-calendar"></i> <label
+								class="mayusculas" th:text="#{lbl_trabajador_fecha_creacion}"></label></td>
+							<td>
+								<!-- http://www.baeldung.com/dates-in-thymeleaf -->
+								<p th:if="${trabajador.fechaCreacion != null}"
+									th:with="df=#{fecha_formato_completo}"
+									th:text="${#dates.format(trabajador.fechaCreacion, df)}"></p>
+							</td>
+						</tr>
+						<tr>
+							<td class="text-success"><i
+								class="glyphicon glyphicon-calendar"></i> <label
+								class="mayusculas" th:text="#{lbl_trabajador_fecha_activacion}"></label></td>
+							<td>
+								<p th:if="${trabajador.fechaActivacion != null}"
+									th:with="df=#{fecha_formato_completo}"
+									th:text="${#dates.format(trabajador.fechaActivacion, df)}"></p>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<!-- </div> -->
+</body>
+</html>

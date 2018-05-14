@@ -20,16 +20,12 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Digits;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotBlank;
-
-import com.fasterxml.jackson.databind.ser.std.StdKeySerializers.Default;
 
 import es.udc.citytrash.util.GlobalNames;
 import es.udc.citytrash.util.enums.Idioma;

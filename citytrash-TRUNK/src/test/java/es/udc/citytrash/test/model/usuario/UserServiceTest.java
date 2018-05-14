@@ -26,8 +26,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.udc.citytrash.controller.util.dtos.TrabajadorRegistroFormDto;
-import es.udc.citytrash.controller.util.dtos.TrabajadorUpdateFormDto;
+import es.udc.citytrash.controller.util.dtos.trabajador.TrabajadorRegistroFormDto;
+import es.udc.citytrash.controller.util.dtos.trabajador.TrabajadorUpdateFormDto;
 import es.udc.citytrash.model.trabajador.Trabajador;
 import es.udc.citytrash.model.trabajador.TrabajadorDao;
 import es.udc.citytrash.model.trabajadorService.TrabajadorService;

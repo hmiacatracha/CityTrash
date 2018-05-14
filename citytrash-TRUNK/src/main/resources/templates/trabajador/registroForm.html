@@ -281,7 +281,8 @@
 
 							<div class="col-sm-9">
 								<input type="number" maxlength="5"
-									pattern="^(0[1-9][0-9]{3}|[1-4][0-9]{4}|5[0-2][0-9]{3})?"
+									pattern="^$|(0[1-9][0-9]{3}|[1-4][0-9]{4}|5[0-2][0-9]{3})"
+									th:title="#{constraints.pattern.cp}"
 									class="mayusculas col-sm-6 form-control" id="cp"
 									th:placeholder="#{frm_registro_pholder_cp}" th:field="*{cp}" />
 								<span class="help-block" th:if="${#fields.hasErrors('cp')}"

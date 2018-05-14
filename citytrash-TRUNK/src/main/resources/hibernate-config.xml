@@ -22,5 +22,9 @@
 		<mapping class="es.udc.citytrash.model.trabajador.Conductor" />
 		<mapping class="es.udc.citytrash.model.trabajador.Recolector" />
 		<mapping class="es.udc.citytrash.model.trabajador.Administrador" />
+		<mapping class="es.udc.citytrash.model.tipoDeBasura.TipoDeBasura" />			
+		<mapping class="es.udc.citytrash.model.camion.Camion" />
+		<mapping class="es.udc.citytrash.model.camionModelo.CamionModelo" />
+		<mapping class="es.udc.citytrash.model.camionModeloTipoDeBasura.CamionModeloTipoDeBasura"/>
 	</session-factory>
 </hibernate-configuration>

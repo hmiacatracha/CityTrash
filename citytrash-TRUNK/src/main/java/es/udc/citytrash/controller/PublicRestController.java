@@ -35,7 +35,7 @@ public class PublicRestController {
 			@RequestParam(value = "email", required = true) String email) {
 		logger.info("buscando trabajador por email");
 		try {
-			tservicio.buscarTrabajadorEmail(email);
+			tservicio.buscarTrabajadorByEmail(email);
 			logger.info("buscando trabajador por email => si");
 			logger.info("buscando trabajador por email = " + email);
 			return false;

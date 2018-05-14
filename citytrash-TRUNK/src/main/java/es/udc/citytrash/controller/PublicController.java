@@ -98,7 +98,7 @@ public class PublicController {
 	public @ResponseBody Boolean emailExistente(HttpServletResponse response,
 			@RequestParam(value = "email", required = true) String email) {
 		try {
-			tservicio.buscarTrabajadorEmail(email);
+			tservicio.buscarTrabajadorByEmail(email);
 			return true;
 		} catch (InstanceNotFoundException e) {
 			return false;

@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.udc.citytrash.controller.cuenta.CustomUserDetails;
-import es.udc.citytrash.controller.util.dtos.PerfilDto;
+import es.udc.citytrash.controller.util.dtos.cuenta.PerfilDto;
 import es.udc.citytrash.model.trabajador.Trabajador;
 import es.udc.citytrash.model.trabajador.TrabajadorDao;
 import es.udc.citytrash.model.util.excepciones.ExpiredTokenException;

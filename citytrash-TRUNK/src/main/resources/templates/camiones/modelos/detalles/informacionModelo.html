@@ -1,0 +1,194 @@
+<!DOCTYPE>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/default}" th:with="currentPage='recursos'">
+<head>
+<title th:text="#{page_camiones_modelo_detalle_info}"></title>
+</head>
+<body class="blanco">
+	<div id="container" class="container" th:fragment="content">
+		</br>
+		<!-- nombre and color -->
+		<div class="row container center-block">
+
+			<h3 th:if="${nombreDelModelo}"
+				class="pull-left text-warning col-xs-6"
+				th:text="${#strings.toUpperCase('__#{frm_detalles_camiones_modelos}__')}  + ' - ' + ${#strings.toUpperCase(nombreDelModelo)}"></h3>
+
+
+			<div class="pull-left col-xs-6">
+				<div class="col-xs-1" th:if="${coloresTiposDeBasura}"
+					th:each="item : ${coloresTiposDeBasura}">
+					<div th:style="'background: #' + ${item}"
+						class="basura_color_circulo"></div>
+				</div>
+			</div>
+		</div>
+
+		<div th:if="${objecto}" th:object="${objecto}">
+			<div class="panel-heading ">
+				<div class="col-xs-12 text-right">
+					<div class="btn-group text-center">
+						<a th:href="@{#{link.camiones.modelos.editar}(id=*{id})}"
+							class="btn-sm"><i class="glyphicon glyphicon-pencil"></i></a><a
+							th:href="@{#{link.camiones.modelos.registro}}" class="btn-sm"><i
+							class="glyphicon glyphicon-plus"></i> </a> <a
+							th:href="@{#{link.camiones.modelos}}" class="btn-sm"> <i
+							class="glyphicon glyphicon-list"></i>
+						</a>
+					</div>
+				</div>
+			</div>
+
+			<div class="panel-body">
+
+				<table class="table table-hover table-responsive">
+					<tbody>
+						<tr>
+							<td class="text-success"><label
+								th:text="#{lbl_camion_modelo_nombre}"></label></td>
+							<td th:if="*{modelo}">
+								<p class="text-right col-xs-6" th:text="*{modelo}"></p>
+
+							</td>
+
+
+
+						</tr>
+						<!-- volumen tolva -->
+						<tr>
+							<td class="text-success"><label
+								th:text="#{lbl_camion_modelo_volumenTolva}"></label></td>
+
+							<td class="row">
+								<p th:if="*{volumenTolva}" class="text-right col-xs-6"
+									th:with="format=#{decimales_formato}"
+									th:text="*{volumenTolva} % 1 == 0 ? ${#numbers.formatDecimal(__*{volumenTolva}__, 0, 0, format)} :${#numbers.formatDecimal(__*{volumenTolva}__, 0, 2, format)}">
+								</p>
+								<p th:if="*{volumenTolva}"
+									class="text-left text-success col-xs-6">
+									<var>m</var>
+									<sup>3</sup>
+								</p>
+							</td>
+						</tr>
+						<!-- altura -->
+						<tr>
+							<td class="text-success"><label
+								th:text="#{lbl_camion_modelo_altura}"></label></td>
+
+							<td class="row">
+								<p th:if="${objecto.altura}"
+									th:with="format=#{decimales_formato}"
+									class="text-right col-xs-6"
+									th:text="*{altura} % 1 == 0 ? ${#numbers.formatDecimal(__*{altura}__, 0, 0, format)} :${#numbers.formatDecimal(__*{altura}__, 0, 2, format)}">
+								</p>
+								<p th:if="${objecto.altura}"
+									class="text-left text-success col-xs-6">
+									<var>mm</var>
+								</p>
+							</td>
+						</tr>
+
+						<!-- ancho -->
+						<tr>
+							<td class="text-success"><label
+								th:text="#{lbl_camion_modelo_ancho}"></label></td>
+
+							<td class="row">
+								<p th:if="*{ancho}" th:with="format=#{decimales_formato}"
+									class="text-right col-xs-6"
+									th:text="*{ancho} % 1 == 0 ? ${#numbers.formatDecimal(__*{ancho}__, 0, 0, format)} :${#numbers.formatDecimal(__*{ancho}__, 0, 2, format)}">
+								</p>
+								<p th:if="*{ancho}" class="text-left text-success col-xs-6">
+									<var>mm</var>
+								</p>
+							</td>
+						</tr>
+						<tr>
+							<td class="text-success"><label
+								th:text="#{lbl_camion_modelo_longitud}"></label></td>
+							<td class="row">
+								<p th:if="*{longitud}" th:with="format=#{decimales_formato}"
+									class="text-right col-xs-6"
+									th:text="*{longitud} % 1 == 0 ? ${#numbers.formatDecimal(__*{longitud}__, 0, 0, format)} :${#numbers.formatDecimal(__*{longitud}__, 0, 2, format)}">
+								</p>
+								<p th:if="*{longitud}" class="text-left text-success col-xs-6">
+									<var>mm</var>
+								</p>
+							</td>
+						</tr>
+						<tr>
+							<td class="text-success"><label
+								th:text="#{lbl_camion_modelo_distancia}"></label></td>
+							<td class="row">
+								<p th:if="*{distancia}" th:with="format=#{decimales_formato}"
+									class="text-right col-xs-6"
+									th:text="*{distancia} % 1 == 0 ? ${#numbers.formatDecimal(__*{distancia}__, 0, 0, format)} :${#numbers.formatDecimal(__*{distancia}__, 0, 2, format)}">
+								</p>
+								<p th:if="*{distancia}" class="text-left text-success col-xs-6">
+									<var>mm</var>
+								</p>
+							</td>
+						</tr>
+						<tr>
+							<td class="text-success"><label
+								th:text="#{lbl_camion_modelo_pma}"></label></td>
+							<td class="row">
+								<p th:if="*{pma}" th:with="format=#{decimales_formato}"
+									class="text-right col-xs-6"
+									th:text="*{pma} % 1 == 0 ? ${#numbers.formatDecimal(__*{pma}__, 0, 0, format)} :${#numbers.formatDecimal(__*{pma}__, 0, 2, format)}">
+								</p>
+
+							</td>
+						</tr>
+					</tbody>
+				</table>
+
+
+				<table class="table table-hover table-responsive"
+					th:if="${modeloTiposDeBasura}">
+					<thead th:if="${not #lists.isEmpty(modeloTiposDeBasura)}">
+						<tr>
+							<th scope="col">#</th>
+							<th scope="col" th:text="#{lbl_tipo}">Tipo</th>
+							<th scope="col" th:text="#{lbl_capacidad}">Capacidad</th>
+							<th scope="col" th:text="#{lbl_color}">Color</th>
+						</tr>
+					</thead>
+					<tbody th:if="${not #lists.isEmpty(modeloTiposDeBasura)}">
+						<tr th:each="item, row: ${modeloTiposDeBasura}">
+							<td th:text="${row.index+1}"></td>
+							<td th:text="#{${item.tipo.tipo}}">Name</td>
+							<td class="text-left">
+								<p class="text-right col-xs-6 col-sm-4" th:if="${row!=null}"
+									th:with="format=#{decimales_formato}"
+									th:text="${item.capacidad} % 1 == 0 ? ${#numbers.formatDecimal(item.capacidad, 0, 0, format)} :${#numbers.formatDecimal(item.capacidad, 0, 2, format)}"></p>
+								<p class="text-left text-success col-xs-5 col-sm-4">
+									<var>m</var>
+									<sup>3</sup>
+								</p>
+							</td>
+							<td><div th:style="'background: #' + ${item.tipo.color}"
+									class="basura_color_cuadro"></div>
+						</tr>
+
+					</tbody>
+				</table>
+
+			</div>
+			<div class="panel-footer">
+				<div class="pull-left">
+					<a th:href="@{#{link.camiones.modelos}}"> <i
+						class="glyphicon glyphicon-list"></i> &nbsp; <label
+						th:text="#{lbl_camiones_modelos}"></label>
+					</a>
+				</div>
+				<br />
+			</div>
+		</div>
+	</div>
+</body>
+</html>

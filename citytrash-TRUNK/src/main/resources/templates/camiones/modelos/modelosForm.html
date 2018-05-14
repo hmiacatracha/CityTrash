@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<body>
+	<div th:fragment="modelosForm(camionModeloForm, error)">
+
+		<form th:if="camionModeloForm" id="modeloForm" role="form"
+			class="form-narrow form-horizontal" method="post" action="#"
+			th:action="@{#{link.camiones.modelo.post}}"
+			th:object="${camionModeloForm}" th:fragment="formulario">
+			<fieldset>
+				<!-- mensaje ok -->
+				<th:block th:if="${msg!=null}">
+					<div th:if="${type!=null}"
+						th:replace="fragments/alert :: alert (type='success',  message=#{${type}(${key})})"></div>
+				</th:block>
+
+				<!-- mensaje error -->
+				<th:block th:if="${error!=null and msg==null}">
+					<div th:if="${type!=null}"
+						th:replace="fragments/alert :: alert (type='danger',  message=#{${type}(${key})})"></div>
+				</th:block>
+
+				<th:block th:if="${#fields.hasErrors('${camionModeloForm.*}')}">
+					<br />
+					<div
+						th:replace="fragments/alert :: alert (type='danger', message=#{verificar_campos_alerta})">Alert</div>
+
+					<ul class="list-group">
+						<li class="list-group-item" th:each="err : ${#fields.errors('*')}"><span
+							class="glyphicon glyphicon-remove"> </span> <a href="#"
+							th:text="${err}"></a></li>
+					</ul>
+					<br />
+				</th:block>
+				<br />
+				<!-- modelo -->
+				<input th:if="*{id}" type="hidden"
+					class="mayusculas col-sm-6 form-control" id="nombre"
+					th:field="*{id}" />
+
+				<div id="nombre-group" class="form-group"
+					th:classappend="${#fields.hasErrors('nombre')}? 'has-error'">
+					<div class="col-xs-3 col-sm-3 col-md-3">
+						<label for="nombre" class="col-form-label"
+							th:text="#{lbl_camion_modelo_nombre} + '*'"></label>
+					</div>
+
+					<div class="col-xs-9 col-sm-6 col-md-5">
+						<input type="text" class="mayusculas col-sm-6 form-control"
+							maxlength="255" id="nombre"
+							th:placeholder="#{frm_registro_pholder_modelo}"
+							th:field="*{nombre}" required="required" />
+					</div>
+					<div class="col-xs-12 col-sm-3 col-md-4">
+						<span class="help-block" th:if="${#fields.hasErrors('nombre')}"
+							th:errors="*{nombre}"></span>
+					</div>
+				</div>
+
+				<!-- volumen tolva -->
+				<div id="nombre-group" class="form-group"
+					th:classappend="${#fields.hasErrors('volumenTolva')}? 'has-error'">
+					<div class="col-xs-3 col-sm-3 col-md-3">
+						<label for="volumenTolva" class="col-form-label"
+							th:text="#{lbl_camion_modelo_volumenTolva} + ''"></label>
+					</div>
+					<div class="has-feedback col-xs-9 col-sm-6 col-md-5">
+						<input type="number" step="0.1" pattern="\d[,.]\d{1,2}"
+							th:title="#{lbl_formato_incorrecto}"
+							class="mayusculas col-sm-6 form-control" id="tolva"
+							th:placeholder="#{frm_registro_pholder_volumenTolva}"
+							th:field="*{volumenTolva}" th:with="format=#{decimales_formato}"
+							th:value="${#numbers.formatDecimal(volumenTolva, 0,2, format)}"
+							required="required" /> <span class="form-control-feedback">(<var>m</var><sup>3</sup>)
+						</span>
+					</div>
+					<div class="col-xs-12 col-sm-3 col-md-4">
+						<span class="help-block"
+							th:if="${#fields.hasErrors('volumenTolva')}"
+							th:errors="*{volumenTolva}"></span>
+					</div>
+				</div>
+
+
+
+				<!-- altura -->
+				<div id="nombre-group" class="form-group"
+					th:classappend="${#fields.hasErrors('altura')}? 'has-error'">
+					<div class="pull-left col-xs-3 col-sm-3 col-md-3">
+						<label for="altura" class="col-form-label"
+							th:text="#{lbl_camion_modelo_altura} + '*'"></label>
+					</div>
+					<div class="has-feedback col-xs-9 col-sm-6 col-md-5">
+						<input type="number" min="1000" max="10000" step="0.1"
+							pattern="\d[,.]\d{1,2}" th:title="#{lbl_formato_incorrecto}"
+							class="mayusculas col-sm-6 form-control" id="altura"
+							th:placeholder="#{frm_registro_pholder_altura}"
+							th:with="format=#{decimales_formato}"
+							th:value="${#numbers.formatDecimal(altura, 0,0,format)}"
+							th:field="*{altura}" required="required" /> <span
+							class="form-control-feedback">(<var>mm</var>)
+						</span>
+					</div>
+					<div class="col-xs-12 col-sm-3 col-md-4">
+						<span class="help-block" th:if="${#fields.hasErrors('altura')}"
+							th:errors="*{altura}"></span>
+					</div>
+				</div>
+
+				<!-- ancho -->
+				<div id="nombre-group" class="form-group"
+					th:classappend="${#fields.hasErrors('ancho')}? 'has-error'">
+					<div class="pull-left col-xs-3 col-sm-3 col-md-3">
+						<label for="ancho" class="col-form-label"
+							th:text="#{lbl_camion_modelo_ancho} + '*'"></label>
+					</div>
+					<div class="has-feedback col-xs-9 col-sm-6 col-md-5">
+						<input type="number" min="1000" max="10000" step="0.1"
+							pattern="\d[,.]\d{1,2}" th:title="#{lbl_formato_incorrecto}"
+							class="mayusculas col-sm-6 form-control" id="ancho"
+							th:placeholder="#{frm_registro_pholder_ancho}"
+							th:with="format=#{decimales_formato}"
+							th:value="${#numbers.formatDecimal(ancho, 0,0,format)}"
+							th:field="*{ancho}" required="required" /> <span
+							class="form-control-feedback">(<var>mm</var>)
+						</span>
+					</div>
+					<div class="col-xs-12 col-sm-3 col-md-4">
+						<span class="help-block" th:if="${#fields.hasErrors('ancho')}"
+							th:errors="*{ancho}"></span>
+					</div>
+				</div>
+
+				<!-- longitud -->
+				<div id="nombre-group" class="form-group"
+					th:classappend="${#fields.hasErrors('longitud')}? 'has-error'">
+					<div class="pull-left col-xs-3 col-sm-3 col-md-3">
+						<label for="longitud" class="col-form-label"
+							th:text="#{lbl_camion_modelo_longitud} + '*'"></label>
+					</div>
+					<div class="has-feedback col-xs-9 col-sm-6 col-md-5">
+						<input type="number" min="1000" max="10000" step="0.1"
+							pattern="\d[,.]\d{1,2}" th:title="#{lbl_formato_incorrecto}"
+							class="mayusculas col-sm-6 form-control" id="longitud"
+							th:placeholder="#{frm_registro_pholder_longitud}"
+							th:with="format=#{decimales_formato}"
+							th:value="${#numbers.formatDecimal(longitud, 0,0,format)}"
+							th:field="*{longitud}" required="required" /><span
+							class="form-control-feedback">(<var>mm</var>)
+						</span>
+					</div>
+					<div class="col-xs-12 col-sm-3 col-md-4">
+						<span class="help-block" th:if="${#fields.hasErrors('longitud')}"
+							th:errors="*{longitud}"></span>
+					</div>
+
+				</div>
+				<!-- distancia -->
+				<div id="nombre-group" class="form-group"
+					th:classappend="${#fields.hasErrors('distancia')}? 'has-error'">
+					<div class="pull-left col-xs-3 col-sm-3 col-md-3">
+						<label for="distancia" class="col-form-label"
+							th:text="#{lbl_camion_modelo_distancia} + '*'"></label>
+					</div>
+					<div class="has-feedback col-xs-9 col-sm-6 col-md-5">
+						<input type="number" min="1000" max="10000" step="100"
+							pattern="\d[,.]\d{1,2}" th:title="#{lbl_formato_incorrecto}"
+							class="mayusculas col-sm-6 form-control" id="distancia"
+							th:placeholder="#{frm_registro_pholder_distancia}"
+							th:with="format=#{decimales_formato}"
+							th:value="${#numbers.formatDecimal(distancia, 0,0,format)}"
+							th:field="*{distancia}" required="required" /> <span
+							class="form-control-feedback">(<var>mm</var>)
+						</span>
+					</div>
+					<div class="col-xs-12 col-sm-3 col-md-4">
+						<span class="help-block" th:if="${#fields.hasErrors('distancia')}"
+							th:errors="*{distancia}"></span>
+					</div>
+				</div>
+
+				<!-- pma -->
+				<div id="nombre-group" class="form-group"
+					th:classappend="${#fields.hasErrors('pma')}? 'has-error'">
+					<div class="pull-left col-xs-3 col-sm-3 col-md-3">
+						<label for="pma" class="col-form-label"
+							th:text="#{lbl_camion_modelo_pma} + ''"></label>
+					</div>
+					<div class="has-feedback col-xs-9 col-sm-6 col-md-5">
+						<input type="number" min="0" max="50" step="1" pattern="\d*"
+							th:title="#{lbl_formato_incorrecto}"
+							class="mayusculas col-sm-6 form-control" id="pma"
+							th:placeholder="#{frm_registro_pholder_pma}" th:field="*{pma}"
+							required="required" />
+					</div>
+					<div class="col-xs-12 col-sm-3 col-md-4">
+						<span class="help-block" th:if="${#fields.hasErrors('pma')}"
+							th:errors="*{pma}"></span>
+					</div>
+				</div>
+
+				<legend class="col-xs-12" th:text="#{frm_header_modelos_tipos}"></legend>
+
+				<table class="table table-dark">
+					<thead>
+						<tr>
+							<th scope="col">#</th>
+							<th scope="col">Tipo</th>
+							<th scope="col">Capacidad</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<th scope="row">1</th>
+							<td>Mark</td>
+							<td>Otto</td>
+						</tr>
+					</tbody>
+				</table>
+
+			</fieldset>
+			<br>
+
+			<button th:if="*{id}==null" class="btn btn-default btn-lg btn-block"
+				type="submit" th:text="#{btn_add}" name="registrar"
+				th:value="registrar"></button>
+
+			<button th:unless="*{id}==null"
+				class="btn btn-default btn-lg btn-block" type="submit"
+				th:text="#{btn_update}" name="modificar" th:value="modificar"></button>
+		</form>
+
+	</div>
+</body>
+</html>

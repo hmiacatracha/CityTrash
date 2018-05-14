@@ -34,7 +34,9 @@
 		<mysql-connector-java.version>5.1.6</mysql-connector-java.version>
 		<junit.version>4.12</junit.version>
 		<selenium.version>3.11.0</selenium.version>
-		<mockito.version>2.16.0</mockito.version>
+		<mockito.core.version>2.16.0</mockito.core.version>
+		<mockito.all.version>1.10.19</mockito.all.version>
+		<spring.security.test>5.0.4.RELEASE</spring.security.test>
 		<spring.version>4.3.14.RELEASE</spring.version>
 		<springdata.version>1.11.3.RELEASE</springdata.version>
 		<spring.security.version>4.2.3.RELEASE</spring.security.version>
@@ -163,8 +165,26 @@
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
-			<version>${mockito.version}</version>
+			<version>${mockito.core.version}</version>
 			<scope>test</scope>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.mockito/mockito-all -->
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>${mockito.all.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${spring.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
+			<version>${spring.security.test}</version>
 		</dependency>
 
 		<!-- fin pruebas -->
@@ -175,13 +195,6 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-orm</artifactId>
 			<version>${spring.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-			<version>${spring.version}</version>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>

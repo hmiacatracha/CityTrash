@@ -1,0 +1,44 @@
+<!DOCTYPE>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/default}" th:with="currentPage='recursos'">
+<head>
+<title th:text="#{page_camiones_modelos_detalle}"></title>
+</head>
+
+<body class="blanco">
+	<div id="content" class="container" th:fragment="content"
+		th:remove="tag">
+
+		<div id="tabs" class="container">
+			<ul class="nav nav-tabs" id="detallesCamionModeloTab" role="tablist">
+				<li role="infopersonal"><a class="nav-link active"
+					data-target="#welcome" aria-controls="welcome" role="tab"
+					data-toggle="tab" id="welcomeTab"
+					th:href="@{#{link.camiones.modelos.detalle.info}(id=${id})}"
+					aria-selected="true"> <i class="fa fa-home"></i> <label
+						th:text="#{frm_detalles_camiones_modelos}"> </label>
+				</a></li>
+				<li role="listaCamiones"><a data-target="#listaCamiones"
+					aria-controls="listaCamiones" role="tab" data-toggle="tab"
+					id="historialRutasTab"
+					th:href="@{#{link.camiones.modelos.detalle.camiones}(id=${id})}"
+					aria-selected="false"> <i class="fa fa-truck"></i> <label
+						th:text="#{lbl_lista_de_camiones}"> </label>
+				</a></li>
+			</ul>
+
+			<div class="tab-content" id="detallesCamionModeloTabContent">
+				<div role="tabpanel" class="tab-pane" id="welcome"
+					aria-labelledby="info-tab"></div>
+
+				<div role="tabpanel" class="tab-pane" id="listaCamiones"
+					aria-labelledby="historial-rutas-tab"></div>
+			</div>
+
+		</div>
+	</div>
+</body>
+</html>

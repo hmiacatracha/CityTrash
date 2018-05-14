@@ -54,83 +54,115 @@ public interface TrabajadorDao extends GenericDAO<Trabajador, Long> {
 	 * Lista de todos los trabajadores
 	 * 
 	 * @param List
+	 * @param mostrarSoloActivos mostrar solo activos
 	 * @return
 	 */
-	List<Trabajador> buscarTrabajadores();
+	List<Trabajador> buscarTrabajadoresOrderByApellidos(boolean mostrarSoloActivos);
 
 	/**
 	 * Busca la lista de trabajadores
 	 * 
 	 * @param pageable
 	 *            pageable
+	 * @param mostrarTodos
+	 *            mostrar los trabajadores de baja
 	 * @return
 	 */
-	Page<Trabajador> buscarTrabajadores(Pageable pageable, TipoTrabajador trabajadorType);
+	Page<Trabajador> buscarTrabajadores(Pageable pageable, TipoTrabajador trabajadorType, Boolean mostrarTodos);
 
 	/**
 	 * Busqueda de trabajadores por nombre y/o apellidos, y tipo
 	 * 
 	 * @param pageable
+	 *            pageable
 	 * @param nombre
+	 *            nombre del trabajador
 	 * @param trabajadorType
+	 *            tipo de trabajador
+	 * @param mostrarTodos
+	 *            mostrar los trabajadores de baja
 	 * @return
 	 */
 	Page<Trabajador> buscarTrabajadoresPorNombreApellidosYTipo(Pageable pageable, String palabrasClaves,
-			TipoTrabajador trabajadorType);
+			TipoTrabajador trabajadorType, Boolean mostrarTodos);
 
 	/**
 	 * Busqueda de trabajadores por documento (DNI/NIE y tipo)
 	 * 
 	 * @param pageable
+	 *            pageable
 	 * @param documento
+	 *            documento (Dni/nie)
 	 * @param trabajadorType
+	 *            tipo de trabajador
+	 * @param mostrarTodos
+	 *            mostrar trabajadores de baja
 	 * @return
 	 */
 	Page<Trabajador> buscarTrabajadoresPorDocumentoYTipo(Pageable pageable, String documento,
-			TipoTrabajador trabajadorType);
+			TipoTrabajador trabajadorType, Boolean mostrarTodos);
 
 	/**
 	 * Busqueda de trabajadores por apellidos y tipo
 	 * 
 	 * @param pageable
+	 *            pageable
 	 * @param apellidos
+	 *            apellidos
 	 * @param trabajadorType
 	 *            tipo de trabajador
+	 * @param mostrarTodos
+	 *            mostrar trabajadores de baja
 	 * @return
 	 */
 	Page<Trabajador> buscarTrabajadoresPorApellidosYTipo(Pageable pageable, String apellidos,
-			TipoTrabajador trabajadorType);
+			TipoTrabajador trabajadorType, Boolean mostrarTodos);
 
 	/**
 	 * Búsqueda de trabajores telefono
 	 * 
 	 * @param pageable
+	 *            pageable
 	 * @param telefono
+	 *            telefono
 	 * @param trabajadorType
-	 *            tipo de trabajador
+	 *            tipo de trabajador tipo de trabajador
+	 * @param mostrarTodos
+	 *            mostrar trabajadores de baja
 	 * @return
 	 */
 	Page<Trabajador> buscarTrabajadoresPorTelefonoYTipo(Pageable pageable, String telefono,
-			TipoTrabajador trabajadorType);
+			TipoTrabajador trabajadorType, Boolean mostrarTodos);
 
 	/**
 	 * Buscar por email
 	 * 
 	 * @param pageable
+	 *            pageable
 	 * @param email
+	 *            email
 	 * @param trabajadorType
+	 *            tipo de trabajador
+	 * @param mostrarTodos
+	 *            mostrar trabajadores de baja
 	 * @return
 	 */
-	Page<Trabajador> buscarTrabajadoresPorEmailYTipo(Pageable pageable, String email, TipoTrabajador trabajadorType);
+	Page<Trabajador> buscarTrabajadoresPorEmailYTipo(Pageable pageable, String email, TipoTrabajador trabajadorType,
+			Boolean mostrarTodos);
 
 	/**
 	 * Búsqueda de trabajores por cp
 	 * 
 	 * @param pageable
+	 *            pageable
 	 * @param cp
+	 *            codigo postal
 	 * @param trabajadorType
-	 *            tipo de trabajador
+	 *            tipo de trabajador tipo de trabajador
+	 * @param mostrarTodos
+	 *            mostrar trabajadores de baja
 	 * @return
 	 */
-	Page<Trabajador> buscarTrabajadoresPorCpYTipo(Pageable pageable, String cp, TipoTrabajador trabajadorType);
+	Page<Trabajador> buscarTrabajadoresPorCpYTipo(Pageable pageable, String cp, TipoTrabajador trabajadorType,
+			Boolean mostrarTodos);
 }

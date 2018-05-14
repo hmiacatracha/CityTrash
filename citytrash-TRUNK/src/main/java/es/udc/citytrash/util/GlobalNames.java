@@ -9,9 +9,14 @@ public class GlobalNames {
 	}
 
 	public static final String TBL_TRABAJ = "TBL_TRABAJADORES";
+	public static final String TBL_TIPO_BASURA = "TBL_TIPOS_BASURA";
+	public static final String TBL_CAMION = "TBL_CAMIONES";
+	public static final String TBL_MODELO_CAMION = "TBL_MODELOS_CAMION";
+	public static final String TBL_MODELO_CAMION_TIPO_DE_BASURA = "TBL_MC_TB";
+
 	public static final String CAMPO_DISCRIMINADOR_BD = "TRABAJADOR_TYPE";
 	public static final String CAMPO_ROL_BD = "ROL";
-	
+
 	public static final String DISCRIMINADOR_X_DEFECTO = "NONE";
 	public static final String DISCRIMINADOR_ADMIN = "ADMIN";
 	public static final String DISCRIMINADOR_RECOLECTOR = "RECOLEC";
