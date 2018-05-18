@@ -240,7 +240,8 @@ public class CamionDaoHibernate extends GenericHibernateDAOImpl<Camion, Long> im
 			boolean mostrarSoloActivos, boolean mostrarSoloCamionesDeAlta) {
 		Query<Camion> query;
 		List<Camion> camiones = new ArrayList<Camion>();
-		String[] palabras = palabrasClaves.split(" ");
+		//String[] palabras = palabrasClaves.split(" ");
+		String[] palabras = palabrasClaves.length() > 0 ? palabrasClaves.split(" ") : new String[0];
 		Page<Camion> page = new PageImpl<Camion>(camiones, pageable, camiones.size());
 		String alias = "c";
 		StringBuilder hql = new StringBuilder("Select " + alias + " FROM Camion " + alias);
@@ -321,7 +322,7 @@ public class CamionDaoHibernate extends GenericHibernateDAOImpl<Camion, Long> im
 		logger.info("PAS01 HIBERNATE");
 		Query<Camion> query;
 		List<Camion> camiones = new ArrayList<Camion>();
-		String[] palabras = palabrasClaves.split(" ");
+		String[] palabras = palabrasClaves.length() > 0 ? palabrasClaves.split(" ") : new String[0];
 		Page<Camion> page = new PageImpl<Camion>(camiones, pageable, camiones.size());
 		String alias = "c";
 		StringBuilder hql = new StringBuilder("Select " + alias + " FROM Camion " + alias);
@@ -403,7 +404,8 @@ public class CamionDaoHibernate extends GenericHibernateDAOImpl<Camion, Long> im
 			boolean mostrarSoloActivos, boolean mostrarSoloCamionesDeAlta) {
 		Query<Camion> query;
 		List<Camion> camiones = new ArrayList<Camion>();
-		String[] palabras = palabrasClaves.split(" ");
+		//String[] palabras = palabrasClaves.split(" ");
+		String[] palabras = palabrasClaves.length() > 0 ? palabrasClaves.split(" ") : new String[0];
 		Page<Camion> page = new PageImpl<Camion>(camiones, pageable, camiones.size());
 		String alias = "c";
 		StringBuilder hql = new StringBuilder("Select " + alias + " FROM Camion " + alias);

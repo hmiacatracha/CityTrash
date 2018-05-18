@@ -348,3 +348,9 @@ select.form-control, input.form-control, option.form-control {
 	background-color: #5cb85c;
 	border-color: #eeeeec;
 }
+
+/*MAPS*/
+.map_canvas {
+	height: 300px;
+}
+

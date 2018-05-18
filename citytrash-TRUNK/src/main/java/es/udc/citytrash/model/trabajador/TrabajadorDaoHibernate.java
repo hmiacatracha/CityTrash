@@ -132,7 +132,7 @@ public class TrabajadorDaoHibernate extends GenericHibernateDAOImpl<Trabajador, 
 	@Override
 	public Page<Trabajador> buscarTrabajadoresPorNombreApellidosYTipo(Pageable pageable, String palabrasClaves,
 			TipoTrabajador tipo, Boolean mostrarTodos) {
-		String[] palabras = palabrasClaves.split(" ");
+		String[] palabras = palabrasClaves.length() > 0 ? palabrasClaves.split(" ") : new String[0];
 		Query<Trabajador> query;
 		List<Trabajador> trabajadores = new ArrayList<Trabajador>();
 		Page<Trabajador> page = new PageImpl<Trabajador>(trabajadores, pageable, trabajadores.size());

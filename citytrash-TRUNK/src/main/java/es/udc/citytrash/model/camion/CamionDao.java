@@ -69,6 +69,7 @@ public interface CamionDao extends GenericDAO<Camion, Long> {
 	Page<Camion> buscarCamiones(Pageable pageable, boolean mostrarSoloActivos, boolean mostrarSoloCamionesDeAlta);
 
 	/**
+	 * buscar camiones por modelo
 	 * 
 	 * @param modelo
 	 *            modelo a buscar

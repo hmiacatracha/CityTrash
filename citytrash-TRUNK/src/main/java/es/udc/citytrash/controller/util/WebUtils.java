@@ -69,6 +69,32 @@ public class WebUtils {
 			+ "detalles/informacionModelo";
 	public static final String VISTA_CAMIONES_MODELOS_DETALLES_CAMIONES = VISTA_CAMIONES_MODELOS_PREFIX
 			+ "detalles/ListaDeCamiones";
+
+	/* PAQUETE CONTENEDORES */
+	public static final String VISTA_CONTENEDORES_PREFIX = "contenedores/";
+	public static final String VISTA_CONTENEDORES_MODELOS_PREFIX = "contenedores/modelos/";
+	public static final String VISTA_CONTENEDORES = VISTA_CONTENEDORES_PREFIX + "contenedores";
+	public static final String VISTA_CONTENEDORES_REGISTRO = VISTA_CONTENEDORES_PREFIX + "contenedoresRegistro";
+	public static final String VISTA_CONTENEDORES_EDITAR = VISTA_CONTENEDORES_PREFIX + "contenedoresModificar";
+	public static final String VISTA_CONTENEDORES_DETALLES = VISTA_CONTENEDORES_PREFIX + "detalles";
+	public static final String VISTA_CONTENEDORES_DETALLES_INFO_CONTENEDOR = VISTA_CONTENEDORES_PREFIX
+			+ "detalles/informacionContenedor";
+	public static final String VISTA_CONTENEDORES_DETALLES_RUTAS = VISTA_CONTENEDORES_PREFIX
+			+ "detalles/historialRutas";
+	public static final String VISTA_CONTENEDORES_DETALLES_SENSORES = VISTA_CONTENEDORES_PREFIX + "detalles/sensores";
+	public static final String VISTA_CONTENEDORES_DETALLES_MODELO = VISTA_CONTENEDORES_PREFIX
+			+ "detalles/informacionModelo";
+
+	public static final String VISTA_CONTENEDORES_MODELOS = VISTA_CONTENEDORES_MODELOS_PREFIX+ "/modelos";
+	public static final String VISTA_CONTENEDORES_MODELOS_EDITAR = VISTA_CONTENEDORES_MODELOS_PREFIX + "modelosEditar";
+	public static final String VISTA_CONTENEDORES_MODELOS_REGISTRO = VISTA_CONTENEDORES_MODELOS_PREFIX
+			+ "modelosRegistro";
+	public static final String VISTA_CONTENEDORES_MODELOS_DETALLES = VISTA_CONTENEDORES_MODELOS_PREFIX + "detalles";
+	public static final String VISTA_CONTENEDORES_MODELOS_DETALLES_INFO = VISTA_CONTENEDORES_MODELOS_PREFIX
+			+ "detalles/informacionModelo";
+	public static final String VISTA_CONTENEDORES_MODELOS_DETALLES_CONTENEDORES = VISTA_CONTENEDORES_MODELOS_PREFIX
+			+ "detalles/contenedores";
+
 	/**
 	 * URLS
 	 */
@@ -180,6 +206,58 @@ public class WebUtils {
 
 	public static final String URL_MAPPING_CAMIONES_MODELO_REGISTRO_OR_MODIFICAR = "/camiones/modelos/guardar";
 	public static final String REQUEST_MAPPING_CAMIONES_MODELO_REGISTRO_OR_MODIFICAR = "/modelos/guardar";
+
+	/// URLS CONTENEDORES
+
+	public static final String URL_MAPPING_CONTENEDORES = "/contenedores";
+	public static final String REQUEST_MAPPING_CONTENEDORES = "/";
+
+	public static final String URL_MAPPING_CONTENEDORES_REGISTRO = "/contenedores/registro";
+	public static final String REQUEST_MAPPING_CONTENEDORES_REGISTRO = "/registro";
+
+	public static final String URL_MAPPING_CONTENEDORES_DETALLES = "/contenedores/{id}/detalles";
+	public static final String REQUEST_MAPPING_CONTENEDORES_DETALLES = "/{id}/detalles";
+
+	public static final String URL_MAPPING_CONTENEDORES_DETALLES_INFO_CONTENEDOR = "/contenedores/{id}/detalles/contenedor";
+	public static final String REQUEST_MAPPING_CONTENEDORES_DETALLES_INFO_CONTENEDOR = "/{id}/detalles/contenedor";
+
+	public static final String URL_MAPPING_CONTENEDORES_DETALLES_INFO_MODELO = "/contenedores/{id}/detalles/modelo";
+	public static final String REQUEST_MAPPING_CONTENEDORES_DETALLES_INFO_MODELO = "/{id}/detalles/modelo";
+
+	public static final String URL_MAPPING_CONTENEDORES_DETALLES_INFO_RUTAS = "/contenedores/{id}/detalles/rutas";
+	public static final String REQUEST_MAPPING_CONTENEDORES_DETALLES_INFO_RUTAS = "/{id}/detalles/rutas";
+
+	public static final String URL_MAPPING_CONTENEDORES_DETALLES_INFO_SENSORES = "/contenedores/{id}/detalles/sensores";
+	public static final String REQUEST_MAPPING_CONTENEDORES_DETALLES_INFO_SENSORES = "{id}/detalles/sensores";
+
+	public static final String URL_MAPPING_CONTENEDORES_EDITAR = "/contenedores/{id}/editar";
+	public static final String REQUEST_MAPPING_CONTENEDORES_EDITAR = "/{id}/editar";
+
+	public static final String URL_MAPPING_CONTENEDORES_ESTADO = "/contenedores/{id}/estado";
+	public static final String REQUEST_MAPPING_CONTENEDORES_ESTADO = "/{id}/estado";
+
+	public static final String URL_MAPPING_CONTENEDORES_MODELOS = "/contenedores/modelos";
+	public static final String REQUEST_MAPPING_CONTENEDORES_MODELOS = "/modelos";
+
+	public static final String URL_MAPPING_CONTENEDORES_REGISTRO_MODELO = "/contenedores/modelos/registro";
+	public static final String REQUEST_MAPPING_CONTENEDORES_REGISTRO_MODELO = "/modelos/registro";
+
+	public static final String URL_MAPPING_CONTENEDORES_DETALLES_MODELO = "/contenedores/modelos/{id}/detalles";
+	public static final String REQUEST_MAPPING_CONTENEDORES_DETALLES_MODELO = "/modelos/{id}/detalles";
+
+	public static final String URL_MAPPING_CONTENEDORES_DETALLES_MODELO_INFO_MODELO = "/contenedores/modelos/{id}/detalles/modelo";
+	public static final String REQUEST_MAPPING_CCONTENEDORES_DETALLES_MODELO_INFO_MODELO = "/modelos/{id}/detalles/modelo";
+
+	public static final String URL_MAPPING_CONTENEDORES_DETALLES_MODELO_INFO_CONTENEDOR = "/contenedores/modelos/{id}/detalles/contenedores";
+	public static final String REQUEST_MAPPING_CCONTENEDORES_DETALLES_MODELO_INFO_COTENEDOR = "/modelos/{id}/detalles/contenedores";
+
+	public static final String URL_MAPPING_CONTENEDORES_EDITAR_MODELO = "/contenedores/modelos/{id}/editar";
+	public static final String REQUEST_MAPPING_CONTENEDORES_EDITAR_MODELO = "/modelos/{id}/editar";
+
+	public static final String URL_MAPPING_CONTENEDORES_REGISTRAR_MODELO = "/contenedores/modelos/registrar";
+	public static final String REQUEST_MAPPING_CONTENEDORESS_REGISTRAR_MODELO = "/modelos/registrar";
+	// public static final String
+	// URL_MAPPING_CONTENEDORES_DETALLES_INFO_SENSORES = null;
 
 	public static String getUrlWithContextPath(HttpServletRequest request) {
 		return request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()

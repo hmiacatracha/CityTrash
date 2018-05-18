@@ -17,7 +17,7 @@ import javax.validation.constraints.Size;
 import org.springframework.format.annotation.NumberFormat;
 import org.springframework.format.annotation.NumberFormat.Style;
 
-import es.udc.citytrash.controller.util.anotaciones.NombreModeloCamionUnico;
+import es.udc.citytrash.controller.util.anotaciones.ModeloCamionNombreUnico;
 import es.udc.citytrash.model.camionModelo.CamionModelo;
 import es.udc.citytrash.model.camionModeloTipoDeBasura.CamionModeloTipoDeBasura;
 
@@ -49,7 +49,7 @@ public class CamionModeloDto {
 	private Integer id = null;
 
 	// @NombreModeloCamionUnico
-	@Size(min = 2, max = 255)
+	@Size(min = 2, max = 100)
 	private String nombre;
 
 	@NumberFormat(style = Style.NUMBER, pattern = "###.###")

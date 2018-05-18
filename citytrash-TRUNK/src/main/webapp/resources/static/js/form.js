@@ -142,16 +142,34 @@ jQuery(function($) {
 
 	/*Se ejecutara cada vez que se cargue la pagina*/
 	$(document).ready(function() {
-		//alert('Hello World');
 
+		/* Añadimos lo de autocompletar la direccion en los los mapas y calcular la latitud y longitud*/
+		$("#geocomplete").geocomplete({
+			map : "#mapa",
+			mapOptions : {
+				center : new google.maps.LatLng(43.368712, -8.401460000000043),
+				zoom : 16
+			},
+			markerOptions : {
+				draggable : true
+			},
+			details : "#localizacion_div",
+			detailsAttribute : "data-geo",
+			types : [ "geocode", "establishment" ]
+		});
+
+		/* Buscar localizacion*/
+		$("#findLocalizacion").click(function() {
+			$("#geocomplete").trigger("geocode");
+		});
+
+		//alert('Hello World');
 		/*Comprobamos si el documento tiene nav, si es así entonces activamos el primer tab*/
 		if ($(this).find('.nav-tabs')) {
 			$('.nav-tabs > li:first-child > a')[0].click();
 		}
-
 		/*Activamos el tooltip*/
 		$('[data-toggle="tooltip"]').tooltip();
-
 	});
 
 	/*Si es una venta modal y tiene un formulario, al cerrarse limpia el formulario */

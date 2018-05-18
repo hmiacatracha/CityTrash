@@ -22,6 +22,7 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
@@ -46,6 +47,7 @@ import es.udc.citytrash.util.enums.Idioma;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = GlobalNames.CAMPO_DISCRIMINADOR_BD, discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue("NONE")
+@BatchSize(size = 10)
 public abstract class Trabajador implements Serializable {
 
 	private static final long serialVersionUID = 1L;

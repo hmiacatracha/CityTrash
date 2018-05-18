@@ -284,7 +284,6 @@ public class CamionServiceImpl implements CamionService {
 			}
 		}
 		logger.info("paso9 registrarCamion");
-		camion.setActivo(form.isActivo());
 		camionDao.guardar(camion);
 		return camion;
 	}

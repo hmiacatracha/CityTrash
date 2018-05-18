@@ -94,7 +94,7 @@ public interface CamionService {
 	 * 
 	 * @param pageable
 	 *            pageable
-	 * @param CamionModeloFormBusq
+	 * @param ContenedorModeloFormBusq
 	 *            formulario de busqueda
 	 * @return
 	 */
@@ -110,7 +110,7 @@ public interface CamionService {
 	/**
 	 * Registrar un camion
 	 * 
-	 * @param CamionRegistroDto
+	 * @param ContenedorRegistroDto
 	 *            formulario
 	 * @return
 	 * @throws InstanceNotFoundException

@@ -15,6 +15,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Digits;
 
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
 
 import es.udc.citytrash.model.camion.Camion;
@@ -29,6 +30,7 @@ import es.udc.citytrash.util.GlobalNames;
 
 @Entity
 @Table(name = GlobalNames.TBL_MODELO_CAMION)
+@BatchSize(size = 10)
 public class CamionModelo implements Serializable {
 
 	CamionModelo() {

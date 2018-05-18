@@ -26,5 +26,7 @@
 		<mapping class="es.udc.citytrash.model.camion.Camion" />
 		<mapping class="es.udc.citytrash.model.camionModelo.CamionModelo" />
 		<mapping class="es.udc.citytrash.model.camionModeloTipoDeBasura.CamionModeloTipoDeBasura"/>
+		<mapping class="es.udc.citytrash.model.contenedor.Contenedor"/>
+		<mapping class="es.udc.citytrash.model.contenedorModelo.ContenedorModelo"/>
 	</session-factory>
 </hibernate-configuration>

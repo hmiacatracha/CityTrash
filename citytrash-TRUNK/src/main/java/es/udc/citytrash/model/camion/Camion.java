@@ -16,6 +16,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
@@ -33,6 +34,7 @@ import es.udc.citytrash.util.GlobalNames;
 
 @Entity
 @Table(name = GlobalNames.TBL_CAMION)
+@BatchSize(size = 10)
 public class Camion implements Serializable {
 
 	/**
@@ -52,6 +54,7 @@ public class Camion implements Serializable {
 	public Camion(String nombre, CamionModelo modelo) {
 		this.nombre = nombre;
 		this.modeloCamion = modelo;
+		this.setActivo(true);
 		this.setFechaBaja(null);
 	}
 

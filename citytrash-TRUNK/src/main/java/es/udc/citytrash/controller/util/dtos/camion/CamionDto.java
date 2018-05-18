@@ -14,6 +14,7 @@ import es.udc.citytrash.controller.util.anotaciones.CoductorValido;
 import es.udc.citytrash.controller.util.anotaciones.RecolectorValido;
 import es.udc.citytrash.controller.util.anotaciones.TrabajadorInactivo;
 import es.udc.citytrash.model.camion.Camion;
+import es.udc.citytrash.model.contenedor.Contenedor;
 
 /**
  * Dto para modificar/ver camiones
@@ -51,7 +52,7 @@ public class CamionDto {
 	private String vin = "";
 
 	@NotBlank
-	@Size(min = 2, max = 50)
+	@Size(min = 2, max = 100)
 	private String nombre = "";
 
 	@Size(min = 0, max = 20)

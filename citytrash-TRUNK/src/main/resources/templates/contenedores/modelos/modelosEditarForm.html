@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<body>
+	<div th:fragment="modelosForm(contenedorModeloForm, error)">
+		<form th:if="contenedorModeloForm" id="modeloForm" role="form"
+			class="form-narrow form-horizontal" method="post" action="#"
+			th:action="@{#{link.contenedores.modelos.editar}(id=${contenedorModeloForm.id})}"
+			th:object="${contenedorModeloForm}" th:fragment="formulario">
+			<fieldset>
+				<!-- mensaje ok -->
+				<th:block th:if="${msg!=null}">
+					<div th:if="${type!=null}"
+						th:replace="fragments/alert :: alert (type='success',  message=#{${type}(${key})})"></div>
+				</th:block>
+
+				<!-- mensaje error -->
+				<th:block th:if="${error!=null and msg==null}">
+					<div th:if="${type!=null}"
+						th:replace="fragments/alert :: alert (type='danger',  message=#{${type}(${key})})"></div>
+				</th:block>
+
+				<th:block th:if="${#fields.hasErrors('${contenedorModeloForm.*}')}">
+					<br />
+					<div
+						th:replace="fragments/alert :: alert (type='danger', message=#{verificar_campos_alerta})">Alert</div>
+
+					<ul class="list-group">
+						<li class="list-group-item" th:each="err : ${#fields.errors('*')}"><span
+							class="glyphicon glyphicon-remove"> </span> <a href="#"
+							th:text="${err}"></a></li>
+					</ul>
+					<br />
+				</th:block>
+				<br />
+
+				<div id="nombre-group" class="form-group"
+					th:classappend="${#fields.hasErrors('nombre')}? 'has-error'">
+					<div class="col-xs-3 col-sm-3 col-md-3">
+						<label for="nombre" class="col-form-label"
+							th:text="#{lbl_contenedor_modelo_nombre} + '*'"></label>
+					</div>
+
+					<div class="col-xs-9 col-sm-6 col-md-5">
+						<input type="text" class="mayusculas col-sm-6 form-control"
+							maxlength="255" id="nombre" pattern="[A-Za-z0-9]+"
+							th:title="#{constraints.campoSinEspacios}"
+							th:placeholder="#{frm_registro_pholder_modelo}"
+							th:field="*{nombre}" required="required" />
+					</div>
+					<div class="col-xs-12 col-sm-3 col-md-4">
+						<span class="help-block" th:if="${#fields.hasErrors('nombre')}"
+							th:errors="*{nombre}"></span>
+					</div>
+				</div>
+
+				<!-- capacidadNominal -->
+				<div id="nombre-group" class="form-group"
+					th:classappend="${#fields.hasErrors('capacidadNominal')}? 'has-error'">
+					<div class="col-xs-3 col-sm-3 col-md-3">
+						<label for="capacidadNominal" class="col-form-label"
+							th:text="#{lbl_contenedor_modelo_capacidadNominal} + '*'"></label>
+					</div>
+					<div class="has-feedback col-xs-9 col-sm-6 col-md-5">
+						<input type="number" min="1000" step="0.1" pattern="\d[,.]\d{1,2}"
+							th:title="#{lbl_formato_incorrecto}"
+							class="mayusculas col-sm-6 form-control" id="capacidadNominal"
+							th:placeholder="#{frm_registro_pholder_capacidadNominal}"
+							th:field="*{capacidadNominal}"
+							th:with="format=#{decimales_formato}"
+							th:value="${#numbers.formatDecimal(capacidadNominal, 0,2, format)}"
+							required="required" /> <span class="form-control-feedback">(<var>L</var>)
+						</span>
+					</div>
+					<div class="col-xs-12 col-sm-3 col-md-4">
+						<span class="help-block"
+							th:if="${#fields.hasErrors('capacidadNominal')}"
+							th:errors="*{capacidadNominal}"></span>
+					</div>
+				</div>
+
+
+
+				<!-- carga nominal -->
+				<div id="nombre-group" class="form-group"
+					th:classappend="${#fields.hasErrors('cargaNominal')}? 'has-error'">
+					<div class="pull-left col-xs-3 col-sm-3 col-md-3">
+						<label for="cargaNominal" class="col-form-label"
+							th:text="#{lbl_contenedor_modelo_cargaNominal} + '*'"></label>
+					</div>
+					<div class="has-feedback col-xs-9 col-sm-6 col-md-5">
+						<input type="number" min="100" step="0.1" pattern="\d[,.]\d{1,2}"
+							th:title="#{lbl_formato_incorrecto}"
+							class="mayusculas col-sm-6 form-control" id="cargaNominal"
+							th:placeholder="#{frm_registro_pholder_cargaNominal}"
+							th:with="format=#{decimales_formato}"
+							th:value="${#numbers.formatDecimal(cargaNominal, 0,0,format)}"
+							th:field="*{cargaNominal}" required="required" /> <span
+							class="form-control-feedback">(<var>kg</var>)
+						</span>
+					</div>
+					<div class="col-xs-12 col-sm-3 col-md-4">
+						<span class="help-block"
+							th:if="${#fields.hasErrors('cargaNominal')}"
+							th:errors="cargaNominal"></span>
+					</div>
+				</div>
+
+
+
+				<!-- profundidad -->
+				<div id="nombre-group" class="form-group"
+					th:classappend="${#fields.hasErrors('profundidad')}? 'has-error'">
+					<div class="pull-left col-xs-3 col-sm-3 col-md-3">
+						<label for="profunidad" class="col-form-label"
+							th:text="#{lbl_contenedor_modelo_profundidad} + '*'"></label>
+					</div>
+					<div class="has-feedback col-xs-9 col-sm-6 col-md-5">
+						<input type="number" min="100" step="0.1" pattern="\d[,.]\d{1,2}"
+							th:title="#{lbl_formato_incorrecto}"
+							class="mayusculas col-sm-6 form-control" id="profudidad"
+							th:placeholder="#{frm_registro_pholder_profundidad}"
+							th:with="format=#{decimales_formato}"
+							th:value="${#numbers.formatDecimal(profundidad, 0,0,format)}"
+							th:field="*{profundidad}" required="required" /><span
+							class="form-control-feedback">(<var>mm</var>)
+						</span>
+					</div>
+					<div class="col-xs-12 col-sm-3 col-md-4">
+						<span class="help-block"
+							th:if="${#fields.hasErrors('profundidad')}"
+							th:errors="*{profundidad}"></span>
+					</div>
+
+				</div>
+
+				<!-- altura -->
+				<div id="nombre-group" class="form-group"
+					th:classappend="${#fields.hasErrors('altura')}? 'has-error'">
+					<div class="pull-left col-xs-3 col-sm-3 col-md-3">
+						<label for="altura" class="col-form-label"
+							th:text="#{lbl_contenedor_modelo_altura} + ''"></label>
+					</div>
+					<div class="has-feedback col-xs-9 col-sm-6 col-md-5">
+						<input type="number" min="0" step="0.1" pattern="\d[,.]\d{1,2}"
+							th:title="#{lbl_formato_incorrecto}"
+							class="mayusculas col-sm-6 form-control" id="altura"
+							th:placeholder="#{frm_registro_pholder_altura}"
+							th:with="format=#{decimales_formato}"
+							th:value="${#numbers.formatDecimal(altura, 0,0,format)}"
+							th:field="*{altura}" /> <span class="form-control-feedback">(<var>mm</var>)
+						</span>
+					</div>
+					<div class="col-xs-12 col-sm-3 col-md-4">
+						<span class="help-block" th:if="${#fields.hasErrors('altura')}"
+							th:errors="*{altura}"></span>
+					</div>
+				</div>
+
+
+				<!-- anchura (ancho) -->
+				<div id="nombre-group" class="form-group"
+					th:classappend="${#fields.hasErrors('ancho')}? 'has-error'">
+					<div class="pull-left col-xs-3 col-sm-3 col-md-3">
+						<label for="anchura" class="col-form-label"
+							th:text="#{lbl_contenedor_modelo_ancho} + ''"></label>
+					</div>
+					<div class="has-feedback col-xs-9 col-sm-6 col-md-5">
+						<input type="number" min="0" step="0.1" pattern="\d[,.]\d{1,2}"
+							th:title="#{lbl_formato_incorrecto}"
+							class="mayusculas col-sm-6 form-control" id="anchura"
+							th:placeholder="#{frm_registro_pholder_anchura}"
+							th:with="format=#{decimales_formato}"
+							th:value="${#numbers.formatDecimal(ancho, 0,0,format)}"
+							th:field="*{ancho}" /> <span class="form-control-feedback">(<var>mm</var>)
+						</span>
+					</div>
+					<div class="col-xs-12 col-sm-3 col-md-4">
+						<span class="help-block" th:if="${#fields.hasErrors('ancho')}"
+							th:errors="*{ancho}"></span>
+					</div>
+				</div>
+
+				<!-- peso vacio -->
+				<div id="nombre-group" class="form-group"
+					th:classappend="${#fields.hasErrors('pesoVacio')}? 'has-error'">
+					<div class="pull-left col-xs-3 col-sm-3 col-md-3">
+						<label for="pesoVacio" class="col-form-label"
+							th:text="#{lbl_contenedor_modelo_pesoVacio} + '*'"></label>
+					</div>
+					<div class="has-feedback col-xs-9 col-sm-6 col-md-5">
+						<input type="number" min="1" step="0.1" pattern="\d[,.]\d{1,2}"
+							th:title="#{lbl_formato_incorrecto}"
+							class="mayusculas col-sm-6 form-control" id="pesoVacio"
+							th:placeholder="#{frm_registro_pholder_pesoVacio}"
+							th:with="format=#{decimales_formato}"
+							th:value="${#numbers.formatDecimal(pesoVacio, 0,0,format)}"
+							th:field="*{pesoVacio}" /><span class="form-control-feedback">(<var>kg</var>)
+						</span>
+					</div>
+					<div class="col-xs-12 col-sm-3 col-md-4">
+						<span class="help-block" th:if="${#fields.hasErrors('pesoVacio')}"
+							th:errors="*{pesoVacio}"></span>
+					</div>
+				</div>
+				<!-- tipo de basura -->
+
+				<div id="tipo-group" class="form-group"
+					th:classappend="${#fields.hasErrors('tipo')}? 'has-error'">
+					<div class="pull-left col-xs-3 col-sm-3 col-md-3">
+						<label for="tipo" class="col-form-label"
+							th:text="#{lbl_contenedor_modelo_tipo} + '*'"></label>
+					</div>
+					<div th:if="${tiposDeBasura}"
+						class="has-feedback col-xs-9 col-sm-6 col-md-5">
+						<select th:field="*{tipo}" class="form-control mySelect"
+							data-style="btn-default" id="tipo" required="required">
+							<option th:if="${tiposDeBasura}!=null"
+								th:each="row, index: ${tiposDeBasura}" th:text="#{${row.tipo}}"
+								th:value="${row.id}"></option>
+						</select>
+					</div>
+					<div class="col-xs-12 col-sm-3 col-md-4">
+						<span class="help-block" th:if="${#fields.hasErrors('tipo')}"
+							th:errors="*{tipo}"></span>
+					</div>
+				</div>
+			</fieldset>
+			<br>
+
+			<button class="btn btn-default btn-lg btn-block" type="submit"
+				th:text="#{btn_update}" name="modificar" th:value="modificar"></button>
+		</form>
+
+	</div>
+</body>
+</html>

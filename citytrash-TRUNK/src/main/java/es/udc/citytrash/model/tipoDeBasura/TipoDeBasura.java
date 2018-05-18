@@ -16,6 +16,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
 
 import es.udc.citytrash.model.camionModelo.CamionModelo;
@@ -31,6 +32,7 @@ import es.udc.citytrash.util.GlobalNames;
 
 @Entity
 @Immutable
+@BatchSize(size = 5)
 @Table(name = GlobalNames.TBL_TIPO_BASURA)
 public class TipoDeBasura implements Serializable {
 
@@ -100,4 +102,11 @@ public class TipoDeBasura implements Serializable {
 	private String tipo;
 	private int id;
 	private Set<CamionModeloTipoDeBasura> modeloCamionTipoDeBasura = new HashSet<CamionModeloTipoDeBasura>();
+
+	@Override
+	public String toString() {
+		return "TipoDeBasura [color=" + color + ", tipo=" + tipo + ", id=" + id + ", modeloCamionTipoDeBasura="
+				+ modeloCamionTipoDeBasura + "]";
+	}
+
 }

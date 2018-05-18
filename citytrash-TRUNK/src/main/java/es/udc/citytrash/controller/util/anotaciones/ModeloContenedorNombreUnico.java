@@ -10,14 +10,13 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 
 /**
- * Validar que la nombre del camion no exista
+ * Validar que la nombre del modelo del contenedor no exista
  */
 @Target({ METHOD, FIELD })
 @Retention(RUNTIME)
-@Constraint(validatedBy = es.udc.citytrash.controller.util.validadores.NombreModeloCamionUnicoImpl.class)
+@Constraint(validatedBy = es.udc.citytrash.controller.util.validadores.ModeloContenedorNombreUnicoImpl.class)
 @Documented
-public @interface NombreModeloCamionUnico {
-
+public @interface ModeloContenedorNombreUnico {
 	String message() default "{validador.nombre.modelo.existente}";
 
 	Class<?>[] groups() default {};

@@ -8,19 +8,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import es.udc.citytrash.controller.util.anotaciones.NombreModeloCamionUnico;
+import es.udc.citytrash.controller.util.anotaciones.ModeloCamionNombreUnico;
 import es.udc.citytrash.model.camionService.CamionService;
 
 @Component
-public class NombreModeloCamionUnicoImpl implements ConstraintValidator<NombreModeloCamionUnico, String> {
+public class ModeloCamionNombreUnicoImpl implements ConstraintValidator<ModeloCamionNombreUnico, String> {
 
 	@Autowired
 	CamionService cServicio;
 
-	final Logger logger = LoggerFactory.getLogger(NombreModeloCamionUnicoImpl.class);
+	final Logger logger = LoggerFactory.getLogger(ModeloCamionNombreUnicoImpl.class);
 
 	@Override
-	public void initialize(NombreModeloCamionUnico camion) {
+	public void initialize(ModeloCamionNombreUnico camion) {
 	}
 
 	@Override

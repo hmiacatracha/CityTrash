@@ -14,6 +14,9 @@ public class GlobalNames {
 	public static final String TBL_MODELO_CAMION = "TBL_MODELOS_CAMION";
 	public static final String TBL_MODELO_CAMION_TIPO_DE_BASURA = "TBL_MC_TB";
 
+	public static final String TBL_CONTENEDOR = "TBL_CONTENEDORES";
+	public static final String TBL_MODELO_CONTENEDOR = "TBL_MODELOS_CONTENEDOR";
+
 	public static final String CAMPO_DISCRIMINADOR_BD = "TRABAJADOR_TYPE";
 	public static final String CAMPO_ROL_BD = "ROL";
 

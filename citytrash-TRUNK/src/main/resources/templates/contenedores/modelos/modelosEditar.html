@@ -1,0 +1,53 @@
+<!DOCTYPE>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/default}" th:with="currentPage='recursos'">
+<head>
+<title th:text="#{page_contenedores_modelo}"></title>
+</head>
+
+<body class="formularios">
+	<!-- id="viewBody" -->
+	<div id="content" class="container" th:fragment="content"
+		th:remove="tag">
+		<div
+			class="col-sm-offset-1 col-sm-10 col-md-offset-3 col-md-6 col-lg-offset-3 col-lg-6">
+			<div class="panel panel-default" th:if="${contenedorModeloForm}">
+
+				<div class="panel-heading ">
+					<h3 th:unless="${contenedorModeloForm.id}==null"
+						class="text-center" th:text="#{frm_editar_contenedores_modelos}"></h3>
+				</div>
+				<div class="panel-body">
+					<div class="row">
+
+						<div class="row">
+							<div class="col-xs-11 text-right">
+								<div class="btn-group">
+									<a id="link_ver_detalles"
+										th:href="@{#{link.contenedores.modelos.detalle}(id=${contenedorModeloForm.id})}"
+										class="btn-sm"><i class="glyphicon glyphicon-eye-open"
+										data-toggle="tooltip" th:title="#{lbl_ver_detalle}"></i></a> <a
+										th:href="@{#{link.contenedores.modelos.registro}}"
+										class="btn-sm"><i class="glyphicon glyphicon-plus"></i> </a> <a
+										th:href="@{#{link.contenedores.modelos}}" class="btn-sm">
+										<i class="glyphicon glyphicon-list"></i>
+									</a>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-xs-12 text-left"></div>
+
+					</div>
+					<div th:fragment="formularios"
+						th:replace="contenedores/modelos/modelosEditarForm :: modelosForm(${contenedorModeloForm}, ${error})"></div>
+				</div>
+			</div>
+			<div class="panel-footer"></div>
+		</div>
+	</div>
+</body>
+</html>
