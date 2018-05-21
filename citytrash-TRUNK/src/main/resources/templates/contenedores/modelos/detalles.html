@@ -17,16 +17,9 @@
 				<li role="infopersonal"><a class="nav-link active"
 					data-target="#welcome" aria-controls="welcome" role="tab"
 					data-toggle="tab" id="welcomeTab"
-					th:href="@{#{link.camiones.modelos.detalle.info}(id=${id})}"
+					th:href="@{#{link.contenedores.modelos.detalle.info}(id=${id})}"
 					aria-selected="true"> <i class="fa fa-home"></i> <label
 						th:text="#{frm_detalles_camiones_modelos}"> </label>
-				</a></li>
-				<li role="listaCamiones"><a data-target="#listaCamiones"
-					aria-controls="listaCamiones" role="tab" data-toggle="tab"
-					id="historialRutasTab"
-					th:href="@{#{link.camiones.modelos.detalle.camiones}(id=${id})}"
-					aria-selected="false"> <i class="fa fa-truck"></i> <label
-						th:text="#{lbl_lista_de_camiones}"> </label>
 				</a></li>
 			</ul>
 
@@ -34,8 +27,6 @@
 				<div role="tabpanel" class="tab-pane" id="welcome"
 					aria-labelledby="info-tab"></div>
 
-				<div role="tabpanel" class="tab-pane" id="listaCamiones"
-					aria-labelledby="historial-rutas-tab"></div>
 			</div>
 
 		</div>

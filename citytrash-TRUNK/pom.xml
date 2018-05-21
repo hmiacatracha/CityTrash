@@ -340,11 +340,13 @@
 			<artifactId>jquery</artifactId>
 			<version>${jquery.version}</version>
 		</dependency>
+		<!-- 
 		<dependency>
 			<groupId>org.webjars</groupId>
 			<artifactId>jquery-i18n-properties</artifactId>
 			<version>${jqyery.i18.version}</version>
 		</dependency>
+		 -->
 		<!-- boostrap plugins -->
 		<!-- css -->
 		<dependency>

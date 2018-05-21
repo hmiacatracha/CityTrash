@@ -15,9 +15,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorDto;
+import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorEditarDto;
 import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorFormBusq;
-import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorModeloDto;
+import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorModeloEditarDto;
 import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorModeloFormBusq;
 import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorModeloRegistroDto;
 import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorRegistroDto;
@@ -122,9 +122,9 @@ public class ContenedorServiceImpl implements ContenedorService {
 	}
 
 	@Override
-	public TipoDeBasura buscarTiposDeBasuraByModelo(int id) throws InstanceNotFoundException {
+	public TipoDeBasura buscarTipoDeBasuraByModelo(int id) throws InstanceNotFoundException {
 		logger.info("buscarTiposDeBasuraByModelo");
-		return modeloDao.buscarById(id).getTipo();
+		return tipoDao.buscarById(modeloDao.buscarById(id).getTipo().getId());
 	}
 
 	@Override
@@ -138,11 +138,12 @@ public class ContenedorServiceImpl implements ContenedorService {
 			throws InstanceNotFoundException, DuplicateInstanceException {
 		logger.info("registrarContenedor");
 		Contenedor contenedor = null;
+		ContenedorModelo modelo;
 		/* Verificamos que el modelo exista */
 		try {
-			modeloDao.buscarById(form.getModeloContenedor().getId());
+			modelo = modeloDao.buscarById(form.getModeloContenedor());
 		} catch (InstanceNotFoundException e) {
-			throw new InstanceNotFoundException(form.getModeloContenedor().getId(), ContenedorModelo.class.getName());
+			throw new InstanceNotFoundException(form.getModeloContenedor(), ContenedorModelo.class.getName());
 		}
 		/* Verificamos que el nombre del contenedor no exista */
 		try {
@@ -152,19 +153,20 @@ public class ContenedorServiceImpl implements ContenedorService {
 
 		}
 
-		contenedor = new Contenedor(form.getNombre(), form.getModeloContenedor());
+		contenedor = new Contenedor(form.getNombre(), modelo);
 		contenedor.setFechaBaja(form.getFechaBaja() != null ? dateToCalendar(form.getFechaBaja()) : null);
-		contenedor.setLatitud(form.getLocalizacion() != null ? form.getLocalizacion().getLatitude() : null);
-		contenedor.setLongitud(form.getLocalizacion() != null ? form.getLocalizacion().getLongitude() : null);
+		contenedor.setLatitud(form.getLatitud() != null ? form.getLatitud() : null);
+		contenedor.setLongitud(form.getLongitud() != null ? form.getLongitud() : null);
 		contenedorDao.guardar(contenedor);
 		return contenedor;
 	}
 
 	@Override
-	public Contenedor modificarContenedor(ContenedorDto form) throws InstanceNotFoundException,
+	public Contenedor modificarContenedor(ContenedorEditarDto form) throws InstanceNotFoundException,
 			DuplicateInstanceException, InactiveResourceException, InvalidFieldException {
 		logger.info("modificarContenedor");
 		Contenedor contenedor = null;
+		ContenedorModelo modelo;
 		/* Verificamos que exista el contenedor */
 		try {
 			contenedor = contenedorDao.buscarById(form.getId());
@@ -174,9 +176,9 @@ public class ContenedorServiceImpl implements ContenedorService {
 		/* Verificamos que el modelo exista */
 		try {
 			// ContenedorModelo modelo =
-			modeloDao.buscarById(form.getModeloContenedor().getId());
+			modelo = modeloDao.buscarById(form.getModeloContenedor());
 		} catch (InstanceNotFoundException e) {
-			throw new InstanceNotFoundException(form.getModeloContenedor().getId(), ContenedorModelo.class.getName());
+			throw new InstanceNotFoundException(form.getModeloContenedor(), ContenedorModelo.class.getName());
 		}
 		try {
 			contenedor = contenedorDao.buscarByNombre(form.getNombre());
@@ -185,11 +187,11 @@ public class ContenedorServiceImpl implements ContenedorService {
 		} catch (InstanceNotFoundException e) {
 		}
 		contenedor.setNombre(form.getNombre());
-		contenedor.setModelo(form.getModeloContenedor());
+		contenedor.setModelo(modelo);
 		contenedor.setActivo(form.isActivo());
 		contenedor.setFechaBaja(form.getFechaBaja() != null ? dateToCalendar(form.getFechaBaja()) : null);
-		contenedor.setLatitud(form.getLocalizacion() != null ? form.getLocalizacion().getLatitude() : null);
-		contenedor.setLongitud(form.getLocalizacion() != null ? form.getLocalizacion().getLongitude() : null);
+		contenedor.setLatitud(form.getLatitud() != null ? form.getLatitud() : null);
+		contenedor.setLongitud(form.getLongitud() != null ? form.getLongitud() : null);
 		contenedorDao.guardar(contenedor);
 		return contenedor;
 	}
@@ -228,14 +230,14 @@ public class ContenedorServiceImpl implements ContenedorService {
 		modelo.setAltura(form.getAltura());
 		modelo.setAnchura(form.getAncho());
 		modelo.setPesoVacio(form.getPesoVacio());
-		modelo.setProfuncidad(form.getProfundidad());
+		modelo.setProfundidad(form.getProfundidad());
 		modelo.setTipo(tipo);
 		modeloDao.guardar(modelo);
 		return modelo;
 	}
 
 	@Override
-	public ContenedorModelo modificarModelo(ContenedorModeloDto form)
+	public ContenedorModelo modificarModelo(ContenedorModeloEditarDto form)
 			throws InstanceNotFoundException, DuplicateInstanceException, InvalidFieldException {
 		logger.info("modificarModelo");
 		ContenedorModelo modelo = modeloDao.buscarById(form.getId());
@@ -267,12 +269,12 @@ public class ContenedorServiceImpl implements ContenedorService {
 			throw new InvalidFieldException("cargaNominalException", "", Contenedor.class.getName());
 
 		modelo.setModelo(form.getNombre());
-		modelo.setCapacidadNomimal(form.getCapacidadNominal());
-		modelo.setCargaNomimal(form.getCargaNominal());
+		modelo.setCapacidadNominal(form.getCapacidadNominal());
+		modelo.setCargaNominal(form.getCargaNominal());
 		modelo.setAltura(form.getAltura());
 		modelo.setAnchura(form.getAncho());
 		modelo.setPesoVacio(form.getPesoVacio());
-		modelo.setProfuncidad(form.getProfundidad());
+		modelo.setProfundidad(form.getProfundidad());
 		modelo.setTipo(tipo);
 		modeloDao.guardar(modelo);
 		return modelo;
@@ -311,26 +313,42 @@ public class ContenedorServiceImpl implements ContenedorService {
 		Page<Contenedor> page = new PageImpl<Contenedor>(contenedoresList, pageable, contenedoresList.size());
 		List<TipoDeBasura> tipos = new ArrayList<TipoDeBasura>();
 		/* Agregamos los tipos de basura */
-		for (Integer t : form.getTiposDeBasura()) {
-			try {
-				TipoDeBasura tb = tipoDao.buscarById(Integer.valueOf(t.toString()));
-				tipos.add(tb);
-			} catch (NumberFormatException | InstanceNotFoundException e) {
+		logger.info("antes 1");
+		if (form.getTiposDeBasura() != null) {
+			for (Integer t : form.getTiposDeBasura()) {
+				try {
+					TipoDeBasura tb = tipoDao.buscarById(Integer.valueOf(t.toString()));
+					tipos.add(tb);
+				} catch (NumberFormatException | InstanceNotFoundException e) {
+
+				}
 			}
 		}
+		logger.info("despues 1");
+
+		logger.info("antes 2");
 
 		try {
-			modelo = modeloDao.buscarById(Integer.valueOf(form.getModelo()));
+			if (form.getModelo() != null) {
+				modelo = modeloDao.buscarById(Integer.valueOf(form.getModelo()));
+			} else {
+				modelo = null;
+			}
 		} catch (InstanceNotFoundException e) {
 			modelo = null;
 		}
+		logger.info("despues 2");
 
 		if (tipos.isEmpty() && modelo == null && form.getBuscar().isEmpty()) {
+			logger.info("PASO1");
 			page = contenedorDao.buscarContenedores(pageable, form.getMostrarSoloContenedoresActivos(),
 					form.getMostrarSoloContenedoresDeAlta());
+			logger.info("PASO1 PAGE =>" + page);
 		} else {
+			logger.info("PASO1");
 			page = contenedorDao.buscarContenedores(pageable, form.getBuscar(), modelo, tipos,
 					form.getMostrarSoloContenedoresActivos(), form.getMostrarSoloContenedoresDeAlta());
+			logger.info("PASO1 PAGE =>" + page);
 		}
 		return page;
 	}

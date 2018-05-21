@@ -6,25 +6,19 @@
 	xmlns:sd="http://www.thymeleaf.org/spring-data"
 	layout:decorate="~{layouts/default}" th:with="currentPage='recursos'">
 <head>
-<title th:text="#{page_camiones}"></title>
+<title th:text="#{page_contenedores}"></title>
 </head>
 <body class="blanco">
 	<div id="content" class="container" th:fragment="content"
-		th:if="${pageCamiones}">
+		th:if="${pageContenedores}">
 		<!-- pagination size and add button -->
 		<div class="form-group row">
 			<div class="col-xs-6">
 				<div class="pull-left">
-					<a class="btn btn-default" th:href="@{#{link.camiones.registro}}"
-						role="button"><i class="glyphicon glyphicon-plus"
-						data-toggle="tooltip" th:title="#{frm_registro_camiones}"></i></a>
-					<!-- 
-					<button id="registrarBtn" type="button" class="btn btn-default"
-						data-toggle="modal" data-target="#registroDialog">
-						<i class="glyphicon glyphicon-plus" data-toggle="tooltip"
-							th:title="#{frm_trabajadores_registro}"></i>
-					</button>
-					 -->
+					<a class="btn btn-default"
+						th:href="@{#{link.contenedores.registro}}" role="button"><i
+						class="glyphicon glyphicon-plus" data-toggle="tooltip"
+						th:title="#{frm_registro_contenedores}"></i></a>
 				</div>
 			</div>
 			<div class="col-xs-6">
@@ -40,35 +34,28 @@
 		<!-- titulo -->
 		<div class="row container center-block">
 			<h3 class="text-center text-warning col-xs-12"
-				th:text="${#strings.toUpperCase('__#{lbl_lista_camiones}__')}"></h3>
+				th:text="${#strings.toUpperCase('__#{lbl_lista_contenedores}__')}"></h3>
 		</div>
 		<!-- FIN pagination size and add button -->
 		<div class="row">
 			<!-- search form -->
 			<div id="searchForm" class="col-xs-12 col-sm-12">
-				<form id="busquedaCamionesForm" role="form"
+				<form id="busquedaContenedoresForm" role="form"
 					class="form-narrow form-horizontal" method="post" action="#"
-					th:action="@{#{link.camiones}}" th:object="${busquedaForm}"
+					th:action="@{#{link.contenedores}}" th:object="${busquedaForm}"
 					th:fragment="busquedaForm">
 					<fieldset>
 						<div class="form-group row">
-							<div class="col-xs-6 col-sm-2 col-md-1">
-								<div class="form-check">
-									<label> <input id="activos" type="checkbox"
-										th:field="*{mostrarSoloCamionesActivos}"
-										th:value="${mostrarSoloCamionesActivos}" name="check">
-										<span class="label-text" th:text="#{lbl_camiones_activos}"></span>
-									</label>
-								</div>
-							</div>
-							<div class="col-xs-6 col-sm-2 col-md-2">
-								<div class="form-check">
-									<label> <input id="alta" type="checkbox"
-										th:field="*{mostrarSoloCamionesDeAlta}"
-										th:value="${mostrarSoloCamionesDeAlta}" name="check">
-										<span class="label-text" th:text="#{lbl_camiones_alta}"></span>
-									</label>
-								</div>
+
+							<!-- tipos de basura -->
+							<div th:if="${tiposDeBasura}"
+								class="text-center col-xs-12 col-sm-4 col-md-3">
+								<select th:title="#{lbl_tipos_basura}" class="selectpicker"
+									data-style="btn btn-default btn-success"
+									th:field="*{tiposDeBasura}" id="tipo" multiple>
+									<option th:each="row, index: ${tiposDeBasura}"
+										th:value="${row.id}" th:text="#{${row.tipo}}">Relish</option>
+								</select>
 							</div>
 
 							<!-- tipo de field -->
@@ -76,30 +63,40 @@
 								class="col-xs-12 col-sm-2 col-md-2">
 								<select th:field="*{modelo}" class="form-control mySelect"
 									data-style="btn-default" id="modelo">
-									<option value="" th:text="#{lbl_modelo}"></option>
+									<option value="" th:text="#{lbl_seleccione}"></option>
 									<option th:if="${todosLosModelos}!=null"
 										th:each="row, index: ${todosLosModelos}" th:value="${row.id}"
 										th:text="${row.modelo}"></option>
 								</select>
 							</div>
 
-							<div class="col-xs-12 col-sm-2 col-md-2">
-								<select th:field="*{campo}" class="form-control mySelect"
-									data-style="btn-default" id="campo">
-									<option
-										th:each="campo : ${T(es.udc.citytrash.util.enums.CampoBusqPalabrasClavesCamion).values()}"
-										th:value="${campo}"
-										th:text="${#strings.toUpperCase('__#{${'lbl_' + campo}}__')}"></option>
-								</select>
+							<div class="col-xs-6 col-sm-2 col-md-1">
+								<div class="form-check">
+									<label> <input id="activos" type="checkbox"
+										th:field="*{mostrarSoloContenedoresActivos}"
+										th:value="${mostrarSoloContenedoresActivos}" name="check">
+										<span class="label-text" th:text="#{lbl_contenedores_activos}"></span>
+									</label>
+								</div>
+							</div>
+							<div class="col-xs-6 col-sm-2 col-md-2">
+								<div class="form-check">
+									<label> <input id="alta" type="checkbox"
+										th:field="*{mostrarSoloContenedoresDeAlta}"
+										th:value="${mostrarSoloContenedoresDeAlta}" name="check">
+										<span class="label-text" th:text="#{lbl_contenedores_alta}"></span>
+									</label>
+								</div>
 							</div>
 
-							<div class="col-xs-12 col-sm-4 col-md-4">
+
+							<div class="col-xs-12 col-sm-12 col-md-4">
 								<div class=" input-group">
 									<input type="text" class="form-control"
 										th:placeholder="#{lbl_pholder_search}" th:field="*{buscar}">
 									<span class="input-group-btn">
 										<button class="btn btn-success" type="submit"
-											th:text="#{btn_buscar}" th:value="#{btn_buscar_camiones}">Go!</button>
+											th:text="#{btn_buscar}" th:value="#{btn_buscar_contenedores}">Go!</button>
 									</span>
 								</div>
 							</div>
@@ -112,7 +109,7 @@
 
 			<div id="listaContent" th:fragment="listaContent" class="col-xs-12">
 
-				<!-- trabajadores list -->
+				<!-- list -->
 				<div id="resultMsgDiv">
 					<th:block th:if="${msg!=null}">
 						<div th:if="${type!=null}"
@@ -128,14 +125,14 @@
 									th:text="${#strings.capitalize('__#{lbl_id}__')}"> </a></th>
 
 								<th><a class="sorted" sd:pagination-sort="nombre"
-									th:text="${#strings.toUpperCase('__#{lbl_camion_nombre}__')}">
+									th:text="${#strings.toUpperCase('__#{lbl_contenedor_nombre}__')}">
 								</a></th>
 
-								<th><a class="sorted" sd:pagination-sort="vin"
-									th:text="${#strings.toUpperCase('__#{lbl_camion_vin}__')}"></a></th>
+								<th><a class="sorted" sd:pagination-sort="latitud"
+									th:text="${#strings.toUpperCase('__#{lbl_contenedor_latitud}__')}"></a></th>
 
-								<th><a class="sorted" sd:pagination-sort="matricula"
-									th:text="${#strings.toUpperCase('__#{lbl_camion_matricula}__')}"></a></th>
+								<th><a class="sorted" sd:pagination-sort="longitud"
+									th:text="${#strings.toUpperCase('__#{lbl_contenedor_longitude}__')}"></a></th>
 
 								<th th:text="${#strings.toUpperCase('__#{lbl_fecha_alta}__')}"></th>
 
@@ -148,40 +145,37 @@
 						</thead>
 
 						<tbody>
-							<tr th:each="camion : ${pageCamiones.content}">
+							<tr th:each="contenedor : ${pageContenedores.content}">
 								<td class="align-middle"><span
 									class="articleTitle truncated" data-toggle="tooltip"
-									data-placement="bottom" th:title="${camion.id}"
-									th:text="${camion.id}"> </span></td>
+									data-placement="bottom" th:title="${contenedor.id}"
+									th:text="${contenedor.id}"> </span></td>
 
 								<td class="align-middle"
-									th:text="${#strings.toUpperCase(camion.nombre)}"></td>
+									th:text="${#strings.toUpperCase(contenedor.nombre)}"></td>
 
 
-								<td class="align-middle"
-									th:text="${#strings.toUpperCase(#strings.toLowerCase(camion.vin))}">
-								</td>
+								<td class="align-middle" th:text="${contenedor.latitud}"></td>
 
-								<td class="align-middle"
-									th:text="${#strings.toUpperCase(#strings.toLowerCase(camion.matricula))}">
+								<td class="align-middle" th:text="${contenedor.longitud}">
 								</td>
 
 
 								<td class="align-middle">
-									<p th:if="${camion.fechaAlta != null}"
+									<p th:if="${contenedor.fechaAlta != null}"
 										th:with="df=#{fecha_formato}"
-										th:text="${#dates.format(camion.fechaAlta, df)}"></p>
+										th:text="${#dates.format(contenedor.fechaAlta, df)}"></p>
 
 								</td>
 
 								<td class="align-middle">
-									<p th:if="${camion.fechaBaja != null}"
+									<p th:if="${contenedor.fechaBaja != null}"
 										th:with="df=#{fecha_formato}"
-										th:text="${#dates.format(camion.fechaBaja, df)}"></p>
+										th:text="${#dates.format(contenedor.fechaBaja, df)}"></p>
 								</td>
 
 								<!-- <td class="align-middle"
-									th:text="${#strings.toUpperCase(#strings.toLowerCase(camion.ModeloCamion.modelo))}">
+									th:text="${#strings.toUpperCase(#strings.toLowerCase(contenedor.modelo.modelo))}">
 								</td>
 								 -->
 								<td class="align-middle"
@@ -193,22 +187,22 @@
 										<!-- view details -->
 										<div id="otherOptions" class="btn-group text-center">
 											<a id="link_ver_detalles"
-												th:href="@{#{link.camiones.detalles}(id=${camion.id})}"
+												th:href="@{#{link.contenedores.detalles}(id=${contenedor.id})}"
 												class="btn-sm"><i class="glyphicon glyphicon-eye-open"
 												data-toggle="tooltip" th:title="#{lbl_ver_detalles}"></i></a>
 
 											<!-- edit -->
 											<a id="link_editar"
-												th:href="@{#{link.camiones.editar}(id=${camion.id})}"
+												th:href="@{#{link.contenedores.editar}(id=${contenedor.id})}"
 												class="btn-sm"><i class="glyphicon glyphicon-pencil"
 												data-toggle="tooltip" th:title="#{lbl_editar}"></i></a>
 
 										</div>
 										<div id="changeState" class="btn-group text-center">
 											<a id="link_change_state"
-												th:href="@{#{link.camiones.estado}(id=${camion.id})}"
+												th:href="@{#{link.contenedores.estado}(id=${contenedor.id})}"
 												class="btn-sm"> <i id="iconState"
-												th:class="${camion.activo == true}? 'fa fa-toggle-on' : 'fa fa-toggle-off'"
+												th:class="${contenedor.activo == true}? 'fa fa-toggle-on' : 'fa fa-toggle-off'"
 												data-toggle="tooltip" th:title="#{lbl_estado}"> </i>
 											</a>
 										</div>
@@ -239,7 +233,7 @@
 				</div>
 
 				<!-- fin paginacion -->
-				<p th:unless="${pageCamiones!=null}"></p>
+				<p th:unless="${pageContenedores!=null}"></p>
 				<!-- fin  list -->
 			</div>
 

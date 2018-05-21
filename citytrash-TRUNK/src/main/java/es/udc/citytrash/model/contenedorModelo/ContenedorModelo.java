@@ -2,10 +2,7 @@ package es.udc.citytrash.model.contenedorModelo;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -14,14 +11,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Digits;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import es.udc.citytrash.model.camion.Camion;
-import es.udc.citytrash.model.camionModeloTipoDeBasura.CamionModeloTipoDeBasura;
 import es.udc.citytrash.model.tipoDeBasura.TipoDeBasura;
 import es.udc.citytrash.util.GlobalNames;
 
@@ -51,8 +45,8 @@ public class ContenedorModelo implements Serializable {
 	 */
 	public ContenedorModelo(String modelo, BigDecimal capacidadNomimal, BigDecimal cargaNomimal) {
 		this.modelo = modelo;
-		this.capacidadNomimal = capacidadNomimal;
-		this.cargaNomimal = cargaNomimal;
+		this.capacidadNominal = capacidadNomimal;
+		this.cargaNominal = cargaNomimal;
 	}
 
 	@Id
@@ -78,32 +72,32 @@ public class ContenedorModelo implements Serializable {
 
 	@Digits(integer = 17, fraction = 2)
 	@Column(name = "CAPACIDAD_NOMINAL", nullable = false)
-	public BigDecimal getCapacidadNomimal() {
-		return capacidadNomimal;
+	public BigDecimal getCapacidadNominal() {
+		return capacidadNominal;
 	}
 
-	public void setCapacidadNomimal(BigDecimal capacidadNomimal) {
-		this.capacidadNomimal = capacidadNomimal;
+	public void setCapacidadNominal(BigDecimal capacidadNomimal) {
+		this.capacidadNominal = capacidadNomimal;
 	}
 
 	@Digits(integer = 17, fraction = 2)
 	@Column(name = "CARGA_NOMINAL", nullable = false)
-	public BigDecimal getCargaNomimal() {
-		return cargaNomimal;
+	public BigDecimal getCargaNominal() {
+		return cargaNominal;
 	}
 
-	public void setCargaNomimal(BigDecimal cargaNomimal) {
-		this.cargaNomimal = cargaNomimal;
+	public void setCargaNominal(BigDecimal cargaNomimal) {
+		this.cargaNominal = cargaNomimal;
 	}
 
 	@Digits(integer = 17, fraction = 2)
 	@Column(name = "PROFUNDIDAD", nullable = true)
-	public BigDecimal getProfuncidad() {
-		return profuncidad;
+	public BigDecimal getProfundidad() {
+		return profundidad;
 	}
 
-	public void setProfuncidad(BigDecimal profuncidad) {
-		this.profuncidad = profuncidad;
+	public void setProfundidad(BigDecimal profuncidad) {
+		this.profundidad = profuncidad;
 	}
 
 	@Digits(integer = 17, fraction = 2)
@@ -150,9 +144,9 @@ public class ContenedorModelo implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private int id;
 	private String modelo;
-	private BigDecimal capacidadNomimal;
-	private BigDecimal cargaNomimal;
-	private BigDecimal profuncidad;
+	private BigDecimal capacidadNominal;
+	private BigDecimal cargaNominal;
+	private BigDecimal profundidad;
 	private BigDecimal altura;
 	private BigDecimal anchura;
 	private BigDecimal pesoVacio;

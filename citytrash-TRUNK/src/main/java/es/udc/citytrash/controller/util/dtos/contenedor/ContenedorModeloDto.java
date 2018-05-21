@@ -1,79 +1,28 @@
 package es.udc.citytrash.controller.util.dtos.contenedor;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
-import javax.validation.Valid;
-import javax.validation.constraints.DecimalMax;
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-
-import org.springframework.format.annotation.NumberFormat;
-import org.springframework.format.annotation.NumberFormat.Style;
-
-import es.udc.citytrash.controller.util.anotaciones.ModeloCamionNombreUnico;
-import es.udc.citytrash.model.camionModelo.CamionModelo;
-import es.udc.citytrash.model.camionModeloTipoDeBasura.CamionModeloTipoDeBasura;
+import es.udc.citytrash.controller.util.dtos.tipoDeBasura.TipoDeBasuraDto;
 import es.udc.citytrash.model.contenedorModelo.ContenedorModelo;
-import es.udc.citytrash.model.tipoDeBasura.TipoDeBasura;
 
 public class ContenedorModeloDto {
 
+	
+	
 	public ContenedorModeloDto() {
-
 	}
 
-	public ContenedorModeloDto(ContenedorModelo modelo) {
-		this.id = modelo.getId();
-		this.nombre = modelo.getModelo();
-		this.capacidadNominal = modelo.getCapacidadNomimal();
-		this.cargaNominal = modelo.getCargaNomimal();
-		this.profundidad = modelo.getProfuncidad() != null ? modelo.getProfuncidad() : new BigDecimal(0);
-		this.altura = modelo.getAltura() != null ? modelo.getAltura() : new BigDecimal(0);
-		this.ancho = modelo.getAnchura() != null ? modelo.getAnchura() : new BigDecimal(0);
-		this.pesoVacio = modelo.getPesoVacio() != null ? modelo.getPesoVacio() : new BigDecimal(0);
-		this.tipo = modelo.getTipo().getId();
+	public ContenedorModeloDto(ContenedorModelo m) {
+		this.id = m.getId();
+		this.modelo = m.getModelo();
+		this.capacidadNomimal = m.getCapacidadNominal();
+		this.cargaNomimal = m.getCapacidadNominal();
+		this.profuncidad = m.getProfundidad();
+		this.altura = m.getAltura();
+		this.anchura = m.getAnchura();
+		this.pesoVacio = m.getPesoVacio();
+		this.tipo = new TipoDeBasuraDto(m.getTipo());
 	}
-
-	private int id = -1;
-
-	@Size(min = 2, max = 100)
-	private String nombre;
-
-	@NotNull
-	@Min(value = 1)
-	@NumberFormat(style = Style.NUMBER, pattern = "###.###")
-	private BigDecimal capacidadNominal = new BigDecimal(0);
-
-	@NotNull
-	@Min(value = 1)
-	@NumberFormat(style = Style.NUMBER, pattern = "###.###")
-	private BigDecimal cargaNominal = new BigDecimal(0);
-
-	@NotNull
-	@Min(value = 1)
-	@NumberFormat(style = Style.NUMBER, pattern = "###.###")
-	private BigDecimal profundidad = new BigDecimal(0);
-
-	@NumberFormat(style = Style.NUMBER, pattern = "###.###")
-	private BigDecimal altura = new BigDecimal(0);
-
-	@NumberFormat(style = Style.NUMBER, pattern = "###.###")
-	private BigDecimal ancho = new BigDecimal(0);
-
-	@Min(value = 1)
-	@NumberFormat(style = Style.NUMBER, pattern = "###.###")
-	private BigDecimal pesoVacio = new BigDecimal(0);
-
-	// private TipoDeBasura tipo = null;*/
-
-	private Integer tipo = null;
 
 	public int getId() {
 		return id;
@@ -83,36 +32,36 @@ public class ContenedorModeloDto {
 		this.id = id;
 	}
 
-	public String getNombre() {
-		return nombre;
+	public String getModelo() {
+		return modelo;
 	}
 
-	public void setNombre(String nombre) {
-		this.nombre = nombre.trim().toUpperCase();
+	public void setModelo(String modelo) {
+		this.modelo = modelo;
 	}
 
-	public BigDecimal getCapacidadNominal() {
-		return capacidadNominal;
+	public BigDecimal getCapacidadNomimal() {
+		return capacidadNomimal;
 	}
 
-	public void setCapacidadNominal(BigDecimal capacidadNominal) {
-		this.capacidadNominal = capacidadNominal;
+	public void setCapacidadNomimal(BigDecimal capacidadNomimal) {
+		this.capacidadNomimal = capacidadNomimal;
 	}
 
-	public BigDecimal getCargaNominal() {
-		return cargaNominal;
+	public BigDecimal getCargaNomimal() {
+		return cargaNomimal;
 	}
 
-	public void setCargaNominal(BigDecimal cargaNominal) {
-		this.cargaNominal = cargaNominal;
+	public void setCargaNomimal(BigDecimal cargaNomimal) {
+		this.cargaNomimal = cargaNomimal;
 	}
 
-	public BigDecimal getProfundidad() {
-		return profundidad;
+	public BigDecimal getProfuncidad() {
+		return profuncidad;
 	}
 
-	public void setProfundidad(BigDecimal profundidad) {
-		this.profundidad = profundidad;
+	public void setProfuncidad(BigDecimal profuncidad) {
+		this.profuncidad = profuncidad;
 	}
 
 	public BigDecimal getAltura() {
@@ -123,12 +72,12 @@ public class ContenedorModeloDto {
 		this.altura = altura;
 	}
 
-	public BigDecimal getAncho() {
-		return ancho;
+	public BigDecimal getAnchura() {
+		return anchura;
 	}
 
-	public void setAncho(BigDecimal ancho) {
-		this.ancho = ancho;
+	public void setAnchura(BigDecimal anchura) {
+		this.anchura = anchura;
 	}
 
 	public BigDecimal getPesoVacio() {
@@ -139,18 +88,22 @@ public class ContenedorModeloDto {
 		this.pesoVacio = pesoVacio;
 	}
 
-	public Integer getTipo() {
+	public TipoDeBasuraDto getTipo() {
 		return tipo;
 	}
 
-	public void setTipo(Integer tipo) {
+	public void setTipo(TipoDeBasuraDto tipo) {
 		this.tipo = tipo;
 	}
 
-	@Override
-	public String toString() {
-		return "ContenedorModeloDto [id=" + id + ", nombre=" + nombre + ", capacidadNomial=" + capacidadNominal
-				+ ", cargaNominal=" + cargaNominal + ", profundidad=" + profundidad + ", altura=" + altura + ", ancho="
-				+ ancho + ", pesoVacio=" + pesoVacio + ", tipo=" + tipo + "]";
-	}
+	private int id;
+	private String modelo;
+	private BigDecimal capacidadNomimal;
+	private BigDecimal cargaNomimal;
+	private BigDecimal profuncidad;
+	private BigDecimal altura;
+	private BigDecimal anchura;
+	private BigDecimal pesoVacio;
+	private TipoDeBasuraDto tipo;
+
 }

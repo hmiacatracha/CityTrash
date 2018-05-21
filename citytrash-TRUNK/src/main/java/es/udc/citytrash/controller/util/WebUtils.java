@@ -85,7 +85,7 @@ public class WebUtils {
 	public static final String VISTA_CONTENEDORES_DETALLES_MODELO = VISTA_CONTENEDORES_PREFIX
 			+ "detalles/informacionModelo";
 
-	public static final String VISTA_CONTENEDORES_MODELOS = VISTA_CONTENEDORES_MODELOS_PREFIX+ "/modelos";
+	public static final String VISTA_CONTENEDORES_MODELOS = VISTA_CONTENEDORES_MODELOS_PREFIX + "/modelos";
 	public static final String VISTA_CONTENEDORES_MODELOS_EDITAR = VISTA_CONTENEDORES_MODELOS_PREFIX + "modelosEditar";
 	public static final String VISTA_CONTENEDORES_MODELOS_REGISTRO = VISTA_CONTENEDORES_MODELOS_PREFIX
 			+ "modelosRegistro";
@@ -246,7 +246,7 @@ public class WebUtils {
 	public static final String REQUEST_MAPPING_CONTENEDORES_DETALLES_MODELO = "/modelos/{id}/detalles";
 
 	public static final String URL_MAPPING_CONTENEDORES_DETALLES_MODELO_INFO_MODELO = "/contenedores/modelos/{id}/detalles/modelo";
-	public static final String REQUEST_MAPPING_CCONTENEDORES_DETALLES_MODELO_INFO_MODELO = "/modelos/{id}/detalles/modelo";
+	public static final String REQUEST_MAPPING_CONTENEDORES_DETALLES_MODELO_INFO_MODELO = "/modelos/{id}/detalles/modelo";
 
 	public static final String URL_MAPPING_CONTENEDORES_DETALLES_MODELO_INFO_CONTENEDOR = "/contenedores/modelos/{id}/detalles/contenedores";
 	public static final String REQUEST_MAPPING_CCONTENEDORES_DETALLES_MODELO_INFO_COTENEDOR = "/modelos/{id}/detalles/contenedores";

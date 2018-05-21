@@ -3,29 +3,35 @@
 	xmlns:th="http://www.thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{layouts/default}" th:with="currentPage='recursos'">
+	layout:decorate="~{layouts/maps}" th:with="currentPage='recursos'">
 <head>
-<title th:text="#{page_camiones_modelo_detalle_info}"></title>
+<title th:text="#{page_contenedores_modelo_detalle_info}"></title>
 </head>
 <body class="blanco">
 	<div id="container" class="container" th:fragment="content">
 		<br>
 		<div class="row container center-block">
-			<h3 th:if="${nombreDelCamion!=null}"
-				class="pull-left text-warning
-				col-xs-6"
-				th:text="${#strings.toUpperCase(nombreDelCamion)}"></h3>
+			<h3 th:if="${nombreDelContenedor!=null}"
+				class="text-center text-warning col-xs-10"
+				th:text="${#strings.toUpperCase(nombreDelContenedor)}"></h3>
+
+			<div class="col-xs-2">
+				<div class="col-xs-1" th:if="${tipoDeBasura}">
+					<div th:style="'background: #' + ${tipoDeBasura.color}"
+						class="basura_color_circulo"></div>
+				</div>
+			</div>
 		</div>
 
 		<div th:if="${objecto}" th:object="${objecto}">
 			<div class="panel-heading ">
 				<div class="col-xs-12 text-right">
 					<div class="btn-group text-center">
-						<a th:href="@{#{link.camiones.editar}(id=*{id})}" class="btn-sm"><i
-							class="glyphicon glyphicon-pencil"></i></a><a
-							th:href="@{#{link.camiones.registro}}" class="btn-sm"><i
+						<a th:href="@{#{link.contenedores.editar}(id=*{id})}"
+							class="btn-sm"><i class="glyphicon glyphicon-pencil"></i></a><a
+							th:href="@{#{link.contenedores.registro}}" class="btn-sm"><i
 							class="glyphicon glyphicon-plus"></i> </a> <a
-							th:href="@{#{link.camiones}}" class="btn-sm"> <i
+							th:href="@{#{link.contenedores}}" class="btn-sm"> <i
 							class="glyphicon glyphicon-list"></i>
 						</a>
 					</div>
@@ -40,122 +46,26 @@
 							<!-- nombre -->
 							<tr>
 								<td class="text-success"><label
-									th:text="#{lbl_camion_nombre}"></label></td>
-								<td>
-									<div th:if="*{nombre}"
-										class="input-group date  has-feedback col-sm-6">
-										<input type="text" class="form-control" id="vin"
-											th:field="*{nombre}" disabled="disabled">
-									</div>
-								</td>
-							</tr>
-							<!-- matricula -->
-							<tr>
-								<td class="text-success"><label
-									th:text="#{lbl_camion_matricula}"></label></td>
-
-								<td>
-									<!-- <p th:if="*{matricula}" class="text-right col-xs-6"
-										th:text="*{matricula}"></p>-->
-									<div class="input-group date  has-feedback col-sm-6">
-										<input type="text" class="form-control" id="vin"
-											th:field="*{matricula}" disabled="disabled">
-									</div>
-								</td>
-							</tr>
-							<!-- vin -->
-							<tr>
-								<td class="text-success"><label th:text="#{lbl_camion_vin}"></label></td>
-
-								<td>
-									<!-- <p th:if="*{vin}" class="text-right col-xs-6" th:text="*{vin}"></p>-->
-
-									<div class="input-group date  has-feedback col-sm-6">
-										<input type="text" class="form-control" id="vin"
-											th:field="*{vin}" disabled="disabled">
-									</div>
-								</td>
-							</tr>
-							<!-- conductor principal -->
-							<tr>
-								<td class="text-success"><label th:text="#{lbl_conductor}"></label></td>
-								<td><select th:field="*{conductorPrincipal}"
-									disabled="disabled" id="modelo" class="text-right col-xs-6">
-										<option value="" th:text="#{lbl_seleccione}"></option>
-										<option th:if="${todosLosTrabajadores}!=null"
-											th:each="row, index: ${todosLosTrabajadores}"
-											th:value="${row.id}"
-											th:text="${#strings.toUpperCase(row.apellidos + ' '  + row.nombre)}"></option>
-								</select></td>
-							</tr>
-							<!-- conductor suplente -->
-							<tr>
-								<td class="text-success"><label
-									th:text="#{lbl_conductor_suplente}"></label></td>
-								<td>
-									<!-- <p th:if="*{conductorSuplente}" class="text-right col-xs-6"
-									th:text="*{conductorSuplente}"></p> --> <select
-									th:field="*{conductorSuplente}" disabled="disabled" id="modelo"
-									class="text-right col-xs-6">
-										<option value="" th:text="#{lbl_seleccione}"></option>
-										<option th:if="${todosLosTrabajadores}!=null"
-											th:each="row, index: ${todosLosTrabajadores}"
-											th:value="${row.id}"
-											th:text="${#strings.toUpperCase(row.apellidos + ' '  + row.nombre)}"></option>
-								</select>
-
-								</td>
-							</tr>
-							<!-- recogedor uno -->
-							<tr>
-								<td class="text-success"><label th:text="#{lbl_conductor}"></label></td>
-
-								<td><select th:field="*{recogedorUno}" disabled="disabled"
-									id="modelo" class="text-right col-xs-6">
-										<option value="" th:text="#{lbl_seleccione}"></option>
-										<option th:if="${todosLosTrabajadores}!=null"
-											th:each="row, index: ${todosLosTrabajadores}"
-											th:value="${row.id}"
-											th:text="${#strings.toUpperCase(row.apellidos + ' '  + row.nombre)}"></option>
-								</select></td>
+									th:text="#{lbl_contenedor_nombre}"></label></td>
+								<td th:if="*{nombre}" th:text="*{nombre}"></td>
 							</tr>
 
-							<!-- recogedor dos -->
-
-							<tr>
-								<td class="text-success"><label th:text="#{lbl_recolector}"></label></td>
-
-								<td><select th:field="*{RecogedorDos}" disabled="disabled"
-									id="modelo" class="text-right col-xs-6">
-										<option value="" th:text="#{lbl_seleccione}"></option>
-										<option th:if="${todosLosTrabajadores}!=null"
-											th:each="row, index: ${todosLosTrabajadores}"
-											th:value="${row.id}"
-											th:text="${#strings.toUpperCase(row.apellidos + ' '  + row.nombre)}"></option>
-								</select></td>
-							</tr>
 							<!-- fecha de alta -->
-
 							<tr>
 								<td class="text-success"><i
 									class="glyphicon glyphicon-calendar"></i> <label
 									class="mayusculas" th:text="#{lbl_fechaAlta}"></label></td>
 								<td>
-									<!-- <p th:if="*{fechaAlta != null}" th:with="df=#{fecha_formato}"
-										th:text="${#dates.format(__*{fechaAlta}__, df)}"></p>
-										-->
-
 									<div class="input-group date  has-feedback col-sm-6"
 										id="datetimePicker">
-										<input type="text" class="form-control" id="fechaAlta"
+										<input class="form-control" id="fechaAlta"
 											th:field="*{fechaAlta}" th:data-provide="datepicker"
 											th:with="df=#{fecha_formato}" data-date-format=df
 											th:data-date-autoclose="true"
 											th:data-date-today-highlight="true"
-											th:data-date-orientation="bottom" disabled="disabled" />
+											th:data-date-orientation="bottom" disabled="disabled">
+										</
 									</div>
-
-
 								</td>
 							</tr>
 
@@ -177,10 +87,28 @@
 
 								</td>
 							</tr>
+
+							<!-- latitud -->
+							<tr>
+								<td class="text-success"><label
+									th:text="#{lbl_contenedor_latitud}"></label></td>
+
+								<td id="lat" th:text="*{latitud}"></td>
+							</tr>
+							<!-- longitu -->
+							<tr>
+								<td class="text-success"><label
+									th:text="#{lbl_contenedor_longitude}"></label></td>
+
+								<td id="lng" data-geo="lng" th:text="*{longitud}"></td>
+							<tr>
 						</tbody>
 					</table>
 				</div>
+				<!-- mapa -->
+				<div class="col-xs-offset-1 col-xs-10 map_canvas" id="mapa"></div>
 			</div>
+
 			<div class="panel-footer">
 				<div class="pull-left">
 					<a th:href="@{#{link.camiones}}"> <i
@@ -192,5 +120,8 @@
 			</div>
 		</div>
 	</div>
+	<script>
+
+	</script>
 </body>
 </html>

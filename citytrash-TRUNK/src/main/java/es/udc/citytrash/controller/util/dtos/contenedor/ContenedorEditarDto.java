@@ -10,42 +10,51 @@ import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import es.udc.citytrash.controller.util.anotaciones.CamionNombreUnico;
-import es.udc.citytrash.controller.util.anotaciones.CamposNoIguales;
-import es.udc.citytrash.controller.util.anotaciones.CoductorValido;
-import es.udc.citytrash.controller.util.anotaciones.ContenedorNombreUnico;
-import es.udc.citytrash.controller.util.anotaciones.RecolectorValido;
-import es.udc.citytrash.controller.util.anotaciones.TrabajadorInactivo;
-import es.udc.citytrash.model.camion.Camion;
 import es.udc.citytrash.model.contenedor.Contenedor;
-import es.udc.citytrash.model.contenedorModelo.ContenedorModelo;
 
 /**
- * Dto para registrar contenedores
+ * Dto para modificar/ver Contenedores
  * 
  * @author hmia
  *
  */
 
-public class ContenedorRegistroDto {
+public class ContenedorEditarDto {
 
-	public ContenedorRegistroDto() {
+	public ContenedorEditarDto() {
 
 	}
 
+	public ContenedorEditarDto(Contenedor c) {
+		this.id = c.getId();
+		this.nombre = c.getNombre();
+		if (c.getLatitud() != null && c.getLongitud() != null) {
+			this.latitud = c.getLatitud();
+			this.longitud = c.getLongitud();
+		}
+		this.fechaAlta = c.getFechaAlta() != null ? calendarToDate(c.getFechaAlta()) : null;
+		this.fechaBaja = c.getFechaBaja() != null ? calendarToDate(c.getFechaBaja()) : null;
+		this.activo = c.getActivo();
+		this.modeloContenedor = c.getModelo().getId();
+	}
+
+	@NotNull
+	private long id;
+
 	@NotBlank
-	@ContenedorNombreUnico
 	@Size(min = 2, max = 100)
 	private String nombre = "";
 
 	@NotNull
-	private Integer modeloContenedor;
+	Integer modeloContenedor = null;
 
 	private String localizacion = "";
 
-	private BigDecimal longitud = new BigDecimal(0);
-
+	@NotNull
 	private BigDecimal latitud = new BigDecimal(0);
+
+	@NotNull
+	private BigDecimal longitud = new BigDecimal(0);
 
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	private Date fechaAlta = null;
@@ -57,6 +66,14 @@ public class ContenedorRegistroDto {
 
 	private static Date calendarToDate(Calendar calendar) {
 		return calendar.getTime();
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
 	}
 
 	public String getNombre() {
@@ -71,7 +88,7 @@ public class ContenedorRegistroDto {
 		return modeloContenedor;
 	}
 
-	public void setModeloContenedor(Integer modeloContenedor) {
+	public void Integer(Integer modeloContenedor) {
 		this.modeloContenedor = modeloContenedor;
 	}
 
@@ -99,14 +116,6 @@ public class ContenedorRegistroDto {
 		this.activo = activo;
 	}
 
-	public BigDecimal getLongitud() {
-		return longitud;
-	}
-
-	public void setLongitud(BigDecimal longitud) {
-		this.longitud = longitud;
-	}
-
 	public BigDecimal getLatitud() {
 		return latitud;
 	}
@@ -115,19 +124,30 @@ public class ContenedorRegistroDto {
 		this.latitud = latitud;
 	}
 
+	public BigDecimal getLongitud() {
+		return longitud;
+	}
+
+	public void setLongitud(BigDecimal longitud) {
+		this.longitud = longitud;
+	}
+
+	public void setModeloContenedor(Integer modeloContenedor) {
+		this.modeloContenedor = modeloContenedor;
+	}
+
 	public String getLocalizacion() {
 		return localizacion;
 	}
 
-	public void setLocalizacion(String localizacion) {
-		this.localizacion = localizacion;
+	public void setLocalizacion(String direccion) {
+		this.localizacion = direccion;
 	}
 
 	@Override
 	public String toString() {
-		return "ContenedorRegistroDto [nombre=" + nombre + ", modeloContenedor=" + modeloContenedor + ", longitud="
-				+ longitud + ", latitud=" + latitud + ", fechaAlta=" + fechaAlta + ", fechaBaja=" + fechaBaja
-				+ ", activo=" + activo + "]";
+		return "ContenedorDto [id=" + id + ", nombre=" + nombre + ", modeloContenedor=" + modeloContenedor
+				+ ", latitud=" + latitud + ", longitud=" + longitud + ", fechaAlta=" + fechaAlta + ", fechaBaja="
+				+ fechaBaja + ", activo=" + activo + "]";
 	}
-
 }

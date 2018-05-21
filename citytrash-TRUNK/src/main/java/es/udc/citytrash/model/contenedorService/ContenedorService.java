@@ -5,9 +5,9 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorDto;
+import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorEditarDto;
 import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorFormBusq;
-import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorModeloDto;
+import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorModeloEditarDto;
 import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorModeloFormBusq;
 import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorModeloRegistroDto;
 import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorRegistroDto;
@@ -99,7 +99,7 @@ public interface ContenedorService {
 	 * @return
 	 * @throws InstanceNotFoundException
 	 */
-	TipoDeBasura buscarTiposDeBasuraByModelo(int id) throws InstanceNotFoundException;
+	TipoDeBasura buscarTipoDeBasuraByModelo(int id) throws InstanceNotFoundException;
 
 	/**
 	 * Buscar tipo de basura por contenedor
@@ -131,7 +131,7 @@ public interface ContenedorService {
 	 * @throws InactiveResourceException
 	 * @throws InvalidFieldException
 	 */
-	Contenedor modificarContenedor(ContenedorDto form) throws InstanceNotFoundException, DuplicateInstanceException,
+	Contenedor modificarContenedor(ContenedorEditarDto form) throws InstanceNotFoundException, DuplicateInstanceException,
 			InactiveResourceException, InvalidFieldException;
 
 	/**
@@ -154,7 +154,7 @@ public interface ContenedorService {
 	 * @throws DuplicateInstanceException
 	 * @throws InvalidFieldException
 	 */
-	ContenedorModelo modificarModelo(ContenedorModeloDto form)
+	ContenedorModelo modificarModelo(ContenedorModeloEditarDto form)
 			throws InstanceNotFoundException, DuplicateInstanceException, InvalidFieldException;
 
 	/**

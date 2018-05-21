@@ -34,12 +34,18 @@ public class ContenedorDaoHibernate extends GenericHibernateDAOImpl<Contenedor, 
 	@Override
 	public Contenedor buscarByNombre(String nombre) throws InstanceNotFoundException {
 		String alias = "c";
-		String hql = String.format("Select " + alias + " FROM Contendor " + alias + " WHERE UPPER(" + alias
-				+ ".nombre) LIKE UPPER(:nombre)");
+		Query<Contenedor> query;
+		String hql = String.format("Select " + alias + " FROM Contenedor " + alias + " WHERE UPPER(TRIM(" + alias
+				+ ".nombre)) LIKE UPPER(TRIM(:nombre))");
 		logger.info("paso1 buscarByNombre");
-		Contenedor contenedor = getSession().createQuery(hql, Contenedor.class).setParameter("nombre", nombre)
-				.uniqueResult();
 		logger.info("paso2 buscarByNombre");
+		query = getSession().createQuery(hql.toString(), Contenedor.class);
+		logger.info("paso3 buscarByNombre");
+		query.setParameter("nombre", nombre);
+		logger.info("paso4 buscarByNombre");
+		Contenedor contenedor = query.uniqueResult();
+
+		logger.info("paso5 buscarByNombre");
 		if (contenedor == null) {
 			logger.info("paso3 buscarByNombre");
 			throw new InstanceNotFoundException(nombre, Contenedor.class.getName());

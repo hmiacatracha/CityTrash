@@ -21,7 +21,6 @@
 // * by Martin Kleppe <kleppe@ubilabs.net>
 
 (function($, window, document, undefined) {
-	console.log("pasa por jquery geocomp....")
 	// ## Options
 	// The default options for this plugin.
 	//

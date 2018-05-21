@@ -1,6 +1,7 @@
 package es.udc.citytrash.model.contenedor;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Calendar;
 
 import javax.persistence.Column;
@@ -67,7 +68,7 @@ public class Contenedor implements Serializable {
 	 * @param modelo
 	 * @param activo
 	 */
-	public Contenedor(String nombre, Double latitud, Double longitud, Calendar fechaAlta, Calendar fechaBaja,
+	public Contenedor(String nombre, BigDecimal latitud, BigDecimal longitud, Calendar fechaAlta, Calendar fechaBaja,
 			ContenedorModelo modelo, Boolean activo) {
 		this.nombre = nombre;
 		this.latitud = latitud;
@@ -132,20 +133,20 @@ public class Contenedor implements Serializable {
 	}
 
 	@Column(name = "LOCALIZACION_LATITUD", nullable = true)
-	public Double getLatitud() {
+	public BigDecimal getLatitud() {
 		return latitud;
 	}
 
-	public void setLatitud(Double latitud) {
+	public void setLatitud(BigDecimal latitud) {
 		this.latitud = latitud;
 	}
 
 	@Column(name = "LOCALIZACION_LONGITUD", nullable = true)
-	public Double getLongitud() {
+	public BigDecimal getLongitud() {
 		return longitud;
 	}
 
-	public void setLongitud(Double longitud) {
+	public void setLongitud(BigDecimal longitud) {
 		this.longitud = longitud;
 	}
 
@@ -163,8 +164,8 @@ public class Contenedor implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private long id;
 	private String nombre;
-	private Double latitud;
-	private Double longitud;
+	private BigDecimal latitud;
+	private BigDecimal longitud;
 	private Calendar fechaAlta;
 	private Calendar fechaBaja;
 	private ContenedorModelo modelo;

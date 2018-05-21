@@ -135,16 +135,11 @@
 								</select></td>
 							</tr>
 							<!-- fecha de alta -->
-
 							<tr>
 								<td class="text-success"><i
 									class="glyphicon glyphicon-calendar"></i> <label
 									class="mayusculas" th:text="#{lbl_fechaAlta}"></label></td>
-								<td>
-									<!-- <p th:if="*{fechaAlta != null}" th:with="df=#{fecha_formato}"
-										th:text="${#dates.format(__*{fechaAlta}__, df)}"></p>
-										-->
-
+								<td>								
 									<div class="input-group date  has-feedback col-sm-6"
 										id="datetimePicker">
 										<input type="text" class="form-control" id="fechaAlta"
@@ -154,8 +149,6 @@
 											th:data-date-today-highlight="true"
 											th:data-date-orientation="bottom" disabled="disabled" />
 									</div>
-
-
 								</td>
 							</tr>
 

@@ -1,28 +1,9 @@
 package es.udc.citytrash.controller.util.dtos.contenedor;
 
+import java.math.BigDecimal;
 import java.util.Calendar;
-import java.util.Date;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
-import org.hibernate.validator.constraints.NotBlank;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import es.udc.citytrash.controller.util.anotaciones.CamposNoIguales;
-import es.udc.citytrash.controller.util.anotaciones.CoductorValido;
-import es.udc.citytrash.controller.util.anotaciones.RecolectorValido;
-import es.udc.citytrash.controller.util.anotaciones.TrabajadorInactivo;
-import es.udc.citytrash.model.camion.Camion;
 import es.udc.citytrash.model.contenedor.Contenedor;
-import es.udc.citytrash.model.contenedorModelo.ContenedorModelo;
-
-/**
- * Dto para modificar/ver Contenedores
- * 
- * @author hmia
- *
- */
 
 public class ContenedorDto {
 
@@ -32,37 +13,13 @@ public class ContenedorDto {
 
 	public ContenedorDto(Contenedor c) {
 		this.id = c.getId();
-		this.nombre = c.getNombre();
-		if (c.getLatitud() != null && c.getLongitud() != null)
-			this.localizacion = new Localizacion(c.getLatitud(), c.getLatitud());
-		this.fechaAlta = c.getFechaAlta() != null ? calendarToDate(c.getFechaAlta()) : null;
-		this.fechaBaja = c.getFechaBaja() != null ? calendarToDate(c.getFechaBaja()) : null;
 		this.activo = c.getActivo();
-		this.modeloContenedor = c.getModelo();
-	}
-
-	@NotNull
-	private long id;
-
-	@NotBlank
-	@Size(min = 2, max = 100)
-	private String nombre = "";
-
-	@NotNull
-	private ContenedorModelo modeloContenedor;
-
-	private Localizacion localizacion = new Localizacion();
-
-	@DateTimeFormat(pattern = "dd/MM/yyyy")
-	private Date fechaAlta = null;
-
-	@DateTimeFormat(pattern = "dd/MM/yyyy")
-	private Date fechaBaja = null;
-
-	private boolean activo = true;
-
-	private static Date calendarToDate(Calendar calendar) {
-		return calendar.getTime();
+		this.fechaAlta = c.getFechaAlta();
+		this.fechaBaja = c.getFechaBaja();
+		this.latitud = c.getLatitud();
+		this.latitud = c.getLatitud();
+		this.modelo = new ContenedorModeloDto(c.getModelo());
+		this.nombre = c.getNombre();
 	}
 
 	public long getId() {
@@ -78,53 +35,63 @@ public class ContenedorDto {
 	}
 
 	public void setNombre(String nombre) {
-		this.nombre = nombre.trim().toUpperCase();
+		this.nombre = nombre;
 	}
 
-	public ContenedorModelo getModeloContenedor() {
-		return modeloContenedor;
+	public BigDecimal getLatitud() {
+		return latitud;
 	}
 
-	public void setModeloContenedor(ContenedorModelo modeloContenedor) {
-		this.modeloContenedor = modeloContenedor;
+	public void setLatitud(BigDecimal latitud) {
+		this.latitud = latitud;
 	}
 
-	public Localizacion getLocalizacion() {
-		return localizacion;
+	public BigDecimal getLongitud() {
+		return longitud;
 	}
 
-	public void setLocalizacion(Localizacion localizacion) {
-		this.localizacion = localizacion;
+	public void setLongitud(BigDecimal longitud) {
+		this.longitud = longitud;
 	}
 
-	public Date getFechaAlta() {
+	public Calendar getFechaAlta() {
 		return fechaAlta;
 	}
 
-	public void setFechaAlta(Date fechaAlta) {
+	public void setFechaAlta(Calendar fechaAlta) {
 		this.fechaAlta = fechaAlta;
 	}
 
-	public Date getFechaBaja() {
+	public Calendar getFechaBaja() {
 		return fechaBaja;
 	}
 
-	public void setFechaBaja(Date fechaBaja) {
+	public void setFechaBaja(Calendar fechaBaja) {
 		this.fechaBaja = fechaBaja;
 	}
 
-	public boolean isActivo() {
+	public ContenedorModeloDto getModelo() {
+		return modelo;
+	}
+
+	public void setModelo(ContenedorModeloDto modelo) {
+		this.modelo = modelo;
+	}
+
+	public Boolean getActivo() {
 		return activo;
 	}
 
-	public void setActivo(boolean activo) {
+	public void setActivo(Boolean activo) {
 		this.activo = activo;
 	}
 
-	@Override
-	public String toString() {
-		return "ContenedorDto [id=" + id + ", nombre=" + nombre + ", modeloContenedor=" + modeloContenedor
-				+ ", localizacion=" + localizacion + ", fechaAlta=" + fechaAlta + ", fechaBaja=" + fechaBaja
-				+ ", activo=" + activo + "]";
-	}
+	private long id;
+	private String nombre;
+	private BigDecimal latitud;
+	private BigDecimal longitud;
+	private Calendar fechaAlta;
+	private Calendar fechaBaja;
+	private ContenedorModeloDto modelo;
+	private Boolean activo;
 }

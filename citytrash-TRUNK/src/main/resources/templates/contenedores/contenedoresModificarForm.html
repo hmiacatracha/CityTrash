@@ -3,12 +3,12 @@
 	xmlns:th="http://www.thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <body>
-	<div th:fragment="form(camionForm, error)">
+	<div th:fragment="form(contenedorForm, error)">
 
-		<form th:if="camionForm" id="camionForm" role="form"
+		<form th:if="contenedorForm" id="contenedorForm" role="form"
 			class="form-narrow form-horizontal" method="post" action="#"
-			th:action="@{#{link.camiones.editar}(id=${camionForm.id})}"
-			th:object="${camionForm}" th:fragment="formulario">
+			th:action="@{#{link.contenedores.editar}(id=${contenedorForm.id})}"
+			th:object="${contenedorForm}" th:fragment="formulario">
 			<fieldset>
 				<!-- mensaje ok -->
 				<th:block th:if="${msg!=null}">
@@ -22,7 +22,7 @@
 						th:replace="fragments/alert :: alert (type='danger',  message=#{${type}(${key})})"></div>
 				</th:block>
 
-				<th:block th:if="${#fields.hasErrors('${camionForm.*}')}">
+				<th:block th:if="${#fields.hasErrors('${contenedorForm.*}')}">
 					<br />
 					<div
 						th:replace="fragments/alert :: alert (type='danger', message=#{verificar_campos_alerta})">Alert</div>
@@ -35,66 +35,102 @@
 					<br />
 				</th:block>
 				<br />
-				<!-- camion -->
-
 				<!-- id -->
 				<input th:if="*{id}" type="hidden"
 					class="mayusculas col-sm-6 form-control" id="id" th:field="*{id}" />
+
+				<!-- localizacion  del contenedor-->
+				<div id="localizacion_div"  class="custom-multiselect">
+					<div class="form-group">
+						<div class="pull-left col-xs-12 col-sm-3">
+							<label for="geocomplete" class="col-form-label"
+								th:text="#{lbl_contenedor_localizacion} + '*'"></label>
+						</div>
+						<div class="col-xs-12 col-sm-8">
+							<div class=" input-group">
+								<input id="geocomplete" type="text" class="form-control"
+									th:placeholder="#{lbl_pholder_localizacion}"
+									th:field="*{localizacion}"> <span
+									class="input-group-btn">
+									<button class="btn btn-success" id="findLocalizacion"
+										type="button" th:text="#{btn_buscar}" value="">Go!</button>
+								</span>
+							</div>
+						</div>
+					</div>
+
+					<!-- mapa -->
+					<div class="col-xs-offset-1 col-xs-10 map_canvas" id="mapa"></div>
+					<div class="col-xs-12"></div>
+					<!-- latitude -->
+					<div id="nombre-group" class="form-group"
+						th:classappend="${#fields.hasErrors('latitud')}? 'has-error'">
+						<div class="pull-left col-xs-3 col-sm-3 col-md-3">
+							<label for="latitud" class="col-form-label"
+								th:text="#{lbl_contenedor_latitud} + '*'"></label>
+						</div>
+						<div class="has-feedback col-xs-9 col-sm-6 col-md-5">
+							<input id="lat" data-geo="lat" type="text"
+								class="col-sm-6 form-control"
+								th:with="format=#{decimales_formato}" th:field="*{latitud}"
+								required="required" /> <span class="form-control-feedback">(<var>DD</var>)
+							</span>
+						</div>
+						<div class="col-xs-12 col-sm-3 col-md-4">
+							<span class="help-block" th:if="${#fields.hasErrors('latitud')}"
+								th:errors="*{latitud}"></span>
+						</div>
+					</div>
+					<div id="nombre-group" class="form-group"
+						th:classappend="${#fields.hasErrors('longitud')}? 'has-error'">
+						<div class="pull-left col-xs-3 col-sm-3 col-md-3">
+							<label for="longitud" class="col-form-label"
+								th:text="#{lbl_contenedor_longitude} + '*'"></label>
+						</div>
+						<div class="has-feedback col-xs-9 col-sm-6 col-md-5">
+							<input id="lng" data-geo="lng" type="text"
+								class="col-sm-6 form-control" th:field="*{longitud}"
+								required="required" /> <span class="form-control-feedback">(<var>DD</var>)
+							</span>
+						</div>
+						<div class="col-xs-12 col-sm-3 col-md-4">
+							<span class="help-block" th:if="${#fields.hasErrors('longitud')}"
+								th:errors="*{longitud}"></span>
+						</div>
+					</div>
+				</div>
 
 				<!-- nombre -->
 				<div id="nombre-group" class="form-group"
 					th:classappend="${#fields.hasErrors('nombre')}? 'has-error'">
 					<div class="col-xs-3 col-md-3">
 						<label for="nombre" class="col-form-label"
-							th:text="#{lbl_camion_nombre} + '*'"></label>
+							th:text="#{lbl_contenedor_nombre} + '*'"></label>
 					</div>
 
 					<div class="col-xs-9 col-md-5">
 						<input type="text" class="mayusculas form-control" maxlength="255"
 							id="nombre"
-							th:placeholder="#{frm_registro_camion_nombre_pholder}"
+							th:placeholder="#{frm_registro_contenedor_nombre_pholder}"
 							th:field="*{nombre}" required="required" />
 					</div>
 					<div class="col-xs-12 col-md-4">
 						<span class="help-block" th:if="${#fields.hasErrors('nombre')}"
 							th:errors="*{nombre}"></span>
 					</div>
-
 				</div>
-
-				<!-- matricula -->
-				<div id="nombre-group" class="form-group"
-					th:classappend="${#fields.hasErrors('matricula')}? 'has-error'">
-					<div class="col-xs-3 col-md-3">
-						<label for="matricula" class="col-form-label"
-							th:text="#{lbl_camion_matricula}"></label>
-					</div>
-					<div class="col-xs-9 col-md-5">
-						<input type="text" class="mayusculas form-control" maxlength="255"
-							id="matricula"
-							th:placeholder="#{frm_registro_camion_matricula_pholder}"
-							th:field="*{matricula}" />
-					</div>
-					<div class="col-xs-12 col-md-4">
-						<span class="help-block" th:if="${#fields.hasErrors('matricula')}"
-							th:errors="*{matricula}"></span>
-					</div>
-
-				</div>
-				<!-- modelo camion -->
+				<!-- modelo contenedor -->
 				<div class="form-group">
 					<div
-						th:classappend="${#fields.hasErrors('modeloCamion')} ? 'has-error'">
+						th:classappend="${#fields.hasErrors('modeloContenedor')} ? 'has-error'">
 						<div class="col-xs-3 col-md-3">
 							<label for="modelo" class="col-form-label"
 								th:text="#{lbl_modelo}+ '*'"> </label>
 						</div>
 						<div class="col-xs-9 col-md-5">
-							<div th:if="${todosLosModelos}"
-								class="input-group has-feedback col-xs-9 col-md-5">
-								<select th:field="*{modeloCamion}"
-									class="form-control col-xs-9 col-md-5" data-style="btn-default"
-									id="modelo">
+							<div th:if="${todosLosModelos}" class="input-group has-feedback">
+								<select th:field="*{modeloContenedor}" class="form-control"
+									data-style="btn-default" id="modelo">
 									<option th:if="${todosLosModelos}!=null"
 										th:each="row, index: ${todosLosModelos}" th:value="${row.id}"
 										th:text="${row.modelo}"></option>
@@ -103,144 +139,14 @@
 						</div>
 						<div class="col-xs-12 col-md-4">
 							<span class="help-block"
-								th:if="${#fields.hasErrors('modeloCamion')}"
-								th:errors="*{modeloCamion}"> <br>
+								th:if="${#fields.hasErrors('modeloContenedor')}"
+								th:errors="*{modeloContenedor}"> <br>
 							</span>
 						</div>
 
 
 					</div>
 				</div>
-
-
-				<!-- conductor -->
-
-				<div class="form-group">
-					<div
-						th:classappend="${#fields.hasErrors('conductorPrincipal')} ? 'has-error'">
-						<div class="col-xs-3 col-sm-3 col-md-3">
-							<label for="conductor" class="col-form-label"
-								th:text="#{lbl_conductor}"> </label>
-						</div>
-
-						<div class="col-xs-9 col-sm-6 col-md-5">
-							<div th:if="${conductoresActivos}"
-								class="input-group has-feedback">
-								<select th:field="*{conductorPrincipal}" class="form-control"
-									data-style="btn-default" id="conductor">
-									<option th:if="${conductoresActivos}!=null"
-										th:each="row, index: ${conductoresActivos}"
-										th:value="${row.id}"
-										th:text="${row.apellidos} + ' '  + ${row.nombre} + '-' + ${row.docId}"></option>
-								</select>
-							</div>
-						</div>
-						<div class="col-xs-12 col-md-4">
-							<span class="help-block"
-								th:if="${#fields.hasErrors('conductorPrincipal')}"
-								th:errors="*{conductorPrincipal}"> <br>
-							</span>
-						</div>
-
-
-					</div>
-				</div>
-
-
-				<!-- conductor suplente -->
-				<div class="form-group">
-					<div
-						th:classappend="${#fields.hasErrors('conductorSuplente')} ? 'has-error'">
-						<div class="col-xs-3 col-sm-3 col-md-3">
-							<label for="conductorSuplente" class="col-form-label"
-								th:text="#{lbl_conductor_suplente}"> </label>
-						</div>
-						<div class="col-xs-9 col-sm-6 col-md-5">
-							<div th:if="${conductoresActivos}"
-								class="input-group has-feedback">
-								<select th:field="*{conductorSuplente}" class="form-control"
-									data-style="btn-default" id="conductorSuplente">
-									<option value="" th:text="#{lbl_seleccione}"></option>
-									<option th:if="${conductoresActivos}!=null"
-										th:each="row, index: ${conductoresActivos}"
-										th:value="${row.id}"
-										th:text="${row.apellidos} + ' '  + ${row.nombre} + '-' + ${row.docId}"></option>
-								</select>
-							</div>
-						</div>
-						<div class="col-xs-12 col-md-4">
-							<span class="help-block"
-								th:if="${#fields.hasErrors('conductorSuplente')}"
-								th:errors="*{conductorSuplente}"> <br>
-							</span>
-						</div>
-					</div>
-				</div>
-
-
-				<!-- recogedor 1-->
-
-				<div class="form-group">
-					<div
-						th:classappend="${#fields.hasErrors('recogedorUno')} ? 'has-error'">
-						<div class="col-xs-3 col-sm-3 col-md-3">
-							<label for="recogedor1" class="col-form-label"
-								th:text="#{lbl_recolector}"> </label>
-						</div>
-
-						<div class="col-xs-9 col-sm-6 col-md-5">
-							<div th:if="${recolectoresActivos}"
-								class="input-group has-feedback">
-								<select th:field="*{recogedorUno}" class="form-control"
-									data-style="btn-default" id="recogedor1">
-									<option value="" th:text="#{lbl_seleccione}"></option>
-									<option th:if="${recolectoresActivos}!=null"
-										th:each="row, index: ${recolectoresActivos}"
-										th:value="${row.id}"
-										th:text="${row.apellidos} + ' '  + ${row.nombre} + '-' + ${row.docId}"></option>
-								</select>
-							</div>
-						</div>
-						<div class="col-xs-12 col-md-4">
-							<span class="help-block"
-								th:if="${#fields.hasErrors('recogedorUno')}"
-								th:errors="*{recogedorUno}"> <br>
-							</span>
-						</div>
-					</div>
-				</div>
-
-				<!-- recogedor 2 -->
-				<div class="form-group">
-					<div
-						th:classappend="${#fields.hasErrors('recogedorDos')} ? 'has-error'">
-
-						<div class="col-xs-3 col-sm-3 col-md-3">
-							<label for="recogedor2" class="col-form-label"
-								th:text="#{lbl_recolector}"> </label>
-						</div>
-						<div class="col-xs-9 col-sm-6 col-md-5">
-							<div th:if="${recolectoresActivos}"
-								class="input-group has-feedback">
-								<select th:field="*{recogedorDos}" class="form-control"
-									data-style="btn-default" id="recogedor2">
-									<option value="" th:text="#{lbl_seleccione}"></option>
-									<option th:if="${recolectoresActivos}!=null"
-										th:each="fila, index: ${recolectoresActivos}"
-										th:value="${fila.id}"
-										th:text="${fila.apellidos} + ' '  + ${fila.nombre} + '-' + ${fila.docId}"></option>
-								</select>
-							</div>
-						</div>
-						<div class="col-xs-12 col-md-4">
-							<span class="help-block"
-								th:if="${#fields.hasErrors('recogedorDos')}"
-								th:errors="*{recogedorDos}"> <br>
-							</span>
-						</div>
-					</div>
-				</div>
-
 				<!-- activo -->
 				<div class="col-xs-12">
 					<div class="col-xs-3"></div>
@@ -254,59 +160,6 @@
 					</div>
 					<div class="col-xs-3"></div>
 				</div>
-
-				<!-- fecha de alta => mostrar solo si se modifican los datos del camion, pero no se puede modificar -->
-
-				<div th:if="*{id}!=null" class="form-group row">
-					<div
-						th:classappend="${#fields.hasErrors('fechaAlta')} ? 'has-error'">
-						<label for="fechaBaja" class="col-sm-3 col-form-label"
-							th:text="#{lbl_fechaAlta}+ '*'"></label>
-						<div class="col-sm-9">
-							<div class="input-group date  has-feedback col-sm-6"
-								id="datetimePicker">
-								<input th:placeholder="#{fecha_formato}" type="text"
-									class="form-control" id="fechaAlta" th:field="*{fechaAlta}"
-									th:data-provide="datepicker" data-date-format="dd/mm/yyyy"
-									th:data-date-autoclose="true"
-									th:data-date-today-highlight="true"
-									th:data-date-orientation="bottom" disabled /> <span
-									class="glyphicon glyphicon-calendar form-control-feedback"></span>
-							</div>
-							<span class="help-block"
-								th:if="${#fields.hasErrors('fechaAlta')}"
-								th:errors="*{fechaAlta}" th:text="#{*{fechaAlta}}"> <br>
-							</span>
-						</div>
-					</div>
-				</div>
-
-				<!-- fecha de baja -->
-
-				<div class="form-group row">
-					<div
-						th:classappend="${#fields.hasErrors('fechaBaja')} ? 'has-error'">
-						<label for="fechaBaja" class="col-sm-3 col-form-label"
-							th:text="#{lbl_fechaBaja}+ '*'"></label>
-						<div class="col-sm-9">
-							<div class="input-group date  has-feedback col-sm-6"
-								id="datetimePicker">
-								<input th:placeholder="#{fecha_formato}" type="text"
-									class="form-control" id="fechaBaja" th:field="*{fechaBaja}"
-									th:data-provide="datepicker" data-date-format="dd/mm/yyyy"
-									th:data-date-autoclose="true"
-									th:data-date-today-highlight="true"
-									th:data-date-orientation="bottom" /> <span
-									class="glyphicon glyphicon-calendar form-control-feedback"></span>
-							</div>
-							<span class="help-block"
-								th:if="${#fields.hasErrors('fechaBaja')}"
-								th:errors="*{fechaBaja}" th:text="#{*{fechaBaja}}"> <br>
-							</span>
-						</div>
-					</div>
-				</div>
-
 			</fieldset>
 			<br>
 			<button class="btn btn-default btn-lg btn-block" type="submit"

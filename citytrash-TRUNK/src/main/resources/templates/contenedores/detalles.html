@@ -5,7 +5,7 @@
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{layouts/default}" th:with="currentPage='recursos'">
 <head>
-<title th:text="#{page_camiones_detalle}"></title>
+<title th:text="#{page_contenedores_detalle}"></title>
 </head>
 
 <body class="blanco">
@@ -13,34 +13,34 @@
 		th:remove="tag">
 
 		<div id="tabs" class="container">
-			<ul class="nav nav-tabs" id="detallesCamionModeloTab" role="tablist">
+			<ul class="nav nav-tabs" id="detallesContenedorModeloTab"
+				role="tablist">
 				<!-- Info  -->
 				<li role="welcome"><a class="nav-link active"
 					data-target="#welcome" aria-controls="welcome" role="tab"
 					data-toggle="tab" id="welcomeTab"
-					th:href="@{#{link.camiones.detalle.info}(id=${id})}"
+					th:href="@{#{link.contenedores.detalle.info}(id=${id})}"
 					aria-selected="true"> <i class="fa fa-home"></i> <label
 						th:text="#{lbl_detalles}"> </label>
 				</a></li>
 				<!-- detalles del modelo -->
 				<li role="modelo"><a data-target="#detallesDelModelo"
-					aria-controls="#modelo" role="tab" data-toggle="tab"
+					aria-controls="detallesDelModelo" role="tab" data-toggle="tab"
 					id="detallesDelModeloTab"
-					th:href="@{#{link.camiones.detalle.modelo}(id=${id})}"
+					th:href="@{#{link.contenedores.detalle.modelo}(id=${id})}"
 					aria-selected="false"> <label th:text="#{lbl_modelo}">
 					</label>
 				</a></li>
-
 				<!-- historial de rutas -->
 				<li role="historialRutas"><a data-target="#historialRutas"
 					aria-controls="historialRutas" role="tab" data-toggle="tab"
 					id="historialRutasTab"
-					th:href="@{#{link.camiones.detalle.rutas}(id=${id})}"
+					th:href="@{#{link.contenedores.detalle.rutas}(id=${id})}"
 					aria-selected="false"> <i class="fa fa-truck"></i> <label
 						th:text="#{lbl_historial_rutas}"> </label>
 				</a></li>
 			</ul>
-			<div class="tab-content" id="detallesCamionModeloTabContent">
+			<div class="tab-content" id="detallesContenedorModeloTabContent">
 				<div role="tabpanel" class="tab-pane" id="welcome"
 					aria-labelledby="info-tab"></div>
 
@@ -49,7 +49,6 @@
 
 				<div role="tabpanel" class="tab-pane" id="historialRutas"
 					aria-labelledby="historial-rutas-tab"></div>
-
 			</div>
 
 		</div>

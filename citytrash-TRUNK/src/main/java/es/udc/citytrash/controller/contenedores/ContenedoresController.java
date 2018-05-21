@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,11 +39,14 @@ import es.udc.citytrash.controller.excepciones.ResourceNotFoundException;
 import es.udc.citytrash.controller.util.AjaxUtils;
 import es.udc.citytrash.controller.util.WebUtils;
 import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorDto;
+import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorEditarDto;
 import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorFormBusq;
 import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorModeloDto;
+import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorModeloEditarDto;
 import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorModeloFormBusq;
 import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorModeloRegistroDto;
 import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorRegistroDto;
+import es.udc.citytrash.controller.util.dtos.tipoDeBasura.TipoDeBasuraDto;
 import es.udc.citytrash.model.contenedor.Contenedor;
 import es.udc.citytrash.model.contenedorModelo.ContenedorModelo;
 import es.udc.citytrash.model.contenedorService.ContenedorService;
@@ -59,14 +63,18 @@ public class ContenedoresController {
 	@Autowired
 	ContenedorService cServicio;
 
+	@Autowired
+	private ModelMapper modelMapper;
+
 	final Logger logger = LoggerFactory.getLogger(ContenedoresController.class);
 
 	@ModelAttribute("todosLosModelos")
 	public List<ContenedorModelo> getModelos() {
-		logger.info("todosLosModelos");
 		List<ContenedorModelo> modelos = new ArrayList<ContenedorModelo>();
 		modelos = cServicio.buscarTodosLosModelosOrderByModelo();
 		return modelos;
+		// return modelos.stream().map(modelo ->
+		// convertToDto(modelo)).collect(Collectors.toList());
 	}
 
 	@ModelAttribute("tiposDeBasura")
@@ -74,6 +82,8 @@ public class ContenedoresController {
 		List<TipoDeBasura> tipos = new ArrayList<TipoDeBasura>();
 		tipos = cServicio.buscarTiposDeBasura();
 		return tipos;
+		// return tipos.stream().map(tipo ->
+		// convertToDto(tipo)).collect(Collectors.toList());
 	}
 
 	@RequestMapping(value = { WebUtils.REQUEST_MAPPING_CONTENEDORES, "" }, method = RequestMethod.GET)
@@ -100,6 +110,7 @@ public class ContenedoresController {
 		model.addAttribute("busquedaForm", busquedaForm);
 		try {
 			page = cServicio.buscarContenedores(pageRequest, busquedaForm);
+
 		} catch (DataAccessException e) {
 			throw new PageNotFoundException(String.format("The requested page (%s) of the worker list was not found.",
 					pageRequest.getPageNumber()));
@@ -186,11 +197,14 @@ public class ContenedoresController {
 		try {
 
 			contenedor = cServicio.buscarContenedorById(id);
-			ContenedorDto dto = new ContenedorDto(contenedor);
+			ContenedorEditarDto dto = new ContenedorEditarDto(contenedor);
+			// ContenedorEditarDto dto = modelMapper.map(contenedor,
+			// ContenedorEditarDto.class);
+			// logger.info("CONTENEDOREDITARDTO => " + dto.toString());
 			model.addAttribute("contenedorForm", dto);
-			model.addAttribute("msg", msg);
 			model.addAttribute("type", type);
 			model.addAttribute("key", contenedor.getNombre());
+			model.addAttribute("key", "");
 
 			if (AjaxUtils.isAjaxRequest(requestedWith))
 				return WebUtils.VISTA_CONTENEDORES_EDITAR.concat(" ::content");
@@ -213,7 +227,6 @@ public class ContenedoresController {
 			throws ResourceNotFoundException {
 		logger.info("paso1 POST REQUEST_MAPPING_CONTENEDORES_REGISTRO");
 		model.addAttribute("contenedorForm", form);
-		ContenedorDto contenedorDto;
 		/* CHECK THE FORM */
 		if (result.hasErrors()) {
 			if (AjaxUtils.isAjaxRequest(requestedWith)) {
@@ -222,7 +235,10 @@ public class ContenedoresController {
 			return WebUtils.VISTA_CONTENEDORES_REGISTRO;
 		}
 		try {
-			contenedorDto = new ContenedorDto(cServicio.registrarContenedor(form));
+			ContenedorEditarDto contenedorDto = new ContenedorEditarDto(cServicio.registrarContenedor(form));
+			// ContenedorEditarDto contenedorDto =
+			// modelMapper.map(cServicio.registrarContenedor(form),
+			// ContenedorEditarDto.class);
 			redirectAttributes.addAttribute("msg", "ok");
 			redirectAttributes.addAttribute("type", "reg_cont");
 			response.setHeader("X-Requested-With", requestedWith);
@@ -247,11 +263,12 @@ public class ContenedoresController {
 	}
 
 	@RequestMapping(value = WebUtils.REQUEST_MAPPING_CONTENEDORES_EDITAR, method = RequestMethod.POST)
-	public String modificarContenedor(@ModelAttribute("contenedorForm") @Valid ContenedorDto form, BindingResult result,
-			HttpServletRequest request, Errors errors, Model model, RedirectAttributes redirectAttributes,
+	public String modificarContenedor(@ModelAttribute("contenedorForm") @Valid ContenedorEditarDto form,
+			BindingResult result, HttpServletRequest request, Errors errors, Model model,
+			RedirectAttributes redirectAttributes,
 			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
 		logger.info("POST REQUEST_MAPPING_CONTENEDORES_EDITAR");
-		ContenedorDto contenedor;
+		ContenedorEditarDto contenedor;
 
 		if (result.hasErrors()) {
 			model.addAttribute("contenedorForm", form);
@@ -261,7 +278,11 @@ public class ContenedoresController {
 			return WebUtils.VISTA_CONTENEDORES_EDITAR;
 		}
 		try {
-			contenedor = new ContenedorDto(cServicio.modificarContenedor(form));
+			contenedor = new ContenedorEditarDto(cServicio.modificarContenedor(form));
+
+			// contenedor = modelMapper.map(cServicio.modificarContenedor(form),
+			// ContenedorEditarDto.class);
+
 			model.addAttribute("contenedorForm", contenedor);
 		} catch (DuplicateInstanceException e) {
 			model = duplicateInstanceException(model, e);
@@ -321,11 +342,17 @@ public class ContenedoresController {
 			throws ResourceNotFoundException {
 		logger.info("GET URL_MAPPING_CONTENEDORES_DETALLES_INFO_CONTENEDOR");
 		try {
-			ContenedorDto contenedorDto = new ContenedorDto(cServicio.buscarContenedorById(id));
+			ContenedorEditarDto contenedorDto = new ContenedorEditarDto(cServicio.buscarContenedorById(id));
+			// ContenedorModelo modelo =
+			// cServicio.buscarModeloById(contenedorDto.getModeloContenedor());
+			TipoDeBasura tipo = cServicio.buscarTipoDeBasuraByModelo(contenedorDto.getModeloContenedor());
+			// ContenedorEditarDto contenedorDto =
+			// modelMapper.map(cServicio.buscarContenedorById(id),
+			// ContenedorEditarDto.class);
 			model.addAttribute("objecto", contenedorDto);
 			model.addAttribute("id", contenedorDto.getId());
 			model.addAttribute("nombreDelContenedor", contenedorDto.getNombre());
-
+			model.addAttribute("tipoDeBasura", tipo);
 			if (AjaxUtils.isAjaxRequest(requestedWith))
 				return WebUtils.VISTA_CONTENEDORES_DETALLES_INFO_CONTENEDOR.concat("::content");
 			return WebUtils.VISTA_CONTENEDORES_DETALLES_INFO_CONTENEDOR;
@@ -341,16 +368,24 @@ public class ContenedoresController {
 			throws ResourceNotFoundException {
 		logger.info("GET REQUEST_MAPPING_CONTENEDORES_DETALLES_INFO_MODELO");
 		try {
+			/*
+			 * ContenedorDto contenedor =
+			 * modelMapper.map(cServicio.buscarContenedorById(id),
+			 * ContenedorDto.class); ContenedorModeloDto modelo =
+			 * modelMapper.map(cServicio.buscarModeloById(contenedor.getModelo()
+			 * .getId()), ContenedorModeloDto.class);
+			 */
 			Contenedor contenedor = cServicio.buscarContenedorById(id);
 			ContenedorModelo modelo = cServicio.buscarModeloById(contenedor.getModelo().getId());
+			TipoDeBasura tipo = cServicio.buscarTipoDeBasuraByModelo(modelo.getId());
 
 			model.addAttribute("objecto", modelo);
 			model.addAttribute("id", contenedor.getId());
 			model.addAttribute("nombreDelContenedor", contenedor.getNombre());
 			model.addAttribute("nombreDelModelo", modelo.getModelo() != null ? modelo.getModelo() : "_no_tiene_nombre");
-			model.addAttribute("modeloTipoDeBasura", modelo.getTipo());
-			model.addAttribute("colorTipoDeBasura", modelo.getTipo().getColor());
+			model.addAttribute("tipoDeBasura", tipo);
 
+			logger.info("PASA POR AQUI 1");
 			if (AjaxUtils.isAjaxRequest(requestedWith))
 				return WebUtils.VISTA_CONTENEDORES_DETALLES_MODELO.concat("::content");
 			return WebUtils.VISTA_CONTENEDORES_DETALLES_MODELO;
@@ -519,7 +554,7 @@ public class ContenedoresController {
 			throws ResourceNotFoundException {
 		logger.info("POST REQUEST_MAPPING_CONTENEDORES_POST_MODELO registrar");
 		model.addAttribute("modeloRegistroForm", form);
-		ContenedorModeloDto modelo;
+		ContenedorModeloEditarDto modelo;
 		/* CHECK THE FORM */
 		if (result.hasErrors()) {
 			if (AjaxUtils.isAjaxRequest(requestedWith)) {
@@ -529,7 +564,7 @@ public class ContenedoresController {
 		}
 		try {
 			/* Registrar modelo */
-			modelo = new ContenedorModeloDto(cServicio.registrarModelo(form));
+			modelo = new ContenedorModeloEditarDto(cServicio.registrarModelo(form));
 			redirectAttributes.addAttribute("msg", "ok");
 			redirectAttributes.addAttribute("type", "reg_cont_modelo");
 			response.setHeader("X-Requested-With", requestedWith);
@@ -565,7 +600,7 @@ public class ContenedoresController {
 		ContenedorModelo modelo;
 		try {
 			modelo = cServicio.buscarModeloById(id);
-			ContenedorModeloDto dto = new ContenedorModeloDto(modelo);
+			ContenedorModeloEditarDto dto = new ContenedorModeloEditarDto(modelo);
 			model.addAttribute("msg", msg);
 			model.addAttribute("type", type);
 			model.addAttribute("key", dto.getNombre());
@@ -580,14 +615,14 @@ public class ContenedoresController {
 
 	/* POST MODELO CONTENEDORES => MODIFICAR */
 	@RequestMapping(value = WebUtils.REQUEST_MAPPING_CONTENEDORES_EDITAR_MODELO, method = RequestMethod.POST)
-	public String editarModelo(@ModelAttribute("contenedorModeloForm") @Valid ContenedorModeloDto form,
+	public String editarModelo(@ModelAttribute("contenedorModeloForm") @Valid ContenedorModeloEditarDto form,
 			BindingResult result, HttpServletRequest request, HttpServletResponse response, Errors errors, Model model,
 			RedirectAttributes redirectAttributes,
 			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
 		logger.info("POST REQUEST_MAPPING_CONTENEDORES_POST_MODELO modificar");
 
 		model.addAttribute("contenedorModelForm", form);
-		ContenedorModeloDto modelo;
+		ContenedorModeloEditarDto modelo;
 
 		if (result.hasErrors()) {
 			if (AjaxUtils.isAjaxRequest(requestedWith)) {
@@ -596,7 +631,7 @@ public class ContenedoresController {
 			return WebUtils.VISTA_CONTENEDORES_MODELOS_EDITAR;
 		}
 		try {
-			modelo = new ContenedorModeloDto(cServicio.modificarModelo(form));
+			modelo = new ContenedorModeloEditarDto(cServicio.modificarModelo(form));
 
 			redirectAttributes.addAttribute("msg", "ok");
 			redirectAttributes.addAttribute("type", "mod_cont_modelo");
@@ -642,56 +677,30 @@ public class ContenedoresController {
 	}
 
 	@RequestMapping(value = {
-			WebUtils.REQUEST_MAPPING_CCONTENEDORES_DETALLES_MODELO_INFO_COTENEDOR }, method = RequestMethod.GET)
-	public String modelosDetallesContenedor(@PathVariable("id") int id,
-			@PageableDefault(size = WebUtils.DEFAULT_PAGE_SIZE, page = WebUtils.DEFAULT_PAGE_NUMBER, direction = Direction.DESC) @SortDefault("id") Pageable pageRequest,
-			@RequestParam(value = "buscar", required = false, defaultValue = "") String palabrasClaves,
-			@RequestParam(value = "mostrarSoloContenedoresActivos", required = false, defaultValue = "false") Boolean activos,
-			@RequestParam(value = "mostrarSoloContenedoresDeAlta", required = false, defaultValue = "false") Boolean alta,
-			@RequestParam(value = "tipos", required = false) List<Integer> types, Model model,
+			WebUtils.REQUEST_MAPPING_CONTENEDORES_DETALLES_MODELO_INFO_MODELO }, method = RequestMethod.GET)
+	public String modelosDetallesContenedor(@PathVariable("id") int id, Model model,
 			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith)
 			throws ResourceNotFoundException {
-		logger.info("GET REQUEST_MAPPING_CCONTENEDORES_DETALLES_MODELO_INFO_COTENEDOR");
-		List<Contenedor> contenedoresList = new ArrayList<Contenedor>();
-		Page<Contenedor> page = new PageImpl<Contenedor>(contenedoresList, pageRequest, contenedoresList.size());
-		model.addAttribute("pageContenedores", page);
-
+		logger.info("GET REQUEST_MAPPING_CCONTENEDORES_DETALLES_MODELO_INFO_MODELO");
 		try {
-
 			ContenedorModelo modelo = cServicio.buscarModeloById(id);
-			ContenedorFormBusq busquedaForm = new ContenedorFormBusq();
-			busquedaForm.setBuscar(palabrasClaves);
-			busquedaForm.setModelo(id);
-			busquedaForm.setTiposDeBasura(types);
-			busquedaForm.setMostrarSoloContenedoresActivos(activos);
-			busquedaForm.setMostrarSoloContenedoresDeAlta(alta);
-
-			model.addAttribute("busquedaForm", busquedaForm);
+			TipoDeBasura tipo = cServicio.buscarTipoDeBasuraByModelo(modelo.getId());
 			model.addAttribute("objecto", modelo);
-			model.addAttribute("id", modelo.getId());
-			model.addAttribute("nombreDelModelo", modelo.getModelo());
-			model.addAttribute("colorTiposDeBasura", modelo.getTipo().getColor());
+			model.addAttribute("id", id);
+			model.addAttribute("nombreDelModelo", modelo.getModelo() != null ? modelo.getModelo() : "_no_tiene_nombre");
+			model.addAttribute("tipoDeBasura", tipo);
 
-			busquedaForm.setModelo(modelo.getId());
-			page = cServicio.buscarContenedores(pageRequest, busquedaForm);
-			model.addAttribute("pageContenedores", page);
-
-			if (page.getNumberOfElements() == 0) {
-				if (!page.isFirst()) {
-					logger.info("PageNotFoundException");
-					throw new PageNotFoundException(String.format(
-							"The requested page (%s) of the worker list was not found.", pageRequest.getPageNumber()));
-				}
-			}
+			logger.info("PASA POR AQUI 1");
 			if (AjaxUtils.isAjaxRequest(requestedWith))
-				return WebUtils.VISTA_CONTENEDORES_DETALLES_INFO_CONTENEDOR.concat("::content");
-			return WebUtils.VISTA_CONTENEDORES_DETALLES_INFO_CONTENEDOR;
+				return WebUtils.VISTA_CONTENEDORES_DETALLES_MODELO.concat("::content");
+			return WebUtils.VISTA_CONTENEDORES_DETALLES_MODELO;
 
 		} catch (InstanceNotFoundException e) {
 			throw new ResourceNotFoundException(id);
-		} catch (DataAccessException e) {
-			throw new PageNotFoundException(String.format("The requested page (%s) of the worker list was not found.",
-					pageRequest.getPageNumber()));
+		} catch (Exception e) {
+			model.addAttribute("error", e);
+			model.addAttribute("type", "Exception");
+			return WebUtils.VISTA_CONTENEDORES_DETALLES_MODELO;
 		}
 	}
 
@@ -721,4 +730,27 @@ public class ContenedoresController {
 		model.addAttribute("key", "");
 		return model;
 	}
+
+	private TipoDeBasuraDto convertToDto(TipoDeBasura tipo) {
+		// TipoDeBasuraDto postDto = modelMapper.map(tipo,
+		// TipoDeBasuraDto.class);
+		// postDto.setColor(tipo.getColor());
+		TipoDeBasuraDto postDto = new TipoDeBasuraDto(tipo);
+		return postDto;
+	}
+
+	private ContenedorModeloDto convertToDto(ContenedorModelo modelo) {
+		// ContenedorModeloDto postDto = modelMapper.map(modelo,
+		// ContenedorModeloDto.class);
+		ContenedorModeloDto postDto = new ContenedorModeloDto(modelo);
+		return postDto;
+	}
+
+	private ContenedorDto convertToDto(Contenedor contenedor) {
+		// ContenedorDto postDto = modelMapper.map(contenedor,
+		// ContenedorDto.class);
+		ContenedorDto postDto = new ContenedorDto(contenedor);
+		return postDto;
+	}
+
 }

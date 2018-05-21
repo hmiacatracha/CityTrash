@@ -105,17 +105,20 @@
 
 								<th><a class="sorted" sd:pagination-sort="volumenTolva"
 									th:text="${#strings.toUpperCase('__#{lbl_camion_modelo_volumenTolva}__')}">
-								</a></th>
+								</a> <var>(m</var> <sup>3</sup>)</th>
 
 								<th><a class="sorted" sd:pagination-sort="altura"
-									th:text="${#strings.toUpperCase('__#{lbl_camion_modelo_altura}__')}"></a></th>
+									th:text="${#strings.toUpperCase('__#{lbl_camion_modelo_altura}__')}"></a>
+									<var>(mm)</var></th>
 
 								<th><a class="sorted" sd:pagination-sort="ancho"
-									th:text="${#strings.toUpperCase('__#{lbl_camion_modelo_ancho}__')}"></a></th>
+									th:text="${#strings.toUpperCase('__#{lbl_camion_modelo_ancho}__')}"></a>
+									<var>(mm)</var></th>
 
 								<th><a class="sorted" sd:pagination-sort="longitud"
 									th:text="${#strings.toUpperCase('__#{lbl_camion_modelo_longitud}__')}">
-								</a></th>
+
+								</a> <var>(mm)</var></th>
 
 								<th
 									th:text="${#strings.toUpperCase('__#{frm_header_modelos_tipos}__')}">
