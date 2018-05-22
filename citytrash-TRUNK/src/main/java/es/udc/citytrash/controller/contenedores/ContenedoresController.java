@@ -96,7 +96,6 @@ public class ContenedoresController {
 			@RequestParam(value = "mostrarSoloContenedoresDeAlta", required = false, defaultValue = "false") Boolean alta,
 			Model model, @RequestHeader(value = "X-Requested-With", required = false) String requestedWith)
 			throws ResourceNotFoundException {
-
 		List<Contenedor> contenedoresList = new ArrayList<Contenedor>();
 		Page<Contenedor> page = new PageImpl<Contenedor>(contenedoresList, pageRequest, contenedoresList.size());
 		logger.info("GET REQUEST_MAPPING_CONTENEDORES");

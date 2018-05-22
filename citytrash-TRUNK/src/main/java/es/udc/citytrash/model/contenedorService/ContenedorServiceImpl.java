@@ -289,31 +289,34 @@ public class ContenedorServiceImpl implements ContenedorService {
 				contenedoresList.size());
 		List<TipoDeBasura> tipos = new ArrayList<TipoDeBasura>();
 		/* Agregamos los tipos de basura */
-		for (Integer t : formBusqueda.getTipos()) {
-			try {
-				TipoDeBasura tb = tipoDao.buscarById(Integer.valueOf(t.toString()));
-				tipos.add(tb);
-			} catch (NumberFormatException | InstanceNotFoundException e) {
+		if (formBusqueda.getTipos() != null) {
+			for (Integer t : formBusqueda.getTipos()) {
+				try {
+					TipoDeBasura tb = tipoDao.buscarById(Integer.valueOf(t.toString()));
+					tipos.add(tb);
+				} catch (NumberFormatException | InstanceNotFoundException e) {
+
+				}
 			}
 		}
+
 		if (formBusqueda.getPalabrasClaveModelo().trim().isEmpty() && tipos.isEmpty()) {
 			page = modeloDao.buscarContenedorModelo(pageable);
 		} else {
 			page = modeloDao.buscarContenedorModelo(pageable, formBusqueda.getPalabrasClaveModelo(), tipos);
 		}
+
 		return page;
 	}
 
 	@Override
 	public Page<Contenedor> buscarContenedores(Pageable pageable, ContenedorFormBusq form) {
 		logger.info("buscarContenedores");
-		logger.info("IMPRIMIENDO formbusqueda buscar contenedores => " + form.toString());
 		ContenedorModelo modelo = null;
 		List<Contenedor> contenedoresList = new ArrayList<Contenedor>();
 		Page<Contenedor> page = new PageImpl<Contenedor>(contenedoresList, pageable, contenedoresList.size());
 		List<TipoDeBasura> tipos = new ArrayList<TipoDeBasura>();
 		/* Agregamos los tipos de basura */
-		logger.info("antes 1");
 		if (form.getTiposDeBasura() != null) {
 			for (Integer t : form.getTiposDeBasura()) {
 				try {
@@ -324,10 +327,7 @@ public class ContenedorServiceImpl implements ContenedorService {
 				}
 			}
 		}
-		logger.info("despues 1");
-
-		logger.info("antes 2");
-
+		/* Bucamos el modelo */
 		try {
 			if (form.getModelo() != null) {
 				modelo = modeloDao.buscarById(Integer.valueOf(form.getModelo()));
@@ -337,18 +337,14 @@ public class ContenedorServiceImpl implements ContenedorService {
 		} catch (InstanceNotFoundException e) {
 			modelo = null;
 		}
-		logger.info("despues 2");
 
+		/* Realiamos la búsqueda */
 		if (tipos.isEmpty() && modelo == null && form.getBuscar().isEmpty()) {
-			logger.info("PASO1");
 			page = contenedorDao.buscarContenedores(pageable, form.getMostrarSoloContenedoresActivos(),
 					form.getMostrarSoloContenedoresDeAlta());
-			logger.info("PASO1 PAGE =>" + page);
 		} else {
-			logger.info("PASO1");
 			page = contenedorDao.buscarContenedores(pageable, form.getBuscar(), modelo, tipos,
 					form.getMostrarSoloContenedoresActivos(), form.getMostrarSoloContenedoresDeAlta());
-			logger.info("PASO1 PAGE =>" + page);
 		}
 		return page;
 	}

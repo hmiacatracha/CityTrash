@@ -84,36 +84,51 @@ public class ContenedorModeloDaoHibernate extends GenericHibernateDAOImpl<Conten
 	public Page<ContenedorModelo> buscarContenedorModelo(Pageable pageable, String palabrasClaveModelo,
 			List<TipoDeBasura> tipos) {
 		String alias = "m";
+
+		logger.info("buscarContenedorModelo paso1");
 		Query<ContenedorModelo> query;
 		List<ContenedorModelo> modelos = new ArrayList<ContenedorModelo>();
 		Page<ContenedorModelo> page = new PageImpl<ContenedorModelo>(modelos, pageable, modelos.size());
+		logger.info("buscarContenedorModelo paso2");
 		String[] palabras = palabrasClaveModelo.length() > 0 ? palabrasClaveModelo.split(" ") : new String[0];
+		logger.info("buscarContenedorModelo paso3");
+		List<TipoDeBasura> tiposAux = tipos != null ? tipos : new ArrayList<TipoDeBasura>();
 
+		logger.info("buscarContenedorModelo paso4");
 		StringBuilder hql = new StringBuilder("Select " + alias + " FROM ContenedorModelo " + alias);
-		StringBuilder condicion = new StringBuilder();
-		StringBuilder orden = new StringBuilder();
 
+		logger.info("buscarContenedorModelo paso5");
 		for (int i = 0; i < palabras.length; i++) {
 			if (i != 0)
-				condicion.append(" AND LOWER(" + alias + ".modelo) LIKE  LOWER (?) ");
+				hql.append(" AND LOWER(" + alias + ".modelo) LIKE  LOWER (?) ");
 			else
-				condicion.append(" WHERE LOWER(" + alias + ".modelo) LIKE  LOWER (?) ");
+				hql.append(" WHERE LOWER(" + alias + ".modelo) LIKE  LOWER (?) ");
 		}
-
-		if ((palabras.length > 0) && tipos != null) {
-			hql.append(" AND " + alias + ".t.modelo = :modelo");
-		} else if (tipos != null) {
-			hql.append(" WHERE " + alias + ".modelo = :modelo");
+		if ((palabras.length > 0) && (tiposAux.size() > 0)) {
+			hql.append(" AND " + alias + ".tipo in (:tipos) ");
+		} else if (tipos.size() > 0) {
+			hql.append(" WHERE " + alias + ".tipo in (:tipos)");
 		}
 
 		/* Sorted */
 		String order = StringUtils
 				.collectionToCommaDelimitedString(StreamSupport.stream(pageable.getSort().spliterator(), false)
 						.map(o -> alias + "." + o.getProperty() + " " + o.getDirection()).collect(Collectors.toList()));
-		orden.append(" ORDER BY " + order);
+		hql.append(" ORDER BY " + order);
 
+		logger.info("buscarContenedorModelo paso6");
 		query = getSession().createQuery(hql.toString(), ContenedorModelo.class);
 
+		logger.info("buscarContenedorModelo paso7 => " + hql.toString());
+		/* set parameters */
+		for (int i = 0; i < palabras.length; i++) {
+			query.setParameter(i, "%" + palabras[i] + "%");
+		}
+
+		if (tiposAux.size() > 0)
+			query.setParameter("tipos", tipos);
+
+		logger.info("buscarContenedorModelo paso9");
 		modelos = query.list();
 		int start = pageable.getOffset();
 		int end = (start + pageable.getPageSize()) > modelos.size() ? modelos.size() : (start + pageable.getPageSize());

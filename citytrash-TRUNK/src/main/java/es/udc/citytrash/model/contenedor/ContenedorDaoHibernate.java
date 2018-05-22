@@ -143,11 +143,12 @@ public class ContenedorDaoHibernate extends GenericHibernateDAOImpl<Contenedor, 
 
 	@Override
 	public Page<Contenedor> buscarContenedores(Pageable pageable, String palabrasClaves, ContenedorModelo modelo,
-			List<TipoDeBasura> tipos, boolean mostrarSoloActivos, boolean mostrarSoloContenedoresDeAlta) {
+			List<TipoDeBasura> tiposDeBasura, boolean mostrarSoloActivos, boolean mostrarSoloContenedoresDeAlta) {
 		Query<Contenedor> query;
 		List<Contenedor> contenedores = new ArrayList<Contenedor>();
-		String[] palabras = palabrasClaves.split(" ");
+		String[] palabras = palabrasClaves.length() > 0 ? palabrasClaves.split(" ") : new String[0];
 		Page<Contenedor> page = new PageImpl<Contenedor>(contenedores, pageable, contenedores.size());
+		List<TipoDeBasura> tipos = tiposDeBasura != null ? tiposDeBasura : new ArrayList<TipoDeBasura>();
 		String alias = "c";
 		StringBuilder hql = new StringBuilder("Select " + alias + " FROM Contenedor " + alias);
 
