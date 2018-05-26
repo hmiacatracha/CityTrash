@@ -310,6 +310,36 @@ public class ContenedorServiceImpl implements ContenedorService {
 	}
 
 	@Override
+	public List<Contenedor> buscarContenedores(ContenedorFormBusq form) {
+		ContenedorModelo modelo = null;
+		List<TipoDeBasura> tipos = new ArrayList<TipoDeBasura>();
+
+		/* tipos de basura */
+		if (form.getTiposDeBasura() != null) {
+			for (Integer t : form.getTiposDeBasura()) {
+				try {
+					TipoDeBasura tb = tipoDao.buscarById(Integer.valueOf(t.toString()));
+					tipos.add(tb);
+				} catch (NumberFormatException | InstanceNotFoundException e) {
+
+				}
+			}
+		}
+		/* Bucamos el modelo */
+		try {
+			if (form.getModelo() != null) {
+				modelo = modeloDao.buscarById(Integer.valueOf(form.getModelo()));
+			} else {
+				modelo = null;
+			}
+		} catch (InstanceNotFoundException e) {
+			modelo = null;
+		}
+		return contenedorDao.buscarContenedores(form.getBuscar() != null ? form.getBuscar() : "", modelo, tipos,
+				form.getMostrarSoloContenedoresActivos(), form.getMostrarSoloContenedoresDeAlta());
+	}
+
+	@Override
 	public Page<Contenedor> buscarContenedores(Pageable pageable, ContenedorFormBusq form) {
 		logger.info("buscarContenedores");
 		ContenedorModelo modelo = null;

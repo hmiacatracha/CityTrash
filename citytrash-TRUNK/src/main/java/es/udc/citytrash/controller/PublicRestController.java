@@ -1,7 +1,14 @@
 package es.udc.citytrash.controller;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.servlet.http.HttpServletResponse;
 
+import org.geojson.Feature;
+import org.geojson.FeatureCollection;
+import org.geojson.Point;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +18,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorFormBusq;
+import es.udc.citytrash.controller.util.dtos.contenedor.Localizacion;
+import es.udc.citytrash.controller.util.dtos.contenedor.MapaContenedoresDto;
+import es.udc.citytrash.model.contenedor.Contenedor;
+import es.udc.citytrash.model.contenedorModelo.ContenedorModelo;
+import es.udc.citytrash.model.contenedorService.ContenedorService;
+import es.udc.citytrash.model.tipoDeBasura.TipoDeBasura;
 import es.udc.citytrash.model.trabajadorService.TrabajadorService;
 import es.udc.citytrash.model.usuarioService.UsuarioService;
 import es.udc.citytrash.model.util.excepciones.InstanceNotFoundException;
@@ -26,9 +40,77 @@ public class PublicRestController {
 	TrabajadorService tservicio;
 
 	@Autowired
+	ContenedorService cServicio;
+
+	@Autowired
 	UsuarioService usuarioService;
 
+	@Autowired
+	private ModelMapper modelMapper;
+
 	final Logger logger = LoggerFactory.getLogger(PublicRestController.class);
+
+	@RequestMapping(value = "/contenedores/geojson", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody FeatureCollection getContenedoresGeoJson() {
+		ContenedorFormBusq form = new ContenedorFormBusq();
+		FeatureCollection featureCollection = new FeatureCollection();
+		List<Contenedor> contenedores = cServicio.buscarContenedores(form);
+		TipoDeBasura tipo;
+		ContenedorModelo modelo;
+
+		for (Contenedor contenedor : contenedores) {
+			Feature feature = new Feature();
+			Point geometry = new Point(contenedor.getLatitud().doubleValue(), contenedor.getLongitud().doubleValue());
+			feature.setGeometry(geometry);
+			feature.setProperty("id", contenedor.getId());
+			feature.setProperty("nombre", contenedor.getNombre());
+
+			try {
+				modelo = cServicio.buscarModeloById(contenedor.getModelo().getId());
+				tipo = cServicio.buscarTipoDeBasuraByModelo(contenedor.getModelo().getId());
+				feature.setProperty("tipo", tipo.getTipo());
+				feature.setProperty("color", "#" + tipo.getColor());
+				feature.setProperty("capacidad_nominal", modelo.getCapacidadNominal());
+				feature.setProperty("carga_nominal", modelo.getCargaNominal());
+				feature.setProperty("profundidad", modelo.getProfundidad());
+				feature.setProperty("peso_Vacio", modelo.getPesoVacio());
+			} catch (InstanceNotFoundException e) {
+				feature.setProperty("tipo", "UNKOWN");
+				feature.setProperty("color", "#000000");
+				feature.setProperty("capacidad_nominal", "0");
+				feature.setProperty("carga_nominal", "0");
+				feature.setProperty("profundidad", "0");
+				feature.setProperty("peso_Vacio", "0");
+			}
+			featureCollection.add(feature);
+		}
+		return featureCollection;
+	}
+
+	@RequestMapping(value = "/contenedores/json", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody List<MapaContenedoresDto> getContenedoresByLocalizacion() {
+		ContenedorFormBusq form = new ContenedorFormBusq();
+		List<Contenedor> contenedores = cServicio.buscarContenedores(form);
+		return contenedores.stream().map(contenedor -> convertToDto(contenedor)).collect(Collectors.toList());
+	}
+
+	private MapaContenedoresDto convertToDto(Contenedor contenedor) {
+		MapaContenedoresDto dto = new MapaContenedoresDto();
+
+		try {
+			TipoDeBasura tipo = cServicio.buscarTipoDeBasuraByModelo(contenedor.getModelo().getId());
+			dto.setTipo(tipo.getTipo());
+		} catch (InstanceNotFoundException e) {
+			dto.setTipo("");
+		}
+		Localizacion localizacion = new Localizacion();
+		localizacion.setLatitude(contenedor.getLatitud());
+		localizacion.setLongitude(contenedor.getLongitud());
+		dto.setLocalizacion(localizacion);
+		dto.setNombre(contenedor.getNombre());
+		dto.setId(contenedor.getId());
+		return dto;
+	}
 
 	@RequestMapping(value = "/cuenta/validarEmail", method = RequestMethod.POST, produces = "application/json")
 	public @ResponseBody Boolean validarEmail(HttpServletResponse response,

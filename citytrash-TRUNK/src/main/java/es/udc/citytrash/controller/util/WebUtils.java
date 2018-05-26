@@ -95,6 +95,12 @@ public class WebUtils {
 	public static final String VISTA_CONTENEDORES_MODELOS_DETALLES_CONTENEDORES = VISTA_CONTENEDORES_MODELOS_PREFIX
 			+ "detalles/contenedores";
 
+	/* PAQUETE MAPAS */
+	public static final String VISTA_MAPA_PREFIX = "mapas/";
+	public static final String VISTA_MAPA_CONTENEDORES = VISTA_MAPA_PREFIX + "/contenedores2";
+	public static final String VISTA_MAPA_RUTAS = VISTA_MAPA_PREFIX + "/rutas";
+	public static final String VISTA_MAPA_RUTA_NAVEGAR = VISTA_MAPA_PREFIX + "/navegar";
+
 	/**
 	 * URLS
 	 */
@@ -256,8 +262,16 @@ public class WebUtils {
 
 	public static final String URL_MAPPING_CONTENEDORES_REGISTRAR_MODELO = "/contenedores/modelos/registrar";
 	public static final String REQUEST_MAPPING_CONTENEDORESS_REGISTRAR_MODELO = "/modelos/registrar";
-	// public static final String
-	// URL_MAPPING_CONTENEDORES_DETALLES_INFO_SENSORES = null;
+
+	// URLS MAPAS
+	public static final String URL_MAPPING_MAPA_CONTENEDORES = "/contenedores/map";
+	public static final String REQUEST_MAPPING_MAPA_CONTENEDORES = "contenedores/map";
+
+	public static final String URL_MAPPING_MAPA_RUTAS = "rutas/map";
+	public static final String REQUEST_MAPPING_MAPA_RUTAS = "rutas/map";
+
+	public static final String URL_MAPPING_MAPA_RUTA_NAVEGAR = "rutas/id/map";
+	public static final String REQUEST_MAPPING_MAPA_RUTA_NAVEGAR = "rutas/id/map";
 
 	public static String getUrlWithContextPath(HttpServletRequest request) {
 		return request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()

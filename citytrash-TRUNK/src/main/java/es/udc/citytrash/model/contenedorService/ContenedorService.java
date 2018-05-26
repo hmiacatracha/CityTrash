@@ -162,7 +162,7 @@ public interface ContenedorService {
 	 * 
 	 * @param pageable
 	 * @param formBusqueda
-	 * @return
+	 * @return Pageable
 	 */
 	Page<ContenedorModelo> buscarModelos(Pageable pageable, ContenedorModeloFormBusq formBusqueda);
 
@@ -171,8 +171,15 @@ public interface ContenedorService {
 	 * 
 	 * @param pageable
 	 * @param formBusqueda
-	 * @return
+	 * @return Pageable
 	 */
 	Page<Contenedor> buscarContenedores(Pageable pageable, ContenedorFormBusq formBusqueda);
+
+	/**
+	 * Buscar contenedores
+	 * @param formBusqueda formulario de busqueda
+	 * @return List
+	 */
+	List<Contenedor> buscarContenedores(ContenedorFormBusq form);
 
 }

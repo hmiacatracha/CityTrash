@@ -232,4 +232,69 @@ public class ContenedorDaoHibernate extends GenericHibernateDAOImpl<Contenedor, 
 		return page;
 
 	}
+
+	@Override
+	public List<Contenedor> buscarContenedores(String palabrasClaves, ContenedorModelo modelo,
+			List<TipoDeBasura> tiposDeBasura, boolean mostrarSoloActivos, boolean mostrarSoloContenedoresDeAlta) {
+		Query<Contenedor> query;
+		String[] palabras = palabrasClaves.length() > 0 ? palabrasClaves.split(" ") : new String[0];
+		List<TipoDeBasura> tipos = tiposDeBasura != null ? tiposDeBasura : new ArrayList<TipoDeBasura>();
+		String alias = "c";
+		StringBuilder hql = new StringBuilder("Select " + alias + " FROM Contenedor " + alias);
+
+		/* Palabras claves */
+		for (int i = 0; i < palabras.length; i++) {
+			if (i != 0)
+				hql.append(" AND LOWER(" + alias + ".nombre) LIKE  LOWER (?) ");
+			else
+				hql.append(" WHERE LOWER(" + alias + ".nombre) LIKE  LOWER (?) ");
+		}
+
+		// mostrar por tipos
+		if (palabras.length > 0 && tipos.size() > 0) {
+			hql.append(" AND (" + alias + ".modelo.tipo) in   (:tipos) ");
+		} else if (tipos.size() > 0) {
+			hql.append(" WHERE (" + alias + ".modelo.tipo) in   (:tipos) ");
+		}
+
+		// muestra solo los trabajadores de alta, los de baja no
+		if (mostrarSoloActivos)
+			if (palabras.length > 0 || tipos.size() > 0)
+				hql.append(" AND " + alias + ".activo = :activo");
+			else
+				hql.append(" WHERE " + alias + ".activo = :activo ");
+
+		if ((palabras.length > 0 || tipos.size() > 0 || mostrarSoloActivos) && modelo != null) {
+			hql.append(" AND " + alias + ".modelo = :modelo");
+		} else if (modelo != null) {
+			hql.append(" WHERE " + alias + ".modelo = :modelo");
+		}
+
+		if ((palabras.length > 0 || tipos.size() > 0 || mostrarSoloActivos || modelo != null)
+				&& mostrarSoloContenedoresDeAlta) {
+			hql.append(" AND ((DATE(" + alias + ".fechaAlta)  <= DATE(:fecha) and DATE(" + alias
+					+ ".fechaBaja)  > DATE(:fecha)) OR  ( DATE(" + alias + ".fechaAlta)  <= DATE(:fecha) and " + alias
+					+ ".fechaBaja  is null))");
+		} else if (mostrarSoloContenedoresDeAlta) {
+			hql.append(" WHERE ((DATE(" + alias + ".fechaAlta)  <= DATE(:fecha) and DATE(" + alias
+					+ ".fechaBaja)  > DATE(:fecha)) OR  ( DATE(" + alias + ".fechaAlta)  <= DATE(:fecha) and " + alias
+					+ ".fechaBaja  is null))");
+		}
+		query = getSession().createQuery(hql.toString(), Contenedor.class);
+		/* set parameters */
+		for (int i = 0; i < palabras.length; i++) {
+			query.setParameter(i, "%" + palabras[i] + "%");
+		}
+		if (tipos.size() > 0)
+			query.setParameter("tipos", tipos);
+		if (mostrarSoloActivos)
+			query.setParameter("activo", mostrarSoloActivos);
+		if (modelo != null) {
+			query.setParameter("modelo", modelo);
+		}
+		if (mostrarSoloContenedoresDeAlta)
+			query.setParameter("fecha", Calendar.getInstance().getTime());
+		return query.list();
+	}
+
 }

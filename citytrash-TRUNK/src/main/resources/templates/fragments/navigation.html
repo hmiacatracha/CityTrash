@@ -38,12 +38,12 @@
 				<li th:classappend="${currentPage == 'mapa'} ? 'active'"
 					th:class="dropdown" class="dropdown"><a
 					class="dropdown-toggle" data-toggle="dropdown"
-					th:href="@{#{menu.mapa_link_ref}}" th:text="#{mapa}"> </a>
+					th:href="@{#{link.mapa}}" th:text="#{mapa}"> </a>
 					<ul class="dropdown-menu">
 						<li><a th:text="#{contenedores}"
-							th:href="@{#{menu.mapa_contendores_link_ref}}"> </a></li>
+							th:href="@{#{link.mapa.contenedores}}"> </a></li>
 						<li sec:authorize="isAuthenticated()"><a th:text="#{rutas}"
-							th:href="@{#{menu.mapa_rutas_link_ref}}"> </a></li>
+							th:href="@{#{link.mapa.rutas}}"> </a></li>
 					</ul></li>
 				<li th:classappend="${currentPage == 'estadisticas'} ? 'active'"
 					th:class="dropdown" class="dropdown"><a

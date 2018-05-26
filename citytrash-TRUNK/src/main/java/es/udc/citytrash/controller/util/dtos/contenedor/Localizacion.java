@@ -1,14 +1,12 @@
 package es.udc.citytrash.controller.util.dtos.contenedor;
 
-import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 
 public class Localizacion {
 
-	@NotNull
-	private double latitude;
+	private BigDecimal latitude;
 
-	@NotNull
-	private double longitude;
+	private BigDecimal longitude;
 
 	public Localizacion() {
 
@@ -21,7 +19,7 @@ public class Localizacion {
 	 * @param longitude
 	 *            longitud
 	 */
-	public Localizacion(double latitude, double longitude) {
+	public Localizacion(BigDecimal latitude, BigDecimal longitude) {
 		this.latitude = latitude;
 		this.longitude = longitude;
 	}
@@ -29,7 +27,7 @@ public class Localizacion {
 	/**
 	 * @return the latitude
 	 */
-	public double getLatitude() {
+	public BigDecimal getLatitude() {
 		return latitude;
 	}
 
@@ -37,14 +35,14 @@ public class Localizacion {
 	 * @param latitude
 	 *            the latitude to set
 	 */
-	public void setLatitude(double latitude) {
+	public void setLatitude(BigDecimal latitude) {
 		this.latitude = latitude;
 	}
 
 	/**
 	 * @return the longitude
 	 */
-	public double getLongitude() {
+	public BigDecimal getLongitude() {
 		return longitude;
 	}
 
@@ -52,29 +50,32 @@ public class Localizacion {
 	 * @param longitude
 	 *            the longitude to set
 	 */
-	public void setLongitude(double longitude) {
+	public void setLongitude(BigDecimal longitude) {
 		this.longitude = longitude;
 	}
 
 	private String latitudeString() {
-		double lat = getLatitude();
+		BigDecimal lat = getLatitude();
 		String dir = "N";
 
-		if (lat < 0) {
+		if (lat.compareTo(new BigDecimal(0)) == -1) {
 			dir = "S";
-			lat *= -1;
+			lat.multiply(new BigDecimal(-1));
+			// *= -1;
 		}
 
 		return "" + lat + "°" + dir;
 	}
 
 	private String longitudeString() {
-		double lng = getLongitude();
+		BigDecimal lng = getLongitude();
 		String dir = "E";
-
-		if (lng < 0) {
+		/*
+		 * if (lng < 0) { dir = "W"; lng *= -1; }
+		 */
+		if (lng.compareTo(new BigDecimal(0)) == -1) {
 			dir = "W";
-			lng *= -1;
+			lng.multiply(new BigDecimal(-1));
 		}
 		return "" + lng + "°" + dir;
 	}
@@ -86,5 +87,4 @@ public class Localizacion {
 	public String toString() {
 		return latitudeString() + ", " + longitudeString();
 	}
-
 }

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	th:with="currentPage='mapa'">
+<head>
+<meta charset="utf-8"></meta>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
+<meta name="description" content=""></meta>
+<meta name="author" content="heidy">
+
+<link rel="shortcut icon" type="image/png"
+	th:href="@{/resources/static/img/icon.png}"></link>
+<!-- boostrap -->
+<link rel="stylesheet" media="screen"
+	th:href="@{/webjars/bootstrap/3.3.7-1/css/bootstrap.min.css}" />
+
+<!-- BOOSTRAP SELECT -->
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
+
+<!-- fonts -->
+<link rel="stylesheet"
+	href="https://fonts.googleapis.com/css?family=Tangerine">
+<!--fonts -->
+<link href="https://fonts.googleapis.com/css?family=Lustria"
+	rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Merienda+One"
+	rel="stylesheet">
+
+<!-- icons -->
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+	rel="stylesheet">
+
+<!-- owner -->
+<link th:href="@{/resources/static/css/styles.css}" rel="stylesheet"></link>
+
+<!-- leaflet -->
+<link rel="stylesheet"
+	th:href="@{/resources/static/css/leaflet/leaflet.css}" />
+
+<title th:text="#{page_mapa_contenedores}"></title>
+</head>
+
+<body class="fondoBlanco">
+	<div th:replace="fragments/navigation :: nav(${menu})"></div>
+	<div id="viewBody" class="container" th:fragment="content">
+		<h3 class="text-center text-warning">TITULO</h3>
+		<div id="map"></div>
+		<nav id='filter-group' class='filter-group'></nav>
+	</div>
+	<div th:replace="fragments/footer :: footer()"></div>
+	<!-- LEAFLET -->
+	<script th:src="@{/resources/static/js/leaflet/leaflet.js}"></script>
+	<script th:src="@{/resources/static/js/contenedoresMap.js}"></script>
+</body>
+</html>
+
+
+
+

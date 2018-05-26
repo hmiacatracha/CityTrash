@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+<meta charset="utf-8"></meta>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
+<meta name="description" content=""></meta>
+<meta name="author" content="heidy">
+
+<link rel="shortcut icon" type="image/png"
+	th:href="@{/resources/static/img/icon.png}"></link>
+<!-- boostrap -->
+<link rel="stylesheet" media="screen"
+	th:href="@{/webjars/bootstrap/3.3.7-1/css/bootstrap.min.css}" />
+<!-- boostrap datapicker -->
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css" />
+
+<!-- BOOSTRAP SELECT -->
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
+
+<!-- fonts -->
+<link rel="stylesheet"
+	href="https://fonts.googleapis.com/css?family=Tangerine">
+<!--fonts -->
+<link href="https://fonts.googleapis.com/css?family=Lustria"
+	rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Merienda+One"
+	rel="stylesheet">
+
+<!-- icons -->
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+	rel="stylesheet">
+
+<!-- owner -->
+<link th:href="@{/resources/static/css/styles.css}" rel="stylesheet"></link>
+<link th:href="@{/resources/static/css/maps.css}" rel="stylesheet"></link>
+<title layout:title-pattern="$LAYOUT_TITLE - $CONTENT_TITLE"></title>
+</head>
+
+<body>
+	<div th:replace="fragments/navigation :: nav(${menu})"></div>
+	<div th:replace="${view} :: content">Page Content</div>
+	<div th:replace="fragments/footer :: footer()"></div>
+
+	<script th:src="@{/resources/static/js/multimap.js}"></script>
+	<script
+		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCrlvVn1r7o14oV7i9tD-ZHAMLK-Jr1inc&callback=renderGoogleMap"
+		async defer></script>
+	<script th:src="@{/resources/static/js/infobox.js}"></script>
+</body>
+</html>

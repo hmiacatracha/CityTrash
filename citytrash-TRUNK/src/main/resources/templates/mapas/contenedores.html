@@ -1,0 +1,29 @@
+
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/multiMaps}" th:with="currentPage='mapa'">
+<head>
+<title th:text="#{page_mapa_contenedores}"></title>
+</head>
+<body class="fondoBlanco">
+	<div id="viewBody" class="container" th:fragment="content">
+
+		<h3 class="text-center text-warning">TITULO</h3>
+
+		<div class="container bs-container big-font-container">
+			<div class="row row-map">
+
+				<div th:if="${mappingError == null}" class="col-lg-12">
+					<div class="map_container">
+						<div id="map_canvas" class="map_canvas"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- <script src="js/markers.js"></script>-->
+	</div>
+</body>
+</html>

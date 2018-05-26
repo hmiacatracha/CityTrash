@@ -60,9 +60,21 @@ public interface ContenedorDao extends GenericDAO<Contenedor, Long> {
 	 * @param tipos
 	 * @param mostrarSoloActivos
 	 * @param mostrarSoloContenedoresDeAlta
-	 * @return
+	 * @return Pageable
 	 */
 	Page<Contenedor> buscarContenedores(Pageable pageable, String palabrasClaves, ContenedorModelo modelo,
 			List<TipoDeBasura> tipos, boolean mostrarSoloActivos, boolean mostrarSoloContenedoresDeAlta);
+
+	/**
+	 * Buscar by modelo y/0 nombre y/o tipo
+	 * @param palabrasClaves
+	 * @param modelo
+	 * @param tiposDeBasura
+	 * @param mostrarSoloActivos
+	 * @param mostrarSoloContenedoresDeAlta
+	 * @return List
+	 */
+	List<Contenedor> buscarContenedores(String palabrasClaves, ContenedorModelo modelo,
+			List<TipoDeBasura> tiposDeBasura, boolean mostrarSoloActivos, boolean mostrarSoloContenedoresDeAlta);
 
 }
