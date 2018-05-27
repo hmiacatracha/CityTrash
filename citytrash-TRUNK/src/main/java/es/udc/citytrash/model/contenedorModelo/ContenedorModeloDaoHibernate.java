@@ -90,7 +90,7 @@ public class ContenedorModeloDaoHibernate extends GenericHibernateDAOImpl<Conten
 		List<ContenedorModelo> modelos = new ArrayList<ContenedorModelo>();
 		Page<ContenedorModelo> page = new PageImpl<ContenedorModelo>(modelos, pageable, modelos.size());
 		logger.info("buscarContenedorModelo paso2");
-		String[] palabras = palabrasClaveModelo.length() > 0 ? palabrasClaveModelo.split(" ") : new String[0];
+		String[] palabras = palabrasClaveModelo != null ? palabrasClaveModelo.split(" ") : new String[0];
 		logger.info("buscarContenedorModelo paso3");
 		List<TipoDeBasura> tiposAux = tipos != null ? tipos : new ArrayList<TipoDeBasura>();
 

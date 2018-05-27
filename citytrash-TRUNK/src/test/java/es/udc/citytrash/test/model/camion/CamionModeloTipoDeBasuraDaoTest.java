@@ -1,4 +1,4 @@
-package es.udc.citytrash.test.model.camionModeloTipoDeBasura;
+package es.udc.citytrash.test.model.camion;
 
 import static es.udc.citytrash.test.util.GlobalNames.SPRING_CONFIG_TEST_FILE;
 import static es.udc.citytrash.util.GlobalNames.SPRING_CONFIG_FILE;

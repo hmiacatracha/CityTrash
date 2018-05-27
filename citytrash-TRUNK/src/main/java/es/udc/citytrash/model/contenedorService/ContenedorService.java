@@ -128,11 +128,9 @@ public interface ContenedorService {
 	 * @return
 	 * @throws InstanceNotFoundException
 	 * @throws DuplicateInstanceException
-	 * @throws InactiveResourceException
-	 * @throws InvalidFieldException
 	 */
-	Contenedor modificarContenedor(ContenedorEditarDto form) throws InstanceNotFoundException, DuplicateInstanceException,
-			InactiveResourceException, InvalidFieldException;
+	Contenedor modificarContenedor(ContenedorEditarDto form)
+			throws InstanceNotFoundException, DuplicateInstanceException;
 
 	/**
 	 * Registrar modelo
@@ -177,7 +175,9 @@ public interface ContenedorService {
 
 	/**
 	 * Buscar contenedores
-	 * @param formBusqueda formulario de busqueda
+	 * 
+	 * @param formBusqueda
+	 *            formulario de busqueda
 	 * @return List
 	 */
 	List<Contenedor> buscarContenedores(ContenedorFormBusq form);

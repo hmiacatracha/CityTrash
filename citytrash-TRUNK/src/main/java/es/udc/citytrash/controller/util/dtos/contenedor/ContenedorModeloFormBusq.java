@@ -17,7 +17,7 @@ public class ContenedorModeloFormBusq {
 		this.palabrasClaveModelo = modelo;
 	}
 
-	String palabrasClaveModelo;
+	String palabrasClaveModelo = "";
 
 	private List<Integer> tipos = new ArrayList<Integer>();
 

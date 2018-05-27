@@ -28,7 +28,6 @@ import es.udc.citytrash.model.contenedorModelo.ContenedorModeloDao;
 import es.udc.citytrash.model.tipoDeBasura.TipoDeBasura;
 import es.udc.citytrash.model.tipoDeBasura.TipoDeBasuraDao;
 import es.udc.citytrash.model.util.excepciones.DuplicateInstanceException;
-import es.udc.citytrash.model.util.excepciones.InactiveResourceException;
 import es.udc.citytrash.model.util.excepciones.InstanceNotFoundException;
 import es.udc.citytrash.model.util.excepciones.InvalidFieldException;
 
@@ -162,8 +161,8 @@ public class ContenedorServiceImpl implements ContenedorService {
 	}
 
 	@Override
-	public Contenedor modificarContenedor(ContenedorEditarDto form) throws InstanceNotFoundException,
-			DuplicateInstanceException, InactiveResourceException, InvalidFieldException {
+	public Contenedor modificarContenedor(ContenedorEditarDto form)
+			throws InstanceNotFoundException, DuplicateInstanceException {
 		logger.info("modificarContenedor");
 		Contenedor contenedor = null;
 		ContenedorModelo modelo;
@@ -199,32 +198,42 @@ public class ContenedorServiceImpl implements ContenedorService {
 	@Override
 	public ContenedorModelo registrarModelo(ContenedorModeloRegistroDto form)
 			throws DuplicateInstanceException, InvalidFieldException {
-		logger.info("registrarModelo");
+		logger.info("registrarModelo => " + form.getNombre());
 		ContenedorModelo modelo;
 		TipoDeBasura tipo;
 		try {
-			modeloDao.buscarModeloPorNombre(form.getNombre().trim());
+			logger.info("paso0");
+			modeloDao.buscarModeloPorNombre(form.getNombre());
+			logger.info("paso1");
 			throw new DuplicateInstanceException(form.getNombre(), ContenedorModelo.class.getName());
 		} catch (InstanceNotFoundException e) {
-
+			logger.info("paso2");
 		}
 		/* Verificamos el tipo de basura */
 		try {
 			if (form.getTipo() != null) {
+				logger.info("paso2.1");
 				tipo = tipoDao.buscarById(form.getTipo());
+				logger.info("paso3");
 			} else {
+				logger.info("paso4");
 				throw new InvalidFieldException("TipoDeBasuraException", "tipo", Contenedor.class.getName());
 			}
 		} catch (InstanceNotFoundException e) {
+			logger.info("paso5");
 			throw new InvalidFieldException("TipoDeBasuraException", "tipo", Contenedor.class.getName());
 		}
 
-		if (form.getCapacidadNominal().compareTo(new BigDecimal(0)) != 1)
+		if (form.getCapacidadNominal().compareTo(new BigDecimal(0)) != 1) {
+			logger.info("paso6");
 			throw new InvalidFieldException("capacidadNominalException", "", Contenedor.class.getName());
+		}
 
 		logger.info("registrarModelo paso4");
-		if (form.getCargaNominal().compareTo(new BigDecimal(0)) != 1)
+		if (form.getCargaNominal().compareTo(new BigDecimal(0)) != 1) {
+			logger.info("paso7");
 			throw new InvalidFieldException("cargaNominalException", "", Contenedor.class.getName());
+		}
 
 		modelo = new ContenedorModelo(form.getNombre(), form.getCapacidadNominal(), form.getCapacidadNominal());
 		modelo.setAltura(form.getAltura());
@@ -232,7 +241,9 @@ public class ContenedorServiceImpl implements ContenedorService {
 		modelo.setPesoVacio(form.getPesoVacio());
 		modelo.setProfundidad(form.getProfundidad());
 		modelo.setTipo(tipo);
+		logger.info("paso8");
 		modeloDao.guardar(modelo);
+		logger.info("paso9");
 		return modelo;
 	}
 
@@ -283,16 +294,23 @@ public class ContenedorServiceImpl implements ContenedorService {
 	@Override
 	public Page<ContenedorModelo> buscarModelos(Pageable pageable, ContenedorModeloFormBusq formBusqueda) {
 		logger.info("IMPRIMIENDO formbusqueda buscar modelos de contenedores => " + formBusqueda.toString());
-		logger.info("buscarModelos");
+		logger.info("buscarModelos1");
+
 		List<ContenedorModelo> contenedoresList = new ArrayList<ContenedorModelo>();
+		logger.info("buscarModelos2");
 		Page<ContenedorModelo> page = new PageImpl<ContenedorModelo>(contenedoresList, pageable,
 				contenedoresList.size());
+		logger.info("buscarModelos3");
+		String search = formBusqueda.getPalabrasClaveModelo() == null ? "" : formBusqueda.getPalabrasClaveModelo();
+		logger.info("buscarModelos4");
 		List<TipoDeBasura> tipos = new ArrayList<TipoDeBasura>();
+
 		/* Agregamos los tipos de basura */
 		if (formBusqueda.getTipos() != null) {
 			for (Integer t : formBusqueda.getTipos()) {
 				try {
 					TipoDeBasura tb = tipoDao.buscarById(Integer.valueOf(t.toString()));
+					logger.info("tipo encontrado =>" + tb.toString());
 					tipos.add(tb);
 				} catch (NumberFormatException | InstanceNotFoundException e) {
 
@@ -300,10 +318,15 @@ public class ContenedorServiceImpl implements ContenedorService {
 			}
 		}
 
-		if (formBusqueda.getPalabrasClaveModelo().trim().isEmpty() && tipos.isEmpty()) {
-			page = modeloDao.buscarContenedorModelo(pageable);
+		logger.info("buscarModelos5");
+		if (tipos.size() > 0 || search.length() > 0) {
+			logger.info("buscarModelos antes de buscar1");
+			page = modeloDao.buscarContenedorModelo(pageable, search, tipos);
+			logger.info("buscarModelos despues de buscar1");
 		} else {
-			page = modeloDao.buscarContenedorModelo(pageable, formBusqueda.getPalabrasClaveModelo(), tipos);
+			logger.info("buscarModelos antes de buscar2");
+			page = modeloDao.buscarContenedorModelo(pageable);
+			logger.info("buscarModelos despues de buscar2");
 		}
 
 		return page;
@@ -346,6 +369,8 @@ public class ContenedorServiceImpl implements ContenedorService {
 		List<Contenedor> contenedoresList = new ArrayList<Contenedor>();
 		Page<Contenedor> page = new PageImpl<Contenedor>(contenedoresList, pageable, contenedoresList.size());
 		List<TipoDeBasura> tipos = new ArrayList<TipoDeBasura>();
+
+		logger.info("buscarContenedores paso2");
 		/* Agregamos los tipos de basura */
 		if (form.getTiposDeBasura() != null) {
 			for (Integer t : form.getTiposDeBasura()) {
@@ -357,6 +382,7 @@ public class ContenedorServiceImpl implements ContenedorService {
 				}
 			}
 		}
+		logger.info("buscarContenedores paso3");
 		/* Bucamos el modelo */
 		try {
 			if (form.getModelo() != null) {
@@ -368,14 +394,20 @@ public class ContenedorServiceImpl implements ContenedorService {
 			modelo = null;
 		}
 
+		logger.info("buscarContenedores paso4");
 		/* Realiamos la búsqueda */
-		if (tipos.isEmpty() && modelo == null && form.getBuscar().isEmpty()) {
+		if (tipos.isEmpty() && modelo == null && form.getBuscar() == null) {
+			logger.info("buscarContenedores paso5");
 			page = contenedorDao.buscarContenedores(pageable, form.getMostrarSoloContenedoresActivos(),
 					form.getMostrarSoloContenedoresDeAlta());
+			logger.info("buscarContenedores paso5.1");
 		} else {
+			logger.info("buscarContenedores paso6");
 			page = contenedorDao.buscarContenedores(pageable, form.getBuscar(), modelo, tipos,
 					form.getMostrarSoloContenedoresActivos(), form.getMostrarSoloContenedoresDeAlta());
+			logger.info("buscarContenedores paso6.1");
 		}
+		logger.info("buscarContenedores paso6");
 		return page;
 	}
 

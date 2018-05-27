@@ -408,7 +408,7 @@ public class TrabajadorServiceTest {
 		Page<Trabajador> page = trabajadorService.buscarTrabajadores(pageable, true);
 		List<Trabajador> trabajadores = new ArrayList<Trabajador>();
 		assertTrue(page.getContent().isEmpty());
-
+		
 		try {
 			// Añadimos tres trabajadores en la base de datos
 			trabajadores.add(trabajadorService.registrar(frmRegistro_ADMIN));

@@ -197,6 +197,7 @@ public class ContenedorDaoHibernate extends GenericHibernateDAOImpl<Contenedor, 
 						.map(o -> alias + "." + o.getProperty() + " " + o.getDirection()).collect(Collectors.toList()));
 		hql.append(" ORDER BY " + order);
 
+		logger.info("HQL=>" + hql.toString());
 		query = getSession().createQuery(hql.toString(), Contenedor.class);
 
 		/* set parameters */
@@ -218,6 +219,7 @@ public class ContenedorDaoHibernate extends GenericHibernateDAOImpl<Contenedor, 
 			query.setParameter("fecha", Calendar.getInstance().getTime());
 
 		contenedores = query.list();
+		logger.info("Econtrados =>" + contenedores.toString());
 		int start = pageable.getOffset();
 		int end = (start + pageable.getPageSize()) > contenedores.size() ? contenedores.size()
 				: (start + pageable.getPageSize());

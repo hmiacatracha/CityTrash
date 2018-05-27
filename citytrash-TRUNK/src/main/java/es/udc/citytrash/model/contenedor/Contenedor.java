@@ -170,4 +170,11 @@ public class Contenedor implements Serializable {
 	private Calendar fechaBaja;
 	private ContenedorModelo modelo;
 	private Boolean activo;
+
+	@Override
+	public String toString() {
+		return "Contenedor [id=" + id + ", nombre=" + nombre + ", latitud=" + latitud + ", longitud=" + longitud
+				+ ", fechaAlta=" + fechaAlta + ", fechaBaja=" + fechaBaja + ", modelo=" + modelo + ", activo=" + activo
+				+ "]";
+	}
 }
