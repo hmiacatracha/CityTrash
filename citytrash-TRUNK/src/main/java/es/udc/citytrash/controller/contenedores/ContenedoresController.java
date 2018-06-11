@@ -1,8 +1,10 @@
 package es.udc.citytrash.controller.contenedores;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
-
+import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -18,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -46,14 +49,18 @@ import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorModeloEditarDt
 import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorModeloFormBusq;
 import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorModeloRegistroDto;
 import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorRegistroDto;
+import es.udc.citytrash.controller.util.dtos.sensor.SensorDto;
 import es.udc.citytrash.controller.util.dtos.tipoDeBasura.TipoDeBasuraDto;
 import es.udc.citytrash.model.contenedor.Contenedor;
 import es.udc.citytrash.model.contenedorModelo.ContenedorModelo;
 import es.udc.citytrash.model.contenedorService.ContenedorService;
+import es.udc.citytrash.model.sensor.Sensor;
+import es.udc.citytrash.model.sensorValor.Valor;
 import es.udc.citytrash.model.tipoDeBasura.TipoDeBasura;
 import es.udc.citytrash.model.util.excepciones.DuplicateInstanceException;
 import es.udc.citytrash.model.util.excepciones.InstanceNotFoundException;
 import es.udc.citytrash.model.util.excepciones.InvalidFieldException;
+import es.udc.citytrash.util.enums.TipoSensor;
 
 @Controller
 // @PreAuthorize("hasRole('" + GlobalNames.ROL_ADMINISTRADOR + "')")
@@ -67,6 +74,11 @@ public class ContenedoresController {
 	private ModelMapper modelMapper;
 
 	final Logger logger = LoggerFactory.getLogger(ContenedoresController.class);
+
+	@ModelAttribute("numeroDeSensores")
+	public int getSensoresSize() {
+		return TipoSensor.values().length;
+	}
 
 	@ModelAttribute("todosLosModelos")
 	public List<ContenedorModelo> getModelos() {
@@ -186,37 +198,6 @@ public class ContenedoresController {
 		return WebUtils.VISTA_CONTENEDORES_REGISTRO;
 	}
 
-	@RequestMapping(value = WebUtils.REQUEST_MAPPING_CONTENEDORES_EDITAR, method = RequestMethod.GET)
-	public String editarContenedor(@PathVariable("id") long id, Model model,
-			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith,
-			@RequestParam(value = "msg", required = false) String msg,
-			@RequestParam(value = "type", required = false) String type) throws ResourceNotFoundException {
-		logger.info("GET REQUEST_MAPPING_CONTENEDORES_EDITAR");
-		Contenedor contenedor;
-		try {
-
-			contenedor = cServicio.buscarContenedorById(id);
-			ContenedorEditarDto dto = new ContenedorEditarDto(contenedor);
-			// ContenedorEditarDto dto = modelMapper.map(contenedor,
-			// ContenedorEditarDto.class);
-			// logger.info("CONTENEDOREDITARDTO => " + dto.toString());
-			model.addAttribute("contenedorForm", dto);
-			model.addAttribute("type", type);
-			model.addAttribute("key", contenedor.getNombre());
-			model.addAttribute("key", "");
-
-			if (AjaxUtils.isAjaxRequest(requestedWith))
-				return WebUtils.VISTA_CONTENEDORES_EDITAR.concat(" ::content");
-			return WebUtils.VISTA_CONTENEDORES_EDITAR;
-		} catch (InstanceNotFoundException e) {
-			throw new ResourceNotFoundException(id);
-		} catch (Exception ex) {
-			model.addAttribute("error", ex);
-			model.addAttribute("type", "Exception");
-			return WebUtils.VISTA_CONTENEDORES_EDITAR;
-		}
-	}
-
 	/* POST CONTENEDORES => REGISTRAR */
 	@RequestMapping(value = WebUtils.REQUEST_MAPPING_CONTENEDORES_REGISTRO, method = RequestMethod.POST)
 	public String registroContenedor(@ModelAttribute("contenedorForm") @Valid ContenedorRegistroDto form,
@@ -261,14 +242,52 @@ public class ContenedoresController {
 		}
 	}
 
-	@RequestMapping(value = WebUtils.REQUEST_MAPPING_CONTENEDORES_EDITAR, method = RequestMethod.POST)
+	@RequestMapping(value = WebUtils.REQUEST_MAPPING_CONTENEDORES_EDITAR, method = RequestMethod.GET)
+	public String editarContenedor(@PathVariable("id") long id, Model model,
+			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith,
+			@RequestParam(value = "msg", required = false, defaultValue = "") String msg,
+			@RequestParam(value = "type", required = false, defaultValue = "") String type)
+			throws ResourceNotFoundException {
+		logger.info("GET REQUEST_MAPPING_CONTENEDORES_EDITAR");
+		Contenedor contenedor;
+		try {
+
+			contenedor = cServicio.buscarContenedorById(id);
+			ContenedorEditarDto dto = new ContenedorEditarDto(contenedor);
+
+			List<Sensor> sensores = cServicio.buscarSensorsByContenedor(contenedor.getId());
+			dto.setSensores(sensores.stream().map(sensor -> convertToDto(sensor)).collect(Collectors.toList()));
+			logger.info("Sensores =>" + dto.getSensores().toString());
+			model.addAttribute("contenedorForm", dto);
+
+			if (msg.trim().length() > 0 && type.trim().length() > 0) {
+				model.addAttribute("msg", msg);
+				model.addAttribute("type", type);
+				model.addAttribute("key", contenedor.getNombre());
+			}
+
+			if (AjaxUtils.isAjaxRequest(requestedWith))
+				return WebUtils.VISTA_CONTENEDORES_EDITAR.concat(" ::content");
+			return WebUtils.VISTA_CONTENEDORES_EDITAR;
+		} catch (InstanceNotFoundException e) {
+			throw new ResourceNotFoundException(id);
+		} catch (Exception ex) {
+			model.addAttribute("error", ex);
+			model.addAttribute("type", "Exception");
+			logger.info("excepcion=>" + ex.getMessage());
+			return WebUtils.VISTA_CONTENEDORES_EDITAR;
+		}
+	}
+
+	@RequestMapping(value = WebUtils.REQUEST_MAPPING_CONTENEDORES_EDITAR, params = {
+			"modificar" }, method = RequestMethod.POST)
 	public String modificarContenedor(@ModelAttribute("contenedorForm") @Valid ContenedorEditarDto form,
 			BindingResult result, HttpServletRequest request, Errors errors, Model model,
 			RedirectAttributes redirectAttributes,
 			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
-		logger.info("POST REQUEST_MAPPING_CONTENEDORES_EDITAR");
+		logger.info("POST REQUEST_MAPPING_CONTENEDORES_EDITAR modificar");
 		ContenedorEditarDto contenedor;
-
+		logger.info("Imprimir lista => " + form.getSensores().toString());
 		if (result.hasErrors()) {
 			model.addAttribute("contenedorForm", form);
 			if (AjaxUtils.isAjaxRequest(requestedWith)) {
@@ -278,11 +297,16 @@ public class ContenedoresController {
 		}
 		try {
 			contenedor = new ContenedorEditarDto(cServicio.modificarContenedor(form));
-
-			// contenedor = modelMapper.map(cServicio.modificarContenedor(form),
-			// ContenedorEditarDto.class);
-
+			List<Sensor> sensores = cServicio.buscarSensorsByContenedor(contenedor.getId());
+			contenedor.setSensores(sensores.stream().map(sensor -> convertToDto(sensor)).collect(Collectors.toList()));
 			model.addAttribute("contenedorForm", contenedor);
+			model.addAttribute("msg", "ok");
+			model.addAttribute("type", "mod_cont");
+			model.addAttribute("key", contenedor.getNombre());
+			if (AjaxUtils.isAjaxRequest(requestedWith))
+				return WebUtils.VISTA_CONTENEDORES_EDITAR.concat("::content");
+			return WebUtils.VISTA_CONTENEDORES_EDITAR;
+
 		} catch (DuplicateInstanceException e) {
 			model = duplicateInstanceException(model, e);
 			if (AjaxUtils.isAjaxRequest(requestedWith))
@@ -290,18 +314,67 @@ public class ContenedoresController {
 			return WebUtils.VISTA_CONTENEDORES_EDITAR;
 
 		} catch (Exception e) {
+			logger.info("EXCEPCION RESULTADO =>" + e.toString());
 			model.addAttribute("error", e);
 			model.addAttribute("type", "Exception");
 			return WebUtils.VISTA_CONTENEDORES_EDITAR;
 		}
+	}
 
-		model.addAttribute("msg", "ok");
-		model.addAttribute("type", "mod_cam");
-		model.addAttribute("key", contenedor.getNombre());
+	@RequestMapping(value = WebUtils.REQUEST_MAPPING_CONTENEDORES_EDITAR, params = {
+			"addSensor" }, method = RequestMethod.POST)
+	public String addSensorRow(@ModelAttribute("contenedorForm") ContenedorEditarDto form, final HttpServletRequest req,
+			Model model, @RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
 
-		if (AjaxUtils.isAjaxRequest(requestedWith)) {
-			return WebUtils.VISTA_CONTENEDORES_EDITAR.concat("::content");
+		logger.info("POST REQUEST_MAPPING_CONTENEDORES_EDITAR addSensorPrueba");
+		logger.info("Imprimir lista => " + form.getSensores().toString());
+		SensorDto sensor = new SensorDto();
+		sensor.setId(WebUtils.randomNegativeId());
+		form.getSensores().add(sensor);
+		model.addAttribute("contenedorForm", form);
+		logger.info("Imprimir lista => " + form.getSensores().toString());
+		if (AjaxUtils.isAjaxRequest(requestedWith))
+			return WebUtils.VISTA_CONTENEDORES_EDITAR.concat("::sensoresList");
+		return WebUtils.VISTA_CONTENEDORES_EDITAR;
+	}
+
+	@RequestMapping(value = WebUtils.REQUEST_MAPPING_CONTENEDORES_EDITAR, params = {
+			"eliminarSensor" }, method = RequestMethod.POST)
+	public String eliminarSensorRow(@ModelAttribute("contenedorForm") ContenedorEditarDto form,
+			final HttpServletRequest req, Model model,
+			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
+		logger.info("POST REQUEST_MAPPING_CONTENEDORES_EDITAR eliminarSensor paso1");
+		Long sensorId = new Long(-1);
+
+		try {
+			sensorId = Long.valueOf(req.getParameter("eliminarSensor"));
+		} catch (NullPointerException e) {
+			logger.info("ERROR addSensorPrueba =>" + e.getMessage());
 		}
+
+		logger.info("POST REQUEST_MAPPING_CONTENEDORES_EDITAR eliminarSensor paso2");
+		logger.info("POST REQUEST_MAPPING_CONTENEDORES_EDITAR eliminarSensor paso2 =>" + form.getSensores().toString());
+
+		for (SensorDto sensor : form.getSensores()) {
+			if (sensor.getId() == null)
+				form.getSensores().remove(sensor);
+			else if (sensor.getId().equals(sensorId)) {
+				form.getSensores().remove(sensor);
+				break;
+			}
+		}
+		logger.info("POST REQUEST_MAPPING_CONTENEDORES_EDITAR eliminarSensor paso3");
+		if (sensorId > 0)
+			try {
+				cServicio.eliminarSensorId(sensorId);
+			} catch (InstanceNotFoundException e) {
+
+			}
+		logger.info("POST REQUEST_MAPPING_CONTENEDORES_EDITAR eliminarSensor 5 =>" + form.getSensores().toString());
+		model.addAttribute("contenedorForm", form);
+
+		if (AjaxUtils.isAjaxRequest(requestedWith))
+			return WebUtils.VISTA_CONTENEDORES_EDITAR.concat("::sensoresList");
 		return WebUtils.VISTA_CONTENEDORES_EDITAR;
 	}
 
@@ -352,6 +425,9 @@ public class ContenedoresController {
 			model.addAttribute("id", contenedorDto.getId());
 			model.addAttribute("nombreDelContenedor", contenedorDto.getNombre());
 			model.addAttribute("tipoDeBasura", tipo);
+			List<Sensor> sensores = cServicio.buscarSensorsByContenedor(id);
+			// logger.info("Sensores=>" + sensores.toString());
+			model.addAttribute("sensores", sensores);
 			if (AjaxUtils.isAjaxRequest(requestedWith))
 				return WebUtils.VISTA_CONTENEDORES_DETALLES_INFO_CONTENEDOR.concat("::content");
 			return WebUtils.VISTA_CONTENEDORES_DETALLES_INFO_CONTENEDOR;
@@ -383,8 +459,6 @@ public class ContenedoresController {
 			model.addAttribute("nombreDelContenedor", contenedor.getNombre());
 			model.addAttribute("nombreDelModelo", modelo.getModelo() != null ? modelo.getModelo() : "_no_tiene_nombre");
 			model.addAttribute("tipoDeBasura", tipo);
-
-			logger.info("PASA POR AQUI 1");
 			if (AjaxUtils.isAjaxRequest(requestedWith))
 				return WebUtils.VISTA_CONTENEDORES_DETALLES_MODELO.concat("::content");
 			return WebUtils.VISTA_CONTENEDORES_DETALLES_MODELO;
@@ -545,7 +619,7 @@ public class ContenedoresController {
 	}
 
 	/* POST MODELO CONTENEDORES => REGISTRAR */
-	@RequestMapping(value = WebUtils.REQUEST_MAPPING_CONTENEDORESS_REGISTRAR_MODELO, method = RequestMethod.POST)
+	@RequestMapping(value = WebUtils.REQUEST_MAPPING_CONTENEDORES_REGISTRAR_MODELO, method = RequestMethod.POST)
 	public String registroModelo(@ModelAttribute("modeloRegistroForm") @Valid ContenedorModeloRegistroDto form,
 			BindingResult result, HttpServletRequest request, HttpServletResponse response, Errors errors, Model model,
 			RedirectAttributes redirectAttributes,
@@ -703,6 +777,28 @@ public class ContenedoresController {
 		}
 	}
 
+	@RequestMapping(value = { WebUtils.REQUEST_MAPPING_CONTENEDORES_SENSORES_DETALLES_CHART,
+			WebUtils.REQUEST_MAPPING_CONTENEDORES_SENSORES_DETALLES_CHART + "/" }, method = RequestMethod.GET)
+	public String getValores(@PathVariable("sensorId") Long sensorId, @PathVariable("contenedorId") Long contenedorId,			
+			Model model, @RequestHeader(value = "X-Requested-With", required = false) String requestedWith)
+			throws ResourceNotFoundException {
+		try {			
+			Sensor sensor = cServicio.buscarSensorById(sensorId);
+			if (contenedorId != sensor.getContenedor().getId())
+				throw new ResourceNotFoundException(sensorId);
+			model.addAttribute("sensor", sensor);
+			Contenedor contenedor = cServicio.buscarContenedorById(sensor.getContenedor().getId());
+			model.addAttribute("contenedor", contenedor);
+			logger.info("GET URL_MAPPING_CONTENEDORES_SENSORES_DETALLES_CHART");
+			if (AjaxUtils.isAjaxRequest(requestedWith))
+				return WebUtils.VISTA_SENSORES_VALORES_CHART.concat("::content");
+			logger.info("paso5");
+			return WebUtils.VISTA_SENSORES_VALORES_CHART;
+		} catch (InstanceNotFoundException e) {
+			throw new ResourceNotFoundException(sensorId);
+		}
+	}
+
 	@ResponseStatus(HttpStatus.FORBIDDEN)
 	@ExceptionHandler(DuplicateInstanceException.class)
 	public Model duplicateInstanceException(Model model, DuplicateInstanceException ex) {
@@ -750,6 +846,11 @@ public class ContenedoresController {
 		// ContenedorDto.class);
 		ContenedorDto postDto = new ContenedorDto(contenedor);
 		return postDto;
+	}
+
+	private SensorDto convertToDto(Sensor sensor) {
+		SensorDto dto = new SensorDto(sensor);
+		return dto;
 	}
 
 }

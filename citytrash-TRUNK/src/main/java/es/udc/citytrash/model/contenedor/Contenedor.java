@@ -2,7 +2,9 @@ package es.udc.citytrash.model.contenedor;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -23,6 +26,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
 import es.udc.citytrash.model.contenedorModelo.ContenedorModelo;
+import es.udc.citytrash.model.sensor.Sensor;
 import es.udc.citytrash.util.GlobalNames;
 
 /**
@@ -160,6 +164,19 @@ public class Contenedor implements Serializable {
 		this.activo = activo;
 	}
 
+	@OneToMany(mappedBy = "contenedor")
+	public List<Sensor> getSensores() {
+		return sensores;
+	}
+
+	public void setSensores(List<Sensor> sensores) {
+		this.sensores = sensores;
+	}
+
+	public void addSensor(Sensor sensor) {
+		this.sensores.add(sensor);
+	}
+
 	/* Atributos */
 	private static final long serialVersionUID = 1L;
 	private long id;
@@ -170,6 +187,7 @@ public class Contenedor implements Serializable {
 	private Calendar fechaBaja;
 	private ContenedorModelo modelo;
 	private Boolean activo;
+	private List<Sensor> sensores = new ArrayList<Sensor>();
 
 	@Override
 	public String toString() {

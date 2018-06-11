@@ -189,7 +189,7 @@ public class TrabajadorServiceImpl implements TrabajadorService {
 				tipo = TipoTrabajador.RECOLEC;
 			}
 
-			String update = "UPDATE " + GlobalNames.TBL_TRABAJ + " SET " + GlobalNames.CAMPO_DISCRIMINADOR_BD + " = '"
+			String update = "UPDATE " + GlobalNames.TBL_TRABAJ + " SET " + GlobalNames.CAMPO_TRABAJADOR_DISCRIMINADOR + " = '"
 					+ tipo.toString().toUpperCase() + "' , " + GlobalNames.CAMPO_ROL_BD + " = '" + rol
 					+ "' WHERE TRABAJADOR_ID = " + t.getId();
 			try {

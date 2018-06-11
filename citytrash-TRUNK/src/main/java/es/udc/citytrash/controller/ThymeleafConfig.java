@@ -11,6 +11,7 @@ import org.springframework.web.context.request.WebRequestInterceptor;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.dialect.springdata.SpringDataDialect;
+import org.thymeleaf.extras.java8time.dialect.Java8TimeDialect;
 import org.thymeleaf.extras.springsecurity4.dialect.SpringSecurityDialect;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver;
@@ -37,6 +38,7 @@ class ThymeleafConfig extends WebMvcConfigurerAdapter implements ApplicationCont
 		engine.addDialect(new LayoutDialect());
 		engine.addDialect(new SpringDataDialect());
 		engine.addDialect(new SpringSecurityDialect());
+		engine.addDialect(new Java8TimeDialect());
 		engine.setTemplateResolver(templateResolver());
 		logger.info("CONFIGURACION templateEngine");
 		return engine;

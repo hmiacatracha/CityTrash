@@ -2,25 +2,64 @@ jQuery(function($) {
 
 	/*Evento que muestra la lista de una lista al pasar con el raton, en vez de darle click que es el que trae por defecto */
 	$(document).on("mouseenter mouseleave click tap", ".dropdown", function(e) {
-		console.log("EVENT => mouseenter mouseleave click tap");
+		//console.log("EVENT => mouseenter mouseleave click tap");
 		//alert("EVENT => mouseenter mouseleave click tap")
 		$(this).toggleClass("open");
 	});
 
 	/*Si es una venta modal y tiene un formulario, al cerrarse limpia el formulario */
 	$(document).on("hidden.bs.modal", ".modal", function(e) {
-		console.log("EVENT => hidden.bs.modal .modal");
+		//console.log("EVENT => hidden.bs.modal .modal");
 		//alert("EVENT => hidden.bs.modal .modal")
 		if ($(this).find('form')) {
-			$(this).find('form')[0].reset();
-			console.log("EVENT => hidden.bs.modal, clear modal body true");
+			try {
+				$(this).find('form')[0].reset();
+			//console.log("EVENT => hidden.bs.modal, clear modal body true");
+			} catch (err) {
+				//console.log("EVENT => hidden.bs.modal, clear modal body true");
+			}
 		}
 	});
 
+	/*$(document).on("submit", 'form[data-async]', function(e) {		
+		console.log("submit form[data-async] => submit 1");
+		var $form = $(this);
+		var $target = $($form.attr('data-target'));
+		var submitButton = $("input[type='submit'][clicked=true], button[type='submit'][clicked=true]", $form);
+		var formData = $form.serializeArray();
+
+		console.log("imprimir name=>" + $(submitButton[0]).attr("name"));
+		console.log("imprimir value=>" + $(submitButton[0]).attr("value"));
+		
+		try {
+			formData.push({
+				name : $(submitButton[0]).attr("name"),
+				value : $(submitButton[0]).attr("value")
+			});
+		} catch (err) {
+			
+		}
+
+		console.log("submit form[data-async] => submit 2");
+		$.ajax({
+			type : $form.attr('method'),
+			url : $form.attr('action'),
+			data : formData,
+			success : function(data, status) {
+				console.log("submit form[data-async] => submit 3 =>");
+				console.log("data =>" + data);
+				$target.html(data);
+				$("#content").html(data);
+				console.log("submit form[data-async] => submit 4");
+			}
+		});
+		event.preventDefault();
+	});
+	*/
 	/*Si perteneces a la clase registroDialog y se hace un submit => se realiza el registro vía ajax*/
 	$(document).on("submit", "#registroDialog", function(e) {
 		event.preventDefault();
-		console.log("EVENT => submit #registroDialog");
+		//console.log("EVENT => submit #registroDialog");
 		var $dialog = $(this);
 		var $dialog_body = $('#registroDialogBody');
 		var $form = $('#registroForm');
@@ -56,6 +95,7 @@ jQuery(function($) {
 			$dialog.modal("hide");
 		});
 	});
+
 
 	/*Muestra la info de la tab cada vez que se muestra */
 	$(document).on('shown.bs.tab', 'a[data-toggle="tab"]', function(e) {
@@ -141,12 +181,61 @@ jQuery(function($) {
 		});
 	});
 
-	/*Se ejecutara cada vez que se cargue la pagina*/
+
+	$(document).ready(function() {
+		$('#confirmDelete').on('show.bs.modal', function(e) {
+			console.log("confirmDelete1");
+			$message = $(e.relatedTarget).attr('data-message');
+			$(this).find('.modal-body p').text($message);
+			$title = $(e.relatedTarget).attr('data-title');
+			$(this).find('.modal-title').text($title);
+
+			// Pass form reference to modal for submission on yes/ok
+			var form = $(e.relatedTarget).closest('form');
+			var name = $(e.relatedTarget).attr('name');
+			var value = $(e.relatedTarget).attr('value');
+
+			$(this).find('.modal-footer #confirm').data('form', form);
+			$(this).find('.modal-footer #confirm').data('name', name);
+			$(this).find('.modal-footer #confirm').data('value', value);
+			console.log("confirmDelete3");
+		});
+
+		/* Form confirm (yes/ok) handler, submits form */
+		$('#confirmDelete').find('.modal-footer #confirm').on('click', function() {
+			console.log("confirmDelete 1 yes");
+			var $form = $(this).data('form');
+			var type = $form.attr('method');
+			var url = $form.attr('action');
+			var formData = $form.serializeArray();
+
+			formData.push({
+				name : $(this).data('name'),
+				value : $(this).data('value')
+			});
+			
+			$.ajax({
+				type : type,
+				url : url,
+				data : formData,
+				success : function(data, status) {
+					console.log("confirmDelete");
+					console.log("data =>" + data);
+					$("#sensoresList").html(data);
+				}
+			});
+		});
+
+	});
+
 	$(document).ready(function() {
 		/*Comprobamos si el documento tiene nav, si es así entonces activamos el primer tab*/
 		if ($(this).find('.nav-tabs')) {
-			console.log("activar nav-tab 0");
-			$('.nav-tabs > li:first-child > a')[0].click();
+			try {
+				$('.nav-tabs > li:first-child > a')[0].click();
+			} catch (err) {
+				//console.log("activar nav-tab 0 error");
+			}
 		}
 		/*Activamos el tooltip*/
 		$('[data-toggle="tooltip"]').tooltip();

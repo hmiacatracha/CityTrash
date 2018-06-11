@@ -21,10 +21,18 @@ import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorModeloEditarDt
 import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorModeloFormBusq;
 import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorModeloRegistroDto;
 import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorRegistroDto;
+import es.udc.citytrash.controller.util.dtos.sensor.SensorDto;
 import es.udc.citytrash.model.contenedor.Contenedor;
 import es.udc.citytrash.model.contenedor.ContenedorDao;
 import es.udc.citytrash.model.contenedorModelo.ContenedorModelo;
 import es.udc.citytrash.model.contenedorModelo.ContenedorModeloDao;
+import es.udc.citytrash.model.sensor.Bateria;
+import es.udc.citytrash.model.sensor.Sensor;
+import es.udc.citytrash.model.sensor.SensorDao;
+import es.udc.citytrash.model.sensor.Temperatura;
+import es.udc.citytrash.model.sensor.Volumen;
+import es.udc.citytrash.model.sensorValor.Valor;
+import es.udc.citytrash.model.sensorValor.ValorDao;
 import es.udc.citytrash.model.tipoDeBasura.TipoDeBasura;
 import es.udc.citytrash.model.tipoDeBasura.TipoDeBasuraDao;
 import es.udc.citytrash.model.util.excepciones.DuplicateInstanceException;
@@ -44,6 +52,12 @@ public class ContenedorServiceImpl implements ContenedorService {
 	@Autowired
 	TipoDeBasuraDao tipoDao;
 
+	@Autowired
+	SensorDao sensorDao;
+
+	@Autowired
+	ValorDao valorDao;
+
 	final Logger logger = LoggerFactory.getLogger(ContenedorServiceImpl.class);
 
 	@Override
@@ -59,6 +73,7 @@ public class ContenedorServiceImpl implements ContenedorService {
 		return existe;
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public boolean esContenedorByNombreExistente(String nombre) {
 		logger.info("esContenedorByNombreExistente");
@@ -70,6 +85,7 @@ public class ContenedorServiceImpl implements ContenedorService {
 		}
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public boolean esModeloContenedorByNombreExistente(String nombre) {
 		logger.info("esModeloContenedorByNombreExistente");
@@ -90,6 +106,7 @@ public class ContenedorServiceImpl implements ContenedorService {
 		return contenedor.getActivo();
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public Contenedor buscarContenedorById(long id) throws InstanceNotFoundException {
 		logger.info("buscarContenedorById");
@@ -100,6 +117,7 @@ public class ContenedorServiceImpl implements ContenedorService {
 		}
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public ContenedorModelo buscarModeloById(int id) throws InstanceNotFoundException {
 		logger.info("buscarModeloById");
@@ -107,25 +125,29 @@ public class ContenedorServiceImpl implements ContenedorService {
 		return modelo;
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public List<ContenedorModelo> buscarTodosLosModelosOrderByModelo() {
-		logger.info("buscarTodosLosModelosOrderByModelo");
+		// logger.info("buscarTodosLosModelosOrderByModelo");
 		List<ContenedorModelo> modelos = modeloDao.buscarTodosOrderByModelo();
 		return modelos;
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public List<TipoDeBasura> buscarTiposDeBasura() {
 		logger.info("buscarTiposDeBasura");
 		return tipoDao.buscarTodos();
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public TipoDeBasura buscarTipoDeBasuraByModelo(int id) throws InstanceNotFoundException {
 		logger.info("buscarTiposDeBasuraByModelo");
 		return tipoDao.buscarById(modeloDao.buscarById(id).getTipo().getId());
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public TipoDeBasura buscarTiposDeBasuraByContenedor(long id) throws InstanceNotFoundException {
 		logger.info("buscarTiposDeBasuraByContenedor");
@@ -189,10 +211,42 @@ public class ContenedorServiceImpl implements ContenedorService {
 		contenedor.setModelo(modelo);
 		contenedor.setActivo(form.isActivo());
 		contenedor.setFechaBaja(form.getFechaBaja() != null ? dateToCalendar(form.getFechaBaja()) : null);
+		// contenedor.setFechaBaja(form.getFechaBaja());
 		contenedor.setLatitud(form.getLatitud() != null ? form.getLatitud() : null);
 		contenedor.setLongitud(form.getLongitud() != null ? form.getLongitud() : null);
 		contenedorDao.guardar(contenedor);
-		return contenedor;
+		logger.info("modificarContenedor sensores");
+		if (form.isUpdateChildren()) {
+			if (form.getSensores() != null) {
+				for (SensorDto sensor : form.getSensores()) {
+					Sensor s;
+					try {
+						s = sensorDao.buscarById(sensor.getId());
+						// falta cambiar el tipo
+						s.setNombre(sensor.getNombre());
+						s.setActivo(sensor.isActivo());
+						sensorDao.guardar(s);
+					} catch (InstanceNotFoundException e) {
+						switch (sensor.getSensorType()) {
+						case BATERIA:
+							s = new Bateria(sensor.getNombre(), contenedor, sensor.isActivo());
+							break;
+						case TEMPERATURA:
+							s = new Temperatura(sensor.getNombre(), contenedor, sensor.isActivo());
+							break;
+						case VOLUMEN:
+							s = new Volumen(sensor.getNombre(), contenedor, sensor.isActivo());
+							break;
+						default:
+							s = new Volumen(sensor.getNombre(), contenedor, sensor.isActivo());
+						}
+						s.setActivo(sensor.isActivo());
+						sensorDao.guardar(s);
+					}
+				}
+			}
+		}
+		return contenedorDao.buscarById(contenedor.getId());
 	}
 
 	@Override
@@ -291,6 +345,7 @@ public class ContenedorServiceImpl implements ContenedorService {
 		return modelo;
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public Page<ContenedorModelo> buscarModelos(Pageable pageable, ContenedorModeloFormBusq formBusqueda) {
 		logger.info("IMPRIMIENDO formbusqueda buscar modelos de contenedores => " + formBusqueda.toString());
@@ -332,6 +387,7 @@ public class ContenedorServiceImpl implements ContenedorService {
 		return page;
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public List<Contenedor> buscarContenedores(ContenedorFormBusq form) {
 		ContenedorModelo modelo = null;
@@ -362,6 +418,7 @@ public class ContenedorServiceImpl implements ContenedorService {
 				form.getMostrarSoloContenedoresActivos(), form.getMostrarSoloContenedoresDeAlta());
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public Page<Contenedor> buscarContenedores(Pageable pageable, ContenedorFormBusq form) {
 		logger.info("buscarContenedores");
@@ -409,6 +466,37 @@ public class ContenedorServiceImpl implements ContenedorService {
 		}
 		logger.info("buscarContenedores paso6");
 		return page;
+	}
+
+	@Override
+	public void eliminarSensorId(Long sensorId) throws InstanceNotFoundException {
+		Sensor sensor = sensorDao.buscarById(sensorId);
+		sensorDao.eliminar(sensor);
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public Sensor buscarSensorById(Long sensorId) throws InstanceNotFoundException {
+		return sensorDao.buscarById(sensorId);
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public List<Sensor> buscarSensorsByContenedor(Long contenedorId) throws InstanceNotFoundException {
+		logger.info("buscar sensores by contenedor servicio");
+		return sensorDao.buscarSensoresByContenedor(contenedorId);
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public Page<Valor> buscarValoresBySensor(Pageable pageable, Long sensorId) {
+		return valorDao.buscarValoresBySensor(pageable, sensorId);
+	}
+	
+	@Transactional(readOnly = true)
+	@Override
+	public List<Valor> buscarValoresBySensor(Long sensorId, Date fechaInicio, Date fechaFin) {
+		return valorDao.buscarValoresBySensor(sensorId,fechaInicio, fechaFin);
 	}
 
 	private static Calendar dateToCalendar(Date date) {

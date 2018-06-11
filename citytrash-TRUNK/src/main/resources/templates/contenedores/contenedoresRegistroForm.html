@@ -9,9 +9,11 @@
 			class="form-narrow form-horizontal" method="post" action="#"
 			th:action="@{#{link.contenedores.registro}}"
 			th:object="${contenedorForm}" th:fragment="formulario">
+
 			<fieldset>
 				<!-- mensaje ok -->
 				<th:block th:if="${msg!=null}">
+					
 					<div th:if="${type!=null}"
 						th:replace="fragments/alert :: alert (type='success',  message=#{${type}(${key})})"></div>
 				</th:block>
@@ -38,6 +40,20 @@
 				<br />
 				<!-- contenedor -->
 				<!-- localizacion  del contenedor-->
+
+				<!-- mapa -->
+				<div class="col-xs-offset-1 col-xs-10 map_canvas" id="mapa"></div>
+
+				<div id="localizacion_div" class="custom-multiselect">
+					<div class="form-group">
+						<div class="col-xs-12 col-sm-12">
+							<input id="direccion" type="text" class="form-control"
+								th:field="*{localizacion}" disabled="disabled">
+						</div>
+					</div>
+				</div>
+
+				<!-- 
 				<div id="localizacion_div">
 					<div class="form-group">
 						<div class="pull-left col-xs-12 col-sm-3">
@@ -55,47 +71,47 @@
 							</div>
 						</div>
 					</div>
+				-->
 
-					<!-- mapa -->
-					<div class="col-xs-offset-1 col-xs-10 map_canvas" id="mapa"></div>
-					<div class="col-xs-12"></div>
-					<!-- latitude -->
-					<div id="nombre-group" class="form-group"
-						th:classappend="${#fields.hasErrors('latitud')}? 'has-error'">
-						<div class="pull-left col-xs-3 col-sm-3 col-md-3">
-							<label for="latitud" class="col-form-label"
-								th:text="#{lbl_contenedor_latitud} + '*'"></label>
-						</div>
-						<div class="has-feedback col-xs-9 col-sm-6 col-md-5">
-							<input id="lat" data-geo="lat" type="text"
-								class="col-sm-6 form-control"
-								th:with="format=#{decimales_formato}" th:field="*{latitud}"
-								required="required" /> <span class="form-control-feedback">(<var>DD</var>)
-							</span>
-						</div>
-						<div class="col-xs-12 col-sm-3 col-md-4">
-							<span class="help-block" th:if="${#fields.hasErrors('latitud')}"
-								th:errors="*{latitud}"></span>
-						</div>
+				<!-- latitude -->
+				<div id="nombre-group" class="form-group"
+					th:classappend="${#fields.hasErrors('latitud')}? 'has-error'">
+					<div class="pull-left col-xs-3 col-sm-3 col-md-3">
+						<label for="latitud" class="col-form-label"
+							th:text="#{lbl_contenedor_latitud} + '*'"></label>
 					</div>
-					<div id="nombre-group" class="form-group"
-						th:classappend="${#fields.hasErrors('longitud')}? 'has-error'">
-						<div class="pull-left col-xs-3 col-sm-3 col-md-3">
-							<label for="longitud" class="col-form-label"
-								th:text="#{lbl_contenedor_longitude} + '*'"></label>
-						</div>
-						<div class="has-feedback col-xs-9 col-sm-6 col-md-5">
-							<input id="lng" data-geo="lng" type="text"
-								class="col-sm-6 form-control" th:field="*{longitud}"
-								required="required" /> <span class="form-control-feedback">(<var>DD</var>)
-							</span>
-						</div>
-						<div class="col-xs-12 col-sm-3 col-md-4">
-							<span class="help-block" th:if="${#fields.hasErrors('longitud')}"
-								th:errors="*{longitud}"></span>
-						</div>
+					<div class="has-feedback col-xs-9 col-sm-6 col-md-5">
+						<input id="lat" data-geo="lat" type="text"
+							pattern="-?\d{1,3}\.\d+" class="col-sm-6 form-control"
+							th:with="format=#{decimales_formato}" th:field="*{latitud}"
+							th:title="#{constraints.pattern}" required="required" /> <span
+							class="form-control-feedback">(<var>DD</var>)
+						</span>
+					</div>
+					<div class="col-xs-12 col-sm-3 col-md-4">
+						<span class="help-block" th:if="${#fields.hasErrors('latitud')}"
+							th:errors="*{latitud}"></span>
 					</div>
 				</div>
+				<div id="nombre-group" class="form-group"
+					th:classappend="${#fields.hasErrors('longitud')}? 'has-error'">
+					<div class="pull-left col-xs-3 col-sm-3 col-md-3">
+						<label for="longitud" class="col-form-label"
+							th:text="#{lbl_contenedor_longitude} + '*'"></label>
+					</div>
+					<div class="has-feedback col-xs-9 col-sm-6 col-md-5">
+						<input id="lng" data-geo="lng" type="text"
+							pattern="-?\d{1,3}\.\d+" class="col-sm-6 form-control"
+							th:field="*{longitud}" th:title="#{constraints.pattern}"
+							required="required" /> <span class="form-control-feedback">(<var>DD</var>)
+						</span>
+					</div>
+					<div class="col-xs-12 col-sm-3 col-md-4">
+						<span class="help-block" th:if="${#fields.hasErrors('longitud')}"
+							th:errors="*{longitud}"></span>
+					</div>
+				</div>
+
 
 				<!-- nombre -->
 				<div id="nombre-group" class="form-group"
@@ -140,12 +156,8 @@
 								th:errors="*{modeloContenedor}"> <br>
 							</span>
 						</div>
-
-
 					</div>
 				</div>
-
-
 				<!-- activo -->
 				<div class="col-xs-12">
 					<div class="col-xs-3"></div>
@@ -163,8 +175,6 @@
 			<br>
 			<button class="btn btn-default btn-lg btn-block" type="submit"
 				th:text="#{btn_add}" name="registrar" th:value="registrar"></button>
-
-
 		</form>
 
 	</div>

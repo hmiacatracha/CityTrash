@@ -17,7 +17,8 @@ public class GlobalNames {
 	public static final String TBL_CONTENEDOR = "TBL_CONTENEDORES";
 	public static final String TBL_MODELO_CONTENEDOR = "TBL_MODELOS_CONTENEDOR";
 
-	public static final String CAMPO_DISCRIMINADOR_BD = "TRABAJADOR_TYPE";
+	public static final String CAMPO_TRABAJADOR_DISCRIMINADOR = "TRABAJADOR_TYPE";
+	public static final String CAMPO_SENSOR_DISCRIMINADOR = "SENSOR_TIPO";
 	public static final String CAMPO_ROL_BD = "ROL";
 
 	public static final String DISCRIMINADOR_X_DEFECTO = "NONE";
@@ -30,5 +31,10 @@ public class GlobalNames {
 	public static final String ROL_RECOLECTOR = "ROLE_USER";
 	public static final String ROL_CONDUCTOR = "ROLE_USER";
 	public static final String ROL_REINICIAR_PASSWORD = "ROLE_CHANGE_PASSWORD";
+
+	public static final String TBL_SENSORES = "TBL_SENSORES";
+	public static final String DISCRIMINADOR_VOLUMEN = "SEN_VOL";
+	public static final String DISCRIMINADOR_BATERIA = "SEN_BAT";
+	public static final String DISCRIMINADOR_TEMPERATURA = "SEN_TEM";
 
 }

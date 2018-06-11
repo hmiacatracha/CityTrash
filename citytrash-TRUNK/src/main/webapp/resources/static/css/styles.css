@@ -352,11 +352,23 @@ select.form-control, input.form-control, option.form-control {
 /* Map Styles*/
 #map {
 	position: absolute;
-	top: 0;
+	top: 17%;
 	bottom: 0;
+	left: 10%;
+	right: 10%;
 	width: 90%;
+	margin: 0 auto;
 }
 
+#mapa {
+	height: 400px;
+	position: relative;
+	outline: none;
+	width: 100%;
+	margin: 0 auto;
+}
+
+}
 .filter-group {
 	font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
 	font-weight: 600;
@@ -403,4 +415,31 @@ select.form-control, input.form-control, option.form-control {
 .filter-group input[type=checkbox]:checked+label:before {
 	content: '✔';
 	margin-right: 5px;
+}
+
+/* centered columns styles */
+.row-centered {
+	text-align: center;
+}
+
+.col-centered {
+	display: inline-block;
+	float: none;
+	/* reset the text-align */
+	text-align: left;
+	/* inline-block space fix */
+	margin-right: -4px;
+	text-align: center;
+	background-color: #ccc;
+	border: 1px solid #ddd;
+}
+
+/* Canvas style  => para las estadísticas.*/
+#canvas {
+	border: 1px dotted green;
+	width: 100%; height : auto;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	height: auto;
 }

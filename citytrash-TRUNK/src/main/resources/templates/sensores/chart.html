@@ -1,0 +1,135 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+<meta charset="utf-8"></meta>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
+<meta name="description" content=""></meta>
+<meta name="author" content=""></meta>
+
+<link rel="shortcut icon" type="image/png"
+	th:href="@{/resources/static/img/icon.png}"></link>
+<!-- boostrap -->
+<link rel="stylesheet" media="screen"
+	th:href="@{/webjars/bootstrap/3.3.7-1/css/bootstrap.min.css}" />
+<!-- boostrap datapicker -->
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css" />
+
+<!-- BOOSTRAP SELECT -->
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
+
+<!-- fonts -->
+<link rel="stylesheet"
+	href="https://fonts.googleapis.com/css?family=Tangerine">
+<!--fonts -->
+<link href="https://fonts.googleapis.com/css?family=Lustria"
+	rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Merienda+One"
+	rel="stylesheet">
+
+<!-- icons -->
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+	rel="stylesheet">
+<!-- owner -->
+<link th:href="@{/resources/static/css/styles.css}" rel="stylesheet"></link>
+<meta name="author" content="heidy">
+<title layout:title-pattern="$LAYOUT_TITLE - $CONTENT_TITLE"></title>
+
+<!-- rank date -->
+<link rel="stylesheet" type="text/css"
+	href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+</head>
+<body>
+	<div th:replace="fragments/navigation :: nav(${menu})"></div>
+	<div id="content" class="container" th:fragment="content">
+		<div class="row">
+			<div class="col-md-12" th:if="${contenedor}">
+				<p id="sensorId" th:text="${sensor.id}" hidden=""></p>
+				<p id="tipo" th:text="#{${sensor.sensorType}}" hidden=""></p>
+				<p id="contenedor" th:text="#{${contenedor.nombre}}" hidden=""></p>
+				<p id="lbl_contenedor" th:text="${#strings.toUpperCase('__#{lbl_contenedor}__')}" hidden=""></p>
+				<p id="lbl_pronostico" th:text="${#strings.toUpperCase('__#{lbl_pronostico}__')}" hidden=""></p>
+				<p id="lbl_tiempo_real" th:text="${#strings.toUpperCase('__#{lbl_tiempo_real}__')}" hidden=""></p>
+				<!-- 
+				<h3 class="text-center text-warning"
+					th:text="${#strings.toUpperCase('__#{lbl_contenedor}__')}"></h3>
+				<h2 class="text-center text-success" th:text="${contenedor.nombre}">
+				</h2>
+				 -->
+			</div>
+
+			<div class="col-md-2">
+				<button type="button" class="btn btn-default" id="download-pdf">
+					<i class="fa fa-download"></i>
+				</button>
+			</div>
+
+			<!-- https://www.concretepage.com/html5/html5-date-and-time-example -->
+			<!-- https://medium.com/@grokwich/spring-boot-thymeleaf-html-form-handling-762ef0d51327 -->
+			<!-- 
+			<div class="col-md-10">
+				<div class="col-md-4">
+					<p class="input-group">
+						<label th:text="#{lbl_fecha_inicio}" class="col-form-label">
+						</label> <input name="fechaInicio" class="form-control"
+							pattern="[0-9]{2}-[0-9]{2}-[0-9]{4}T[0-9]{2}:[0-9]{2}"
+							type="datetime-local" required />
+					</p>
+				</div>
+				<div class="col-md-4">
+					<p class="input-group">
+						<label th:text="#{lbl_fecha_fin}" class="col-form-label">
+						</label> <input name="fechaFin" class="form-control" type="datetime-local"
+							pattern="[0-9]{2}-[0-9]{2}-[0-9]{4}T[0-9]{2}:[0-9]{2}" required />
+					</p>
+				</div>
+				<div class="col-md-2"></div>
+			</div>
+			-->
+			<div class="col-xd-12 col-md-3 pull-right">
+				<div id="reportrange">
+				<!-- style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%" -->
+					<i class="fa fa-calendar"></i>&nbsp; <span></span> <i
+						class="fa fa-caret-down"></i>
+				</div>
+			</div>
+			<div class="col-md-12">
+				<canvas class="canvas" id="contenedor-canvas"></canvas>
+				<div id="postResultDiv"> </div>
+			</div>
+			<div class="col-md-12">
+				<progress id="animationProgress" max="1" value="0"
+					style="width: 100%"></progress>
+			</div>
+		</div>
+		<!-- /row -->
+	</div>
+	<div th:replace="fragments/footer :: footer()"></div>
+	<!-- pdf -->
+	<script src="https://unpkg.com/jspdf@latest/dist/jspdf.min.js"></script>
+
+	<!-- CHARTS -->
+	<script type="text/javascript"
+		th:src="@{/webjars/chart.js/2.7.2/dist/Chart.min.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/static/js/chart_sensores.js}">
+		</script>
+
+	<!-- jquery rank date http://www.daterangepicker.com/-->
+	<script type="text/javascript"
+		src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+	<script type="text/javascript"
+		src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+	<script type="text/javascript"
+		src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+</body>
+</html>

@@ -1,15 +1,21 @@
 package es.udc.citytrash.controller.util.dtos.contenedor;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import es.udc.citytrash.controller.util.dtos.sensor.SensorDto;
 import es.udc.citytrash.model.contenedor.Contenedor;
 
 /**
@@ -63,6 +69,11 @@ public class ContenedorEditarDto {
 	private Date fechaBaja = null;
 
 	private boolean activo = true;
+
+	private boolean updateChildren = true;
+
+	@Valid
+	private List<SensorDto> sensores = new ArrayList<SensorDto>();
 
 	private static Date calendarToDate(Calendar calendar) {
 		return calendar.getTime();
@@ -144,10 +155,26 @@ public class ContenedorEditarDto {
 		this.localizacion = direccion;
 	}
 
+	public boolean isUpdateChildren() {
+		return updateChildren;
+	}
+
+	public void setUpdateChildren(boolean updateChildren) {
+		this.updateChildren = updateChildren;
+	}
+
 	@Override
 	public String toString() {
 		return "ContenedorDto [id=" + id + ", nombre=" + nombre + ", modeloContenedor=" + modeloContenedor
 				+ ", latitud=" + latitud + ", longitud=" + longitud + ", fechaAlta=" + fechaAlta + ", fechaBaja="
 				+ fechaBaja + ", activo=" + activo + "]";
+	}
+
+	public List<SensorDto> getSensores() {
+		return sensores;
+	}
+
+	public void setSensores(List<SensorDto> sensores) {
+		this.sensores = sensores;
 	}
 }

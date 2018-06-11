@@ -45,7 +45,7 @@ import es.udc.citytrash.util.enums.Idioma;
 @Entity
 @Table(name = GlobalNames.TBL_TRABAJ)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = GlobalNames.CAMPO_DISCRIMINADOR_BD, discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorColumn(name = GlobalNames.CAMPO_TRABAJADOR_DISCRIMINADOR, discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue("NONE")
 @BatchSize(size = 10)
 public abstract class Trabajador implements Serializable {

@@ -32,6 +32,10 @@
 		<mapping class="es.udc.citytrash.model.camionModeloTipoDeBasura.CamionModeloTipoDeBasura"/>
 		<mapping class="es.udc.citytrash.model.contenedor.Contenedor"/>
 		<mapping class="es.udc.citytrash.model.contenedorModelo.ContenedorModelo"/>
-		
+		<mapping class="es.udc.citytrash.model.sensor.Sensor"/>
+		<mapping class="es.udc.citytrash.model.sensor.Bateria"/>
+		<mapping class="es.udc.citytrash.model.sensor.Temperatura"/>
+		<mapping class="es.udc.citytrash.model.sensor.Volumen"/>
+		<mapping class="es.udc.citytrash.model.sensorValor.Valor"/>
 	</session-factory>
 </hibernate-configuration>

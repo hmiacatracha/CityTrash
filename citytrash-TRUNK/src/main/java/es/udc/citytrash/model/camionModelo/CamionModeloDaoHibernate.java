@@ -1,7 +1,6 @@
 package es.udc.citytrash.model.camionModelo;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -15,7 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
-import es.udc.citytrash.model.camion.Camion;
 import es.udc.citytrash.model.tipoDeBasura.TipoDeBasura;
 import es.udc.citytrash.model.util.excepciones.InstanceNotFoundException;
 import es.udc.citytrash.model.util.genericdao.GenericHibernateDAOImpl;
