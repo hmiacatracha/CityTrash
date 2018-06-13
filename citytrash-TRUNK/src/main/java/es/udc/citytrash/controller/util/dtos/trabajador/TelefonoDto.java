@@ -1,6 +1,4 @@
-package es.udc.citytrash.model.telefono;
-
-import java.io.Serializable;
+package es.udc.citytrash.controller.util.dtos.trabajador;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -8,30 +6,28 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.Pattern;
 
-import es.udc.citytrash.util.enums.TipoTelefono;
+import es.udc.citytrash.model.telefono.Telefono;
 
-// https://marcin-chwedczuk.github.io/introduction-to-hibernate-embeddable-types
 /**
  * 
  * @author hmia
  *
  */
 
-@Embeddable
-public class Telefono implements Serializable {
+public class TelefonoDto {
 
 	/**
 	 */
 	private static final long serialVersionUID = -6550595058583546765L;
 
-	public Telefono() {
+	public TelefonoDto(Telefono t) {
 
 	}
 
-	public Telefono(String numero, TipoTelefono tipo) {
+	public TelefonoDto(String numero) {
 		// You can add validation here
 		this.numero = numero;
-		this.tipo = tipo;
+		// this.tipo = tipo;
 	}
 
 	@Pattern(regexp = "^(?=(?:[8-9]){1})(?=[0-9]{8}).*", message = "{error.telefono}")
@@ -43,13 +39,11 @@ public class Telefono implements Serializable {
 		this.numero = numero;
 	}
 
-	public TipoTelefono getTipo() {
-		return tipo;
-	}
-
-	public void setTipo(TipoTelefono tipo) {
-		this.tipo = tipo;
-	}
+	/*
+	 * public TipoTelefono getTipo() { return tipo; }
+	 * 
+	 * public void setTipo(TipoTelefono tipo) { this.tipo = tipo; }
+	 */
 
 	@Override
 	public int hashCode() {
@@ -67,7 +61,7 @@ public class Telefono implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Telefono other = (Telefono) obj;
+		TelefonoDto other = (TelefonoDto) obj;
 		if (numero == null) {
 			if (other.numero != null)
 				return false;
@@ -78,13 +72,13 @@ public class Telefono implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Telefono [numero=" + numero + ", tipo=" + tipo + "]";
+		return "Telefono [numero=" + numero + "]";
 	}
 
 	private String numero = "";
 
-	@Enumerated(EnumType.STRING)
-	// @Column(length = 8)
-	private TipoTelefono tipo;
-
+	/*
+	 * @Enumerated(EnumType.STRING) private TipoTelefono tipo =
+	 * TipoTelefono.HOME;
+	 */
 }

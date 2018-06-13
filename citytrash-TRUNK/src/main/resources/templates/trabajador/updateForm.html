@@ -5,8 +5,8 @@
 <body>
 	<div th:fragment="update(updateForm)">
 		<br>
-		<form id="updateForm" role="form" class="form-narrow form-horizontal"
-			method="post" action="#"
+		<form id="actualizarTrabajador" role="form"
+			class="form-narrow form-horizontal" method="post" action="#"
 			th:action="@{#{link.trabajadores.editar}(id=${id})}"
 			th:object="${updateForm}" th:fragment="updateForm">
 
@@ -89,7 +89,6 @@
 				</div>
 				<br>
 				<th:block>
-
 					<div id="nombre-group" class="form-group row"
 						th:classappend="${#fields.hasErrors('nombre')}? 'has-error'">
 						<label for="nombre" class="col-sm-3 col-form-label"
@@ -334,6 +333,7 @@
 					</div>
 
 					<legend class="col-xs-12" th:text="#{frm_trabajadores_telefonos}"></legend>
+
 					<table th:fragment="telefonosList" id="telefonosList"
 						class="table table-striped">
 						<tr>
@@ -344,49 +344,50 @@
 							<th></th>
 						</tr>
 
-						<!-- 
-						<tr th:if="${telefonos.size()> 0}"
-							th:each="tel, rowStat : ${telefonos}" th:field="${telefonos}">
-							
-						-->
+						<tr th:if="${listaTelefonos.size()> 0}"
+							th:each="telefono, rowStat : ${listaTelefonos}"
+							th:field="${telefonos}">
 
-						<tr th:each="tel, rowStat : ${updateForm.tels}"
-							th:field="${updateForm.tels}">
-
+							<!-- INDEX -->
 							<td class="col-xs-1" th:text="${rowStat.index+1}"></td>
-							<td
-								th:classappend="${#fields.hasErrors('tels[__${rowStat.index}__].numero')}? 'has-error'"><input
-								type="text" class="form-control input-button-right"
-								th:field="*{tels[__${rowStat.index}__].numero}" /> <span
-								class="help-block"
-								th:if="${#fields.hasErrors('tels[__${rowStat.index}__].numero')}"
-								th:errors="*{tels[__${rowStat.index}__].numero}"> </span></td>
 
+							<!-- TIPO -->
+							<td
+								th:classappend="${#fields.hasErrors('telefonos[__${rowStat.index}__].tipo')}? 'has-error'"><select
+								th:field="*{telefonos[__${rowStat.index}__].tipo}"
+								class="form-control mySelect" data-style="btn-default"
+								id="tipoTelefono">
+									<option
+										th:each="tipoTelefono : ${T(es.udc.citytrash.util.enums.TipoTelefono).values()}"
+										th:value="${tipoTelefono}" th:text="#{${tipoTelefono}}"></option>
+							</select> <span class="help-block"
+								th:if="${#fields.hasErrors('telefonos[__${rowStat.index}__].tipo')}"
+								th:errors="*{telefonos[__${rowStat.index}__].tipo}"> </span></td>
+
+							<!-- NUMERO DE TELEFONO -->
+							<td
+								th:classappend="${#fields.hasErrors('telefonos[__${rowStat.index}__].numero')}? 'has-error'"><input
+								type="text" class="form-control input-button-right"
+								th:field="*{telefonos[__${rowStat.index}__].numero}" /> <span
+								class="help-block"
+								th:if="${#fields.hasErrors('telefonos[__${rowStat.index}__].numero')}"
+								th:errors="*{telefonos[__${rowStat.index}__].numero}"> </span></td>
+							<td>
 							<td>
 								<div class="btn-group text-center" id="options">
 									<div id="otherOptions" class="btn-group text-center">
 										<!-- <span class="col-sm-1 row-delete-button"> -->
 										<button type="submit" class="btn btn-danger"
-											th:value="${telefonos[__${rowStat.index}__].numero}"
-											name="eliminarTelefono">
+											th:value="${telefono.numero}" name="eliminarTelefono">
 											<i class="glyphicon glyphicon-trash icon-white"></i>
 										</button>
 									</div>
 								</div>
 							</td>
-
-
-						</tr>
-						<tr>
 						</tr>
 					</table>
 			</fieldset>
 			<br>
-			<!-- 
-			<button class="btn btn-default btn-lg btn-block" type="submit"
-				th:text="#{btn_update}" th:value="#{btn_update}"></button>
-				
-				-->
 			<div>
 				<!-- <div th:if="*{telefonos.size()} < 5" class="col-lg-12"> -->
 				<button class="btn btn-success btn-md pull-right" type="submit"

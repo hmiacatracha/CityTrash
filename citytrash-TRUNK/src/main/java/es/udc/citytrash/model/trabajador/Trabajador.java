@@ -389,12 +389,13 @@ public abstract class Trabajador implements Serializable {
 
 	@ElementCollection
 	@CollectionTable(name = "TBL_TELEFONOS", joinColumns = @JoinColumn(name = "TRABAJADOR_ID"))
-	@AttributeOverrides({ @AttributeOverride(name = "numero", column = @Column(name = "TELEFONO")) })
+	@AttributeOverrides({ @AttributeOverride(name = "numero", column = @Column(name = "TELEFONO")),
+			@AttributeOverride(name = "tipo", column = @Column(name = "TIPO")) })
 	public List<Telefono> getTelefonos() {
 		return telefonos;
 	}
 
-	protected void setTelefonos(List<Telefono> telefonos) {
+	public void setTelefonos(List<Telefono> telefonos) {
 		this.telefonos = telefonos;
 	}
 
@@ -407,7 +408,9 @@ public abstract class Trabajador implements Serializable {
 			telefonos.add(number);
 		else {
 			int index = telefonos.indexOf(number);
-			telefonos.set(index, number);
+			Telefono t = telefonos.get(index);
+			if (t.getTipo() != number.getTipo())
+				telefonos.set(index, number);
 		}
 	}
 

@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import es.udc.citytrash.controller.util.dtos.trabajador.TrabajadorBusqFormDto;
 import es.udc.citytrash.controller.util.dtos.trabajador.TrabajadorRegistroFormDto;
 import es.udc.citytrash.controller.util.dtos.trabajador.TrabajadorUpdateFormDto;
+import es.udc.citytrash.model.telefono.Telefono;
 import es.udc.citytrash.model.trabajador.Administrador;
 import es.udc.citytrash.model.trabajador.Conductor;
 import es.udc.citytrash.model.trabajador.ConductorDao;
@@ -157,6 +158,12 @@ public class TrabajadorServiceImpl implements TrabajadorService {
 		t.setTelefono(esBigDecimal(user.getTelefono()) ? truncateToBigDecimaRouding(user.getTelefono()) : null);
 		t.setCp(esBigDecimal(user.getCp()) ? truncateToBigDecimaRouding(user.getCp()) : null);
 		t.setActiveWorker(!user.isEstaDeBaja());
+
+		for (Telefono tel : user.getTelefonos()) {
+			t.addTelefono(tel);
+		}
+
+		// t.setTelefonos(user.getTelefonos());
 		// t.setEnabledCount(!user.isEstaDeBaja());
 
 		/* Actualizamos mediante SQL el tipo del trabajador */

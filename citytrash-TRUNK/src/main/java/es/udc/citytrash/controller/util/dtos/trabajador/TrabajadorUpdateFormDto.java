@@ -56,7 +56,7 @@ public class TrabajadorUpdateFormDto {
 		this.provincia = t.getProvincia() != null ? t.getProvincia().toUpperCase() : "";
 		this.email = t.getEmail() != null ? t.getEmail().toUpperCase().trim() : "";
 		this.confirmarEmail = t.getEmail() != null ? t.getEmail().toUpperCase().trim() : "";
-		this.tels = t.getTelefonos() != null ? t.getTelefonos() : new ArrayList<Telefono>();
+		this.telefonos = t.getTelefonos() != null ? t.getTelefonos() : new ArrayList<Telefono>();
 
 		String tipo = t.getTrabajadorType();
 
@@ -122,8 +122,10 @@ public class TrabajadorUpdateFormDto {
 	private String telefono;
 
 	@Valid
-	@Size(min = 1, max = 5)
-	private List<Telefono> tels = new ArrayList<Telefono>();
+	// @Size(min = 1, max = 5)
+	private List<Telefono> telefonos = new ArrayList<Telefono>();
+
+	private List<Integer> enteros = new ArrayList<Integer>();
 
 	@NotNull
 	@Past
@@ -297,14 +299,22 @@ public class TrabajadorUpdateFormDto {
 		this.confirmarEmail = confirmarEmail.toLowerCase().trim();
 	}
 
-	public List<Telefono> getTels() {
-		return tels;
+	public List<Telefono> getTelefonos() {
+		return telefonos;
 	}
 
-	public void setTels(List<Telefono> telefonos) {
+	public void setTelefonos(List<Telefono> telefonos) {
 		if (telefonos == null)
 			telefonos = new ArrayList<Telefono>();
-		this.tels = telefonos;
+		this.telefonos = telefonos;
+	}
+
+	public List<Integer> getEnteros() {
+		return enteros;
+	}
+
+	public void setEnteros(List<Integer> enteros) {
+		this.enteros = enteros;
 	}
 
 	@Override
@@ -312,8 +322,8 @@ public class TrabajadorUpdateFormDto {
 		return "TrabajadorUpdateFormDto [id=" + id + ", documento=" + documento + ", nombre=" + nombre + ", apellidos="
 				+ apellidos + ", email=" + email + ", confirmarEmail=" + confirmarEmail + ", tipo=" + tipo + ", via="
 				+ via + ", numero=" + numero + ", piso=" + piso + ", puerta=" + puerta + ", cp=" + cp + ", telefono="
-				+ telefono + ", telefonos=" + tels + ", fechaNacimiento=" + fechaNacimiento + ", localidad=" + localidad
-				+ ", provincia=" + provincia + ", restoDireccion=" + restoDireccion + ", idioma=" + idioma
+				+ telefono + ", telefonos=" + telefonos + ", fechaNacimiento=" + fechaNacimiento + ", localidad="
+				+ localidad + ", provincia=" + provincia + ", restoDireccion=" + restoDireccion + ", idioma=" + idioma
 				+ ", estaDeBaja=" + estaDeBaja + "]";
 	}
 
