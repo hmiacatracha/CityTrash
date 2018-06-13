@@ -18,7 +18,6 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -46,6 +45,7 @@ import es.udc.citytrash.controller.util.dtos.trabajador.TrabajadorDto;
 import es.udc.citytrash.controller.util.dtos.trabajador.TrabajadorRegistroFormDto;
 import es.udc.citytrash.controller.util.dtos.trabajador.TrabajadorUpdateFormDto;
 import es.udc.citytrash.model.emailService.EmailNotificacionesService;
+import es.udc.citytrash.model.telefono.Telefono;
 import es.udc.citytrash.model.trabajador.Trabajador;
 import es.udc.citytrash.model.trabajadorService.TrabajadorService;
 import es.udc.citytrash.model.util.excepciones.DuplicateInstanceException;
@@ -54,8 +54,6 @@ import es.udc.citytrash.model.util.excepciones.InstanceNotFoundException;
 import es.udc.citytrash.util.enums.CampoBusqTrabajador;
 import es.udc.citytrash.util.enums.Idioma;
 import es.udc.citytrash.util.enums.TipoTrabajador;
-
-import es.udc.citytrash.util.GlobalNames;
 
 @Controller
 // @PreAuthorize("hasRole('" + GlobalNames.ROL_ADMINISTRADOR + "')")
@@ -338,13 +336,11 @@ public class TrabajadoresController {
 		try {
 			logger.info("UPDATE WORKER GET");
 			Trabajador t = tservicio.buscarTrabajador(id);
-			TrabajadorUpdateFormDto updateForm = new TrabajadorUpdateFormDto(t.getId(), t.getDocId(), t.getNombre(),
-					t.getApellidos(), t.getFecNac(), t.getEmail(), t.getToken(), t.getFechaExpiracionToken(),
-					t.getIdioma(), t.getNombreVia(), t.getNumero(), t.getPiso(), t.getPuerta(), t.getProvincia(),
-					t.getLocalidad(), t.getCp(), t.getTelefono(), t.getRestoDireccion(), t.isActiveWorker(),
-					t.getTrabajadorType());
+			TrabajadorUpdateFormDto updateForm = new TrabajadorUpdateFormDto(t);
 			logger.info("UPDATE WORKER GET updateForm => " + updateForm.toString());
+			logger.info("telefonos =>" + updateForm.getTels());
 			model.addAttribute("updateForm", updateForm);
+			model.addAttribute("telefonos", t.getTelefonos());
 			model.addAttribute("msg", msg);
 			model.addAttribute("type", type);
 			model.addAttribute("key", updateForm.getEmail());
@@ -358,7 +354,8 @@ public class TrabajadoresController {
 		}
 	}
 
-	@RequestMapping(value = WebUtils.REQUEST_MAPPING_TRABAJADOR_UPDATE, method = RequestMethod.POST)
+	@RequestMapping(value = WebUtils.REQUEST_MAPPING_TRABAJADOR_UPDATE, method = RequestMethod.POST, params = {
+			"modificar" })
 	public String updateTrabajador(@PathVariable("trabajadorId") long id,
 			@ModelAttribute("updateForm") @Valid TrabajadorUpdateFormDto updateForm, BindingResult result,
 			HttpServletRequest request, Errors errors, Model model, RedirectAttributes redirectAttributes,
@@ -386,11 +383,9 @@ public class TrabajadoresController {
 			model.addAttribute("msg", "ok");
 			model.addAttribute("type", "cambios_realizados_ok");
 			model.addAttribute("key", t.getEmail());
-			updateForm = new TrabajadorUpdateFormDto(t.getId(), t.getDocId(), t.getNombre(), t.getApellidos(),
-					t.getFecNac(), t.getEmail(), t.getToken(), t.getFechaExpiracionToken(), t.getIdioma(),
-					t.getNombreVia(), t.getNumero(), t.getPiso(), t.getPuerta(), t.getProvincia(), t.getLocalidad(),
-					t.getCp(), t.getTelefono(), t.getRestoDireccion(), t.isActiveWorker(), t.getTrabajadorType());
+			updateForm = new TrabajadorUpdateFormDto(t);
 			model.addAttribute("updateForm", updateForm);
+			model.addAttribute("telefonos", updateForm.getTels());
 			if (AjaxUtils.isAjaxRequest(requestedWith))
 				return WebUtils.VISTA_TRABAJADORES_UPDATE.concat(" :: content");
 			return WebUtils.VISTA_TRABAJADORES_UPDATE;
@@ -406,6 +401,60 @@ public class TrabajadoresController {
 				return WebUtils.VISTA_TRABAJADORES_UPDATE.concat(" :: content");
 			return WebUtils.VISTA_TRABAJADORES_UPDATE;
 		}
+	}
+
+	@RequestMapping(value = WebUtils.REQUEST_MAPPING_TRABAJADOR_UPDATE, method = RequestMethod.POST, params = {
+			"addTelefono" })
+	public String anadirTelefono(@PathVariable("trabajadorId") long id,
+			@ModelAttribute("updateForm") TrabajadorUpdateFormDto updateForm, Model model,
+			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith)
+			throws EmployeeNotFoundException {
+
+		Trabajador t;
+
+		try {
+			t = tservicio.buscarTrabajador(id);
+		} catch (InstanceNotFoundException e1) {
+			throw new EmployeeNotFoundException(id);
+		}
+
+		if (updateForm.getTels().size() < 5) {
+			logger.info("paso1");
+			updateForm.getTels().add(new Telefono());
+			logger.info("paso2");
+		} else {
+			logger.info("paso3");
+		}
+		model.addAttribute("updateForm", updateForm);
+		model.addAttribute("telefonos", updateForm.getTels());
+		if (AjaxUtils.isAjaxRequest(requestedWith))
+			return WebUtils.VISTA_TRABAJADORES_UPDATE.concat(" :: content");
+		return WebUtils.VISTA_TRABAJADORES_UPDATE;
+	}
+
+	@RequestMapping(value = WebUtils.REQUEST_MAPPING_TRABAJADOR_UPDATE, method = RequestMethod.POST, params = {
+			"eliminarTelefono" })
+	public String eliminarTelefono(@PathVariable("trabajadorId") long id,
+			@ModelAttribute("updateForm") TrabajadorUpdateFormDto updateForm, Model model,
+			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith,
+			final HttpServletRequest req) throws EmployeeNotFoundException {
+		Trabajador t;
+		try {
+			t = tservicio.buscarTrabajador(id);
+		} catch (InstanceNotFoundException e1) {
+			throw new EmployeeNotFoundException(id);
+		}
+		String numTelEliminar = req.getParameter("eliminarTelefono");
+		for (Telefono tel : updateForm.getTels()) {
+			if (tel.getNumero().equals(numTelEliminar)) {
+				updateForm.getTels().remove(tel);
+				break;
+			}
+		}
+		model.addAttribute("updateForm", updateForm);
+		if (AjaxUtils.isAjaxRequest(requestedWith))
+			return WebUtils.VISTA_TRABAJADORES_UPDATE.concat(" :: content");
+		return WebUtils.VISTA_TRABAJADORES_UPDATE;
 	}
 
 	@RequestMapping(path = WebUtils.REQUEST_MAPPING_CAMBIAR_ESTADO, method = RequestMethod.POST)

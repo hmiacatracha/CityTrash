@@ -210,6 +210,7 @@ public class TrabajadorServiceImpl implements TrabajadorService {
 	@Override
 	public Trabajador buscarTrabajador(long id) throws InstanceNotFoundException {
 		Trabajador t = trabajadorProfileDao.buscarById(id);
+		logger.info("trabajador =>" + t.toString());
 		return t;
 	}
 

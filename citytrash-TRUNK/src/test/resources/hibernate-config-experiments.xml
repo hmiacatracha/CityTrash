@@ -32,6 +32,7 @@
 		<mapping class="es.udc.citytrash.model.camionModeloTipoDeBasura.CamionModeloTipoDeBasura"/>
 		<mapping class="es.udc.citytrash.model.contenedor.Contenedor"/>
 		<mapping class="es.udc.citytrash.model.contenedorModelo.ContenedorModelo"/>
-		
+		<mapping class="es.udc.citytrash.model.telefono.Telefono"/>
+
 	</session-factory>
 </hibernate-configuration>

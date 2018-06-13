@@ -1,9 +1,10 @@
 package es.udc.citytrash.controller.util.dtos.trabajador;
 
-import java.math.BigDecimal;
-import java.util.Calendar;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Pattern;
@@ -14,7 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import es.udc.citytrash.controller.util.anotaciones.DocumentoNoDuplicado;
+import es.udc.citytrash.model.telefono.Telefono;
 import es.udc.citytrash.model.trabajador.Trabajador;
 import es.udc.citytrash.util.enums.Idioma;
 import es.udc.citytrash.util.enums.TipoTrabajador;
@@ -36,30 +37,28 @@ public class TrabajadorUpdateFormDto {
 
 	}
 
-	public TrabajadorUpdateFormDto(long id, String docId, String nombre, String apellidos, Calendar fechaNacimiento,
-			String email, String token, Calendar fechaExpiracionToken, Idioma idioma, String nombreVia, Integer numero,
-			Integer piso, String puerta, String provincia, String localidad, BigDecimal cp, BigDecimal telefono,
-			String restoDireccion, Boolean trabajadorActivo, String trabajadorType) {
+	public TrabajadorUpdateFormDto(Trabajador t) {
 
-		this.id = id;
-		this.documento = docId != null ? docId.toUpperCase() : "";
-		this.nombre = nombre != null ? nombre.toUpperCase() : "";
-		this.apellidos = apellidos != null ? apellidos.toUpperCase().trim() : "";
-		this.fechaNacimiento = fechaNacimiento != null ? fechaNacimiento.getTime() : null;
-		this.idioma = idioma != null ? idioma : Idioma.es;
-		this.estaDeBaja = !trabajadorActivo;
-		this.via = nombreVia != null ? nombreVia.toUpperCase() : "";
-		this.numero = numero != null ? numero.toString() : "";
-		this.piso = piso != null ? piso.toString() : "";
-		this.puerta = puerta != null ? puerta.toUpperCase() : "";
-		this.restoDireccion = restoDireccion != null ? restoDireccion.toUpperCase() : "";
-		this.cp = cp != null ? cp.toString() : "";
-		this.localidad = localidad != null ? provincia.toUpperCase() : "";
-		this.provincia = provincia != null ? provincia.toUpperCase() : "";
-		this.email = email != null ? email.toUpperCase().trim() : "";
-		this.confirmarEmail = email != null ? email.toUpperCase().trim() : "";
+		this.id = t.getId();
+		this.documento = t.getDocId() != null ? t.getDocId().toUpperCase() : "";
+		this.nombre = t.getNombre() != null ? t.getNombre().toUpperCase() : "";
+		this.apellidos = t.getApellidos() != null ? t.getApellidos().toUpperCase().trim() : "";
+		this.fechaNacimiento = t.getFecNac() != null ? t.getFecNac().getTime() : null;
+		this.idioma = t.getIdioma() != null ? t.getIdioma() : Idioma.es;
+		this.estaDeBaja = !t.isActiveWorker();
+		this.via = t.getNombreVia() != null ? t.getNombreVia().toUpperCase() : "";
+		this.numero = t.getNumero() != null ? t.getNumero().toString() : "";
+		this.piso = t.getPiso() != null ? t.getPiso().toString() : "";
+		this.puerta = t.getPuerta() != null ? t.getPuerta().toUpperCase() : "";
+		this.restoDireccion = t.getRestoDireccion() != null ? t.getRestoDireccion().toUpperCase() : "";
+		this.cp = t.getCp() != null ? t.getCp().toString() : "";
+		this.localidad = t.getLocalidad() != null ? t.getLocalidad().toUpperCase() : "";
+		this.provincia = t.getProvincia() != null ? t.getProvincia().toUpperCase() : "";
+		this.email = t.getEmail() != null ? t.getEmail().toUpperCase().trim() : "";
+		this.confirmarEmail = t.getEmail() != null ? t.getEmail().toUpperCase().trim() : "";
+		this.tels = t.getTelefonos() != null ? t.getTelefonos() : new ArrayList<Telefono>();
 
-		String tipo = trabajadorType;
+		String tipo = t.getTrabajadorType();
 
 		if (tipo == null || tipo.isEmpty())
 			tipo = "NONE";
@@ -121,6 +120,10 @@ public class TrabajadorUpdateFormDto {
 	@Pattern(regexp = "^([9|6|7][0-9]{8})?", message = "{constraints.pattern.telefono}")
 	@Size(min = 0, max = 9)
 	private String telefono;
+
+	@Valid
+	@Size(min = 1, max = 5)
+	private List<Telefono> tels = new ArrayList<Telefono>();
 
 	@NotNull
 	@Past
@@ -294,12 +297,24 @@ public class TrabajadorUpdateFormDto {
 		this.confirmarEmail = confirmarEmail.toLowerCase().trim();
 	}
 
+	public List<Telefono> getTels() {
+		return tels;
+	}
+
+	public void setTels(List<Telefono> telefonos) {
+		if (telefonos == null)
+			telefonos = new ArrayList<Telefono>();
+		this.tels = telefonos;
+	}
+
 	@Override
 	public String toString() {
-		return "TrabajadorUpdateFormDto [documento=" + documento + ", nombre=" + nombre + ", apellidos=" + apellidos
-				+ ", tipo=" + tipo + ", via=" + via + ", numero=" + numero + ", piso=" + piso + ", puerta=" + puerta
-				+ ", cp=" + cp + ", telefono=" + telefono + ", fechaNacimiento=" + fechaNacimiento + ", localidad="
-				+ localidad + ", provincia=" + provincia + ", restoDireccion=" + restoDireccion + ", idioma=" + idioma
+		return "TrabajadorUpdateFormDto [id=" + id + ", documento=" + documento + ", nombre=" + nombre + ", apellidos="
+				+ apellidos + ", email=" + email + ", confirmarEmail=" + confirmarEmail + ", tipo=" + tipo + ", via="
+				+ via + ", numero=" + numero + ", piso=" + piso + ", puerta=" + puerta + ", cp=" + cp + ", telefono="
+				+ telefono + ", telefonos=" + tels + ", fechaNacimiento=" + fechaNacimiento + ", localidad=" + localidad
+				+ ", provincia=" + provincia + ", restoDireccion=" + restoDireccion + ", idioma=" + idioma
 				+ ", estaDeBaja=" + estaDeBaja + "]";
 	}
+
 }

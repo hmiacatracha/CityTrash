@@ -2,20 +2,30 @@ package es.udc.citytrash.model.trabajador;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
+import javax.annotation.Nonnull;
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -28,6 +38,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotBlank;
 
+import es.udc.citytrash.model.telefono.Telefono;
 import es.udc.citytrash.util.GlobalNames;
 import es.udc.citytrash.util.enums.Idioma;
 
@@ -376,16 +387,43 @@ public abstract class Trabajador implements Serializable {
 		this.trabajadorType = trabajadorType;
 	}
 
+	@ElementCollection
+	@CollectionTable(name = "TBL_TELEFONOS", joinColumns = @JoinColumn(name = "TRABAJADOR_ID"))
+	@AttributeOverrides({ @AttributeOverride(name = "numero", column = @Column(name = "TELEFONO")) })
+	public List<Telefono> getTelefonos() {
+		return telefonos;
+	}
+
+	protected void setTelefonos(List<Telefono> telefonos) {
+		this.telefonos = telefonos;
+	}
+
+	public boolean isTelefonoExistente(Telefono number) {
+		return telefonos.contains(number);
+	}
+
+	public void addTelefono(Telefono number) {
+		if (!telefonos.contains(number))
+			telefonos.add(number);
+		else {
+			int index = telefonos.indexOf(number);
+			telefonos.set(index, number);
+		}
+	}
+
+	public void removeTelefono(Telefono number) {
+		telefonos.remove(number);
+	}
+
 	@Override
 	public String toString() {
 		return "Trabajador [id=" + id + ", docId=" + docId + ", nombre=" + nombre + ", apellidos=" + apellidos
-				+ ", fechaNacimiento=" + fechaNacimiento + ", email=" + email + ", password=" + password + ", token="
-				+ token + ", fechaExpiracionToken=" + fechaExpiracionToken + ", idioma=" + idioma + ", nombreVia="
+				+ ", fechaNacimiento=" + fechaNacimiento + ", email=" + email + ", idioma=" + idioma + ", nombreVia="
 				+ nombreVia + ", numero=" + numero + ", piso=" + piso + ", puerta=" + puerta + ", provincia="
 				+ provincia + ", localidad=" + localidad + ", cp=" + cp + ", telefono=" + telefono + ", restoDireccion="
 				+ restoDireccion + ", cuentaActiva=" + cuentaActiva + ", trabajadorActivo=" + trabajadorActivo
 				+ ", fechaCreacion=" + fechaCreacion + ", fechaActivacion=" + fechaActivacion + ", rol=" + rol
-				+ ", trabajadorType=" + trabajadorType + "]";
+				+ ", trabajadorType=" + trabajadorType + ", telefonos=" + telefonos + "]";
 	}
 
 	/* Atributos */
@@ -414,5 +452,6 @@ public abstract class Trabajador implements Serializable {
 	public Calendar fechaActivacion;
 	private String rol;
 	private String trabajadorType;
+	private List<Telefono> telefonos = new ArrayList<Telefono>();
 
 }

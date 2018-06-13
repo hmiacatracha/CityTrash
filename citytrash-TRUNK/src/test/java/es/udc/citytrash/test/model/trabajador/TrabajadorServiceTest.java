@@ -109,10 +109,7 @@ public class TrabajadorServiceTest {
 	}
 
 	private TrabajadorUpdateFormDto rellenarActualizar(Trabajador t) {
-		return new TrabajadorUpdateFormDto(t.getId(), t.getDocId(), t.getNombre(), t.getApellidos(), t.getFecNac(),
-				t.getEmail(), t.getToken(), t.getFechaExpiracionToken(), t.getIdioma(), t.getNombreVia(), t.getNumero(),
-				t.getPiso(), t.getPuerta(), t.getProvincia(), t.getLocalidad(), t.getCp(), t.getTelefono(),
-				t.getRestoDireccion(), t.isActiveWorker(), t.getTrabajadorType());
+		return new TrabajadorUpdateFormDto(t);
 	}
 
 	@Test
