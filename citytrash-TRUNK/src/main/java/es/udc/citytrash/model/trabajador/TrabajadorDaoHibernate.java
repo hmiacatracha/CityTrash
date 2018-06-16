@@ -343,7 +343,7 @@ public class TrabajadorDaoHibernate extends GenericHibernateDAOImpl<Trabajador, 
 	}
 
 	@Override
-	public Page<Trabajador> buscarTrabajadoresPorTelefonoYTipo(Pageable pageable, String telefono, TipoTrabajador tipo,
+	public Page<Trabajador> buscarTrabajadoresPorTelefonosYTipo(Pageable pageable, String telefono, TipoTrabajador tipo,
 			Boolean mostrarTodos) {
 		String[] palabras = telefono.split(" ");
 		Query<Trabajador> query;
@@ -351,13 +351,15 @@ public class TrabajadorDaoHibernate extends GenericHibernateDAOImpl<Trabajador, 
 		Page<Trabajador> page = new PageImpl<Trabajador>(trabajadores, pageable, trabajadores.size());
 		String alias = "t";
 
-		StringBuilder hql = new StringBuilder("Select " + alias + " FROM Trabajador " + alias);
+		StringBuilder hql = new StringBuilder(
+				"Select distinct " + alias + " FROM Trabajador  " + alias + " JOIN " + alias + ".telefonos  tel  ");
+
 		/* Palabras claves */
 		for (int i = 0; i < palabras.length; i++) {
 			if (i != 0)
-				hql.append(" AND LOWER(" + alias + ".telefono) LIKE  LOWER (?)");
+				hql.append(" AND LOWER(tel.numero) like LOWER(?) ");
 			else
-				hql.append(" WHERE LOWER(" + alias + ".telefono) LIKE  LOWER (?)");
+				hql.append(" WHERE LOWER(tel.numero) like LOWER(?)");
 		}
 
 		if (!mostrarTodos)

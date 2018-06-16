@@ -15,12 +15,20 @@
 		<div class="form-group row">
 			<div class="col-xs-6">
 				<div class="pull-left">
+					<a class="btn btn-default"
+						th:href="@{#{link.trabajadores.registro}}" role="button"><i
+						class="glyphicon glyphicon-plus" data-toggle="tooltip"
+						th:title="#{frm_trabajadores_registro}"></i></a>
+				</div>
+				<!-- 
+				<div class="pull-left">	
 					<button id="registrarBtn" type="button" class="btn btn-default"
 						data-toggle="modal" data-target="#registroDialog">
 						<i class="glyphicon glyphicon-plus" data-toggle="tooltip"
 							th:title="#{frm_trabajadores_registro}"></i>
 					</button>
 				</div>
+			 -->
 			</div>
 			<div class="col-xs-6">
 				<div class="pull-right">
@@ -135,8 +143,7 @@
 									th:text="${#strings.toUpperCase('__#{lbl_trabajador_cuenta}__')}">cuenta</th>
 
 
-								<th
-									th:text="${#strings.toUpperCase('__#{lbl_acciones}__')}">Acciones</th>
+								<th th:text="${#strings.toUpperCase('__#{lbl_acciones}__')}">Acciones</th>
 							</tr>
 						</thead>
 
@@ -175,7 +182,7 @@
 											th:unless="${trabajador.cuentaActiva == true}"
 											class="fa fa-toggle-off"></i></a>
 									</div>
-								</td>								
+								</td>
 								<td>
 									<div class="btn-group text-center" id="options">
 										<!-- view details -->

@@ -131,7 +131,7 @@ public interface TrabajadorDao extends GenericDAO<Trabajador, Long> {
 	 *            mostrar trabajadores de baja
 	 * @return
 	 */
-	Page<Trabajador> buscarTrabajadoresPorTelefonoYTipo(Pageable pageable, String telefono,
+	Page<Trabajador> buscarTrabajadoresPorTelefonosYTipo(Pageable pageable, String telefono,
 			TipoTrabajador trabajadorType, Boolean mostrarTodos);
 
 	/**

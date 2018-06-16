@@ -2,6 +2,7 @@ package es.udc.citytrash.controller.camiones;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,6 +33,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import es.udc.citytrash.controller.excepciones.EmployeeNotFoundException;
 import es.udc.citytrash.controller.excepciones.PageNotFoundException;
 import es.udc.citytrash.controller.excepciones.ResourceNotFoundException;
 import es.udc.citytrash.controller.util.AjaxUtils;
@@ -40,11 +42,17 @@ import es.udc.citytrash.controller.util.dtos.camion.CamionDto;
 import es.udc.citytrash.controller.util.dtos.camion.CamionFormBusq;
 import es.udc.citytrash.controller.util.dtos.camion.CamionModeloDto;
 import es.udc.citytrash.controller.util.dtos.camion.CamionModeloFormBusq;
+import es.udc.citytrash.controller.util.dtos.camion.CamionModeloTipoDeBasuraDto;
 import es.udc.citytrash.controller.util.dtos.camion.CamionRegistroDto;
+import es.udc.citytrash.controller.util.dtos.tipoDeBasura.TipoDeBasuraDto;
+import es.udc.citytrash.controller.util.dtos.trabajador.TrabajadorDto;
+import es.udc.citytrash.controller.util.dtos.trabajador.TrabajadorUpdateFormDto;
 import es.udc.citytrash.model.camion.Camion;
+import es.udc.citytrash.model.camion.CamionDao;
 import es.udc.citytrash.model.camionModelo.CamionModelo;
 import es.udc.citytrash.model.camionModeloTipoDeBasura.CamionModeloTipoDeBasura;
 import es.udc.citytrash.model.camionService.CamionService;
+import es.udc.citytrash.model.telefono.Telefono;
 import es.udc.citytrash.model.tipoDeBasura.TipoDeBasura;
 import es.udc.citytrash.model.trabajador.Conductor;
 import es.udc.citytrash.model.trabajador.Recolector;
@@ -431,7 +439,7 @@ public class CamionesController {
 	}
 
 	@RequestMapping(value = { WebUtils.REQUEST_MAPPING_CAMIONES_MODELOS }, method = RequestMethod.POST)
-	public String getModelos(
+	public String postModelos(
 			@PageableDefault(size = WebUtils.DEFAULT_PAGE_SIZE, page = WebUtils.DEFAULT_PAGE_NUMBER, direction = Direction.DESC) @SortDefault("id") Pageable pageRequest,
 			@Valid CamionModeloFormBusq form, BindingResult result, Model model,
 			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
@@ -495,6 +503,11 @@ public class CamionesController {
 
 			// model.addAttribute("camionModeloForm", new CamionModeloDto());
 			CamionModeloDto dto = new CamionModeloDto(modelo);
+			List<CamionModeloTipoDeBasura> tipos = cServicio.buscarTipoDeBasuraByModelo(modelo.getId());
+			dto.setListaTiposDeBasura(tipos.stream().map(sensor -> convertToDto(sensor)).collect(Collectors.toList()));
+
+			// falta añadir el id aleatorio positivos los que estan guardados en
+			// la base de datos
 			model.addAttribute("msg", msg);
 			model.addAttribute("type", type);
 			model.addAttribute("key", dto.getNombre());
@@ -506,6 +519,14 @@ public class CamionesController {
 		} catch (InstanceNotFoundException e) {
 			throw new ResourceNotFoundException(id);
 		}
+	}
+
+	private CamionModeloTipoDeBasuraDto convertToDto(CamionModeloTipoDeBasura tipo) {
+		CamionModeloTipoDeBasuraDto postDto = new CamionModeloTipoDeBasuraDto();
+		postDto.setNuevo(false);
+		postDto.setCapacidad(tipo.getCapacidad());
+		postDto.setIdTipo(tipo.getTipo().getId());
+		return postDto;
 	}
 
 	/* POST MODELO CAMIONES => REGISTRAR */
@@ -539,7 +560,7 @@ public class CamionesController {
 			return WebUtils.VISTA_CAMIONES_MODELOS;
 		}
 		redirectAttributes.addAttribute("msg", "ok");
-		redirectAttributes.addAttribute("type", "reg_mod");
+		redirectAttributes.addAttribute("type", "reg_cam_modelo");
 		response.setHeader("X-Requested-With", requestedWith);
 		return "redirect:"
 				+ WebUtils.URL_MAPPING_CAMIONES_EDITAR_MODELO.replace("{id}", String.valueOf(modelo.getId()));
@@ -554,9 +575,8 @@ public class CamionesController {
 			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
 		logger.info("POST REQUEST_MAPPING_CAMIONES_POST_MODELO modificar");
 
+		CamionModeloDto modelo = null;
 		model.addAttribute("camionModelForm", form);
-		CamionModeloDto modelo;
-
 		if (result.hasErrors() || form.getId() == null) {
 			if (AjaxUtils.isAjaxRequest(requestedWith)) {
 				return WebUtils.VISTA_CAMIONES_MODELOS_FORMULARIO.concat("::content");
@@ -567,34 +587,74 @@ public class CamionesController {
 			modelo = new CamionModeloDto(cServicio.modificarModelo(form));
 
 		} catch (DuplicateInstanceException e) {
+
 			model = duplicateInstanceException(model, e);
 			if (AjaxUtils.isAjaxRequest(requestedWith))
 				return WebUtils.VISTA_CAMIONES_MODELOS_FORMULARIO.concat("::content");
 			return WebUtils.VISTA_CAMIONES_MODELOS_FORMULARIO;
 
 		} catch (Exception e) {
+			// model.addAttribute("camionModelForm", form);
 			logger.debug("error register a user => " + e.toString());
 			return WebUtils.VISTA_CAMIONES_MODELOS;
 		}
 
-		/*
-		 * if (AjaxUtils.isAjaxRequest(requestedWith)) {
-		 * model.addAttribute("msg", "ok"); model.addAttribute("type",
-		 * "frm_registro_ok"); model.addAttribute("key",
-		 * UriComponentsBuilder.fromUriString(WebUtils.
-		 * URL_MAPPING_CAMIONES_DETALLES) .queryParam("trabajadorId",
-		 * modelo.getId())); return
-		 * WebUtils.VISTA_CAMIONES_MODELOS.concat("::content"); } return
-		 * "redirect:" +
-		 * WebUtils.URL_MAPPING_CAMIONES_DETALLES_MODELO.replace("{id}",
-		 * String.valueOf(modelo.getId()));
-		 */
 		redirectAttributes.addAttribute("msg", "ok");
-		redirectAttributes.addAttribute("type", "reg_mod");
-		// redirectAttributes.addAttribute("key", modelo.getNombre());
+		redirectAttributes.addAttribute("type", "mod_cam_modelo");
 		response.setHeader("X-Requested-With", requestedWith);
 		return "redirect:"
 				+ WebUtils.URL_MAPPING_CAMIONES_EDITAR_MODELO.replace("{id}", String.valueOf(modelo.getId()));
+	}
+
+	@RequestMapping(value = WebUtils.REQUEST_MAPPING_CAMIONES_MODELO_REGISTRO_OR_MODIFICAR, method = RequestMethod.POST, params = "addTipoBasura")
+	public String addTipoBasura(CamionModeloDto form, Model model,
+			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith)
+			throws ResourceNotFoundException {
+
+		logger.info("POST REQUEST_MAPPING_CAMIONES_POST_MODELO add CamionModeloTipoDeBasuraDto");
+		CamionModeloDto modelo = form;
+		CamionModeloTipoDeBasuraDto tipo = new CamionModeloTipoDeBasuraDto();
+		List<CamionModeloTipoDeBasuraDto> tipos = form.getListaTiposDeBasura() != null ? form.getListaTiposDeBasura()
+				: new ArrayList<CamionModeloTipoDeBasuraDto>();
+		tipos.add(tipo);
+		modelo.setListaTiposDeBasura(tipos);
+		model.addAttribute("camionModeloForm", modelo);
+
+		if (AjaxUtils.isAjaxRequest(requestedWith))
+			return WebUtils.VISTA_CAMIONES_MODELOS_FORMULARIO.concat(" ::content");
+		return WebUtils.VISTA_CAMIONES_MODELOS_FORMULARIO;
+
+	}
+
+	@RequestMapping(value = WebUtils.REQUEST_MAPPING_CAMIONES_MODELO_REGISTRO_OR_MODIFICAR, method = RequestMethod.POST, params = {
+			"eliminarTipoBasura" })
+	public String eliminarTipoBasura(CamionModeloDto form, Model model,
+			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith,
+			final HttpServletRequest req, @RequestParam("eliminarTipoBasura") int row)
+			throws EmployeeNotFoundException {
+
+		logger.info("POST REQUEST_MAPPING_CAMIONES_POST_MODELO add CamionModeloTipoDeBasuraDto");
+
+		try {
+
+			CamionModeloTipoDeBasuraDto tipoAELiminar = form.getListaTiposDeBasura().get(row);
+			form.getListaTiposDeBasura().remove(row);
+
+			if (!tipoAELiminar.isNuevo()) {
+				cServicio.eliminarModeloTipoDeBasura(form.getId(), tipoAELiminar.getIdTipo());
+			}
+
+		} catch (InstanceNotFoundException e) {
+
+		} catch (IndexOutOfBoundsException e) {
+			logger.info("row =>" + row);
+			logger.info("IndexOutOfBoundsException =>");
+		}
+
+		model.addAttribute("camionModeloForm", form);
+		if (AjaxUtils.isAjaxRequest(requestedWith))
+			return WebUtils.VISTA_CAMIONES_MODELOS_FORMULARIO.concat(" ::content");
+		return WebUtils.VISTA_CAMIONES_MODELOS_FORMULARIO;
 	}
 
 	/* detalles del modelo del camion */

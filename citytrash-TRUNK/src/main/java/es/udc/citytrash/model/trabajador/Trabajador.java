@@ -111,8 +111,7 @@ public abstract class Trabajador implements Serializable {
 	 */
 	protected Trabajador(String docId, String nombre, String apellidos, Calendar fechaNacimiento, String email,
 			String token, Calendar fechaExpiracionToken, Idioma idioma, String nombreVia, Integer numero, Integer piso,
-			String puerta, String provincia, String localidad, BigDecimal cp, BigDecimal telefono,
-			String restoDireccion) {
+			String puerta, String provincia, String localidad, BigDecimal cp, String restoDireccion) {
 		this.docId = docId;
 		this.nombre = nombre;
 		this.apellidos = apellidos;
@@ -128,7 +127,6 @@ public abstract class Trabajador implements Serializable {
 		this.provincia = provincia;
 		this.localidad = localidad;
 		this.cp = cp;
-		this.telefono = telefono;
 		this.restoDireccion = restoDireccion;
 		this.trabajadorActivo = true;
 		this.cuentaActiva = false;
@@ -271,16 +269,6 @@ public abstract class Trabajador implements Serializable {
 		this.cp = cp;
 	}
 
-	@Digits(integer = 9, fraction = 0)
-	@Column(name = "TELEFONO")
-	public BigDecimal getTelefono() {
-		return telefono;
-	}
-
-	public void setTelefono(BigDecimal telefono) {
-		this.telefono = telefono;
-	}
-
 	@Column(name = "CUENTA_HABILITADA", nullable = false)
 	@Type(type = "org.hibernate.type.NumericBooleanType")
 	public Boolean isEnabledCount() {
@@ -403,19 +391,19 @@ public abstract class Trabajador implements Serializable {
 		return telefonos.contains(number);
 	}
 
-	public void addTelefono(Telefono number) {
-		if (!telefonos.contains(number))
-			telefonos.add(number);
+	public void addTelefono(Telefono telefono) {
+		if (!telefonos.contains(telefono))
+			telefonos.add(telefono);
 		else {
-			int index = telefonos.indexOf(number);
+			int index = telefonos.indexOf(telefono);
 			Telefono t = telefonos.get(index);
-			if (t.getTipo() != number.getTipo())
-				telefonos.set(index, number);
+			if (t.getTipo() != telefono.getTipo())
+				telefonos.set(index, telefono);
 		}
 	}
 
-	public void removeTelefono(Telefono number) {
-		telefonos.remove(number);
+	public void removeTelefono(Telefono telefono) {
+		telefonos.remove(telefono);
 	}
 
 	@Override
@@ -423,10 +411,10 @@ public abstract class Trabajador implements Serializable {
 		return "Trabajador [id=" + id + ", docId=" + docId + ", nombre=" + nombre + ", apellidos=" + apellidos
 				+ ", fechaNacimiento=" + fechaNacimiento + ", email=" + email + ", idioma=" + idioma + ", nombreVia="
 				+ nombreVia + ", numero=" + numero + ", piso=" + piso + ", puerta=" + puerta + ", provincia="
-				+ provincia + ", localidad=" + localidad + ", cp=" + cp + ", telefono=" + telefono + ", restoDireccion="
-				+ restoDireccion + ", cuentaActiva=" + cuentaActiva + ", trabajadorActivo=" + trabajadorActivo
-				+ ", fechaCreacion=" + fechaCreacion + ", fechaActivacion=" + fechaActivacion + ", rol=" + rol
-				+ ", trabajadorType=" + trabajadorType + ", telefonos=" + telefonos + "]";
+				+ provincia + ", localidad=" + localidad + ", cp=" + cp + ", restoDireccion=" + restoDireccion
+				+ ", cuentaActiva=" + cuentaActiva + ", trabajadorActivo=" + trabajadorActivo + ", fechaCreacion="
+				+ fechaCreacion + ", fechaActivacion=" + fechaActivacion + ", rol=" + rol + ", trabajadorType="
+				+ trabajadorType + ", telefonos=" + telefonos + "]";
 	}
 
 	/* Atributos */
@@ -447,7 +435,6 @@ public abstract class Trabajador implements Serializable {
 	private String provincia;
 	private String localidad;
 	private BigDecimal cp;
-	private BigDecimal telefono;
 	private String restoDireccion;
 	private Boolean cuentaActiva;
 	private Boolean trabajadorActivo;

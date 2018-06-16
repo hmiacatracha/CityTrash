@@ -208,7 +208,7 @@ public class TrabajadorServiceTest {
 			assertTrue(t.getDocId().equals(frmRegistro_CONDUCT.getDocumento()));
 			assertNull(t.getPiso());
 			assertNull(t.getCp());
-			assertNull(t.getTelefono());
+			assertNull(t.getTelefonos());
 			assertNull(t.getNumero());
 
 		} catch (DuplicateInstanceException e) {
@@ -405,7 +405,7 @@ public class TrabajadorServiceTest {
 		Page<Trabajador> page = trabajadorService.buscarTrabajadores(pageable, true);
 		List<Trabajador> trabajadores = new ArrayList<Trabajador>();
 		assertTrue(page.getContent().isEmpty());
-		
+
 		try {
 			// Añadimos tres trabajadores en la base de datos
 			trabajadores.add(trabajadorService.registrar(frmRegistro_ADMIN));

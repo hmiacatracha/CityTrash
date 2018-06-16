@@ -159,7 +159,8 @@
 								th:text="#{lbl_telefono}"></label>
 
 							<div class="col-sm-9">
-								<input type="number" maxlength="9" pattern="^([9|6|7][0-9]{8})?"
+								<input type="tel" maxlength="9" pattern="^([9|6|7][0-9]{8})?"
+									th:title="#{constraints.pattern.telefono}"
 									class="mayusculas col-sm-6 form-control" id="telefono"
 									th:placeholder="#{frm_registro_pholder_telefono}"
 									th:field="*{telefono}" /> <span class="help-block"

@@ -29,7 +29,9 @@
 		<cglib.version>3.2.4</cglib.version>
 		<commons-io.version>2.5</commons-io.version>
 		<hibernate.version>5.2.10.Final</hibernate.version>
-		<hibernate-validator.version>5.2.1.Final</hibernate-validator.version>
+		<!-- <hibernate-validator.version>5.2.1.Final</hibernate-validator.version> -->
+		<hibernate-validator.version>6.0.10.Final</hibernate-validator.version>
+		<glassfish.version>3.0.1-b09</glassfish.version>
 		<java.validator.version>2.0.0.Final</java.validator.version>
 		<mysql-connector-java.version>5.1.6</mysql-connector-java.version>
 		<junit.version>4.12</junit.version>
@@ -269,6 +271,13 @@
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>
 			<version>${hibernate-validator.version}</version>
+		</dependency>
+		<!-- hibernate validator 6 need Unified Unified Expression Language (EL) -->
+		<dependency>
+			<groupId>org.glassfish</groupId>
+			<artifactId>javax.el</artifactId>
+			<version>${glassfish.version}</version>
+
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/javax.validation/validation-api -->
 		<dependency>

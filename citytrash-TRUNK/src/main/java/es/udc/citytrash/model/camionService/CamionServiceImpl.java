@@ -1,5 +1,6 @@
 package es.udc.citytrash.model.camionService;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -19,6 +20,7 @@ import es.udc.citytrash.controller.util.dtos.camion.CamionDto;
 import es.udc.citytrash.controller.util.dtos.camion.CamionFormBusq;
 import es.udc.citytrash.controller.util.dtos.camion.CamionModeloDto;
 import es.udc.citytrash.controller.util.dtos.camion.CamionModeloFormBusq;
+import es.udc.citytrash.controller.util.dtos.camion.CamionModeloTipoDeBasuraDto;
 import es.udc.citytrash.controller.util.dtos.camion.CamionRegistroDto;
 import es.udc.citytrash.model.camion.Camion;
 import es.udc.citytrash.model.camion.CamionDao;
@@ -26,6 +28,7 @@ import es.udc.citytrash.model.camionModelo.CamionModelo;
 import es.udc.citytrash.model.camionModelo.CamionModeloDao;
 import es.udc.citytrash.model.camionModeloTipoDeBasura.CamionModeloTipoDeBasura;
 import es.udc.citytrash.model.camionModeloTipoDeBasura.CamionModeloTipoDeBasuraDao;
+import es.udc.citytrash.model.camionModeloTipoDeBasura.CamionModeloTipoDeBasuraPK;
 import es.udc.citytrash.model.tipoDeBasura.TipoDeBasura;
 import es.udc.citytrash.model.tipoDeBasura.TipoDeBasuraDao;
 import es.udc.citytrash.model.trabajador.AdministradorDao;
@@ -405,7 +408,8 @@ public class CamionServiceImpl implements CamionService {
 	}
 
 	@Override
-	public CamionModelo registrarModelo(CamionModeloDto form) throws DuplicateInstanceException {
+	public CamionModelo registrarModelo(CamionModeloDto form)
+			throws DuplicateInstanceException, InstanceNotFoundException {
 		CamionModelo camionModelo;
 		try {
 			logger.info("paso1 registrarModelo paso inicial");
@@ -422,7 +426,10 @@ public class CamionServiceImpl implements CamionService {
 		camionModelo.setPma(form.getPma());
 		camionModelo.setVolumenTolva(form.getVolumenTolva() != null ? form.getVolumenTolva() : null);
 		modeloDao.guardar(camionModelo);
-		return camionModelo;
+		logger.info("antes guardar tipos de basura");
+		guardarOActualizarModeloTipoDeBasura(camionModelo.getId(), form.getListaTiposDeBasura());
+		logger.info("despues guardar tipos de basura");
+		return modeloDao.buscarById(camionModelo.getId());
 	}
 
 	@Override
@@ -439,15 +446,23 @@ public class CamionServiceImpl implements CamionService {
 		} catch (InstanceNotFoundException e) {
 
 		}
-		camionModelo.setModelo(form.getNombre());
-		camionModelo.setAncho(form.getAncho());
-		camionModelo.setAltura(form.getAltura());
-		camionModelo.setLongitud(form.getLongitud());
-		camionModelo.setDistancia(form.getDistancia() != null ? form.getDistancia() : null);
-		camionModelo.setPma(form.getPma());
-		camionModelo.setVolumenTolva(form.getVolumenTolva() != null ? form.getVolumenTolva() : null);
-		modeloDao.guardar(camionModelo);
-		return camionModelo;
+		
+		if (form.isModificado()) {
+			logger.info("modificarModelo => Camion modelo se modifico");
+			camionModelo.setModelo(form.getNombre());
+			camionModelo.setAncho(form.getAncho());
+			camionModelo.setAltura(form.getAltura());
+			camionModelo.setLongitud(form.getLongitud());
+			camionModelo.setDistancia(form.getDistancia() != null ? form.getDistancia() : null);
+			camionModelo.setPma(form.getPma());
+			camionModelo.setVolumenTolva(form.getVolumenTolva() != null ? form.getVolumenTolva() : null);
+			modeloDao.guardar(camionModelo);
+
+		}
+		logger.info("antes guardar tipos de basura");
+		guardarOActualizarModeloTipoDeBasura(camionModelo.getId(), form.getListaTiposDeBasura());
+		logger.info("despues guardar tipos de basura");
+		return modeloDao.buscarById(camionModelo.getId());
 	}
 
 	@Override
@@ -518,6 +533,52 @@ public class CamionServiceImpl implements CamionService {
 					formBusqueda.getMostrarSoloCamionesDeAlta());
 		}
 		return page;
+	}
+
+	@Override
+	public void eliminarModeloTipoDeBasura(int idModelo, int tipoId) throws InstanceNotFoundException {
+		logger.info("servicio eliminar modelo tipoDeBasura 1");
+
+		CamionModelo modelo = modeloDao.buscarById(idModelo);
+		TipoDeBasura tipo = tipoDao.buscarById(tipoId);
+		CamionModeloTipoDeBasuraPK pk = new CamionModeloTipoDeBasuraPK(modelo, tipo);
+
+		if (cmtbDao.existe(pk)) {
+			cmtbDao.eliminar(cmtbDao.buscarById(pk));
+		} else {
+			throw new InstanceNotFoundException(pk, CamionModeloTipoDeBasuraPK.class.getName());
+		}
+	}
+
+	@Override
+	public List<CamionModeloTipoDeBasura> guardarOActualizarModeloTipoDeBasura(int modeloId,
+			List<CamionModeloTipoDeBasuraDto> tipos) throws InstanceNotFoundException {
+
+		for (CamionModeloTipoDeBasuraDto dto : tipos) {
+			TipoDeBasura tipo = tipoDao.buscarById(dto.getIdTipo());
+			CamionModelo modelo = modeloDao.buscarById(modeloId);
+			CamionModeloTipoDeBasuraPK pk = new CamionModeloTipoDeBasuraPK(modelo, tipo);
+
+			if (!cmtbDao.existe(pk)) {
+				CamionModeloTipoDeBasura cm;
+				cm = new CamionModeloTipoDeBasura(modelo, tipo, dto.getCapacidad());
+				cmtbDao.guardar(cm);
+
+			} else if (dto.isModificado()) {
+				CamionModeloTipoDeBasura cm;
+				try {
+					cm = cmtbDao.buscarById(pk);
+					if (!cm.getCapacidad().equals(dto.getCapacidad())) {
+						cm.setCapacidad(dto.getCapacidad());
+						cmtbDao.guardar(cm);
+					}
+				} catch (InstanceNotFoundException e) {
+
+				}
+			}
+		}
+
+		return cmtbDao.buscarTiposDeBasuraByModelo(modeloId);
 	}
 
 	/**

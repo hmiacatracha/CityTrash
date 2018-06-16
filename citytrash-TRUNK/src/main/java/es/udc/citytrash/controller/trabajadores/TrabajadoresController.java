@@ -2,7 +2,6 @@ package es.udc.citytrash.controller.trabajadores;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,14 +39,11 @@ import es.udc.citytrash.controller.excepciones.ResourceNotFoundException;
 import es.udc.citytrash.controller.util.AjaxUtils;
 import es.udc.citytrash.controller.util.WebUtils;
 import es.udc.citytrash.controller.util.anotaciones.UsuarioActual;
-import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorModeloDto;
 import es.udc.citytrash.controller.util.dtos.cuenta.PerfilDto;
-import es.udc.citytrash.controller.util.dtos.trabajador.TelefonoDto;
 import es.udc.citytrash.controller.util.dtos.trabajador.TrabajadorBusqFormDto;
 import es.udc.citytrash.controller.util.dtos.trabajador.TrabajadorDto;
 import es.udc.citytrash.controller.util.dtos.trabajador.TrabajadorRegistroFormDto;
 import es.udc.citytrash.controller.util.dtos.trabajador.TrabajadorUpdateFormDto;
-import es.udc.citytrash.model.contenedorModelo.ContenedorModelo;
 import es.udc.citytrash.model.emailService.EmailNotificacionesService;
 import es.udc.citytrash.model.telefono.Telefono;
 import es.udc.citytrash.model.trabajador.Trabajador;
@@ -342,17 +338,17 @@ public class TrabajadoresController {
 			Trabajador t = tservicio.buscarTrabajador(id);
 			TrabajadorUpdateFormDto updateForm = new TrabajadorUpdateFormDto(t);
 			logger.info("UPDATE WORKER GET updateForm => " + updateForm.toString());
-			List<Telefono> telefonos = t.getTelefonos();
-			/*
-			 * updateForm .setTelefonos(telefonos.stream().map(sensor ->
-			 * convertToDto(sensor)).collect(Collectors.toList()));
-			 */
-			logger.info("telefonos =>" + updateForm.getTelefonos().toString());
+
 			model.addAttribute("updateForm", updateForm);
 			model.addAttribute("listaTelefonos", updateForm.getTelefonos());
 			model.addAttribute("msg", msg);
 			model.addAttribute("type", type);
 			model.addAttribute("key", updateForm.getEmail());
+
+			// logger.info("GET REGISTRO TRABAJADORES 4 =>" +
+			// model.containsAttribute("listaTelefonos"));
+			// logger.info("GET REGISTRO TRABAJADORES 5 =>" +
+			// model.asMap().get("listaTelefonos"));
 
 			if (AjaxUtils.isAjaxRequest(requestedWith))
 				return WebUtils.VISTA_TRABAJADORES_UPDATE.concat(" :: content");
@@ -371,8 +367,6 @@ public class TrabajadoresController {
 			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith)
 			throws EmployeeNotFoundException {
 		logger.info("POST REGISTRO TRABAJADORES");
-		model.addAttribute("updateForm", updateForm);
-
 		model.addAttribute("id", id);
 		Trabajador t;
 
@@ -382,7 +376,9 @@ public class TrabajadoresController {
 			throw new EmployeeNotFoundException(id);
 		}
 
+		logger.info("POST REGISTRO TRABAJADORES 2");
 		if (result.hasErrors()) {
+			model.addAttribute("updateForm", updateForm);
 			model.addAttribute("listaTelefonos", updateForm.getTelefonos());
 			logger.info("POST UPDATE TRABAJADORES has errores => " + result.getAllErrors().toString());
 			if (AjaxUtils.isAjaxRequest(requestedWith))
@@ -390,24 +386,35 @@ public class TrabajadoresController {
 			return WebUtils.VISTA_TRABAJADORES_UPDATE;
 		}
 		try {
+
+			logger.info("POST REGISTRO TRABAJADORES 3");
 			t = tservicio.modificarTrabajador(updateForm);
+			updateForm = new TrabajadorUpdateFormDto(t);
 			model.addAttribute("msg", "ok");
 			model.addAttribute("type", "cambios_realizados_ok");
 			model.addAttribute("key", t.getEmail());
-			updateForm = new TrabajadorUpdateFormDto(t);
 			model.addAttribute("updateForm", updateForm);
 			model.addAttribute("listaTelefonos", updateForm.getTelefonos());
+
+			// logger.info("POST REGISTRO TRABAJADORES 4 =>" +
+			// model.containsAttribute("listaTelefonos"));
+			// logger.info("POST REGISTRO TRABAJADORES 5 =>" +
+			// model.asMap().toString());
 
 			if (AjaxUtils.isAjaxRequest(requestedWith))
 				return WebUtils.VISTA_TRABAJADORES_UPDATE.concat(" :: content");
 			return WebUtils.VISTA_TRABAJADORES_UPDATE;
 
 		} catch (DuplicateInstanceException e) {
+			model.addAttribute("updateForm", updateForm);
+			model.addAttribute("listaTelefonos", updateForm.getTelefonos());
 			model = duplicateInstanceException(model, e);
 			if (AjaxUtils.isAjaxRequest(requestedWith))
 				return WebUtils.VISTA_TRABAJADORES_UPDATE.concat(" :: content");
 			return WebUtils.VISTA_TRABAJADORES_UPDATE;
 		} catch (InstanceNotFoundException e) {
+			model.addAttribute("updateForm", updateForm);
+			model.addAttribute("listaTelefonos", updateForm.getTelefonos());
 			model = instanceNotFoundException(model, e);
 			if (AjaxUtils.isAjaxRequest(requestedWith))
 				return WebUtils.VISTA_TRABAJADORES_UPDATE.concat(" :: content");
@@ -421,6 +428,7 @@ public class TrabajadoresController {
 			@ModelAttribute("updateForm") TrabajadorUpdateFormDto updateForm, Model model,
 			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith)
 			throws EmployeeNotFoundException {
+		logger.info("REQUEST_MAPPING_TRABAJADOR_UPDATE");
 		model.addAttribute("id", id);
 		Trabajador t;
 
@@ -462,6 +470,10 @@ public class TrabajadoresController {
 		for (Telefono tel : updateForm.getTelefonos()) {
 			if (tel.getNumero().equals(numTelEliminar)) {
 				updateForm.getTelefonos().remove(tel);
+				try {
+					tservicio.eliminarTelefono(id, tel);
+				} catch (InstanceNotFoundException e) {
+				}
 				break;
 			}
 		}
@@ -511,13 +523,6 @@ public class TrabajadoresController {
 	}
 
 	/* FIN TRABAJADORES */
-
-	private TelefonoDto convertToDto(Telefono telefono) {
-		// ContenedorModeloDto postDto = modelMapper.map(modelo,
-		// ContenedorModeloDto.class);
-		TelefonoDto telfefonoDto = new TelefonoDto(telefono.getNumero());
-		return telfefonoDto;
-	}
 
 	@ResponseStatus(HttpStatus.FORBIDDEN)
 	@ExceptionHandler(DuplicateInstanceException.class)

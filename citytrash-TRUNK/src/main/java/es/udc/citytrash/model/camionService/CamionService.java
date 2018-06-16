@@ -9,6 +9,7 @@ import es.udc.citytrash.controller.util.dtos.camion.CamionDto;
 import es.udc.citytrash.controller.util.dtos.camion.CamionFormBusq;
 import es.udc.citytrash.controller.util.dtos.camion.CamionModeloDto;
 import es.udc.citytrash.controller.util.dtos.camion.CamionModeloFormBusq;
+import es.udc.citytrash.controller.util.dtos.camion.CamionModeloTipoDeBasuraDto;
 import es.udc.citytrash.controller.util.dtos.camion.CamionRegistroDto;
 import es.udc.citytrash.model.camion.Camion;
 import es.udc.citytrash.model.camionModelo.CamionModelo;
@@ -166,8 +167,9 @@ public interface CamionService {
 	 * @return CamionModeloDto
 	 * @throws DuplicateInstanceException
 	 *             el nombre del modelo
+	 * @throws InstanceNotFoundException 
 	 */
-	CamionModelo registrarModelo(CamionModeloDto form) throws DuplicateInstanceException;
+	CamionModelo registrarModelo(CamionModeloDto form) throws DuplicateInstanceException, InstanceNotFoundException;
 
 	/**
 	 * 
@@ -216,5 +218,24 @@ public interface CamionService {
 	 * @return
 	 */
 	List<TipoDeBasura> buscarTiposDeBasura();
+
+	/**
+	 * Eliminar modelo tipo de basura
+	 * 
+	 * @param idModelo
+	 * @param tipoId
+	 * @throws InstanceNotFoundException
+	 */
+	void eliminarModeloTipoDeBasura(int idModelo, int tipoId) throws InstanceNotFoundException;
+
+	/**
+	 * Guardar o Realizar cambios en los modelos tipos de basura
+	 * @param modeloId
+	 * @param tipos
+	 * @return
+	 * @throws InstanceNotFoundException
+	 */
+	List<CamionModeloTipoDeBasura> guardarOActualizarModeloTipoDeBasura(int modeloId, List<CamionModeloTipoDeBasuraDto> tipos)
+			throws InstanceNotFoundException;
 
 }

@@ -11,6 +11,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.UniqueElements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -86,11 +87,10 @@ public class TrabajadorUpdateFormDto {
 	@Pattern(regexp = "[0-9X-Z][0-9]{7}[A-Z]", message = "{constraints.pattern.documentoId}")
 	private String documento;
 
-	@NotBlank
 	@Size(min = 2, max = 255)
 	private String nombre;
 
-	@NotBlank
+	@NotNull
 	@Size(min = 2, max = 255)
 	private String apellidos;
 
@@ -117,12 +117,9 @@ public class TrabajadorUpdateFormDto {
 	@Pattern(regexp = "^(0[1-9][0-9]{3}|[1-4][0-9]{4}|5[0-2][0-9]{3})?", message = "{constraints.pattern.cp}")
 	private String cp;
 
-	@Pattern(regexp = "^([9|6|7][0-9]{8})?", message = "{constraints.pattern.telefono}")
-	@Size(min = 0, max = 9)
-	private String telefono;
-
 	@Valid
-	// @Size(min = 1, max = 5)
+	@Size(min = 1, max = 5)
+	@UniqueElements(message = "{constraints.telefonos.duplicados}")
 	private List<Telefono> telefonos = new ArrayList<Telefono>();
 
 	private List<Integer> enteros = new ArrayList<Integer>();
@@ -275,14 +272,6 @@ public class TrabajadorUpdateFormDto {
 		this.idioma = idioma;
 	}
 
-	public String getTelefono() {
-		return telefono;
-	}
-
-	public void setTelefono(String telefono) {
-		this.telefono = telefono;
-	}
-
 	public String getEmail() {
 		return email;
 	}
@@ -321,10 +310,10 @@ public class TrabajadorUpdateFormDto {
 	public String toString() {
 		return "TrabajadorUpdateFormDto [id=" + id + ", documento=" + documento + ", nombre=" + nombre + ", apellidos="
 				+ apellidos + ", email=" + email + ", confirmarEmail=" + confirmarEmail + ", tipo=" + tipo + ", via="
-				+ via + ", numero=" + numero + ", piso=" + piso + ", puerta=" + puerta + ", cp=" + cp + ", telefono="
-				+ telefono + ", telefonos=" + telefonos + ", fechaNacimiento=" + fechaNacimiento + ", localidad="
-				+ localidad + ", provincia=" + provincia + ", restoDireccion=" + restoDireccion + ", idioma=" + idioma
-				+ ", estaDeBaja=" + estaDeBaja + "]";
+				+ via + ", numero=" + numero + ", piso=" + piso + ", puerta=" + puerta + ", cp=" + cp + ", telefonos="
+				+ telefonos + ", fechaNacimiento=" + fechaNacimiento + ", localidad=" + localidad + ", provincia="
+				+ provincia + ", restoDireccion=" + restoDireccion + ", idioma=" + idioma + ", estaDeBaja=" + estaDeBaja
+				+ "]";
 	}
 
 }

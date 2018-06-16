@@ -203,26 +203,103 @@
 
 				<legend class="col-xs-12" th:text="#{frm_header_modelos_tipos}"></legend>
 
-				<table class="table table-dark">
-					<thead>
-						<tr>
-							<th scope="col">#</th>
-							<th scope="col">Tipo</th>
-							<th scope="col">Capacidad</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<th scope="row">1</th>
-							<td>Mark</td>
-							<td>Otto</td>
-						</tr>
-					</tbody>
+				<table th:fragment="tiposList" id="tiposList"
+					class="table table-striped"
+					th:classappend="${#fields.hasErrors('listaTiposDeBasura')}? 'has-error'">
+					<tr>
+						<th class="col-xs-1 col-sm-1">#</th>
+						<th th:text="#{lbl_tipo_basura}">tipo</th>
+						<th th:text="#{lbl_capacidad}">nombre</th>
+						<th></th>
+						<th></th>
+					</tr>
+
+					<tr th:if="*{listaTiposDeBasura.size()> 0}"
+						th:each="tipo, rowStat : *{listaTiposDeBasura}"
+						th:field="*{listaTiposDeBasura}">
+
+						<td class="col-xs-1" th:text="${rowStat.index+1}"></td>
+
+						<td hidden=""><input type="text" readonly="readonly"
+							th:field="*{listaTiposDeBasura[__${rowStat.index}__].nuevo}" /></td>
+
+						<td hidden=""><input type="text" readonly="readonly"
+							th:field="*{listaTiposDeBasura[__${rowStat.index}__].modificado}" /></td>
+
+						<!-- modificar -->
+						<td
+							th:if="*{listaTiposDeBasura[__${rowStat.index}__].nuevo==false}"
+							th:classappend="${#fields.hasErrors('listaTiposDeBasura[__${rowStat.index}__].idTipo')}? 'has-error'">
+
+
+							<select
+							th:field="*{listaTiposDeBasura[__${rowStat.index}__].idTipo}"
+							class="form-control mySelect" data-style="btn-default"
+							id="tipoBasura">
+								<option th:each="row, index: ${tiposDeBasura}"
+									th:value="${row.id}" th:text="#{${row.tipo}}"></option>
+						</select> <span class="help-block"
+							th:if="${#fields.hasErrors('listaTiposDeBasura[__${rowStat.index}__].idTipo')}"
+							th:errors="*{listaTiposDeBasura[__${rowStat.index}__].idTipo}">
+						</span>
+						</td>
+
+						<!-- nuevo -->
+						<td
+							th:unless="*{listaTiposDeBasura[__${rowStat.index}__].nuevo==false}"
+							th:classappend="${#fields.hasErrors('listaTiposDeBasura[__${rowStat.index}__].idTipo')}? 'has-error'">
+
+							<select
+							th:field="*{listaTiposDeBasura[__${rowStat.index}__].idTipo}"
+							class="form-control mySelect" data-style="btn-default"
+							id="tipoBasura">
+								<option th:each="row, index: ${tiposDeBasura}"
+									th:value="${row.id}" th:text="#{${row.tipo}}"></option>
+						</select> <span class="help-block"
+							th:if="${#fields.hasErrors('listaTiposDeBasura[__${rowStat.index}__].idTipo')}"
+							th:errors="*{listaTiposDeBasura[__${rowStat.index}__].idTipo}">
+						</span>
+						</td>
+
+						<td
+							th:classappend="${#fields.hasErrors('listaTiposDeBasura[__${rowStat.index}__].capacidad')}? 'has-error'">
+							<div th:class="has-feedback">
+								<input id="capacidad" type="number" step="0.1"
+									pattern="\d[,.]\d{1,2}" th:title="#{lbl_formato_incorrecto}"
+									class="form-control input-button-right"
+									th:field="*{listaTiposDeBasura[__${rowStat.index}__].capacidad}"
+									th:with="format=#{decimales_formato}"
+									th:value="${#numbers.formatDecimal(tipo.capacidad, 0,2, format)}"
+									required="required" /> <span class="form-control-feedback"><var>m</var>
+									<sup>3</sup> </span>
+							</div> <span class="help-block"
+							th:if="${#fields.hasErrors('listaTiposDeBasura[__${rowStat.index}__].capacidad')}"
+							th:errors="*{listaTiposDeBasura[__${rowStat.index}__].capacidad}">
+						</span>
+						</td>
+						<td>
+							<div class="btn-group text-center" id="options">
+								<div id="otherOptions" class="btn-group text-center">
+									<!-- <span class="col-sm-1 row-delete-button"> -->
+									<button type="submit" class="btn btn-danger"
+										th:value="${rowStat.index}" name="eliminarTipoBasura">
+										<i class="glyphicon glyphicon-trash icon-white"></i>
+									</button>
+								</div>
+							</div>
+						</td>
+					</tr>
 				</table>
-
 			</fieldset>
-			<br>
+			<div>
+				<div th:if="*{listaTiposDeBasura.size()} < ${tiposDeBasura.size()}"
+					class="col-lg-12">
+					<button class="btn btn-success btn-md pull-right" type="submit"
+						th:text="#{btn_add_tipos_de_basura}" name="addTipoBasura"></button>
+				</div>
+			</div>
 
+			<br> <br> <br>
 			<button th:if="*{id}==null" class="btn btn-default btn-lg btn-block"
 				type="submit" th:text="#{btn_add}" name="registrar"
 				th:value="registrar"></button>

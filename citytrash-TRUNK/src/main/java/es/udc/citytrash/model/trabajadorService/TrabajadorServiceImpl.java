@@ -5,7 +5,11 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -32,6 +36,7 @@ import es.udc.citytrash.model.util.excepciones.InstanceNotFoundException;
 import es.udc.citytrash.model.util.excepciones.FormBusquedaException;
 import es.udc.citytrash.util.GlobalNames;
 import es.udc.citytrash.util.enums.CampoBusqTrabajador;
+import es.udc.citytrash.util.enums.TipoTelefono;
 import es.udc.citytrash.util.enums.TipoTrabajador;
 
 @Service("trabajadorService")
@@ -70,7 +75,6 @@ public class TrabajadorServiceImpl implements TrabajadorService {
 					esInteger(user.getPiso()) ? Integer.parseInt(user.getPiso()) : null, user.getPuerta(),
 					user.getProvincia(), user.getLocalidad(),
 					esBigDecimal(user.getCp()) ? truncateToBigDecimaRouding(user.getCp()) : null,
-					esBigDecimal(user.getTelefono()) ? truncateToBigDecimaRouding(user.getTelefono()) : null,
 					user.getRestoDireccion());
 			break;
 		/* CONDUCTOR */
@@ -82,7 +86,6 @@ public class TrabajadorServiceImpl implements TrabajadorService {
 					esInteger(user.getPiso()) ? Integer.parseInt(user.getPiso()) : null, user.getPuerta(),
 					user.getProvincia(), user.getLocalidad(),
 					esBigDecimal(user.getCp()) ? truncateToBigDecimaRouding(user.getCp()) : null,
-					esBigDecimal(user.getTelefono()) ? truncateToBigDecimaRouding(user.getTelefono()) : null,
 					user.getRestoDireccion());
 			break;
 		/* default es RECOLECTOR */
@@ -94,9 +97,16 @@ public class TrabajadorServiceImpl implements TrabajadorService {
 					esInteger(user.getPiso()) ? Integer.parseInt(user.getPiso()) : null, user.getPuerta(),
 					user.getProvincia(), user.getLocalidad(),
 					esBigDecimal(user.getCp()) ? truncateToBigDecimaRouding(user.getCp()) : null,
-					esBigDecimal(user.getTelefono()) ? truncateToBigDecimaRouding(user.getTelefono()) : null,
 					user.getRestoDireccion());
 		}
+		/* By default you can only add a telephone */
+		if (user.getTelefono().trim().length() > 0) {
+			Telefono telefono = new Telefono();
+			telefono.setTipo(TipoTelefono.HOME);
+			telefono.setNumero(user.getTelefono());
+			trabajador.addTelefono(telefono);
+		}
+
 		/* Check if the email and the documentoId are not duplicate */
 		try {
 			trabajadorProfileDao.buscarTrabajadorPorEmail(user.getEmail());
@@ -117,7 +127,6 @@ public class TrabajadorServiceImpl implements TrabajadorService {
 		return trabajador;
 	}
 
-	@Transactional
 	@Override
 	public Trabajador modificarTrabajador(TrabajadorUpdateFormDto user)
 			throws InstanceNotFoundException, DuplicateInstanceException {
@@ -142,6 +151,20 @@ public class TrabajadorServiceImpl implements TrabajadorService {
 
 		}
 
+		logger.info("pasa por aqui pruebas antes");
+		/* Verificamos que no tenga numeros de telefonos duplicados */
+		Map<String, Telefono> map = new HashMap<String, Telefono>();
+
+		for (Telefono telefono : user.getTelefonos()) {
+			// logger.info("contains " + telefono.getNumero() + " =>" +
+			// map.containsKey(telefono.getNumero().trim()));
+			if (map.containsKey(telefono.getNumero().trim())) {
+				throw new DuplicateInstanceException(telefono.getNumero(), Telefono.class.getName());
+			} else {
+				map.put(telefono.getNumero().trim(), telefono);
+			}
+		}
+
 		t.setDocId(user.getDocumento());
 		t.setEmail(user.getEmail());
 		t.setNombre(user.getNombre());
@@ -155,18 +178,13 @@ public class TrabajadorServiceImpl implements TrabajadorService {
 		t.setLocalidad(user.getLocalidad());
 		t.setProvincia(user.getProvincia());
 		t.setRestoDireccion(user.getRestoDireccion());
-		t.setTelefono(esBigDecimal(user.getTelefono()) ? truncateToBigDecimaRouding(user.getTelefono()) : null);
 		t.setCp(esBigDecimal(user.getCp()) ? truncateToBigDecimaRouding(user.getCp()) : null);
 		t.setActiveWorker(!user.isEstaDeBaja());
-
-		for (Telefono tel : user.getTelefonos()) {
-			t.addTelefono(tel);
-		}
-
-		// t.setTelefonos(user.getTelefonos());
-		// t.setEnabledCount(!user.isEstaDeBaja());
-
-		/* Actualizamos mediante SQL el tipo del trabajador */
+		t.setTelefonos(user.getTelefonos());
+		/*
+		 * for (Telefono tel : user.getTelefonos()) { if
+		 * (tel.getNumero().trim().length() > 0) t.addTelefono(tel); }
+		 */
 
 		String tipo1 = t.getTrabajadorType();
 		String tipo2 = user.getTipo().toString();
@@ -326,7 +344,7 @@ public class TrabajadorServiceImpl implements TrabajadorService {
 						tipo, formBusqueda.getMostrarTodosLosTrabajadores());
 				return trabajadores;
 			case telefono:
-				trabajadores = trabajadorProfileDao.buscarTrabajadoresPorTelefonoYTipo(pageable,
+				trabajadores = trabajadorProfileDao.buscarTrabajadoresPorTelefonosYTipo(pageable,
 						formBusqueda.getBuscar(), tipo, formBusqueda.getMostrarTodosLosTrabajadores());
 				return trabajadores;
 			case email:
@@ -361,6 +379,19 @@ public class TrabajadorServiceImpl implements TrabajadorService {
 	@Override
 	public boolean esUnTrabajadorActivo(long trabajadorId) throws InstanceNotFoundException {
 		return trabajadorProfileDao.buscarById(trabajadorId).isActiveWorker();
+	}
+
+	@Override
+	public void eliminarTelefono(long trabajadorId, Telefono tel) throws InstanceNotFoundException {
+		Trabajador t = trabajadorProfileDao.buscarById(trabajadorId);
+
+		if (tel != null) {
+			if (!t.getTelefonos().contains(tel))
+				throw new InstanceNotFoundException(tel.getNumero().toString(), Telefono.class.getName());
+			else
+				t.removeTelefono(tel);
+		} else
+			throw new InstanceNotFoundException(tel.getNumero().toString(), Telefono.class.getName());
 	}
 
 	private static boolean esInteger(String cadena) {

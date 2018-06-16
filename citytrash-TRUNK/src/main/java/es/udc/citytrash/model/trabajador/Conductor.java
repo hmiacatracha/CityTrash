@@ -62,11 +62,11 @@ public class Conductor extends Trabajador implements Serializable {
 	 */
 	public Conductor(String docId, String nombre, String apellidos, Calendar fechaNacimiento, String email,
 			String token, Calendar fechaExpiracionToken, Idioma idioma, String nombreVia, Integer numero, Integer piso,
-			String puerta, String provincia, String localidad, BigDecimal cp, BigDecimal telefono,
+			String puerta, String provincia, String localidad, BigDecimal cp,
 			String restoDireccion) {
 
 		super(docId, nombre, apellidos, fechaNacimiento, email, token, fechaExpiracionToken, idioma, nombreVia, numero,
-				piso, puerta, provincia, localidad, cp, telefono, restoDireccion);
+				piso, puerta, provincia, localidad, cp, restoDireccion);
 	}
 
 	@Override

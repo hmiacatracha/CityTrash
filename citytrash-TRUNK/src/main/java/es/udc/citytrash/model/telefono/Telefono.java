@@ -2,7 +2,6 @@ package es.udc.citytrash.model.telefono;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -34,13 +33,14 @@ public class Telefono implements Serializable {
 		this.tipo = tipo;
 	}
 
-	@Pattern(regexp = "^(?=(?:[8-9]){1})(?=[0-9]{8}).*", message = "{error.telefono}")
+	@Pattern(regexp = "^([9|6|7][0-9]{8})?", message = "{constraints.pattern.telefono}")
 	public String getNumero() {
 		return numero;
 	}
 
 	public void setNumero(String numero) {
-		this.numero = numero;
+		if (numero != null)
+			this.numero = numero.trim();
 	}
 
 	public TipoTelefono getTipo() {

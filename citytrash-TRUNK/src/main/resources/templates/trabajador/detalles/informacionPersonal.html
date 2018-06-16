@@ -9,7 +9,7 @@
 </head>
 <body class="blanco">
 	<div id="container" class="container" th:fragment="content">
-		</br>
+		<br>
 		<!-- <div class="panel panel-default"> -->
 		<div class="panel-heading ">
 
@@ -78,6 +78,7 @@
 								th:text="#{lbl_email}"></label></td>
 							<td th:text="${#strings.toLowerCase(trabajador.email)}"></td>
 						</tr>
+						<!-- 
 						<tr>
 							<td class="text-success"><i
 								class="glyphicon glyphicon-earphone"></i> <label
@@ -87,6 +88,7 @@
 									th:text="${trabajador.telefono}"></p>
 							</td>
 						</tr>
+						 -->
 						<tr>
 							<td class="text-success"><i class="fa fa-home"></i> <label
 								th:text="#{lbl_direccion}"></label>&nbsp;</td>
@@ -109,6 +111,34 @@
 										th:text="${#strings.toUpperCase(trabajador.provincia)}">
 									</label> <br>
 								</address>
+							</td>
+						</tr>
+						<tr>
+							<td class="text-success"><i
+								class="glyphicon glyphicon-earphone"></i> <label
+								class="mayusculas" th:text="#{frm_trabajadores_telefonos}"></label>
+							</td>
+							<td>
+								<table class="table table-hover table-responsive">
+									<thead>
+										<tr>
+											<th class="col-xs-1 col-sm-1 text-success">#</th>
+											<th class="text-success" th:text="#{lbl_telefono_tipo}"></th>
+											<th class="text-success" th:text="#{lbl_telefono_numero}"></th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr th:if="${trabajador.telefonos.size()> 0}"
+											th:each="telefono, rowStat : ${trabajador.telefonos}">
+											<!-- INDEX -->
+											<td class="col-xs-1" th:text="${rowStat.index+1}"></td>
+											<!-- TIPO -->
+											<td th:text="#{${telefono.tipo}}" id="tipoTelefono"></td>
+											<!-- NUMERO DE TELEFONO -->
+											<td th:text="${telefono.numero}" id="numeroTelefono"></td>
+										</tr>
+									</tbody>
+								</table>
 							</td>
 						</tr>
 					</tbody>

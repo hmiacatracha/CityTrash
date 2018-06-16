@@ -14,6 +14,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.format.annotation.NumberFormat;
 import org.springframework.format.annotation.NumberFormat.Style;
 
@@ -36,14 +37,7 @@ public class CamionModeloDto {
 		this.distancia = modelo.getDistancia();
 		this.longitud = modelo.getLongitud();
 		this.pma = modelo.getPma();
-		listaTiposDeBasura = new ArrayList<CamionModeloTipoDeBasuraDto>();
-
-		/*
-		 * for (CamionModeloTipoDeBasura ct : modelo.getTiposDeBasura()) {
-		 * CamionModeloTipoDeBasuraDto ctb = new
-		 * CamionModeloTipoDeBasuraDto(ct.getTipo().getId(), ct.getCapacidad());
-		 * listaTiposDeBasura.add(ctb); }
-		 */
+		this.listaTiposDeBasura = new ArrayList<CamionModeloTipoDeBasuraDto>();
 	}
 
 	private Integer id = null;
@@ -54,8 +48,6 @@ public class CamionModeloDto {
 
 	@NumberFormat(style = Style.NUMBER, pattern = "###.###")
 	private BigDecimal volumenTolva = new BigDecimal(0);
-
-	// private String volumenTolva = "0";
 
 	@NotNull
 	@Min(value = 1000)
@@ -86,8 +78,11 @@ public class CamionModeloDto {
 
 	@Valid
 	@NotNull
-	// @Size(min = 1)
+	@Size(min = 1)
+	@UniqueElements(message = "{constraints.tipos.basura.duplicados}")
 	private List<CamionModeloTipoDeBasuraDto> listaTiposDeBasura = new ArrayList<CamionModeloTipoDeBasuraDto>();
+
+	private boolean modificado = false;
 
 	public Integer getId() {
 		return id;
@@ -102,6 +97,8 @@ public class CamionModeloDto {
 	}
 
 	public void setNombre(String nombre) {
+		if (!nombre.equalsIgnoreCase(this.nombre))
+			modificado = true;
 		this.nombre = nombre.toUpperCase();
 	}
 
@@ -110,6 +107,8 @@ public class CamionModeloDto {
 	}
 
 	public void setVolumenTolva(BigDecimal volumenTolva) {
+		if (!volumenTolva.equals(this.volumenTolva))
+			modificado = true;
 		this.volumenTolva = volumenTolva;
 	}
 
@@ -118,6 +117,8 @@ public class CamionModeloDto {
 	}
 
 	public void setAncho(BigDecimal ancho) {
+		if (!ancho.equals(this.ancho))
+			modificado = true;
 		this.ancho = ancho;
 	}
 
@@ -126,6 +127,8 @@ public class CamionModeloDto {
 	}
 
 	public void setAltura(BigDecimal altura) {
+		if (!altura.equals(this.altura))
+			modificado = true;
 		this.altura = altura;
 	}
 
@@ -134,6 +137,8 @@ public class CamionModeloDto {
 	}
 
 	public void setLongitud(BigDecimal longitud) {
+		if (!longitud.equals(this.longitud))
+			modificado = true;
 		this.longitud = longitud;
 	}
 
@@ -142,6 +147,8 @@ public class CamionModeloDto {
 	}
 
 	public void setDistancia(BigDecimal distancia) {
+		if (!distancia.equals(this.distancia))
+			modificado = true;
 		this.distancia = distancia;
 	}
 
@@ -150,7 +157,17 @@ public class CamionModeloDto {
 	}
 
 	public void setPma(Integer pma) {
+		if (pma != this.pma)
+			modificado = true;
 		this.pma = pma;
+	}
+
+	public boolean isModificado() {
+		return modificado;
+	}
+
+	public void setModificado(boolean modificado) {
+		this.modificado = modificado;
 	}
 
 	public List<CamionModeloTipoDeBasuraDto> getListaTiposDeBasura() {
@@ -164,7 +181,13 @@ public class CamionModeloDto {
 	}
 
 	public void addTipo(CamionModeloTipoDeBasuraDto modeloTipo) {
-		this.listaTiposDeBasura.add(modeloTipo);
+		if (!listaTiposDeBasura.contains(modeloTipo))
+			this.listaTiposDeBasura.add(modeloTipo);
+	}
+
+	public void eliminarTipo(CamionModeloTipoDeBasuraDto modeloTipo) {
+		if (listaTiposDeBasura.contains(modeloTipo))
+			this.listaTiposDeBasura.remove(modeloTipo);
 	}
 
 	@Override

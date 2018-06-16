@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import es.udc.citytrash.controller.util.dtos.trabajador.TrabajadorBusqFormDto;
 import es.udc.citytrash.controller.util.dtos.trabajador.TrabajadorRegistroFormDto;
 import es.udc.citytrash.controller.util.dtos.trabajador.TrabajadorUpdateFormDto;
+import es.udc.citytrash.model.telefono.Telefono;
 import es.udc.citytrash.model.trabajador.Conductor;
 import es.udc.citytrash.model.trabajador.Recolector;
 import es.udc.citytrash.model.trabajador.Trabajador;
@@ -158,5 +159,13 @@ public interface TrabajadorService {
 	 * @return
 	 */
 	List<Trabajador> buscarTrabajadores(Boolean mostrarSoloActivos);
+
+	/**
+	 * Elimina un telefono de la lista
+	 * @param trabajadorId
+	 * @param tel
+	 * @throws InstanceNotFoundException
+	 */
+	void eliminarTelefono(long trabajadorId, Telefono tel) throws InstanceNotFoundException;
 
 }

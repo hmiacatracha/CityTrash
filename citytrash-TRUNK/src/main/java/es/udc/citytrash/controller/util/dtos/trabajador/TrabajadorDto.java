@@ -2,7 +2,9 @@ package es.udc.citytrash.controller.util.dtos.trabajador;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.List;
 
+import es.udc.citytrash.model.telefono.Telefono;
 import es.udc.citytrash.model.trabajador.Trabajador;
 import es.udc.citytrash.util.enums.Idioma;
 import es.udc.citytrash.util.enums.TipoTrabajador;
@@ -38,7 +40,7 @@ public class TrabajadorDto {
 		this.provincia = t.getProvincia();
 		this.localidad = t.getLocalidad();
 		this.cp = t.getCp();
-		this.telefono = t.getTelefono();
+		this.telefonos = t.getTelefonos();
 		this.restoDireccion = t.getRestoDireccion();
 		this.cuentaActiva = t.isEnabledCount();
 		this.trabajadorActivo = t.isActiveWorker();
@@ -193,12 +195,12 @@ public class TrabajadorDto {
 		this.cp = cp;
 	}
 
-	public BigDecimal getTelefono() {
-		return telefono;
+	public List<Telefono> getTelefonos() {
+		return telefonos;
 	}
 
-	public void setTelefono(BigDecimal telefono) {
-		this.telefono = telefono;
+	public void setTelefonos(List<Telefono> telefonos) {
+		this.telefonos = telefonos;
 	}
 
 	public String getRestoDireccion() {
@@ -263,7 +265,7 @@ public class TrabajadorDto {
 				+ apellidos + ", fechaNacimiento=" + fechaNacimiento + ", email=" + email + ", token=" + token
 				+ ", fechaExpiracionToken=" + fechaExpiracionToken + ", idioma=" + idioma + ", nombreVia=" + nombreVia
 				+ ", numero=" + numero + ", piso=" + piso + ", puerta=" + puerta + ", provincia=" + provincia
-				+ ", localidad=" + localidad + ", cp=" + cp + ", telefono=" + telefono + ", restoDireccion="
+				+ ", localidad=" + localidad + ", cp=" + cp + ", telefonos=" + telefonos + ", restoDireccion="
 				+ restoDireccion + ", cuentaActiva=" + cuentaActiva + ", trabajadorActivo=" + trabajadorActivo
 				+ ", fechaCreacion=" + fechaCreacion + ", fechaActivacion=" + fechaActivacion + ", rol=" + rol
 				+ ", tipo=" + tipo + "]";
@@ -285,7 +287,7 @@ public class TrabajadorDto {
 	private String provincia;
 	private String localidad;
 	private BigDecimal cp;
-	private BigDecimal telefono;
+	private List<Telefono> telefonos;
 	private String restoDireccion;
 	private Boolean cuentaActiva;
 	private Boolean trabajadorActivo;
