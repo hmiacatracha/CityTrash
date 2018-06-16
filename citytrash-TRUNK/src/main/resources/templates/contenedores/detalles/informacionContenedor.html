@@ -1,23 +1,72 @@
-<!DOCTYPE>
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:th="http://www.thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{layouts/maps}" th:with="currentPage='recursos'">
+	th:with="currentPage='recursos'">
 <head>
+<meta charset="utf-8"></meta>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
+<meta name="description" content=""></meta>
+<meta name="author" content="heidy">
+
+<link rel="shortcut icon" type="image/png"
+	th:href="@{/resources/static/img/icon.png}"></link>
+<!-- boostrap -->
+<link rel="stylesheet" media="screen"
+	th:href="@{/webjars/bootstrap/3.3.7-1/css/bootstrap.min.css}" />
+
+<!-- BOOSTRAP SELECT -->
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
+
+<!-- fonts -->
+<link rel="stylesheet"
+	href="https://fonts.googleapis.com/css?family=Tangerine">
+<!--fonts -->
+<link href="https://fonts.googleapis.com/css?family=Lustria"
+	rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Merienda+One"
+	rel="stylesheet">
+
+<!-- icons -->
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+	rel="stylesheet">
+
+<!-- owner -->
+<link th:href="@{/resources/static/css/styles.css}" rel="stylesheet"></link>
+
+<!-- leaflet -->
+<link rel="stylesheet"
+	th:href="@{/resources/static/css/leaflet/leaflet.css}" />
+
+<!-- Load Esri Leaflet Geocoder from CDN css -->
+<link rel="stylesheet"
+	href="https://unpkg.com/esri-leaflet-geocoder@2.2.9/dist/esri-leaflet-geocoder.css"
+	integrity="sha512-v5YmWLm8KqAAmg5808pETiccEohtt8rPVMGQ1jA6jqkWVydV5Cuz3nJ9fQ7ittSxvuqsvI9RSGfVoKPaAJZ/AQ=="
+	crossorigin="">
+
 <title th:text="#{page_contenedores_modelo_detalle_info}"></title>
 </head>
-<body class="blanco">
-	<div id="container" class="container" th:fragment="content">
+
+<body class="fondoBlanco">
+	<div th:replace="fragments/navigation :: nav(${menu})"></div>
+	<div id="content" class="container" th:fragment="content">
 		<br>
 		<div class="row container center-block">
 			<h3 th:if="${nombreDelContenedor!=null}"
 				class="text-center text-warning col-xs-10"
 				th:text="${#strings.toUpperCase(nombreDelContenedor)}"></h3>
 
+			<label id="tipo" th:text="${tipoDeBasura.tipo}" hidden=""></label> <label
+				id="color" th:text="${tipoDeBasura.color}" hidden=""></label>
+
 			<div class="col-xs-2">
 				<div class="col-xs-1" th:if="${tipoDeBasura}">
-					<div th:style="'background: #' + ${tipoDeBasura.color}"
+					<div th:style="'background:#' + ${tipoDeBasura.color}"
 						class="basura_color_circulo"></div>
 				</div>
 			</div>
@@ -47,14 +96,24 @@
 							<tr>
 								<td class="text-success"><label
 									th:text="#{lbl_contenedor_nombre}"></label></td>
-								<td th:if="*{nombre}" th:text="*{nombre}"></td>
+								<td id="nombre" th:if="*{nombre}" th:text="*{nombre}"></td>
 							</tr>
-
 							<!-- fecha de alta -->
 							<tr>
+
 								<td class="text-success"><i
 									class="glyphicon glyphicon-calendar"></i> <label
 									class="mayusculas" th:text="#{lbl_fechaAlta}"></label></td>
+
+								<td th:with="df=#{fecha_formato}" th:text="*{fechaAlta}"
+									th:data-provide="datepicker" th:data-date-autoclose="true"
+									th:data-date-today-highlight="true"
+									th:data-date-orientation="bottom" data-date-format=df></td>
+								<!-- 
+								<td data-date-format=df th:with="df=#{fecha_formato}"
+									th:text="${#temporals.format(__*{fechaAlta}__, df)}"></td>
+								 -->
+								<!-- 
 								<td>
 									<div class="input-group date  has-feedback col-sm-6"
 										id="datetimePicker">
@@ -67,6 +126,8 @@
 										</
 									</div>
 								</td>
+								 -->
+
 							</tr>
 
 							<!-- fecha de baja -->
@@ -75,6 +136,7 @@
 									class="glyphicon glyphicon-calendar"></i> <label
 									class="mayusculas" th:text="#{lbl_fechaBaja}"></label></td>
 								<td>
+									<!-- 
 									<div class="input-group date  has-feedback col-sm-6"
 										id="datetimePicker">
 										<input type="text" class="form-control" id="fechaBaja"
@@ -84,8 +146,11 @@
 											th:data-date-today-highlight="true"
 											th:data-date-orientation="bottom" disabled="disabled" />
 									</div>
+								-->
+								<td data-date-format=df th:with="df=#{fecha_formato}"
+									th:text="*{fechaBaja}"></td>
 
-								</td>
+
 							</tr>
 
 							<!-- latitud -->
@@ -102,8 +167,95 @@
 
 								<td id="lng" data-geo="lng" th:text="*{longitud}"></td>
 							<tr>
+							<tr>
+
+								<td colspan="2"><label id="direccion" class="text-success"></label>
+									<div class="col-xs-offset-1 col-xs-10 map_canvas" id="mapa"></div>
+							</tr>
 						</tbody>
+
 					</table>
+					<legend class="col-xs-12" th:text="#{frm_contenedores_sensores}"></legend>
+					<table th:fragment="sensoresList" id="sensoresList"
+						class="table table-striped">
+						<tr>
+							<th class="col-xs-1 col-sm-1">#</th>
+							<th class="text-success" th:text="#{lbl_sensor_tipo}">tipo</th>
+							<th class="text-success" th:text="#{lbl_sensor_nombre}">nombre</th>
+							<th class="text-success" th:text="#{lbl_sensor_nivel}">nombre</th>
+							<th class="text-success"
+								th:text="#{lbl_sensor_fecha_ultima_actualizacion}">nombre</th>
+							<th class="text-success" th:text="#{lbl_activo}">activo</th>
+							<th></th>
+						</tr>
+						<tr th:if="${sensores.size()> 0}"
+							th:each="sensor, rowStat : ${sensores}">
+
+							<!-- numero de fila -->
+							<td id="numFila" class="col-xs-1 text-success"
+								th:text="${rowStat.index+1}"></td>
+							<!-- id -->
+							<td id="id" hidden=""
+								th:text="${sensores[__${rowStat.index}__].id}"></td>
+							<!-- tipo de sensor -->
+							<td id="tipoSensor"
+								th:text="#{${sensores[__${rowStat.index}__].sensorType}}"></td>
+							<!-- nombre -->
+							<td id="nombre"
+								th:text="${sensores[__${rowStat.index}__].nombre}"></td>
+
+							<!-- capacidad -->
+							<td
+								th:if="${sensores[__${rowStat.index}__] instanceof T(es.udc.citytrash.model.sensor.Bateria)}"
+								th:text="${sensores[__${rowStat.index}__].porcentajeBateria} + '%'">
+							</td>
+
+							<td
+								th:if="${sensores[__${rowStat.index}__] instanceof T(es.udc.citytrash.model.sensor.Volumen)}"
+								th:text="${sensores[__${rowStat.index}__].porcentajeVolumen}+ '%'"></td>
+
+							<td
+								th:if="${sensores[__${rowStat.index}__] instanceof T(es.udc.citytrash.model.sensor.Temperatura)}"
+								th:text="${sensores[__${rowStat.index}__].gradosCentigrados} + 'ºC'"></td>
+
+							<!-- ultima actualizacion -->
+							<td th:with="df=#{fecha_formato_completo}"
+								th:text="${#dates.format(sensores[__${rowStat.index}__].ultimaActualizacion, df)}"></td>
+							<td>
+								<div id="otherOptions" class="btn-group text-center">
+									<i th:if="${sensores[__${rowStat.index}__].activo==true}"
+										class="fa fa-toggle-on"></i> <i
+										th:unless="${sensores[__${rowStat.index}__].activo==true}"
+										class="fa fa-toggle-off"></i>
+								</div>
+							</td>
+
+							<td>
+								<div class="btn-group text-center" id="options">
+									<!-- view details -->
+									<div id="otherOptions" class="btn-group text-center">
+										<a id="link_ver_detalles"
+											th:href="@{#{link.sensores.detalles}(id=${sensores[__${rowStat.index}__].id})}"
+											class="btn-sm"><i class="glyphicon glyphicon-eye-open"
+											data-toggle="tooltip" th:title="#{lbl_ver_detalles}"></i></a>
+									</div>
+									<!-- 
+										<div id="changeState" class="btn-group text-center">
+											<a id="link_change_state"
+												th:href="@{#{link.trabajadores.estado}(id=${trabajador.id})}"
+												class="btn-sm"> <i id="iconState"
+												th:class="${trabajador.trabajadorActivo == true}? 'fa fa-toggle-on' : 'fa fa-toggle-off'"
+												data-toggle="tooltip" th:title="#{lbl_estado}"> </i>
+											</a>
+										</div>
+									 -->
+								</div>
+							</td>
+						</tr>
+						<tr>
+						</tr>
+					</table>
+
 				</div>
 				<!-- mapa -->
 				<div class="col-xs-offset-1 col-xs-10 map_canvas" id="mapa"></div>
@@ -120,8 +272,22 @@
 			</div>
 		</div>
 	</div>
-	<script>
 
-	</script>
+	<div th:replace="fragments/footer :: footer()"></div>
+
+	<!-- LEAFLET -->
+	<script th:src="@{/resources/static/js/leaflet/leaflet.js}"></script>
+
+	<!-- Load Esri Leaflet from CDN -->
+	<script src="https://unpkg.com/esri-leaflet@2.1.3"></script>
+
+	<!-- Esri Leaflet Geocoder from CDN -->
+	<script
+		src="https://unpkg.com/esri-leaflet-geocoder@2.2.9/dist/esri-leaflet-geocoder.js"
+		integrity="sha512-QXchymy6PyEfYFQeOUuoz5pH5q9ng0eewZN8Sv0wvxq3ZhujTGF4eS/ySpnl6YfTQRWmA2Nn3Bezi9xuF8yNiw=="
+		crossorigin=""></script>
+
+	<script th:src="@{/resources/static/js/contenedorDetallesMap.js}"></script>
+
 </body>
 </html>

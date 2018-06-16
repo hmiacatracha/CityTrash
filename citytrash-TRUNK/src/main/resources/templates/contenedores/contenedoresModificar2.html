@@ -1,0 +1,48 @@
+<!DOCTYPE>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/maps}" th:with="currentPage='recursos'">
+<head>
+<title th:text="#{page_editar}"></title>
+</head>
+
+<body class="formularios">
+	<!-- id="viewBody" -->
+	<div id="content" class="container" th:fragment="content"
+		th:remove="tag">
+		<div
+			class="col-sm-offset-1 col-sm-10 col-md-offset-3 col-md-6 col-lg-offset-2 col-lg-8">
+			<div class="panel panel-default" th:if="${contenedorForm}">
+				<div class="panel-heading ">
+
+					<h3 class="text-center text-warning"
+						th:text="${contenedorForm.nombre}"></h3>
+				</div>
+				<div class="panel-body">
+
+					<div class="row">
+						<div class="col-xs-11 text-right">
+							<div class="btn-group">
+								<a id="link_ver_detalles"
+									th:href="@{#{link.contenedores.detalles}(id=${contenedorForm.id})}"
+									class="btn-sm"><i class="glyphicon glyphicon-eye-open"
+									data-toggle="tooltip" th:title="#{lbl_ver_detalles}"></i></a> <a
+									th:href="@{#{link.contenedores.registro}}" class="btn-sm"><i
+									class="glyphicon glyphicon-plus"></i> </a> <a
+									th:href="@{#{link.contenedores}}" class="btn-sm"> <i
+									class="glyphicon glyphicon-list"></i>
+								</a>
+							</div>
+						</div>
+					</div>
+					<div th:fragment="formularios"
+						th:replace="contenedores/contenedoresModificarForm :: form(${contenedorForm}, ${error})"></div>
+				</div>
+			</div>
+			<div class="panel-footer"></div>
+		</div>
+	</div>
+</body>
+</html>

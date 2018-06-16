@@ -52,12 +52,21 @@
 					<tr>
 						<td class="text-success"><label
 							th:text="#{lbl_trabajador_cuenta_habilitada}"> </label></td>
-
+						<td><i th:if="${trabajador.cuentaActiva == true}"
+							class="fa fa-toggle-on"></i> <i
+							th:unless="${trabajador.cuentaActiva == true}"
+							class="fa fa-toggle-off"></i></td>
+						<!-- 
 						<td th:if="${trabajador.cuentaActiva == true}"><i
 							class="glyphicon glyphicon-ok"> </i></td>
 
 						<td th:unless="${trabajador.cuentaActiva == true}"><i
 							class="glyphicon glyphicon-remove"> </i></td>
+
+						-->
+
+
+
 					</tr>
 
 					<tr>

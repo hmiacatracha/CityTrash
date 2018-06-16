@@ -87,4 +87,4 @@ $(document).on("change", "#lat", function(e) {
 	});
 });
 
-}
+});

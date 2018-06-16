@@ -1,7 +1,6 @@
 package es.udc.citytrash.model.contenedorModelo;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -44,8 +43,8 @@ public class ContenedorModeloDaoHibernate extends GenericHibernateDAOImpl<Conten
 	public List<ContenedorModelo> buscarTodosOrderByModelo() {
 		String alias = "m";
 		List<ContenedorModelo> modelos = new ArrayList<ContenedorModelo>();
-		String hql = String
-				.format("Select " + alias + " FROM ContenedorModelo " + alias + " ORDER BY " + alias + ".modelo");
+		String hql = String.format("Select " + alias + " FROM ContenedorModelo " + alias + " ORDER BY " + alias
+				+ ".modelo, " + alias + ".tipo.tipo");
 		modelos = getSession().createQuery(hql, ContenedorModelo.class).list();
 		return modelos;
 	}

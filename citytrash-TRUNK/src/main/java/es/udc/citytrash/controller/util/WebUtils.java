@@ -1,5 +1,7 @@
 package es.udc.citytrash.controller.util;
 
+import java.util.Random;
+
 import javax.servlet.http.HttpServletRequest;
 
 public class WebUtils {
@@ -94,6 +96,9 @@ public class WebUtils {
 			+ "detalles/informacionModelo";
 	public static final String VISTA_CONTENEDORES_MODELOS_DETALLES_CONTENEDORES = VISTA_CONTENEDORES_MODELOS_PREFIX
 			+ "detalles/contenedores";
+
+	public static final String VISTA_SENSORES_VALORES = "sensores/valores";
+	public static final String VISTA_SENSORES_VALORES_CHART = "sensores/chart";
 
 	/* PAQUETE MAPAS */
 	public static final String VISTA_MAPA_PREFIX = "mapas/";
@@ -261,8 +266,14 @@ public class WebUtils {
 	public static final String REQUEST_MAPPING_CONTENEDORES_EDITAR_MODELO = "/modelos/{id}/editar";
 
 	public static final String URL_MAPPING_CONTENEDORES_REGISTRAR_MODELO = "/contenedores/modelos/registrar";
-	public static final String REQUEST_MAPPING_CONTENEDORESS_REGISTRAR_MODELO = "/modelos/registrar";
+	public static final String REQUEST_MAPPING_CONTENEDORES_REGISTRAR_MODELO = "/modelos/registrar";
 
+	public static final String URL_MAPPING_CONTENEDORES_SENSORES_DETALLES = "/contenedores/sensores/{id}";
+	public static final String REQUEST_MAPPING_CONTENEDORES_SENSORES_DETALLES = "/sensores/{id}";
+
+	public static final String URL_MAPPING_CONTENEDORES_SENSORES_DETALLES_CHART = "/contenedores/{contenedorId}/sensores/{sensorId}";
+	public static final String REQUEST_MAPPING_CONTENEDORES_SENSORES_DETALLES_CHART = "/{contenedorId}/sensores/{sensorId}";
+	
 	// URLS MAPAS
 	public static final String URL_MAPPING_MAPA_CONTENEDORES = "/contenedores/map";
 	public static final String REQUEST_MAPPING_MAPA_CONTENEDORES = "contenedores/map";
@@ -276,6 +287,11 @@ public class WebUtils {
 	public static String getUrlWithContextPath(HttpServletRequest request) {
 		return request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
 				+ request.getContextPath();
+	}
+
+	public static Long randomNegativeId() {
+		Random rand = new Random();
+		return -1 * ((long) rand.nextInt(1000));
 	}
 
 }

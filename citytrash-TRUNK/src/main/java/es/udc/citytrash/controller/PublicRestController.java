@@ -1,5 +1,9 @@
 package es.udc.citytrash.controller;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -12,18 +16,23 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorFormBusq;
+import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorModeloDto;
 import es.udc.citytrash.controller.util.dtos.contenedor.Localizacion;
 import es.udc.citytrash.controller.util.dtos.contenedor.MapaContenedoresDto;
+import es.udc.citytrash.controller.util.dtos.contenedor.SensorValores;
 import es.udc.citytrash.model.contenedor.Contenedor;
 import es.udc.citytrash.model.contenedorModelo.ContenedorModelo;
 import es.udc.citytrash.model.contenedorService.ContenedorService;
+import es.udc.citytrash.model.sensorValor.Valor;
 import es.udc.citytrash.model.tipoDeBasura.TipoDeBasura;
 import es.udc.citytrash.model.trabajadorService.TrabajadorService;
 import es.udc.citytrash.model.usuarioService.UsuarioService;
@@ -136,5 +145,39 @@ public class PublicRestController {
 		} catch (InstanceNotFoundException e) {
 			return true;
 		}
+	}
+
+	@RequestMapping(value = "/contenedor/modelo/tipo", method = RequestMethod.GET, produces = "text/plain")
+	public @ResponseBody String getTipoBasura(@RequestParam(value = "modeloId", required = true) int id) {
+		try {
+			return cServicio.buscarTipoDeBasuraByModelo(id).getTipo();
+		} catch (InstanceNotFoundException e) {
+			return "";
+		}
+	}
+
+	@RequestMapping(value = "/sensor/{id}/json", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody List<SensorValores> gets(@PathVariable("id") Long sensorId,
+			@RequestParam(value = "fromDate", required = false) @DateTimeFormat(pattern = "dd/MM/yyyy") Date fromDate,
+			@RequestParam(value = "toDate", required = false) @DateTimeFormat(pattern = "dd/MM/yyyy") Date toDate)
+			throws InstanceNotFoundException {
+		logger.info("contenedores/sensores/id/json");
+		List<Valor> valores = new ArrayList<Valor>();
+
+		cServicio.buscarSensorById(sensorId);
+		
+		if (fromDate != null)
+			logger.info("fromDate =>" + fromDate.toString());
+		if (toDate != null)
+			logger.info("toDate =>" + toDate.toString());
+		
+		valores = cServicio.buscarValoresBySensor(sensorId, fromDate, toDate);
+		return valores.stream().map(valor -> convertToDto(valor)).collect(Collectors.toList());
+	}
+
+	private SensorValores convertToDto(Valor valor) {
+		Timestamp timestamp = new Timestamp(valor.getPk().getFechaHora().getTimeInMillis());
+		SensorValores sensorValor = new SensorValores(timestamp, valor.getValor(), "%");
+		return sensorValor;
 	}
 }

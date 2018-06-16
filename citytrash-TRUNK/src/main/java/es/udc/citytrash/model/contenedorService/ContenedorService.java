@@ -1,5 +1,6 @@
 package es.udc.citytrash.model.contenedorService;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -13,9 +14,10 @@ import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorModeloRegistro
 import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorRegistroDto;
 import es.udc.citytrash.model.contenedor.Contenedor;
 import es.udc.citytrash.model.contenedorModelo.ContenedorModelo;
+import es.udc.citytrash.model.sensor.Sensor;
+import es.udc.citytrash.model.sensorValor.Valor;
 import es.udc.citytrash.model.tipoDeBasura.TipoDeBasura;
 import es.udc.citytrash.model.util.excepciones.DuplicateInstanceException;
-import es.udc.citytrash.model.util.excepciones.InactiveResourceException;
 import es.udc.citytrash.model.util.excepciones.InstanceNotFoundException;
 import es.udc.citytrash.model.util.excepciones.InvalidFieldException;
 
@@ -182,4 +184,47 @@ public interface ContenedorService {
 	 */
 	List<Contenedor> buscarContenedores(ContenedorFormBusq form);
 
+	/**
+	 * Eliminar un sensorId de un contenedor
+	 * 
+	 * @param sensorId
+	 * @throws InstanceNotFoundException
+	 */
+	void eliminarSensorId(Long sensorId) throws InstanceNotFoundException;
+
+	/**
+	 * Buscar un sensor by id
+	 * 
+	 * @param sensorId
+	 * @return
+	 * @throws InstanceNotFoundException
+	 */
+	Sensor buscarSensorById(Long sensorId) throws InstanceNotFoundException;
+
+	/**
+	 * Buscar un sensor by contenedor
+	 * 
+	 * @param contenedorId
+	 * @return
+	 * @throws InstanceNotFoundException
+	 */
+	List<Sensor> buscarSensorsByContenedor(Long contenedorId) throws InstanceNotFoundException;
+
+	/**
+	 * Buscar valores de un sensor
+	 * 
+	 * @param pageable
+	 * @param sensorId
+	 * @return
+	 */
+	Page<Valor> buscarValoresBySensor(Pageable pageable, Long sensorId);
+
+	/**
+	 * Buscar valores by sensor
+	 * @param sensorId
+	 * @param fechaInicio
+	 * @param fechaFin
+	 * @return
+	 */
+	List<Valor> buscarValoresBySensor(Long sensorId, Date fechaInicio, Date fechaFin);
 }
