@@ -146,7 +146,7 @@ public class ContenedorDaoHibernate extends GenericHibernateDAOImpl<Contenedor, 
 			List<TipoDeBasura> tiposDeBasura, boolean mostrarSoloActivos, boolean mostrarSoloContenedoresDeAlta) {
 		Query<Contenedor> query;
 		List<Contenedor> contenedores = new ArrayList<Contenedor>();
-		String[] palabras = palabrasClaves.length() > 0 ? palabrasClaves.split(" ") : new String[0];
+		String[] palabras = palabrasClaves != null ? palabrasClaves.split(" ") : new String[0];
 		Page<Contenedor> page = new PageImpl<Contenedor>(contenedores, pageable, contenedores.size());
 		List<TipoDeBasura> tipos = tiposDeBasura != null ? tiposDeBasura : new ArrayList<TipoDeBasura>();
 		String alias = "c";
@@ -239,7 +239,7 @@ public class ContenedorDaoHibernate extends GenericHibernateDAOImpl<Contenedor, 
 	public List<Contenedor> buscarContenedores(String palabrasClaves, ContenedorModelo modelo,
 			List<TipoDeBasura> tiposDeBasura, boolean mostrarSoloActivos, boolean mostrarSoloContenedoresDeAlta) {
 		Query<Contenedor> query;
-		String[] palabras = palabrasClaves.length() > 0 ? palabrasClaves.split(" ") : new String[0];
+		String[] palabras = palabrasClaves != null ? palabrasClaves.split(" ") : new String[0];
 		List<TipoDeBasura> tipos = tiposDeBasura != null ? tiposDeBasura : new ArrayList<TipoDeBasura>();
 		String alias = "c";
 		StringBuilder hql = new StringBuilder("Select " + alias + " FROM Contenedor " + alias);

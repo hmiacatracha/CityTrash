@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 
 import es.udc.citytrash.controller.util.dtos.camion.CamionModeloDto;
 import es.udc.citytrash.model.camionModelo.CamionModelo;
+import es.udc.citytrash.model.tipoDeBasura.TipoDeBasura;
 import es.udc.citytrash.model.util.excepciones.InstanceNotFoundException;
 import es.udc.citytrash.model.util.genericdao.GenericDAO;
 
@@ -78,10 +79,12 @@ public interface CamionDao extends GenericDAO<Camion, Long> {
 	 *            camiones activos
 	 * @param mostrarSoloCamionesDeAlta
 	 *            camiones de alta
+	 * @param tipos
+	 *            tipos de basura
 	 * @return
 	 */
-	Page<Camion> buscarCamionesByModelo(Pageable pageable, CamionModelo modelo, boolean mostrarSoloActivos,
-			boolean mostrarSoloCamionesDeAlta);
+	Page<Camion> buscarCamionesByModeloTiposDeBasura(Pageable pageable, CamionModelo modelo, boolean mostrarSoloActivos,
+			boolean mostrarSoloCamionesDeAlta, List<TipoDeBasura> tipos);
 
 	/**
 	 * Buscar camiones de un modelo y el nombre
@@ -94,11 +97,12 @@ public interface CamionDao extends GenericDAO<Camion, Long> {
 	 * @param mostrarSoloActivos
 	 *            camiones activos
 	 * @param mostrarSoloCamionesDeAlta
-	 *            camiones de alta
+	 *            camiones de alt
+	 * @param tipos
 	 * @return
 	 */
-	Page<Camion> buscarCamionesByModeloYNombre(Pageable pageable, String palabrasClaves, CamionModelo modelo,
-			boolean mostrarSoloActivos, boolean mostrarSoloCamionesDeAlta);
+	Page<Camion> buscarCamionesByModeloTiposDeBasuraYNombre(Pageable pageable, String palabrasClaves, CamionModelo modelo,
+			boolean mostrarSoloActivos, boolean mostrarSoloCamionesDeAlta,List<TipoDeBasura> tipos);
 
 	/**
 	 * 
@@ -109,10 +113,11 @@ public interface CamionDao extends GenericDAO<Camion, Long> {
 	 *            camiones activos
 	 * @param mostrarSoloCamionesDeAlta
 	 *            camiones de alta
+	 * @param tipos          
 	 * @return
 	 */
-	Page<Camion> buscarCamionesByModeloYMatricula(Pageable pageable, String palabrasClaves, CamionModelo modelo,
-			boolean mostrarSoloActivos, boolean mostrarSoloCamionesDeAlta);
+	Page<Camion> buscarCamionesByModeloTiposDeBasuraYMatricula(Pageable pageable, String palabrasClaves, CamionModelo modelo,
+			boolean mostrarSoloActivos, boolean mostrarSoloCamionesDeAlta,List<TipoDeBasura> tipos);
 
 	/**
 	 * 
@@ -123,9 +128,10 @@ public interface CamionDao extends GenericDAO<Camion, Long> {
 	 *            mostrar camiones activos
 	 * @param mostrarSoloCamionesDeAlta
 	 *            mostrar camiones de alta
+	 * @param tipos
 	 * @return
 	 */
-	Page<Camion> buscarCamionesByModeloYVin(Pageable pageable, String palabrasClaves, CamionModelo modelo,
-			boolean mostrarSoloActivos, boolean mostrarSoloCamionesDeAlta);
+	Page<Camion> buscarCamionesByModeloTiposDeBasuraYVin(Pageable pageable, String palabrasClaves, CamionModelo modelo,
+			boolean mostrarSoloActivos, boolean mostrarSoloCamionesDeAlta,List<TipoDeBasura> tipos);
 
 }

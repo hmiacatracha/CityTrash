@@ -81,19 +81,29 @@ public class CamionModeloDaoHibernate extends GenericHibernateDAOImpl<CamionMode
 	}
 
 	@Override
-	public Page<CamionModelo> buscarCamionModelo(Pageable pageable, String palabrasClaveModelo) {
+	public Page<CamionModelo> buscarCamionModelo(Pageable pageable, String palabrasClaveModelo,
+			List<TipoDeBasura> tipos) {
 		String alias = "m";
 		Query<CamionModelo> query;
 		List<CamionModelo> modelos = new ArrayList<CamionModelo>();
 		Page<CamionModelo> page = new PageImpl<CamionModelo>(modelos, pageable, modelos.size());
-		StringBuilder hql = new StringBuilder("Select " + alias + " FROM CamionModelo " + alias);
-		String[] palabras = palabrasClaveModelo.length() > 0 ? palabrasClaveModelo.split(" ") : new String[0];
+		String[] palabras = palabrasClaveModelo != null ? palabrasClaveModelo.split(" ") : new String[0];
+		List<TipoDeBasura> tiposAux = tipos != null ? tipos : new ArrayList<TipoDeBasura>();
+
+		StringBuilder hql = new StringBuilder("Select distinct " + alias + " FROM CamionModelo " + alias
+				+ " inner join " + alias + ".tiposDeBasura t inner join t.pk pk");
 
 		for (int i = 0; i < palabras.length; i++) {
 			if (i != 0)
 				hql.append(" AND LOWER(" + alias + ".modelo) LIKE  LOWER (?) ");
 			else
 				hql.append(" WHERE LOWER(" + alias + ".modelo) LIKE  LOWER (?) ");
+		}
+
+		if ((palabras.length > 0) && tiposAux.size() > 0) {
+			hql.append(" AND pk.tipo in (:tipos) ");
+		} else if (tiposAux.size() > 0) {
+			hql.append(" WHERE pk.tipo in (:tipos)");
 		}
 
 		/* Sorted */
@@ -109,52 +119,10 @@ public class CamionModeloDaoHibernate extends GenericHibernateDAOImpl<CamionMode
 			query.setParameter(i, "%" + palabras[i] + "%");
 		}
 
-		modelos = query.list();
-		int start = pageable.getOffset();
-		int end = (start + pageable.getPageSize()) > modelos.size() ? modelos.size() : (start + pageable.getPageSize());
-		boolean rangoExistente = (modelos.size() - start >= 0) && (modelos.size() - end >= 0);
+		if (tiposAux.size() > 0)
+			query.setParameter("tipos", tiposAux);
 
-		if (rangoExistente) {
-			page = new PageImpl<CamionModelo>(modelos.subList(start, end), pageable, modelos.size());
-		} else {
-			List<CamionModelo> modeloAux = new ArrayList<CamionModelo>();
-			page = new PageImpl<CamionModelo>(modeloAux, pageable, modeloAux.size());
-		}
-		return page;
-	}
-
-	@Override
-	public Page<CamionModelo> buscarCamionModelo(Pageable pageable, String palabrasClaveModelo, TipoDeBasura tipo) {
-		String alias = "m";
-		Query<CamionModelo> query;
-		List<CamionModelo> modelos = new ArrayList<CamionModelo>();
-		Page<CamionModelo> page = new PageImpl<CamionModelo>(modelos, pageable, modelos.size());
-		String[] palabras = palabrasClaveModelo.length() > 0 ? palabrasClaveModelo.split(" ") : new String[0];
-
-		StringBuilder hql = new StringBuilder("Select " + alias + " FROM CamionModelo " + alias);
-		StringBuilder condicion = new StringBuilder();
-		StringBuilder orden = new StringBuilder();
-
-		for (int i = 0; i < palabras.length; i++) {
-			if (i != 0)
-				condicion.append(" AND LOWER(" + alias + ".modelo) LIKE  LOWER (?) ");
-			else
-				condicion.append(" WHERE LOWER(" + alias + ".modelo) LIKE  LOWER (?) ");
-		}
-
-		if ((palabras.length > 0) && tipo != null) {
-			hql.append(" AND " + alias + ".t = :modelo");
-		} else if (tipo != null) {
-			hql.append(" WHERE " + alias + ".modeloCamion = :modelo");
-		}
-
-		/* Sorted */
-		String order = StringUtils
-				.collectionToCommaDelimitedString(StreamSupport.stream(pageable.getSort().spliterator(), false)
-						.map(o -> alias + "." + o.getProperty() + " " + o.getDirection()).collect(Collectors.toList()));
-		orden.append(" ORDER BY " + order);
-
-		query = getSession().createQuery(hql.toString(), CamionModelo.class);
+		logger.info("HQL => " + hql.toString());
 
 		modelos = query.list();
 		int start = pageable.getOffset();

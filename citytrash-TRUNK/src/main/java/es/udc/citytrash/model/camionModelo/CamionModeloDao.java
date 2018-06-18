@@ -42,21 +42,14 @@ public interface CamionModeloDao extends GenericDAO<CamionModelo, Integer> {
 	Page<CamionModelo> buscarCamionModelo(Pageable pageable);
 
 	/**
-	 * 
-	 * @param pageable
-	 * @param palabrasClaveModelo
-	 * @return
-	 */
-	Page<CamionModelo> buscarCamionModelo(Pageable pageable, String palabrasClaveModelo);
-
-	/**
 	 * Buscar modelo by pageable y palabras claaves del modelo
 	 * 
 	 * @param pageable
 	 * @param palabrasClaveModelo
 	 * @param tipo
-	 *            modelo
+	 *            tipos de basura modelo
 	 * @return
 	 */
-	Page<CamionModelo> buscarCamionModelo(Pageable pageable, String palabrasClaveModelo, TipoDeBasura tipo);
+	Page<CamionModelo> buscarCamionModelo(Pageable pageable, String palabrasClaveModelo, List<TipoDeBasura> tipos);
+
 }

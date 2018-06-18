@@ -132,7 +132,7 @@ public class TrabajadorDaoHibernate extends GenericHibernateDAOImpl<Trabajador, 
 	@Override
 	public Page<Trabajador> buscarTrabajadoresPorNombreApellidosYTipo(Pageable pageable, String palabrasClaves,
 			TipoTrabajador tipo, Boolean mostrarTodos) {
-		String[] palabras = palabrasClaves.length() > 0 ? palabrasClaves.split(" ") : new String[0];
+		String[] palabras = palabrasClaves != null ? palabrasClaves.split(" ") : new String[0];
 		Query<Trabajador> query;
 		List<Trabajador> trabajadores = new ArrayList<Trabajador>();
 		Page<Trabajador> page = new PageImpl<Trabajador>(trabajadores, pageable, trabajadores.size());
@@ -207,7 +207,8 @@ public class TrabajadorDaoHibernate extends GenericHibernateDAOImpl<Trabajador, 
 	public Page<Trabajador> buscarTrabajadoresPorDocumentoYTipo(Pageable pageable, String documento,
 			TipoTrabajador tipo, Boolean mostrarTodos) {
 
-		String[] palabras = documento.split(" ");
+		// String[] palabras = documento.split(" ");
+		String[] palabras = documento != null ? documento.split(" ") : new String[0];
 		Query<Trabajador> query;
 		List<Trabajador> trabajadores = new ArrayList<Trabajador>();
 		Page<Trabajador> page = new PageImpl<Trabajador>(trabajadores, pageable, trabajadores.size());
@@ -276,7 +277,7 @@ public class TrabajadorDaoHibernate extends GenericHibernateDAOImpl<Trabajador, 
 	@Override
 	public Page<Trabajador> buscarTrabajadoresPorApellidosYTipo(Pageable pageable, String apellidos,
 			TipoTrabajador tipo, Boolean mostrarTodos) {
-		String[] palabras = apellidos.split(" ");
+		String[] palabras = apellidos != null ? apellidos.split(" ") : new String[0];
 		Query<Trabajador> query;
 		List<Trabajador> trabajadores = new ArrayList<Trabajador>();
 		Page<Trabajador> page = new PageImpl<Trabajador>(trabajadores, pageable, trabajadores.size());
@@ -345,7 +346,7 @@ public class TrabajadorDaoHibernate extends GenericHibernateDAOImpl<Trabajador, 
 	@Override
 	public Page<Trabajador> buscarTrabajadoresPorTelefonosYTipo(Pageable pageable, String telefono, TipoTrabajador tipo,
 			Boolean mostrarTodos) {
-		String[] palabras = telefono.split(" ");
+		String[] palabras = telefono != null ? telefono.split(" ") : new String[0];
 		Query<Trabajador> query;
 		List<Trabajador> trabajadores = new ArrayList<Trabajador>();
 		Page<Trabajador> page = new PageImpl<Trabajador>(trabajadores, pageable, trabajadores.size());
@@ -484,7 +485,7 @@ public class TrabajadorDaoHibernate extends GenericHibernateDAOImpl<Trabajador, 
 	public Page<Trabajador> buscarTrabajadoresPorEmailYTipo(Pageable pageable, String email, TipoTrabajador tipo,
 			Boolean mostrarTodos) {
 
-		String[] palabras = email.split(" ");
+		String[] palabras = email != null ? email.split(" ") : new String[0];
 		Query<Trabajador> query;
 		List<Trabajador> trabajadores = new ArrayList<Trabajador>();
 		Page<Trabajador> page = new PageImpl<Trabajador>(trabajadores, pageable, trabajadores.size());

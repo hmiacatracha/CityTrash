@@ -116,6 +116,7 @@ public class CamionesController {
 			@PageableDefault(size = WebUtils.DEFAULT_PAGE_SIZE, page = WebUtils.DEFAULT_PAGE_NUMBER, direction = Direction.DESC) @SortDefault("id") Pageable pageRequest,
 			@RequestParam(value = "buscar", required = false, defaultValue = "") String palabrasClaves,
 			@RequestParam(value = "modelo", required = false, defaultValue = "") Integer modelo,
+			@RequestParam(value = "tipos", required = false) List<Integer> types,
 			@RequestParam(value = "campo", required = false, defaultValue = "matricula") CampoBusqPalabrasClavesCamion campo,
 			@RequestParam(value = "mostrarSoloCamionesActivos", required = false, defaultValue = "false") Boolean activos,
 			@RequestParam(value = "mostrarSoloCamionesDeAlta", required = false, defaultValue = "false") Boolean alta,
@@ -126,6 +127,7 @@ public class CamionesController {
 			Page<Camion> page = new PageImpl<Camion>(camionesList, pageRequest, camionesList.size());
 			logger.info("GET REQUEST_MAPPING_CAMIONES");
 			CamionFormBusq busquedaForm = new CamionFormBusq();
+			busquedaForm.setTipos(types);
 			busquedaForm.setBuscar(palabrasClaves);
 			busquedaForm.setCampo(campo.toString());
 			busquedaForm.setModelo(modelo);

@@ -2,7 +2,6 @@ package es.udc.citytrash.model.camion;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -19,6 +18,7 @@ import org.springframework.util.StringUtils;
 
 import es.udc.citytrash.model.camionModelo.CamionModelo;
 import es.udc.citytrash.model.camionModelo.CamionModeloDaoHibernate;
+import es.udc.citytrash.model.tipoDeBasura.TipoDeBasura;
 import es.udc.citytrash.model.util.excepciones.InstanceNotFoundException;
 import es.udc.citytrash.model.util.genericdao.GenericHibernateDAOImpl;
 
@@ -162,8 +162,8 @@ public class CamionDaoHibernate extends GenericHibernateDAOImpl<Camion, Long> im
 	}
 
 	@Override
-	public Page<Camion> buscarCamionesByModelo(Pageable pageable, CamionModelo modelo, boolean mostrarSoloActivos,
-			boolean mostrarSoloCamionesDeAlta) {
+	public Page<Camion> buscarCamionesByModeloTiposDeBasura(Pageable pageable, CamionModelo modelo,
+			boolean mostrarSoloActivos, boolean mostrarSoloCamionesDeAlta, List<TipoDeBasura> tipos) {
 		Query<Camion> query;
 		List<Camion> camiones = new ArrayList<Camion>();
 		Page<Camion> page = new PageImpl<Camion>(camiones, pageable, camiones.size());
@@ -236,12 +236,12 @@ public class CamionDaoHibernate extends GenericHibernateDAOImpl<Camion, Long> im
 	}
 
 	@Override
-	public Page<Camion> buscarCamionesByModeloYNombre(Pageable pageable, String palabrasClaves, CamionModelo modelo,
-			boolean mostrarSoloActivos, boolean mostrarSoloCamionesDeAlta) {
+	public Page<Camion> buscarCamionesByModeloTiposDeBasuraYNombre(Pageable pageable, String palabrasClaves,
+			CamionModelo modelo, boolean mostrarSoloActivos, boolean mostrarSoloCamionesDeAlta,
+			List<TipoDeBasura> tipos) {
 		Query<Camion> query;
 		List<Camion> camiones = new ArrayList<Camion>();
-		//String[] palabras = palabrasClaves.split(" ");
-		String[] palabras = palabrasClaves.length() > 0 ? palabrasClaves.split(" ") : new String[0];
+		String[] palabras = palabrasClaves != null ? palabrasClaves.split(" ") : new String[0];
 		Page<Camion> page = new PageImpl<Camion>(camiones, pageable, camiones.size());
 		String alias = "c";
 		StringBuilder hql = new StringBuilder("Select " + alias + " FROM Camion " + alias);
@@ -317,12 +317,13 @@ public class CamionDaoHibernate extends GenericHibernateDAOImpl<Camion, Long> im
 	}
 
 	@Override
-	public Page<Camion> buscarCamionesByModeloYMatricula(Pageable pageable, String palabrasClaves, CamionModelo modelo,
-			boolean mostrarSoloActivos, boolean mostrarSoloCamionesDeAlta) {
+	public Page<Camion> buscarCamionesByModeloTiposDeBasuraYMatricula(Pageable pageable, String palabrasClaves,
+			CamionModelo modelo, boolean mostrarSoloActivos, boolean mostrarSoloCamionesDeAlta,
+			List<TipoDeBasura> tipos) {
 		logger.info("PAS01 HIBERNATE");
 		Query<Camion> query;
 		List<Camion> camiones = new ArrayList<Camion>();
-		String[] palabras = palabrasClaves.length() > 0 ? palabrasClaves.split(" ") : new String[0];
+		String[] palabras = palabrasClaves != null ? palabrasClaves.split(" ") : new String[0];
 		Page<Camion> page = new PageImpl<Camion>(camiones, pageable, camiones.size());
 		String alias = "c";
 		StringBuilder hql = new StringBuilder("Select " + alias + " FROM Camion " + alias);
@@ -400,12 +401,12 @@ public class CamionDaoHibernate extends GenericHibernateDAOImpl<Camion, Long> im
 	}
 
 	@Override
-	public Page<Camion> buscarCamionesByModeloYVin(Pageable pageable, String palabrasClaves, CamionModelo modelo,
-			boolean mostrarSoloActivos, boolean mostrarSoloCamionesDeAlta) {
+	public Page<Camion> buscarCamionesByModeloTiposDeBasuraYVin(Pageable pageable, String palabrasClaves,
+			CamionModelo modelo, boolean mostrarSoloActivos, boolean mostrarSoloCamionesDeAlta,
+			List<TipoDeBasura> tipos) {
 		Query<Camion> query;
 		List<Camion> camiones = new ArrayList<Camion>();
-		//String[] palabras = palabrasClaves.split(" ");
-		String[] palabras = palabrasClaves.length() > 0 ? palabrasClaves.split(" ") : new String[0];
+		String[] palabras = palabrasClaves != null ? palabrasClaves.split(" ") : new String[0];
 		Page<Camion> page = new PageImpl<Camion>(camiones, pageable, camiones.size());
 		String alias = "c";
 		StringBuilder hql = new StringBuilder("Select " + alias + " FROM Camion " + alias);

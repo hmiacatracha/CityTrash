@@ -1,6 +1,5 @@
 package es.udc.citytrash.model.camionService;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -446,7 +445,7 @@ public class CamionServiceImpl implements CamionService {
 		} catch (InstanceNotFoundException e) {
 
 		}
-		
+
 		if (form.isModificado()) {
 			logger.info("modificarModelo => Camion modelo se modifico");
 			camionModelo.setModelo(form.getNombre());
@@ -469,12 +468,26 @@ public class CamionServiceImpl implements CamionService {
 	public Page<CamionModelo> buscarModelos(Pageable pageable, CamionModeloFormBusq formBusqueda) {
 		logger.info("IMPRIMIENDO formbusqueda buscar modelos de camiones => " + formBusqueda.toString());
 
-		TipoDeBasura tipo = null;
 		List<CamionModelo> camionesList = new ArrayList<CamionModelo>();
 		Page<CamionModelo> page = new PageImpl<CamionModelo>(camionesList, pageable, camionesList.size());
 
-		if (formBusqueda.getPalabrasClaveModelo().length() > 0) {
-			page = modeloDao.buscarCamionModelo(pageable, formBusqueda.getPalabrasClaveModelo());
+		List<TipoDeBasura> tipos = new ArrayList<TipoDeBasura>();
+
+		/* Agregamos los tipos de basura */
+		if (formBusqueda.getTipos() != null) {
+			for (Integer t : formBusqueda.getTipos()) {
+				try {
+					TipoDeBasura tb = tipoDao.buscarById(Integer.valueOf(t.toString()));
+					logger.info("tipo encontrado =>" + tb.toString());
+					tipos.add(tb);
+				} catch (NumberFormatException | InstanceNotFoundException e) {
+
+				}
+			}
+		}
+
+		if (tipos.size() > 0 || formBusqueda.getPalabrasClaveModelo().length() > 0) {
+			page = modeloDao.buscarCamionModelo(pageable, formBusqueda.getPalabrasClaveModelo(), tipos);
 		} else {
 			page = modeloDao.buscarCamionModelo(pageable);
 		}
@@ -483,7 +496,6 @@ public class CamionServiceImpl implements CamionService {
 
 	@Override
 	public Page<Camion> buscarCamiones(Pageable pageable, CamionFormBusq formBusqueda) throws FormBusquedaException {
-
 		logger.info("IMPRIMIENDO formbusqueda buscar camiones => " + formBusqueda.toString());
 		CampoBusqPalabrasClavesCamion campo = CampoBusqPalabrasClavesCamion.matricula;
 		CamionModelo modelo = null;
@@ -496,6 +508,19 @@ public class CamionServiceImpl implements CamionService {
 		} catch (InstanceNotFoundException e) {
 		}
 
+		List<TipoDeBasura> tipos = new ArrayList<TipoDeBasura>();
+		/* Agregamos los tipos de basura */
+		if (formBusqueda.getTipos() != null) {
+			for (Integer t : formBusqueda.getTipos()) {
+				try {
+					TipoDeBasura tb = tipoDao.buscarById(Integer.valueOf(t.toString()));
+					logger.info("tipo encontrado =>" + tb.toString());
+					tipos.add(tb);
+				} catch (NumberFormatException | InstanceNotFoundException e) {
+					
+				}
+			}
+		}
 		/* Convertimos el campo por el que buscar las palabras claves */
 		try {
 			campo = CampoBusqPalabrasClavesCamion.valueOf(formBusqueda.getCampo());
@@ -509,28 +534,32 @@ public class CamionServiceImpl implements CamionService {
 			switch (campo) {
 			case matricula:
 				logger.info("CAMPO => matricula buscarCamionesByModeloYMatricula");
-				page = camionDao.buscarCamionesByModeloYMatricula(pageable, formBusqueda.getBuscar(), modelo,
-						formBusqueda.getMostrarSoloCamionesActivos(), formBusqueda.getMostrarSoloCamionesDeAlta());
+				page = camionDao.buscarCamionesByModeloTiposDeBasuraYMatricula(pageable, formBusqueda.getBuscar(),
+						modelo, formBusqueda.getMostrarSoloCamionesActivos(),
+						formBusqueda.getMostrarSoloCamionesDeAlta(), tipos);
 				break;
 			case nombre:
 				logger.info("CAMPO => nombre buscarCamionesByModeloYNombre");
-				page = camionDao.buscarCamionesByModeloYNombre(pageable, formBusqueda.getBuscar(), modelo,
-						formBusqueda.getMostrarSoloCamionesActivos(), formBusqueda.getMostrarSoloCamionesDeAlta());
+				page = camionDao.buscarCamionesByModeloTiposDeBasuraYNombre(pageable, formBusqueda.getBuscar(), modelo,
+						formBusqueda.getMostrarSoloCamionesActivos(), formBusqueda.getMostrarSoloCamionesDeAlta(),
+						tipos);
 				break;
 			case vin:
 				logger.info("CAMPO => vin buscarCamionesByModeloYNombre");
-				page = camionDao.buscarCamionesByModeloYVin(pageable, formBusqueda.getBuscar(), modelo,
-						formBusqueda.getMostrarSoloCamionesActivos(), formBusqueda.getMostrarSoloCamionesDeAlta());
+				page = camionDao.buscarCamionesByModeloTiposDeBasuraYVin(pageable, formBusqueda.getBuscar(), modelo,
+						formBusqueda.getMostrarSoloCamionesActivos(), formBusqueda.getMostrarSoloCamionesDeAlta(),
+						tipos);
 				break;
 			default:
 				logger.info("CAMPO => default buscarCamionesByModeloYMatricula");
-				page = camionDao.buscarCamionesByModeloYMatricula(pageable, formBusqueda.getBuscar(), modelo,
-						formBusqueda.getMostrarSoloCamionesActivos(), formBusqueda.getMostrarSoloCamionesDeAlta());
+				page = camionDao.buscarCamionesByModeloTiposDeBasuraYMatricula(pageable, formBusqueda.getBuscar(),
+						modelo, formBusqueda.getMostrarSoloCamionesActivos(),
+						formBusqueda.getMostrarSoloCamionesDeAlta(), tipos);
 			}
 		else {
 			logger.info("CAMPO => NO_CAMPO buscarCamionesByModelo");
-			page = camionDao.buscarCamionesByModelo(pageable, modelo, formBusqueda.getMostrarSoloCamionesActivos(),
-					formBusqueda.getMostrarSoloCamionesDeAlta());
+			page = camionDao.buscarCamionesByModeloTiposDeBasura(pageable, modelo,
+					formBusqueda.getMostrarSoloCamionesActivos(), formBusqueda.getMostrarSoloCamionesDeAlta(), tipos);
 		}
 		return page;
 	}
