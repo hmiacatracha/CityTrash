@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -106,6 +107,9 @@ public class TrabajadoresController {
 		} catch (FormBusquedaException e) {
 			throw new PageNotFoundException(String.format("The requested page (%s) of the worker list was not found.",
 					pageRequest.getPageNumber()));
+		} catch (Exception e) {
+			throw new PageNotFoundException(String.format("The requested page (%s) of the worker list was not found.",
+					pageRequest.getPageNumber()));
 		}
 
 		page = trabajadoresPage.map(new Converter<Trabajador, TrabajadorDto>() {
@@ -154,6 +158,9 @@ public class TrabajadoresController {
 			trabajadoresPage = tservicio.buscarTrabajadores(pageRequest, busquedaForm);
 
 		} catch (FormBusquedaException e) {
+			throw new PageNotFoundException(String.format("The requested page (%s) of the worker list was not found.",
+					pageRequest.getPageNumber()));
+		} catch (Exception e) {
 			throw new PageNotFoundException(String.format("The requested page (%s) of the worker list was not found.",
 					pageRequest.getPageNumber()));
 		}

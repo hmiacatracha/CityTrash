@@ -219,6 +219,15 @@
 										name="eliminarSensor">
 										<i class="glyphicon glyphicon-trash icon-white"></i>
 									</button>
+
+									<!-- 
+									<button type="submit" class="btn btn-primary"
+										th:value="*{sensores[__${rowStat.index}__].Id}"
+										name="eliminarSensor">
+										<i class="glyphicon glyphicon-eye-open icon-white"></i>
+									</button>
+									 -->
+
 									<!--</span> <span  class="col-sm-1 row-delete-button"> -->
 									<a id="link_ver_detalles"
 										th:href="@{#{link.sensores.detalles}(contenedorId=*{id}, 
@@ -239,7 +248,7 @@
 			<div>
 				<div th:if="*{sensores.size()} < ${numeroDeSensores}"
 					class="col-lg-12">
-					<button class="btn btn-success btn-md pull-right" type="submit"
+					<button class="btn btn-secondary btn-md pull-right" type="submit"
 						th:text="#{btn_add_sensor}" name="addSensor"></button>
 				</div>
 			</div>

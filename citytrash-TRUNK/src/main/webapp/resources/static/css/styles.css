@@ -234,6 +234,7 @@ img.account {
 	content: "\25B2";
 }
 
+/*
 .active a {
 	color: #5cb85c !important;
 }
@@ -241,19 +242,27 @@ img.account {
 a:link {
 	color: #000000;
 }
+*/
 
 /* visited link */
+/*
 a:visited {
-	color: #5cb85c;
-	text-decoration: none;
+	color: #babdb6!important;	
+	text-decoration:overline;
 }
-
+*/
 /* mouse over link and selected link */
-a:hover, a:active {
-	color: #ef2929;
+/*
+a:hover, a:active {	
+	color: #5cb85c;
 	text-decoration: underline;
 }
-
+*/
+/*
+.active a {
+	color: #4e9a06!important;
+}
+*/
 .btn-default {
 	padding: 10px 20px;
 	background-color: #333;
@@ -437,7 +446,8 @@ select.form-control, input.form-control, option.form-control {
 /* Canvas style  => para las estadísticas.*/
 #canvas {
 	border: 1px dotted green;
-	width: 100%; height : auto;
+	width: 100%;
+	height: auto;
 	-moz-user-select: none;
 	-webkit-user-select: none;
 	-ms-user-select: none;

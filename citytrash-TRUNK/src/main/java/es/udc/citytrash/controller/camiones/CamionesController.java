@@ -52,7 +52,6 @@ import es.udc.citytrash.model.camion.CamionDao;
 import es.udc.citytrash.model.camionModelo.CamionModelo;
 import es.udc.citytrash.model.camionModeloTipoDeBasura.CamionModeloTipoDeBasura;
 import es.udc.citytrash.model.camionService.CamionService;
-import es.udc.citytrash.model.telefono.Telefono;
 import es.udc.citytrash.model.tipoDeBasura.TipoDeBasura;
 import es.udc.citytrash.model.trabajador.Conductor;
 import es.udc.citytrash.model.trabajador.Recolector;
@@ -152,6 +151,9 @@ public class CamionesController {
 		} catch (FormBusquedaException e) {
 			throw new PageNotFoundException(String.format("The requested page (%s) of the camiones list was not found.",
 					pageRequest.getPageNumber()));
+		} catch (Exception e) {
+			throw new PageNotFoundException(String.format("The requested page (%s) of the worker list was not found.",
+					pageRequest.getPageNumber()));
 		}
 	}
 
@@ -190,6 +192,9 @@ public class CamionesController {
 		} catch (FormBusquedaException e) {
 			model.addAttribute("pageCamiones", page);
 			logger.info("formBusquedaError => " + e.getMessage());
+		} catch (Exception e) {
+			throw new PageNotFoundException(String.format("The requested page (%s) of the worker list was not found.",
+					pageRequest.getPageNumber()));
 		}
 		if (AjaxUtils.isAjaxRequest(requestedWith))
 			return WebUtils.VISTA_CAMIONES.concat("::content");
@@ -435,6 +440,9 @@ public class CamionesController {
 		} catch (FormBusquedaException e) {
 			throw new PageNotFoundException(String.format("The requested page (%s) of the camiones list was not found.",
 					pageRequest.getPageNumber()));
+		} catch (Exception e) {
+			throw new PageNotFoundException(String.format("The requested page (%s) of the worker list was not found.",
+					pageRequest.getPageNumber()));
 		}
 	}
 
@@ -472,6 +480,9 @@ public class CamionesController {
 			}
 
 		} catch (FormBusquedaException e) {
+			model.addAttribute("page", page);
+			logger.info("formBusquedaError => " + e.getMessage());
+		} catch (Exception e) {
 			model.addAttribute("page", page);
 			logger.info("formBusquedaError => " + e.getMessage());
 		}
@@ -749,6 +760,9 @@ public class CamionesController {
 		} catch (FormBusquedaException e) {
 			throw new PageNotFoundException(String.format("The requested page (%s) of the worker list was not found.",
 					pageRequest.getPageNumber()));
+		} catch (Exception e) {
+			throw new PageNotFoundException(String.format("The requested page (%s) of the worker list was not found.",
+					pageRequest.getPageNumber()));
 		}
 	}
 
@@ -798,6 +812,9 @@ public class CamionesController {
 			throw new ResourceNotFoundException(id);
 		} catch (FormBusquedaException e) {
 			throw new ResourceNotFoundException(id);
+		} catch (Exception e) {
+			throw new PageNotFoundException(String.format("The requested page (%s) of the worker list was not found.",
+					pageRequest.getPageNumber()));
 		}
 	}
 

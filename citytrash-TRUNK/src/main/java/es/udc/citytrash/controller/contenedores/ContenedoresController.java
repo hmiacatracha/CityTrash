@@ -20,7 +20,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -122,12 +121,9 @@ public class ContenedoresController {
 		try {
 			page = cServicio.buscarContenedores(pageRequest, busquedaForm);
 
-		} catch (DataAccessException e) {
+		} catch (Exception e) {
 			throw new PageNotFoundException(String.format("The requested page (%s) of the worker list was not found.",
 					pageRequest.getPageNumber()));
-		} catch (Exception ex) {
-			model.addAttribute("error", ex);
-			model.addAttribute("type", "Exception");
 		}
 		model.addAttribute("pageContenedores", page);
 
@@ -175,13 +171,9 @@ public class ContenedoresController {
 				}
 			}
 
-		} catch (DataAccessException e) {
+		} catch (Exception e) {
 			throw new PageNotFoundException(String.format("The requested page (%s) of the worker list was not found.",
 					pageRequest.getPageNumber()));
-		} catch (Exception ex) {
-			model.addAttribute("pageContenedores", page);
-			model.addAttribute("error", ex);
-			model.addAttribute("type", "Exception");
 		}
 		if (AjaxUtils.isAjaxRequest(requestedWith))
 			return WebUtils.VISTA_CONTENEDORES.concat("::content");
@@ -340,17 +332,12 @@ public class ContenedoresController {
 
 	@RequestMapping(value = WebUtils.REQUEST_MAPPING_CONTENEDORES_EDITAR, params = {
 			"eliminarSensor" }, method = RequestMethod.POST)
-	public String eliminarSensorRow(@ModelAttribute("contenedorForm") ContenedorEditarDto form,
+	public String eliminarSensorRow(final @ModelAttribute("contenedorForm") ContenedorEditarDto form,
 			final HttpServletRequest req, Model model,
-			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
+			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith,
+			@RequestParam(value = "eliminarSensor", required = true) Long id) {
 		logger.info("POST REQUEST_MAPPING_CONTENEDORES_EDITAR eliminarSensor paso1");
-		Long sensorId = new Long(-1);
-
-		try {
-			sensorId = Long.valueOf(req.getParameter("eliminarSensor"));
-		} catch (NullPointerException e) {
-			logger.info("ERROR addSensorPrueba =>" + e.getMessage());
-		}
+		Long sensorId = id;
 
 		logger.info("POST REQUEST_MAPPING_CONTENEDORES_EDITAR eliminarSensor paso2");
 		logger.info("POST REQUEST_MAPPING_CONTENEDORES_EDITAR eliminarSensor paso2 =>" + form.getSensores().toString());
@@ -559,7 +546,7 @@ public class ContenedoresController {
 				return WebUtils.VISTA_CONTENEDORES_MODELOS.concat("::content");
 			return WebUtils.VISTA_CONTENEDORES_MODELOS;
 
-		} catch (DataAccessException e) {
+		} catch (Exception e) {
 			throw new PageNotFoundException(String.format("The requested page (%s) of the worker list was not found.",
 					pageRequest.getPageNumber()));
 		}
@@ -598,7 +585,7 @@ public class ContenedoresController {
 				}
 			}
 
-		} catch (DataAccessException e) {
+		} catch (Exception e) {
 			model.addAttribute("page", page);
 			logger.info("formBusquedaError => " + e.getMessage());
 		}
@@ -779,10 +766,10 @@ public class ContenedoresController {
 
 	@RequestMapping(value = { WebUtils.REQUEST_MAPPING_CONTENEDORES_SENSORES_DETALLES_CHART,
 			WebUtils.REQUEST_MAPPING_CONTENEDORES_SENSORES_DETALLES_CHART + "/" }, method = RequestMethod.GET)
-	public String getValores(@PathVariable("sensorId") Long sensorId, @PathVariable("contenedorId") Long contenedorId,			
+	public String getValores(@PathVariable("sensorId") Long sensorId, @PathVariable("contenedorId") Long contenedorId,
 			Model model, @RequestHeader(value = "X-Requested-With", required = false) String requestedWith)
 			throws ResourceNotFoundException {
-		try {			
+		try {
 			Sensor sensor = cServicio.buscarSensorById(sensorId);
 			if (contenedorId != sensor.getContenedor().getId())
 				throw new ResourceNotFoundException(sensorId);
