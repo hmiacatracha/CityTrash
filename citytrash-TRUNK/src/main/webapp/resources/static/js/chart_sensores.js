@@ -19,11 +19,10 @@ function dibujarGrafica(startDate, endDate, contenedor, modeloId, tipo, progress
 	startDateGlobal = startDate;
 	endDateGlobal = endDate;
 
-
 	Date.prototype.formatMMDDYYYY = function() {
 		return (this.getMonth() + 1) +
 			"/" + this.getDate() +
-			"/" + this.getFullYear();
+			"/" + this.getFullYear() + " " + this.getHours() + ":" + this.getMinutes();
 	}
 
 	var formData = {
@@ -51,6 +50,7 @@ function dibujarGrafica(startDate, endDate, contenedor, modeloId, tipo, progress
 			$.each(result, function(i, valor) {
 				console.log("paso2 =>" + valor.fechaHora);
 				labels.push(valor.fechaHora)
+				//labels.push(new Date(valor.fechaHora).formatMMDDYYYY());
 				data.push(parseFloat(valor.valor));
 				unidad = valor.unidad;			
 			});
@@ -95,7 +95,6 @@ function dibujarGrafica(startDate, endDate, contenedor, modeloId, tipo, progress
 							display : true,
 							scaleLabel : {
 								display : true
-							//labelString : 'Y'
 							}
 						} ],
 						yAxes : [ {
@@ -103,6 +102,7 @@ function dibujarGrafica(startDate, endDate, contenedor, modeloId, tipo, progress
 							scaleLabel : {
 								display : true,
 								labelString : unidad + " " + tipo
+
 							}
 						} ]
 					}

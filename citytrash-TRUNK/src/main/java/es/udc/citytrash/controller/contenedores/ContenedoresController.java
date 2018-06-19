@@ -20,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -315,8 +316,9 @@ public class ContenedoresController {
 
 	@RequestMapping(value = WebUtils.REQUEST_MAPPING_CONTENEDORES_EDITAR, params = {
 			"addSensor" }, method = RequestMethod.POST)
-	public String addSensorRow(@ModelAttribute("contenedorForm") ContenedorEditarDto form, final HttpServletRequest req,
-			Model model, @RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
+	public String addSensorRow(@ModelAttribute("contenedorForm") final ContenedorEditarDto form,
+			final HttpServletRequest req, Model model,
+			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
 
 		logger.info("POST REQUEST_MAPPING_CONTENEDORES_EDITAR addSensorPrueba");
 		logger.info("Imprimir lista => " + form.getSensores().toString());
@@ -332,15 +334,17 @@ public class ContenedoresController {
 
 	@RequestMapping(value = WebUtils.REQUEST_MAPPING_CONTENEDORES_EDITAR, params = {
 			"eliminarSensor" }, method = RequestMethod.POST)
-	public String eliminarSensorRow(final @ModelAttribute("contenedorForm") ContenedorEditarDto form,
+	public String eliminarSensorRow(@ModelAttribute("contenedorForm") final ContenedorEditarDto form,
 			final HttpServletRequest req, Model model,
-			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith,
-			@RequestParam(value = "eliminarSensor", required = true) Long id) {
+			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
 		logger.info("POST REQUEST_MAPPING_CONTENEDORES_EDITAR eliminarSensor paso1");
-		Long sensorId = id;
+		Long sensorId = new Long(-1);
 
-		logger.info("POST REQUEST_MAPPING_CONTENEDORES_EDITAR eliminarSensor paso2");
-		logger.info("POST REQUEST_MAPPING_CONTENEDORES_EDITAR eliminarSensor paso2 =>" + form.getSensores().toString());
+		try {
+			sensorId = Long.valueOf(req.getParameter("eliminarSensor"));
+		} catch (NullPointerException e) {
+			logger.info("ERROR addSensorPrueba =>" + e.getMessage());
+		}
 
 		for (SensorDto sensor : form.getSensores()) {
 			if (sensor.getId() == null)

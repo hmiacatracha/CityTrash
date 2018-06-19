@@ -36,8 +36,6 @@ public class ValorDaoHibernate extends GenericHibernateDAOImpl<Valor, ValorPk> i
 		String alias = "v";
 		StringBuilder hql = new StringBuilder("Select " + alias + " FROM Valor " + alias);
 
-		if (sensorId != null)
-			hql.append(" WHERE " + alias + ".sensor.id = :id");
 		if (sensorId != null && (fechaInicio != null || fechaFin != null))
 			hql.append(" AND ");
 		else if (sensorId == null && (fechaInicio != null || fechaFin != null))
@@ -47,34 +45,12 @@ public class ValorDaoHibernate extends GenericHibernateDAOImpl<Valor, ValorPk> i
 		if (fechaInicio != null && fechaFin != null) {
 			hql.append(" DATE(" + alias + ".pk.fechaHora) >= DATE(:fechaInicio) AND DATE(" + alias
 					+ ".pk.fechaHora) <= DATE(:fechaFin) ");
-			/*
-			 * hql.append("( YEAR(" + alias +
-			 * ".pk.fechaHora) >= YEAR(:fechaInicio) " + "AND MONTH(" + alias +
-			 * ".pk.fechaHora) >= MONTH(:fechaInicio) " + "AND DAY(" + alias +
-			 * ".pk.fechaHora) >= DAY(:fechaInicio)) ");
-			 * 
-			 * hql.append(" AND (YEAR(" + alias +
-			 * ".pk.fechaHora) <= YEAR(:fechaFin) " + "AND MONTH(" + alias +
-			 * ".pk.fechaHora) <= MONTH(:fechaFin) " + "AND DAY(" + alias +
-			 * ".pk.fechaHora) <= DAY(:fechaFin)) ");
-			 */
 
 		} else if (fechaInicio != null) {
 			hql.append(" DATE(" + alias + ".pk.fechaHora) >= DATE(:fechaInicio)");
-			/*
-			 * hql.append("( YEAR(" + alias +
-			 * ".pk.fechaHora) >= YEAR(:fechaInicio) " + "AND MONTH(" + alias +
-			 * ".pk.fechaHora) >= MONTH(:fechaInicio) " + "AND DAY(" + alias +
-			 * ".pk.fechaHora) >= DAY(:fechaInicio)) ");
-			 */
+
 		} else if (fechaFin != null) {
 			hql.append(" DATE(" + alias + ".pk.fechaHora) <= DATE(:fechaInicio)");
-			/*
-			 * hql.append(" (YEAR(" + alias +
-			 * ".pk.fechaHora) <= YEAR(:fechaFin) " + "AND MONTH(" + alias +
-			 * ".pk.fechaHora) <= MONTH(:fechaFin) " + "AND DAY(" + alias +
-			 * ".pk.fechaHora) <= DAY(:fechaFin)) ");
-			 */
 		}
 
 		hql.append(" ORDER BY " + alias + ".pk.fechaHora Asc");

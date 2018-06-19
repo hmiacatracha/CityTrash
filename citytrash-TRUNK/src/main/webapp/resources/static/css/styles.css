@@ -367,6 +367,7 @@ select.form-control, input.form-control, option.form-control {
 	right: 10%;
 	width: 90%;
 	margin: 0 auto;
+<<<<<<< HEAD
 }
 
 #mapa {
@@ -377,7 +378,17 @@ select.form-control, input.form-control, option.form-control {
 	margin: 0 auto;
 }
 
+=======
 }
+
+#mapa {
+	height: 400px;
+	position: relative;
+	outline: none;
+	width: 100%;
+	margin: 0 auto;
+}
+
 .filter-group {
 	font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
 	font-weight: 600;
@@ -446,10 +457,10 @@ select.form-control, input.form-control, option.form-control {
 /* Canvas style  => para las estadísticas.*/
 #canvas {
 	border: 1px dotted green;
-	width: 100%;
-	height: auto;
+	width: 100%; height : auto;
 	-moz-user-select: none;
 	-webkit-user-select: none;
 	-ms-user-select: none;
 	height: auto;
 }
+
