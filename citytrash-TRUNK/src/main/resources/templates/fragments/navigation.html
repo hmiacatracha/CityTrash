@@ -31,20 +31,76 @@
 						class="glyphicon glyphicon-home" aria-hidden="true"></span>&nbsp;
 						<label th:text="#{home}"></label>
 				</a></li>
-
-				<li th:classappend="${currentPage == 'about'} ? 'active'"><a
-					th:text="#{about}" th:href="@{#{link.about.us}}"> </a></li>
-
-				<li th:classappend="${currentPage == 'mapa'} ? 'active'"
+				<!-- TRABAJADORES -->
+				<!--  -->
+				<li th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}"
+					th:classappend="${currentPage == 'trabajadores'} ? 'active'"
 					th:class="dropdown" class="dropdown"><a
 					class="dropdown-toggle" data-toggle="dropdown"
-					th:href="@{#{link.mapa}}" th:text="#{mapa}"> </a>
+					th:text="#{trabajadores}" th:href="@{#{menu.trabajadores}}"><span
+						class="glyphicon glyphicon-home" aria-hidden="true"></span>&nbsp;
+						<label th:text="#{home}"></label> </a>
 					<ul class="dropdown-menu">
-						<li><a th:text="#{contenedores}"
-							th:href="@{#{link.mapa.contenedores}}"> </a></li>
-						<li sec:authorize="isAuthenticated()"><a th:text="#{rutas}"
-							th:href="@{#{link.mapa.rutas}}"> </a></li>
+						<li><a th:text="#{lbl_add}"
+							th:href="@{#{link.trabajadores.registro}}"> </a></li>
+						<li><a th:text="#{lbl_list_trabajadores}"
+							th:href="@{#{link.trabajadores}}"> </a></li>
 					</ul></li>
+
+				<!-- CAMIONES -->
+				<li th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}"
+					th:classappend="${currentPage == 'camiones'} ? 'active'"
+					th:class="dropdown" class="dropdown"><a
+					class="dropdown-toggle" data-toggle="dropdown"
+					th:text="#{camiones}" th:href="@{#{menu.camiones}}"> </a>
+					<ul class="dropdown-menu">
+						<li><a th:text="#{lbl_add}"
+							th:href="@{#{link.camiones.registro}}"> </a></li>
+						<li><a th:text="#{lbl_list_camiones}"
+							th:href="@{#{link.camiones}}"> </a></li>
+						<li><a th:text="#{page_camiones_modelos}"
+							th:href="@{#{link.camiones.modelos}}"> </a></li>
+					</ul></li>
+
+				<!-- CONTENEDORES -->
+				<li th:classappend="${currentPage == 'contenedores'} ? 'active'"
+					th:class="dropdown" class="dropdown"><a
+					class="dropdown-toggle" data-toggle="dropdown"
+					th:text="#{contenedores}" th:href="@{#{menu.contenedores}}"> </a>
+					<ul class="dropdown-menu">
+						<li sec:authorize="hasRole('ROLE_ADMIN')"><a
+							th:text="#{lbl_add}" th:href="@{#{link.contenedores.registro}}">
+						</a></li>
+						<li sec:authorize="!hasRole('ROLE_ADMIN')"><a
+							th:text="#{mapa}" th:href="@{#{link.mapa.contenedores}}"> </a></li>
+						<li sec:authorize="hasRole('ROLE_ADMIN')"><a
+							th:text="#{lbl_list_contenedores}"
+							th:href="@{#{link.contenedores}}"> </a></li>
+						<li sec:authorize="hasRole('ROLE_ADMIN')"><a
+							th:text="#{page_contenedores_modelos}"
+							th:href="@{#{link.contenedores.modelos}}"> </a></li>
+					</ul></li>
+
+				<!-- rutas -->
+				<li sec:authorize="isAuthenticated()"
+					th:classappend="${currentPage == 'rutas'} ? 'active'"
+					th:class="dropdown" class="dropdown"><a
+					class="dropdown-toggle" data-toggle="dropdown" th:text="#{rutas}"
+					th:href="@{#{menu.trabajadores}}"><span class="glyphicon"
+						aria-hidden="true"></span>&nbsp; <label th:text="#{rutas}"></label>
+				</a>
+					<ul class="dropdown-menu">
+						<li sec:authorize="hasRole('ROLE_ADMIN')"><a
+							th:text="#{lbl_add}" th:href="@{#{link.rutas.registro}}"> </a></li>
+						<li sec:authorize="isAuthenticated()"><a
+							th:text="#{lbl_historial_rutas}"
+							th:href="@{#{link.rutas.myhistorial}}"> </a></li>
+						<li sec:authorize="hasRole('ROLE_ADMIN')"><a
+							th:text="#{lbl_list_rutas}" th:href="@{#{link.rutas.historial}}">
+						</a></li>
+					</ul></li>
+
+				<!-- estadísticas -->
 				<li th:classappend="${currentPage == 'estadisticas'} ? 'active'"
 					th:class="dropdown" class="dropdown"><a
 					class="dropdown-toggle" data-toggle="dropdown"
@@ -56,83 +112,7 @@
 						<li><a th:text="#{pronostico}"
 							th:href="@{#{menu.estadisticas_pronos_realid_link_ref}}"> </a></li>
 					</ul></li>
-
-
-
-				<li th:classappend="${currentPage == 'recursos'} ? 'active'"
-					th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}"
-					th:class="dropdown" class="dropdown"><a
-					class="dropdown-toggle" data-toggle="dropdown"
-					th:text="#{recursos}" th:href="@{#{menu.recursos}}"> </a>
-
-					<ul class="dropdown-menu dropdown-submenu">
-
-						<!-- trabajadores -->
-						<li class="dropdown dropdown-submenu"><a
-							class="dropdown-toggle" data-toggle="dropdown"
-							th:text="#{trabajadores}" th:href="@{#{menu.trabajadores}}">
-						</a>
-							<ul class="dropdown-menu">
-								<li><a th:href="@{#{link.trabajadores.registro}}"> <i
-										class="glyphicon glyphicon-plus"></i> &nbsp; <label
-										th:text="#{lbl_registrar}"></label>
-
-								</a></li>
-								<li><a th:href="@{#{link.trabajadores}}"> <i
-										class="glyphicon glyphicon-list"></i> &nbsp; <label
-										th:text="#{lbl_listado}"></label>
-								</a></li>
-							</ul></li>
-
-						<!-- camiones -->
-						<!-- <i class="fa fa-truck"></i> -->
-						<li class="dropdown dropdown-submenu"><a
-							class="dropdown-toggle" data-toggle="dropdown"
-							th:text="#{camiones}" th:href="@{#{menu.trabajadores}}"> </a>
-							<ul class="dropdown-menu">
-								<li><a th:href="@{#{link.camiones.registro}}"><i
-										class="glyphicon glyphicon-plus"></i> &nbsp; <label
-										th:text="#{lbl_registrar}"></label> </a></li>
-								<li><a th:href="@{#{link.camiones}}"> <i
-										class="glyphicon glyphicon-list"></i> &nbsp; <label
-										th:text="#{lbl_listado}"></label>
-								</a></li>
-								<li><a th:href="@{#{link.camiones.modelos}}"> <i
-										class="glyphicon glyphicon-list"></i> &nbsp; <label
-										th:text="#{page_camiones_modelos}"></label>
-								</a></li>
-							</ul></li>
-						<!-- contenedores -->
-						<li class="dropdown dropdown-submenu"><a
-							class="dropdown-toggle" data-toggle="dropdown"
-							th:text="#{contenedores}" th:href="@{#{menu.trabajadores}}">
-						</a>
-							<ul class="dropdown-menu">
-								<li><a th:href="@{#{link.contenedores.registro}}"> <i
-										class="glyphicon glyphicon-plus"></i> &nbsp; <label
-										th:text="#{lbl_registrar}"></label></a></li>
-								<li><a th:href="@{#{link.contenedores}}"><i
-										class="glyphicon glyphicon-list"></i> &nbsp; <label
-										th:text="#{lbl_listado}"></label> </a></li>
-							</ul></li>
-						<!-- sensores -->
-						<li class="dropdown dropdown-submenu"><a
-							class="dropdown-toggle" data-toggle="dropdown"
-							th:text="#{sensores}" th:href="@{#{menu.trabajadores}}"> </a>
-							<ul class="dropdown-menu">
-								<li><a th:href="@{#{link.sensores.registro}}"> <i
-										class="glyphicon glyphicon-plus"></i> &nbsp; <label
-										th:text="#{lbl_registrar}"></label></a></li>
-								<li><a th:href="@{#{link.sensores}}"> <i
-										class="glyphicon glyphicon-list"></i> &nbsp; <label
-										th:text="#{lbl_listado}"></label>
-								</a></li>
-							</ul></li>
-
-					</ul></li>
 			</ul>
-
-
 
 			<ul id="menuUsuarioAutenticado" class="nav navbar-nav navbar-right"
 				sec:authorize="isAuthenticated()">
@@ -152,12 +132,10 @@
 				</a>
 
 					<ul id="cuenta" class="dropdown-menu">
-						<!-- th:text="#{navbar.welcome(${#authentication.getName()})}" -->
 						<li id="usuarioAutenticado" class="dropdown-header"
 							th:usuario="${#authentication.getName()}"
 							th:text="${#authentication.getName()}"></li>
 						<!-- separador -->
-
 						<li><a id="cambioPassword" th:href="@{#{link.cuenta.perfil}}">
 								<i class="material-icons fa-lg" style="font-size: 14px">account_circle</i>
 								&nbsp; <label th:text="#{lbl_perfil}"></label>

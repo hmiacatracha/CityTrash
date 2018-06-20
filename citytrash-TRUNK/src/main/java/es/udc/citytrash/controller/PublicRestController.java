@@ -49,7 +49,7 @@ public class PublicRestController {
 	TrabajadorService tservicio;
 
 	@Autowired
-	ContenedorService cServicio;
+	ContenedorService cServicio;	
 
 	@Autowired
 	UsuarioService usuarioService;

@@ -12,7 +12,7 @@
 <body class="blanco">
 	<div id="viewBody" class="container col-xs-12 col-md-offset-4 col-md-4"
 		th:fragment="content">
-		</br>
+		<br>
 
 		<th:block th:if="${success!=null}">
 			<div
@@ -24,7 +24,7 @@
 				th:replace="fragments/alert :: alert (type='danger',  message=#{cambioIdioma_error})"></div>
 		</th:block>
 
-		<h1 class="text-center" th:text="#{label_cambiar_idioma_header}"></h1>
+		<h1 class="text-center text-success" th:text="#{label_cambiar_idioma_header}"></h1>
 
 		<form id="cambiarIdiomaForm" role="form"
 			class="form-narrow form-horizontal" method="post" action="#"
@@ -40,7 +40,7 @@
 					</select> <br> <span class="help-block"
 						th:if="${#fields.hasErrors('idioma')}" th:errors="*{idioma}"></span>
 				</div>
-				<button id="cambiarIdioma" class="btn btn-default btn-lg btn-block"
+				<button id="cambiarIdioma" class="btn btn-default btn-success btn-lg btn-block"
 					type="submit" th:text="#{btn_cambiar_idioma}"></button>
 			</fieldset>
 		</form>

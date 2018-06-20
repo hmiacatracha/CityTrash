@@ -36,6 +36,9 @@ public class ValorDaoHibernate extends GenericHibernateDAOImpl<Valor, ValorPk> i
 		String alias = "v";
 		StringBuilder hql = new StringBuilder("Select " + alias + " FROM Valor " + alias);
 
+		if (sensorId != null)
+			hql.append(" WHERE " + alias + ".sensor.id = :id");
+
 		if (sensorId != null && (fechaInicio != null || fechaFin != null))
 			hql.append(" AND ");
 		else if (sensorId == null && (fechaInicio != null || fechaFin != null))

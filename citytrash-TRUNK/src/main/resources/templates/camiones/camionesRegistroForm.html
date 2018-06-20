@@ -26,7 +26,7 @@
 					<br />
 
 					<div
-						th:replace="fragments/alert :: alert (type='danger', message=#{verificar_campos_alerta})">Alert</div>
+						th:replace="fragments/alert :: alert (type='danger', message=#{verificar_campos_alerta})"></div>
 
 					<ul class="list-group">
 						<li class="list-group-item" th:each="err : ${#fields.errors('*')}"><span
@@ -274,7 +274,7 @@
 			</fieldset>
 			<br>
 
-			<button class="btn btn-default btn-lg btn-block" type="submit"
+			<button class="btn btn-default btn-success btn-lg btn-block" type="submit"
 				th:text="#{btn_add}" name="registrar" th:value="registrar"></button>
 
 

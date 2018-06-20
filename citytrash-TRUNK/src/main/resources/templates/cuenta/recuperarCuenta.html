@@ -21,9 +21,9 @@
 				<div th:unless="${success!=null}" class="panel panel-default">
 
 					<div class="panel-heading ">
-						<h3 class="text-center" th:text="#{label_recuperar_cuenta_header}"></h3>
+						<h3 class="text-center text-success"
+							th:text="${#strings.toUpperCase('__#{label_recuperar_cuenta_header}__')}"></h3>
 					</div>
-
 					<div class="panel-body">
 
 						<!-- mensaje error -->
@@ -39,8 +39,8 @@
 									placeholder="Email" required="required" /> <span
 									class="glyphicon glyphicon-envelope form-control-feedback"></span>
 							</div>
-							<button class="btn btn-default btn-lg btn-block" type="submit"
-								th:text="#{btn_recuperar_cuenta}"></button>
+							<button class="btn btn-default btn-lg btn-success btn-block"
+								type="submit" th:text="#{btn_recuperar_cuenta}"></button>
 						</form>
 					</div>
 					<div class="panel-footer">

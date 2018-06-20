@@ -3,7 +3,7 @@
 	xmlns:th="http://www.thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	th:with="currentPage='mapa'">
+	th:with="currentPage='contenedores'">
 <head>
 <meta charset="utf-8"></meta>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
@@ -49,7 +49,7 @@
 <body class="fondoBlanco">
 	<div th:replace="fragments/navigation :: nav(${menu})"></div>
 	<div id="viewBody" class="container" th:fragment="content">
-		<h3 class="text-center text-warning">TITULO</h3>
+		<h3 class="text-center text-success">TITULO</h3>
 		<div id="map" class="container"></div>
 		<nav id='filter-group' class='filter-group'></nav>
 	</div>

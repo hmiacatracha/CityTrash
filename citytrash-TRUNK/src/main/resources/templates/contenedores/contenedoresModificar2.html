@@ -3,7 +3,7 @@
 	xmlns:th="http://www.thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{layouts/maps}" th:with="currentPage='recursos'">
+	layout:decorate="~{layouts/maps}" th:with="currentPage='contenedores'">
 <head>
 <title th:text="#{page_editar}"></title>
 </head>
@@ -17,8 +17,8 @@
 			<div class="panel panel-default" th:if="${contenedorForm}">
 				<div class="panel-heading ">
 
-					<h3 class="text-center text-warning"
-						th:text="${contenedorForm.nombre}"></h3>
+					<h3 class="text-center text-success"
+						th:text="${#strings.toUpperCase(${contenedorForm.nombre})}"></h3>
 				</div>
 				<div class="panel-body">
 
@@ -30,9 +30,11 @@
 									class="btn-sm"><i class="glyphicon glyphicon-eye-open"
 									data-toggle="tooltip" th:title="#{lbl_ver_detalles}"></i></a> <a
 									th:href="@{#{link.contenedores.registro}}" class="btn-sm"><i
-									class="glyphicon glyphicon-plus"></i> </a> <a
+									class="glyphicon glyphicon-plus" data-toggle="tooltip"
+									th:title="#{lbl_add}"></i> </a> <a
 									th:href="@{#{link.contenedores}}" class="btn-sm"> <i
-									class="glyphicon glyphicon-list"></i>
+									class="glyphicon glyphicon-list" data-toggle="tooltip"
+									th:title="#{lbl_listado}"></i>
 								</a>
 							</div>
 						</div>

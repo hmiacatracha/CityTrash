@@ -3,18 +3,18 @@
 	xmlns:th="http://www.thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{layouts/default}" th:with="currentPage='recursos'">
+	layout:decorate="~{layouts/default}" th:with="currentPage='camiones'">
 <head>
 <title th:text="#{page_camiones_modelo_detalle_info}"></title>
 </head>
 <body class="blanco">
 	<div id="container" class="container" th:fragment="content">
-		</br>
+		<br>
 		<!-- nombre and color -->
 		<div class="row container center-block">
 
 			<h3 th:if="${nombreDelModelo}"
-				class="pull-left text-warning col-xs-6"
+				class="pull-left text-success col-xs-6"
 				th:text="${#strings.toUpperCase('__#{frm_detalles_camiones_modelos}__')}  + ' - ' + ${#strings.toUpperCase(nombreDelModelo)}"></h3>
 
 
@@ -32,16 +32,18 @@
 				<div class="col-xs-12 text-right">
 					<div class="btn-group text-center">
 						<a th:href="@{#{link.camiones.modelos.editar}(id=*{id})}"
-							class="btn-sm"><i class="glyphicon glyphicon-pencil"></i></a><a
-							th:href="@{#{link.camiones.modelos.registro}}" class="btn-sm"><i
+							class="btn-sm"><i class="glyphicon glyphicon-pencil"
+							data-toggle="tooltip" th:title="#{lbl_editar}"></i></a><a
+							th:href="@{#{link.camiones.modelos.registro}}"
+							data-toggle="tooltip" th:title="#{lbl_add}" class="btn-sm"><i
 							class="glyphicon glyphicon-plus"></i> </a> <a
 							th:href="@{#{link.camiones.modelos}}" class="btn-sm"> <i
-							class="glyphicon glyphicon-list"></i>
+							class="glyphicon glyphicon-list" data-toggle="tooltip"
+							th:title="#{lbl_listado}"></i>
 						</a>
 					</div>
 				</div>
 			</div>
-
 			<div class="panel-body">
 
 				<table class="table table-hover table-responsive">

@@ -3,7 +3,7 @@
 	xmlns:th="http://www.thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{layouts/default}" th:with="currentPage='recursos'">
+	layout:decorate="~{layouts/default}" th:with="currentPage='trabajadores'">
 <head>
 <title th:text="#{page_trabajadores_detalle}"></title>
 </head>
@@ -13,16 +13,12 @@
 		th:remove="tag">
 		<div class="row container">
 			<div class="col-offset-lg-2 col-lg-10 col-md-10 text-left">
-				<h3 class="text-warning"
+				<h3 class="text-success text-center"
 					th:text="${#strings.toUpperCase(trabajador_nombre_completo)}"></h3>
 			</div>
 		</div>
-
 		<div id="tabs" class="container">
-			<ul class="nav nav-tabs" id="detallesTrabajadorTab" role="tablist">
-				<!-- para contenido remoto hay que añadir data-target con 
-				el id del div sino href seria el id del div y sin el data-target -->
-
+			<ul class="nav nav-tabs" id="detallesTrabajadorTab" role="tablist">				
 				<li role="infopersonal"><a class="nav-link active"
 					data-target="#welcome" aria-controls="welcome" role="tab"
 					data-toggle="tab" id="welcomeTab"
@@ -46,13 +42,6 @@
 					aria-selected="false"> <i class="fa fa-truck"></i> <label
 						th:text="#{lbl_historial_rutas}"> </label>
 				</a></li>
-
-				<!-- 
-				<li role="settings"><a id="id_tab" data-toggle="tab"
-					href="#settings" role="tab" aria-controls="settings"
-					aria-selected="true">Settings</a></li>
-		 -->
-
 			</ul>
 
 			<div class="tab-content" id="detallesTrabajadorTabContent">
@@ -65,13 +54,6 @@
 
 				<div role="tabpanel" class="tab-pane" id="historialRutas"
 					aria-labelledby="historial-rutas-tab"></div>
-
-				<!-- 
-				<div role="tabpanel" class="tab-pane" id="settings"
-					aria-labelledby="setting-tab">
-					<h1>hola</h1>
-				</div>
-			 -->
 			</div>
 
 		</div>

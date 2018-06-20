@@ -3,7 +3,7 @@
 	xmlns:th="http://www.thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{layouts/default}" th:with="currentPage='recursos'">
+	layout:decorate="~{layouts/default}" th:with="currentPage='camiones'">
 <head>
 <title th:text="#{page_camiones_modelo}"></title>
 </head>
@@ -17,10 +17,12 @@
 			<div class="panel panel-default" th:if="${camionModeloForm}">
 
 				<div class="panel-heading ">
-					<h3 th:if="${camionModeloForm.id}==null" class="text-center"
-						th:text="#{frm_registro_camiones_modelos}"></h3>
-					<h3 th:unless="${camionModeloForm.id}==null" class="text-center"
-						th:text="#{frm_editar_camiones_modelos}"></h3>
+					<h3 th:if="${camionModeloForm.id}==null"
+						class="text-center text-success"
+						th:text="${#strings.toUpperCase('__#{frm_registro_camiones_modelos}__')}"></h3>
+					<h3 th:unless="${camionModeloForm.id}==null"
+						class="text-center text-success"
+						th:text="${#strings.toUpperCase(camionModeloForm.nombre)}"></h3>
 				</div>
 				<div class="panel-body">
 					<div class="row">
@@ -33,9 +35,11 @@
 										class="btn-sm"><i class="glyphicon glyphicon-eye-open"
 										data-toggle="tooltip" th:title="#{lbl_ver_detalle}"></i></a> <a
 										th:href="@{#{link.camiones.modelos.registro}}" class="btn-sm"><i
-										class="glyphicon glyphicon-plus"></i> </a> <a
+										class="glyphicon glyphicon-plus" data-toggle="tooltip"
+										th:title="#{lbl_add}"></i> </a> <a
 										th:href="@{#{link.camiones.modelos}}" class="btn-sm"> <i
-										class="glyphicon glyphicon-list"></i>
+										class="glyphicon glyphicon-list" data-toggle="tooltip"
+										th:title="#{lbl_listado}"></i>
 									</a>
 								</div>
 							</div>

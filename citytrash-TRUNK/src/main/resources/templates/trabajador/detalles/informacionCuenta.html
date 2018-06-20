@@ -3,7 +3,7 @@
 	xmlns:th="http://www.thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{layouts/default}" th:with="currentPage='recursos'">
+	layout:decorate="~{layouts/default}" th:with="currentPage='trabajadores'">
 <head>
 <title th:text="#{page_trabajadores_detalle}"></title>
 </head>
@@ -12,22 +12,23 @@
 		<br>
 		<!-- <div class="panel panel-default"> -->
 		<div class="panel-heading ">
-
 			<div class="col-lg-8 col-md-8">
 				<i class="fa fa-user-circle-o fa-2x"></i> <label class="mayusculas"
 					th:text="#{lbl_cuenta_detalle}"> </label>
-				<h4 class="text-warning"
+				<h4 class="text-success"
 					th:text="${#strings.capitalizeWords(#strings.toLowerCase(trabajador.nombre + ' ' + trabajador.apellidos))}"></h4>
 			</div>
 
 			<div class="col-lg-4 col-md-4 text-right">
 				<div class="btn-group text-center">
 					<a th:href="@{#{link.trabajadores.editar}(id=${trabajador.id})}"
-						class="btn-sm"><i class="glyphicon glyphicon-pencil"></i></a> <a
+						class="btn-sm"><i class="glyphicon glyphicon-pencil"
+						data-toggle="tooltip" th:title="#{lbl_editar}"></i> </a> <a
 						th:href="@{#{link.trabajadores.registro}}" class="btn-sm"><i
-						class="glyphicon glyphicon-plus"></i> </a> <a
-						th:href="@{#{link.trabajadores}}" class="btn-sm"> <i
-						class="glyphicon glyphicon-list"></i>
+						class="glyphicon glyphicon-plus" data-toggle="tooltip"
+						th:title="#{lbl_add}"></i> </a> <a th:href="@{#{link.trabajadores}}"
+						class="btn-sm"> <i class="glyphicon glyphicon-list"
+						data-toggle="tooltip" th:title="#{lbl_listado}"></i>
 					</a>
 				</div>
 			</div>
@@ -43,12 +44,10 @@
 						<td th:if="${trabajador.tipo}"
 							th:text="#{${'trabajador.tipo.' + trabajador.tipo}}"></td>
 					</tr>
-
 					<tr>
 						<td class="text-success"><label th:text="#{lbl_rol}"></label></td>
 						<td th:if="${trabajador.rol}" th:text="#{${trabajador.rol}}"></td>
 					</tr>
-
 					<tr>
 						<td class="text-success"><label
 							th:text="#{lbl_trabajador_cuenta_habilitada}"> </label></td>
@@ -56,39 +55,22 @@
 							class="fa fa-toggle-on"></i> <i
 							th:unless="${trabajador.cuentaActiva == true}"
 							class="fa fa-toggle-off"></i></td>
-						<!-- 
-						<td th:if="${trabajador.cuentaActiva == true}"><i
-							class="glyphicon glyphicon-ok"> </i></td>
-
-						<td th:unless="${trabajador.cuentaActiva == true}"><i
-							class="glyphicon glyphicon-remove"> </i></td>
-
-						-->
-
-
-
 					</tr>
-
 					<tr>
 						<td class="text-success"><label
 							th:text="#{lbl_trabajador_trabajador_habilitado}"> </label></td>
-
 						<td th:if="${trabajador.trabajadorActivo == true}"><i
-							class="glyphicon glyphicon-ok"> </i></td>
-
+							class="fa fa-toggle-on"> </i></td>
 						<td th:unless="${trabajador.trabajadorActivo == true}"><i
-							class="glyphicon glyphicon-remove"> </i></td>
+							class="fa fa-toggle-off"> </i></td>
 					</tr>
-
 					<tr>
 						<td class="text-success"><i class="material-icons"
-							style="font-size: 14px">language</i>&nbsp; <label
+							style="font-size: 14px"></i>&nbsp; <label
 							th:text="#{lbl_trabajador_idioma}"> </label></td>
-
 						<td th:if="${trabajador.idioma}"
 							th:text="#{${'lang.' + trabajador.idioma}}"></td>
 					</tr>
-
 					<tr>
 						<td class="text-success"><i
 							class="glyphicon glyphicon-calendar"></i> <label
@@ -112,13 +94,11 @@
 								th:text="${#dates.format(trabajador.fechaActivacion, df)}"></p>
 						</td>
 					</tr>
-
 					<tr>
 						<td class="text-success"><i
 							class="glyphicon glyphicon-calendar"></i> <label
 							class="mayusculas" th:text="#{lbl_trabajador_fecha_ultimo_token}"></label></td>
 						<td>
-							<!-- http://www.baeldung.com/dates-in-thymeleaf -->
 							<p th:if="${trabajador.fechaExpiracionToken != null}"
 								th:with="df=#{fecha_formato_completo}"
 								th:text="${#dates.format(trabajador.fechaExpiracionToken, df)}"></p>
@@ -130,13 +110,13 @@
 		<div class="panel-footer">
 			<div class="pull-left">
 				<a th:href="@{#{link.trabajadores}}"> <i
-					class="glyphicon glyphicon-list"></i> &nbsp; <label
+					class="glyphicon glyphicon-list" data-toggle="tooltip"
+					th:title="#{lbl_listado}"></i> &nbsp; <label
 					th:text="#{lbl_listado_trabajadores}"></label>
 				</a>
 			</div>
 			<br />
 		</div>
 	</div>
-	<!-- </div>-->
 </body>
 </html>

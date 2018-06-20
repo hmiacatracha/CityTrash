@@ -35,6 +35,7 @@ function dibujarGrafica(startDate, endDate, contenedor, modeloId, tipo, progress
 
 	console.log("data =>" + JSON.stringify(formData));
 	console.log("url" + url);
+	$("#postResultDiv").html("");
 
 	$.ajax({
 		type : "GET",
@@ -52,7 +53,7 @@ function dibujarGrafica(startDate, endDate, contenedor, modeloId, tipo, progress
 				labels.push(valor.fechaHora)
 				//labels.push(new Date(valor.fechaHora).formatMMDDYYYY());
 				data.push(parseFloat(valor.valor));
-				unidad = valor.unidad;			
+				unidad = valor.unidad;
 			});
 
 			console.log("paso3");
@@ -102,7 +103,6 @@ function dibujarGrafica(startDate, endDate, contenedor, modeloId, tipo, progress
 							scaleLabel : {
 								display : true,
 								labelString : unidad + " " + tipo
-
 							}
 						} ]
 					}

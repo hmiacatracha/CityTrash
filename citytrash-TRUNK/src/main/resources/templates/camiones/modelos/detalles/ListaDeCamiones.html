@@ -4,7 +4,7 @@
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	xmlns:sd="http://www.thymeleaf.org/spring-data"
-	layout:decorate="~{layouts/default}" th:with="currentPage='recursos'">
+	layout:decorate="~{layouts/default}" th:with="currentPage='camiones'">
 <head>
 <title th:text="#{page_camiones_modelo_detalle_camiones}"></title>
 </head>
@@ -43,7 +43,7 @@
 		<!-- titulo -->
 		<div class="row">
 			<div class="col-xs-12 col-md-6 text-left">
-				<h3 th:if="${nombreDelModelo}" class="text-center text-warning"
+				<h3 th:if="${nombreDelModelo}" class="text-center text-success"
 					th:text="${#strings.toUpperCase('__#{lbl_lista_camiones}__')}  + ' - '+ ${#strings.toUpperCase('__#{lbl_modelo}__')} + ' ' + ${#strings.toUpperCase(nombreDelModelo)}"></h3>
 			</div>
 			<div class="col-xs-6 col-md-6 text-right">

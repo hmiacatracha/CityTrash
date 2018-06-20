@@ -167,8 +167,10 @@ public class CamionDaoHibernate extends GenericHibernateDAOImpl<Camion, Long> im
 		Query<Camion> query;
 		List<Camion> camiones = new ArrayList<Camion>();
 		Page<Camion> page = new PageImpl<Camion>(camiones, pageable, camiones.size());
+		List<TipoDeBasura> tiposAux = tipos != null ? tipos : new ArrayList<TipoDeBasura>();
 		String alias = "c";
-		StringBuilder hql = new StringBuilder("Select " + alias + " FROM Camion " + alias);
+		StringBuilder hql = new StringBuilder("Select " + alias + " FROM Camion " + alias + " inner join " + alias
+				+ ".modeloCamion mc " + "inner join mc.tiposDeBasura t inner join t.pk pk");
 
 		// muestra solo los trabajadores de alta, los de baja no
 		if (mostrarSoloActivos) {
@@ -182,7 +184,13 @@ public class CamionDaoHibernate extends GenericHibernateDAOImpl<Camion, Long> im
 			hql.append(" WHERE " + alias + ".modeloCamion = :modelo");
 		}
 
-		if ((mostrarSoloActivos || modelo != null) && mostrarSoloCamionesDeAlta) {
+		if ((mostrarSoloActivos || modelo != null) && tiposAux.size() > 0) {
+			hql.append(" AND pk.tipo in (:tipos) ");
+		} else if (tiposAux.size() > 0) {
+			hql.append(" WHERE pk.tipo in (:tipos)");
+		}
+
+		if ((mostrarSoloActivos || modelo != null || tiposAux.size() > 0) && mostrarSoloCamionesDeAlta) {
 			hql.append(" AND ((DATE(" + alias + ".fechaAlta)  <= DATE(:fecha) and DATE(" + alias
 					+ ".fechaBaja)  > DATE(:fecha)) OR  ( DATE(" + alias + ".fechaAlta)  <= DATE(:fecha) and " + alias
 					+ ".fechaBaja  is null))");
@@ -200,6 +208,9 @@ public class CamionDaoHibernate extends GenericHibernateDAOImpl<Camion, Long> im
 		logger.info("buscarCamionesByModelo paso8");
 
 		query = getSession().createQuery(hql.toString(), Camion.class);
+
+		if (tiposAux.size() > 0)
+			query.setParameter("tipos", tiposAux);
 
 		if (mostrarSoloActivos)
 			query.setParameter("activo", mostrarSoloActivos);
@@ -243,8 +254,12 @@ public class CamionDaoHibernate extends GenericHibernateDAOImpl<Camion, Long> im
 		List<Camion> camiones = new ArrayList<Camion>();
 		String[] palabras = palabrasClaves != null ? palabrasClaves.split(" ") : new String[0];
 		Page<Camion> page = new PageImpl<Camion>(camiones, pageable, camiones.size());
+		List<TipoDeBasura> tiposAux = tipos != null ? tipos : new ArrayList<TipoDeBasura>();
 		String alias = "c";
-		StringBuilder hql = new StringBuilder("Select " + alias + " FROM Camion " + alias);
+		// StringBuilder hql = new StringBuilder("Select " + alias + " FROM
+		// Camion " + alias);
+		StringBuilder hql = new StringBuilder("Select " + alias + " FROM Camion " + alias + " inner join " + alias
+				+ ".modeloCamion mc " + "inner join mc.tiposDeBasura t inner join t.pk pk");
 
 		/* Palabras claves */
 		for (int i = 0; i < palabras.length; i++) {
@@ -277,6 +292,13 @@ public class CamionDaoHibernate extends GenericHibernateDAOImpl<Camion, Long> im
 					+ ".fechaBaja  is null))");
 		}
 
+		if ((palabras.length > 0 || mostrarSoloActivos || modelo != null || mostrarSoloCamionesDeAlta)
+				&& tiposAux.size() > 0) {
+			hql.append(" AND pk.tipo in (:tipos) ");
+		} else if (tiposAux.size() > 0) {
+			hql.append(" WHERE pk.tipo in (:tipos)");
+		}
+
 		/* Sorted */
 		String order = StringUtils
 				.collectionToCommaDelimitedString(StreamSupport.stream(pageable.getSort().spliterator(), false)
@@ -299,6 +321,9 @@ public class CamionDaoHibernate extends GenericHibernateDAOImpl<Camion, Long> im
 
 		if (mostrarSoloCamionesDeAlta)
 			query.setParameter("fecha", Calendar.getInstance().getTime());
+
+		if (tiposAux.size() > 0)
+			query.setParameter("tipos", tiposAux);
 
 		camiones = query.list();
 		int start = pageable.getOffset();
@@ -325,8 +350,13 @@ public class CamionDaoHibernate extends GenericHibernateDAOImpl<Camion, Long> im
 		List<Camion> camiones = new ArrayList<Camion>();
 		String[] palabras = palabrasClaves != null ? palabrasClaves.split(" ") : new String[0];
 		Page<Camion> page = new PageImpl<Camion>(camiones, pageable, camiones.size());
+		List<TipoDeBasura> tiposAux = tipos != null ? tipos : new ArrayList<TipoDeBasura>();
 		String alias = "c";
-		StringBuilder hql = new StringBuilder("Select " + alias + " FROM Camion " + alias);
+		// StringBuilder hql = new StringBuilder("Select " + alias + " FROM
+		// Camion " + alias);
+
+		StringBuilder hql = new StringBuilder("Select distinct " + alias + " FROM CamionModelo " + alias
+				+ " inner join " + alias + ".tiposDeBasura t inner join t.pk pk");
 
 		/* Palabras claves */
 		for (int i = 0; i < palabras.length; i++) {
@@ -359,13 +389,19 @@ public class CamionDaoHibernate extends GenericHibernateDAOImpl<Camion, Long> im
 					+ ".fechaBaja  is null))");
 		}
 
+		if ((palabras.length > 0 || mostrarSoloActivos || modelo != null || mostrarSoloCamionesDeAlta)
+				&& tiposAux.size() > 0) {
+			hql.append(" AND pk.tipo in (:tipos) ");
+		} else if (tiposAux.size() > 0) {
+			hql.append(" WHERE pk.tipo in (:tipos)");
+		}
+
 		/* Sorted */
 		String order = StringUtils
 				.collectionToCommaDelimitedString(StreamSupport.stream(pageable.getSort().spliterator(), false)
 						.map(o -> alias + "." + o.getProperty() + " " + o.getDirection()).collect(Collectors.toList()));
 		hql.append(" ORDER BY " + order);
 
-		logger.info("IMPRIMIENDO HQL => " + hql.toString());
 		query = getSession().createQuery(hql.toString(), Camion.class);
 
 		/* set parameters */
@@ -382,6 +418,9 @@ public class CamionDaoHibernate extends GenericHibernateDAOImpl<Camion, Long> im
 
 		if (mostrarSoloCamionesDeAlta)
 			query.setParameter("fecha", Calendar.getInstance().getTime());
+
+		if (tiposAux.size() > 0)
+			query.setParameter("tipos", tiposAux);
 
 		logger.info("IMPRIMIENDO PARAMETERS => " + query.getParameters().toString());
 		camiones = query.list();
@@ -407,6 +446,7 @@ public class CamionDaoHibernate extends GenericHibernateDAOImpl<Camion, Long> im
 		Query<Camion> query;
 		List<Camion> camiones = new ArrayList<Camion>();
 		String[] palabras = palabrasClaves != null ? palabrasClaves.split(" ") : new String[0];
+		List<TipoDeBasura> tiposAux = tipos != null ? tipos : new ArrayList<TipoDeBasura>();
 		Page<Camion> page = new PageImpl<Camion>(camiones, pageable, camiones.size());
 		String alias = "c";
 		StringBuilder hql = new StringBuilder("Select " + alias + " FROM Camion " + alias);
@@ -442,6 +482,12 @@ public class CamionDaoHibernate extends GenericHibernateDAOImpl<Camion, Long> im
 					+ ".fechaBaja  is null))");
 		}
 
+		if ((palabras.length > 0 || mostrarSoloActivos || modelo != null || mostrarSoloCamionesDeAlta)
+				&& tiposAux.size() > 0) {
+			hql.append(" AND pk.tipo in (:tipos) ");
+		} else if (tiposAux.size() > 0) {
+			hql.append(" WHERE pk.tipo in (:tipos)");
+		}
 		/* Sorted */
 		String order = StringUtils
 				.collectionToCommaDelimitedString(StreamSupport.stream(pageable.getSort().spliterator(), false)
@@ -465,6 +511,9 @@ public class CamionDaoHibernate extends GenericHibernateDAOImpl<Camion, Long> im
 		if (mostrarSoloCamionesDeAlta)
 			query.setParameter("fecha", Calendar.getInstance().getTime());
 
+		if (tiposAux.size() > 0)
+			query.setParameter("tipos", tiposAux);
+
 		camiones = query.list();
 		int start = pageable.getOffset();
 		int end = (start + pageable.getPageSize()) > camiones.size() ? camiones.size()
@@ -479,5 +528,4 @@ public class CamionDaoHibernate extends GenericHibernateDAOImpl<Camion, Long> im
 		}
 		return page;
 	}
-
 }

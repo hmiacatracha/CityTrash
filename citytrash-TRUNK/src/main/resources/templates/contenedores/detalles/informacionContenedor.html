@@ -3,7 +3,7 @@
 	xmlns:th="http://www.thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	th:with="currentPage='recursos'">
+	th:with="currentPage='contenedores'">
 <head>
 <meta charset="utf-8"></meta>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
@@ -58,7 +58,7 @@
 		<br>
 		<div class="row container center-block">
 			<h3 th:if="${nombreDelContenedor!=null}"
-				class="text-center text-warning col-xs-10"
+				class="text-center text-success col-xs-10"
 				th:text="${#strings.toUpperCase(nombreDelContenedor)}"></h3>
 
 			<label id="tipo" th:text="${tipoDeBasura.tipo}" hidden=""></label> <label
@@ -77,11 +77,13 @@
 				<div class="col-xs-12 text-right">
 					<div class="btn-group text-center">
 						<a th:href="@{#{link.contenedores.editar}(id=*{id})}"
-							class="btn-sm"><i class="glyphicon glyphicon-pencil"></i></a><a
+							class="btn-sm"><i class="glyphicon glyphicon-pencil"
+							data-toggle="tooltip" th:title="#{lbl_editar}"></i></a><a
 							th:href="@{#{link.contenedores.registro}}" class="btn-sm"><i
-							class="glyphicon glyphicon-plus"></i> </a> <a
-							th:href="@{#{link.contenedores}}" class="btn-sm"> <i
-							class="glyphicon glyphicon-list"></i>
+							class="glyphicon glyphicon-plus" data-toggle="tooltip"
+							th:title="#{lbl_add}"></i> </a> <a th:href="@{#{link.contenedores}}"
+							class="btn-sm"> <i class="glyphicon glyphicon-list"
+							data-toggle="tooltip" th:title="#{lbl_listado}"></i>
 						</a>
 					</div>
 				</div>

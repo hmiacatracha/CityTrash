@@ -35,7 +35,7 @@
 					<br />
 				</th:block>
 				<br />
-				<legend class="col-xs-12" th:text="#{frm_registro_subHeader1}"></legend>
+				<legend class="col-xs-12 text-success" th:text="#{frm_registro_subHeader1}"></legend>
 
 				<div id="documento-group" class="form-group row">
 					<div
@@ -200,7 +200,7 @@
 					</div>
 					<br>
 
-					<legend class="col-xs-12" th:text="#{frm_registro_subHeader2}"></legend>
+					<legend class="col-xs-12 text-success" th:text="#{frm_registro_subHeader2}"></legend>
 
 					<div class="form-group row">
 						<div th:classappend="${#fields.hasErrors('via')}? 'has-error'">
@@ -328,7 +328,7 @@
 			</fieldset>
 			<br>
 
-			<button class="btn btn-default btn-lg btn-block" type="submit"
+			<button class="btn btn-default btn-success btn-lg btn-block" type="submit"
 				th:text="#{btn_registrar}" th:value="#{btn_registrar}"></button>
 		</form>
 

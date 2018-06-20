@@ -3,7 +3,7 @@
 	xmlns:th="http://www.thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{layouts/default}" th:with="currentPage='recursos'">
+	layout:decorate="~{layouts/default}" th:with="currentPage='camiones'">
 <head>
 <title th:text="#{page_registro}"></title>
 </head>
@@ -16,18 +16,23 @@
 			class="col-sm-offset-1 col-sm-10 col-md-offset-3 col-md-6 col-lg-offset-2 col-lg-8">
 			<div class="panel panel-default" th:if="${camionForm}">
 				<div class="panel-heading ">
-					<h3 class="text-center" th:text="#{frm_registro_camiones}"></h3>
-
-
+					<h3 class="text-center text-success col-xs-12"
+						th:text="${#strings.toUpperCase('__#{frm_registro_camiones}__')}"></h3>
 				</div>
+
+
 				<div class="panel-body">
+
 					<div class="row">
 
-						<a th:href="@{#{link.camiones}}"> <i
-							class="glyphicon glyphicon-list"></i> &nbsp; <label
-							th:text="#{lbl_lista_camiones}"></label>
-						</a>
-
+						<div class="col-xs-11 text-right">
+							<div class="btn-group">
+								<a th:href="@{#{link.camiones}}"> <i
+									class="glyphicon glyphicon-list" th:title="#{lbl_listado}"
+									data-toggle="tooltip"></i>
+								</a>
+							</div>
+						</div>
 					</div>
 					<div th:fragment="formularios"
 						th:replace="camiones/camionesRegistroForm :: form(${camionForm}, ${error})"></div>

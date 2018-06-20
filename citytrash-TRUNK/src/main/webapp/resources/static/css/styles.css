@@ -265,14 +265,27 @@ a:hover, a:active {
 */
 .btn-default {
 	padding: 10px 20px;
+	background-color: #5cb85c color: #f1f1f1;
+	border-radius: 0;
+	transition: .2s;
+}
+
+.btn-default:hover, .btn-default:focus {
+	border: 1px solid #000000;
+	background-color: #ffffff;;
+	color: #000;
+}
+
+.btn-cityTrash {
+	padding: 10px 20px;
 	background-color: #333;
 	color: #f1f1f1;
 	border-radius: 0;
 	transition: .2s;
 }
 
-.btn-default:hover, .btn-default:focus {
-	border: 1px solid #333;
+.btn-cityTrash:hover, .btn-cityTrash:focus {
+	border: 1px solid #5cb85c;
 	background-color: #fff;
 	color: #000;
 }
@@ -367,7 +380,8 @@ select.form-control, input.form-control, option.form-control {
 	right: 10%;
 	width: 90%;
 	margin: 0 auto;
-<<<<<<< HEAD
+	<<<<<<<
+	HEAD
 }
 
 #mapa {
@@ -380,7 +394,6 @@ select.form-control, input.form-control, option.form-control {
 
 =======
 }
-
 #mapa {
 	height: 400px;
 	position: relative;
@@ -457,10 +470,10 @@ select.form-control, input.form-control, option.form-control {
 /* Canvas style  => para las estadísticas.*/
 #canvas {
 	border: 1px dotted green;
-	width: 100%; height : auto;
+	width: 100%;
+	height: auto;
 	-moz-user-select: none;
 	-webkit-user-select: none;
 	-ms-user-select: none;
 	height: auto;
 }
-

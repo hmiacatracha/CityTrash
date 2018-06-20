@@ -1,8 +1,10 @@
-<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:th="http://www.thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	th:with="currentPage='contenedores'">
+
 <head>
 <meta charset="utf-8"></meta>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
@@ -55,15 +57,15 @@
 				<p id="sensorId" th:text="${sensor.id}" hidden=""></p>
 				<p id="tipo" th:text="#{${sensor.sensorType}}" hidden=""></p>
 				<p id="contenedor" th:text="#{${contenedor.nombre}}" hidden=""></p>
-				<p id="lbl_contenedor" th:text="${#strings.toUpperCase('__#{lbl_contenedor}__')}" hidden=""></p>
-				<p id="lbl_pronostico" th:text="${#strings.toUpperCase('__#{lbl_pronostico}__')}" hidden=""></p>
-				<p id="lbl_tiempo_real" th:text="${#strings.toUpperCase('__#{lbl_tiempo_real}__')}" hidden=""></p>
-				<!-- 
-				<h3 class="text-center text-warning"
-					th:text="${#strings.toUpperCase('__#{lbl_contenedor}__')}"></h3>
-				<h2 class="text-center text-success" th:text="${contenedor.nombre}">
-				</h2>
-				 -->
+				<p id="lbl_contenedor"
+					th:text="${#strings.toUpperCase('__#{lbl_contenedor}__')}"
+					hidden=""></p>
+				<p id="lbl_pronostico"
+					th:text="${#strings.toUpperCase('__#{lbl_pronostico}__')}"
+					hidden=""></p>
+				<p id="lbl_tiempo_real"
+					th:text="${#strings.toUpperCase('__#{lbl_tiempo_real}__')}"
+					hidden=""></p>
 			</div>
 
 			<div class="col-md-2">
@@ -96,14 +98,14 @@
 			-->
 			<div class="col-xd-12 col-md-3 pull-right">
 				<div id="reportrange">
-				<!-- style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%" -->
+					<!-- style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%" -->
 					<i class="fa fa-calendar"></i>&nbsp; <span></span> <i
 						class="fa fa-caret-down"></i>
 				</div>
 			</div>
 			<div class="col-md-12">
 				<canvas class="canvas" id="contenedor-canvas"></canvas>
-				<div id="postResultDiv"> </div>
+				<div id="postResultDiv"></div>
 			</div>
 			<div class="col-md-12">
 				<progress id="animationProgress" max="1" value="0"

@@ -137,5 +137,4 @@ public class CamionModeloDaoHibernate extends GenericHibernateDAOImpl<CamionMode
 		}
 		return page;
 	}
-
 }

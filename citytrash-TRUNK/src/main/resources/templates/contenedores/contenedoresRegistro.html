@@ -3,7 +3,7 @@
 	xmlns:th="http://www.thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	th:with="currentPage='recursos'">
+	th:with="currentPage='contenedores'">
 <head>
 <meta charset="utf-8"></meta>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
@@ -61,7 +61,7 @@
 			class="col-sm-offset-1 col-sm-10 col-md-offset-3 col-md-6 col-lg-offset-2 col-lg-8">
 			<div class="panel panel-default" th:if="${contenedorForm}">
 				<div class="panel-heading ">
-					<h3 class="text-center" th:text="#{frm_registro_contenedores}"></h3>
+					<h3 class="text-center text-success" th:text="${#strings.toUpperCase('__#{frm_registro_contenedores}__')}"></h3>
 				</div>
 				<div class="panel-body">
 					<div class="row">
