@@ -1,5 +1,6 @@
 package es.udc.citytrash.controller.util.dtos.cuenta;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.NotBlank;
@@ -9,14 +10,14 @@ import es.udc.citytrash.controller.util.anotaciones.CamposIguales;
 @CamposIguales(primerCampo = "password", segundoCampo = "repetirPassword", message = "{constraints.fieldmatch.password}")
 public class CambiarPasswordFormDto {
 
-	@NotBlank
+	@NotNull
 	private String passwordAntigua = "";
 
 	@Pattern(regexp = "(?=^.{8,}$)((?=.*\\d)|(?=.*\\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$", message = "{constraints.pattern.password}")
-	@NotBlank
+	@NotNull
 	private String password;
 
-	@NotBlank
+	@NotNull
 	private String repetirPassword;
 
 	public String getPassword() {

@@ -57,22 +57,22 @@ public class TrabajadorRegistroFormDto {
 		this.idioma = idioma;
 	}
 
-	@NotBlank
+	@NotNull
 	@Size(min = 2, max = 255)
 	private String nombre;
 
-	@NotBlank
+	@NotNull
 	@Size(min = 2, max = 255)
 	private String apellidos;
 
-	@NotBlank
-	@Email
+	@NotNull
+	@javax.validation.constraints.Email
 	@EmailNoDuplicado
 	@Size(max = 100)
 	private String email;
 
-	@NotBlank
-	@Email
+	@NotNull
+	@javax.validation.constraints.Email
 	private String confirmarEmail;
 
 	@NotNull

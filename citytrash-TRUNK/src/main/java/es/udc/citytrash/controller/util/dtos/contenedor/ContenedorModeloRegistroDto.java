@@ -20,7 +20,7 @@ public class ContenedorModeloRegistroDto {
 
 	}
 
-	@NotBlank
+	@NotNull
 	@Size(min = 2, max = 100)
 	@ModeloContenedorNombreUnico
 	private String nombre;

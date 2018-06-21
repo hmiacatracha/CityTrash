@@ -47,7 +47,7 @@ public class ContenedorEditarDto {
 	@NotNull
 	private long id;
 
-	@NotBlank
+	@NotNull
 	@Size(min = 2, max = 100)
 	private String nombre = "";
 

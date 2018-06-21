@@ -25,8 +25,8 @@ public class CamionModeloFormBusq {
 		return palabrasClaveModelo;
 	}
 
-	public void setPalabrasClaveModelo(String palabrasClaveModelo) {
-		this.palabrasClaveModelo = palabrasClaveModelo;
+	public void setPalabrasClaveModelo(String palabras) {
+		this.palabrasClaveModelo = palabras;
 	}
 
 	public List<Integer> getTipos() {

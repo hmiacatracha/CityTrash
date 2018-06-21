@@ -169,8 +169,8 @@ public class CamionDaoHibernate extends GenericHibernateDAOImpl<Camion, Long> im
 		Page<Camion> page = new PageImpl<Camion>(camiones, pageable, camiones.size());
 		List<TipoDeBasura> tiposAux = tipos != null ? tipos : new ArrayList<TipoDeBasura>();
 		String alias = "c";
-		StringBuilder hql = new StringBuilder("Select " + alias + " FROM Camion " + alias + " inner join " + alias
-				+ ".modeloCamion mc " + "inner join mc.tiposDeBasura t inner join t.pk pk");
+		StringBuilder hql = new StringBuilder("Select distinct " + alias + " FROM Camion " + alias + " left join "
+				+ alias + ".modeloCamion mc " + " left join mc.tiposDeBasura t left join t.pk pk");
 
 		// muestra solo los trabajadores de alta, los de baja no
 		if (mostrarSoloActivos) {
@@ -258,8 +258,8 @@ public class CamionDaoHibernate extends GenericHibernateDAOImpl<Camion, Long> im
 		String alias = "c";
 		// StringBuilder hql = new StringBuilder("Select " + alias + " FROM
 		// Camion " + alias);
-		StringBuilder hql = new StringBuilder("Select " + alias + " FROM Camion " + alias + " inner join " + alias
-				+ ".modeloCamion mc " + "inner join mc.tiposDeBasura t inner join t.pk pk");
+		StringBuilder hql = new StringBuilder("Select distinct " + alias + " FROM Camion " + alias + " left join "
+				+ alias + ".modeloCamion mc " + " left join mc.tiposDeBasura t left join t.pk pk");
 
 		/* Palabras claves */
 		for (int i = 0; i < palabras.length; i++) {
@@ -355,8 +355,8 @@ public class CamionDaoHibernate extends GenericHibernateDAOImpl<Camion, Long> im
 		// StringBuilder hql = new StringBuilder("Select " + alias + " FROM
 		// Camion " + alias);
 
-		StringBuilder hql = new StringBuilder("Select distinct " + alias + " FROM CamionModelo " + alias
-				+ " inner join " + alias + ".tiposDeBasura t inner join t.pk pk");
+		StringBuilder hql = new StringBuilder("Select distinct " + alias + " FROM Camion " + alias + " left join "
+				+ alias + ".modeloCamion mc " + " left join mc.tiposDeBasura t left join t.pk pk");
 
 		/* Palabras claves */
 		for (int i = 0; i < palabras.length; i++) {

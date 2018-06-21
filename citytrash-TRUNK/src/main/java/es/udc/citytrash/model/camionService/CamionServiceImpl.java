@@ -481,14 +481,15 @@ public class CamionServiceImpl implements CamionService {
 					logger.info("tipo encontrado =>" + tb.toString());
 					tipos.add(tb);
 				} catch (NumberFormatException | InstanceNotFoundException e) {
-
 				}
 			}
 		}
-
-		if (tipos.size() > 0 || formBusqueda.getPalabrasClaveModelo().length() > 0) {
+		logger.info("pasa por aqui 1 =>" + formBusqueda.getPalabrasClaveModelo());
+		if (tipos.size() > 0 || formBusqueda.getPalabrasClaveModelo() != null) {
+			logger.info("pasa por aqui 2");
 			page = modeloDao.buscarCamionModelo(pageable, formBusqueda.getPalabrasClaveModelo(), tipos);
 		} else {
+			logger.info("pasa por aqui 3");
 			page = modeloDao.buscarCamionModelo(pageable);
 		}
 		return page;
@@ -517,7 +518,7 @@ public class CamionServiceImpl implements CamionService {
 					logger.info("tipo encontrado =>" + tb.toString());
 					tipos.add(tb);
 				} catch (NumberFormatException | InstanceNotFoundException e) {
-					
+
 				}
 			}
 		}

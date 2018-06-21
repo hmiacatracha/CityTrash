@@ -51,7 +51,7 @@ public class CamionDto {
 	@Size(min = 0, max = 17)
 	private String vin = "";
 
-	@NotBlank
+	@NotNull
 	@Size(min = 2, max = 100)
 	private String nombre = "";
 

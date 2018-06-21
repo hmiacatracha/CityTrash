@@ -1,15 +1,17 @@
 package es.udc.citytrash.controller.util.dtos.cuenta;
 
+import javax.validation.constraints.NotNull;
+
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 
 public class LoginFormDto {
 
-	@NotBlank
-	@Email
+	@NotNull
+	@javax.validation.constraints.Email
 	private String email;
 
-	@NotBlank
+	@NotNull
 	private String password;
 
 	public String getEmail() {

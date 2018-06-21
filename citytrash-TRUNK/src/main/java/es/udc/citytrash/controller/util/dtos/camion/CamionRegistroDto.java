@@ -34,7 +34,7 @@ public class CamionRegistroDto {
 	@CamionVinUnico
 	private String vin = "";
 
-	@NotBlank
+	@NotNull
 	@Size(min = 2, max = 100)
 	@CamionNombreUnico
 	private String nombre = "";

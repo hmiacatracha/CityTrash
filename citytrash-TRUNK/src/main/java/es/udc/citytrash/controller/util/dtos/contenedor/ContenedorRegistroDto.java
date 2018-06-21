@@ -33,7 +33,7 @@ public class ContenedorRegistroDto {
 
 	}
 
-	@NotBlank
+	@NotNull
 	@ContenedorNombreUnico
 	@Size(min = 2, max = 100)
 	private String nombre = "";

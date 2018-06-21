@@ -90,9 +90,9 @@ public class CamionModeloDaoHibernate extends GenericHibernateDAOImpl<CamionMode
 		String[] palabras = palabrasClaveModelo != null ? palabrasClaveModelo.split(" ") : new String[0];
 		List<TipoDeBasura> tiposAux = tipos != null ? tipos : new ArrayList<TipoDeBasura>();
 
-		StringBuilder hql = new StringBuilder("Select distinct " + alias + " FROM CamionModelo " + alias
-				+ " inner join " + alias + ".tiposDeBasura t inner join t.pk pk");
-
+		StringBuilder hql = new StringBuilder("Select distinct " + alias + " FROM CamionModelo " + alias + " left join "
+				+ alias + ".tiposDeBasura t left join t.pk pk");
+		
 		for (int i = 0; i < palabras.length; i++) {
 			if (i != 0)
 				hql.append(" AND LOWER(" + alias + ".modelo) LIKE  LOWER (?) ");

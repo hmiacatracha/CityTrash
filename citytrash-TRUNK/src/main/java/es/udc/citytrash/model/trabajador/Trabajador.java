@@ -30,6 +30,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Digits;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.BatchSize;
@@ -154,7 +155,7 @@ public abstract class Trabajador implements Serializable {
 		this.docId = docId;
 	}
 
-	@NotBlank
+	@NotNull
 	@Column(name = "NOMBRE")
 	@Size(min = 1, max = 255)
 	public String getNombre() {
@@ -165,7 +166,7 @@ public abstract class Trabajador implements Serializable {
 		this.nombre = nombre;
 	}
 
-	@NotBlank
+	@NotNull
 	@Column(name = "APELLIDOS")
 	@Size(min = 1, max = 255)
 	public String getApellidos() {
@@ -186,7 +187,7 @@ public abstract class Trabajador implements Serializable {
 		this.fechaNacimiento = fecNac;
 	}
 
-	@NotBlank
+	@NotNull
 	@Size(min = 1, max = 100)
 	@Column(name = "EMAIL", unique = true)
 	public String getEmail() {
