@@ -26,6 +26,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
 import es.udc.citytrash.model.contenedorModelo.ContenedorModelo;
+import es.udc.citytrash.model.ruta.Ruta;
 import es.udc.citytrash.model.sensor.Sensor;
 import es.udc.citytrash.util.GlobalNames;
 
@@ -177,6 +178,16 @@ public class Contenedor implements Serializable {
 		this.sensores.add(sensor);
 	}
 
+	@ManyToOne(optional = true, fetch = FetchType.LAZY)
+	@JoinColumn(name = "RUTA_ID")
+	public Ruta getRuta() {
+		return ruta;
+	}
+
+	public void setRuta(Ruta ruta) {
+		this.ruta = ruta;
+	}
+
 	/* Atributos */
 	private static final long serialVersionUID = 1L;
 	private long id;
@@ -188,6 +199,7 @@ public class Contenedor implements Serializable {
 	private ContenedorModelo modelo;
 	private Boolean activo;
 	private List<Sensor> sensores = new ArrayList<Sensor>();
+	private Ruta ruta;
 
 	@Override
 	public String toString() {

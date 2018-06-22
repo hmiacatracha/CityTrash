@@ -383,7 +383,7 @@
 		<!-- https://mvnrepository.com/artifact/org.webjars.bower/Chart.js -->
 		<!-- <dependency> <groupId>org.webjars.bower</groupId> <artifactId>Chart.js</artifactId> 
 			<version>2.5.0</version> </dependency> -->
-			
+
 		<!-- -->
 		<dependency>
 			<groupId>com.google.guava</groupId>

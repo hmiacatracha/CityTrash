@@ -65,7 +65,6 @@ public class CamionModeloTipoDeBasuraPK implements Serializable {
 			return false;
 		if (modelo != null ? !modelo.equals(that.modelo) : that.modelo != null)
 			return false;
-
 		return true;
 	}
 

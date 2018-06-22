@@ -195,7 +195,7 @@ public class TrabajadorServiceTest {
 		trabajadorService.registrar(frmRegistro_CONDUCT);
 	}
 
-	@Test
+	//@Test
 	public void verificarFormatoFormRegistroError() {
 		Trabajador t = null;
 		try {

@@ -38,5 +38,7 @@
 		<mapping class="es.udc.citytrash.model.sensor.Temperatura"/>
 		<mapping class="es.udc.citytrash.model.sensor.Volumen"/>
 		<mapping class="es.udc.citytrash.model.sensorValor.Valor"/>
+		<mapping class="es.udc.citytrash.model.ruta.Ruta"/>
+		<mapping class="es.udc.citytrash.model.rutaDiaria.RutaDiaria"/>
 	</session-factory>
 </hibernate-configuration>
