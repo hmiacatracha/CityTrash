@@ -1,4 +1,4 @@
-package es.udc.citytrash.model.camionModeloTipoDeBasura;
+package es.udc.citytrash.model.rutaTipoDeBasura;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -14,24 +14,25 @@ import javax.persistence.Transient;
 import javax.validation.constraints.Digits;
 
 import es.udc.citytrash.model.camionModelo.CamionModelo;
+import es.udc.citytrash.model.ruta.Ruta;
 import es.udc.citytrash.model.tipoDeBasura.TipoDeBasura;
 import es.udc.citytrash.util.GlobalNames;
 
 /**
- * Tabla ModeloCamionTipoDeBasura
+ * Tabla RutaTipoDeBasura
  * 
  * @author hmia
- *         http://www.codejava.net/frameworks/hibernate/hibernate-many-to-many-association-with-extra-columns-in-join-table-example
+ * 
  *
  */
 @Entity
-@Table(name = GlobalNames.TBL_MODELO_CAMION_TIPO_DE_BASURA)
-public class CamionModeloTipoDeBasura implements Serializable {
+@Table(name = "TBL_RU_TP")
+public class RutaTipoDeBasura implements Serializable {
 
 	/**
 	 * 
 	 */
-	CamionModeloTipoDeBasura() {
+	RutaTipoDeBasura() {
 
 	}
 
@@ -42,41 +43,29 @@ public class CamionModeloTipoDeBasura implements Serializable {
 	 * @param tipo
 	 *            tipo de basura
 	 */
-	public CamionModeloTipoDeBasura(CamionModelo modelo, TipoDeBasura tipo, BigDecimal capacidad) {
-		this.pk.setModelo(modelo);
+	public RutaTipoDeBasura(Ruta ruta, TipoDeBasura tipo) {
+		this.pk.setRuta(ruta);
 		this.pk.setTipo(tipo);
-		this.capacidad = capacidad;
 	}
 
 	@EmbeddedId
-	@AssociationOverrides({ @AssociationOverride(name = "pk.modelo", joinColumns = @JoinColumn(name = "MODELO_CAMION")),
+	@AssociationOverrides({ @AssociationOverride(name = "pk.ruta", joinColumns = @JoinColumn(name = "RUTA_ID")),
 			@AssociationOverride(name = "pk.tipo", joinColumns = @JoinColumn(name = "TIPO_BASURA")) })
-	public CamionModeloTipoDeBasuraPK getPk() {
+	public RutaTipoDeBasuraPK getPk() {
 		return pk;
 	}
 
-	public void setPk(CamionModeloTipoDeBasuraPK pk) {
+	public void setPk(RutaTipoDeBasuraPK pk) {
 		this.pk = pk;
 	}
 
-	@Column(name = "CAPACIDAD", nullable = false)
-	@Digits(integer = 17, fraction = 2)
-	public BigDecimal getCapacidad() {
-		return capacidad;
-	}
-
-	public void setCapacidad(BigDecimal capacidad) {
-		this.capacidad = capacidad;
-
-	}
-
 	@Transient
-	public CamionModelo getModelo() {
-		return getPk().getModelo();
+	public Ruta getRuta() {
+		return getPk().getRuta();
 	}
 
-	public void setModelo(CamionModelo modelo) {
-		getPk().setModelo(modelo);
+	public void setRuta(Ruta ruta) {
+		getPk().setRuta(ruta);
 	}
 
 	@Transient
@@ -95,7 +84,7 @@ public class CamionModeloTipoDeBasura implements Serializable {
 		if (o == null || getClass() != o.getClass())
 			return false;
 
-		CamionModeloTipoDeBasura that = (CamionModeloTipoDeBasura) o;
+		RutaTipoDeBasura that = (RutaTipoDeBasura) o;
 
 		if (getPk() != null ? !getPk().equals(that.getPk()) : that.getPk() != null)
 			return false;
@@ -112,13 +101,10 @@ public class CamionModeloTipoDeBasura implements Serializable {
 	 * atributos
 	 */
 	private static final long serialVersionUID = 1L;
-	// composite-id key
-	private CamionModeloTipoDeBasuraPK pk = new CamionModeloTipoDeBasuraPK();
-	// additional fields
-	private BigDecimal capacidad;
+	private RutaTipoDeBasuraPK pk = new RutaTipoDeBasuraPK();
 
 	@Override
 	public String toString() {
-		return "CamionModeloTipoDeBasura [pk=" + pk + ", capacidad=" + capacidad + "]";
+		return "RutaTipoDeBasura [pk=" + pk + "]";
 	}
 }

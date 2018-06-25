@@ -1,7 +1,6 @@
 package es.udc.citytrash.model.ruta;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.List;
 
 import javax.persistence.AttributeOverride;
@@ -19,7 +18,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Immutable;
 
 import es.udc.citytrash.model.camion.Camion;
 import es.udc.citytrash.model.contenedor.Contenedor;

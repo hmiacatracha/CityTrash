@@ -15,7 +15,7 @@ public class Localizacion {
 		this.lat = lat;
 		this.lng = lng;
 	}
-
+	
 	private BigDecimal lat;
 
 	private BigDecimal lng;

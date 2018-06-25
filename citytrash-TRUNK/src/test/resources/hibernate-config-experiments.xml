@@ -40,5 +40,7 @@
 		<mapping class="es.udc.citytrash.model.sensorValor.Valor"/>
 		<mapping class="es.udc.citytrash.model.ruta.Ruta"/>
 		<mapping class="es.udc.citytrash.model.rutaDiaria.RutaDiaria"/>
+		<mapping class="es.udc.citytrash.model.rutaTipoDeBasura.RutaTipoDeBasura"/>
+		<mapping class="es.udc.citytrash.model.rutaDiariaContenedores.RutaDiariaContenedores"/>
 	</session-factory>
 </hibernate-configuration>
