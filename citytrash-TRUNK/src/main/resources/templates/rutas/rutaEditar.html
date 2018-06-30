@@ -1,0 +1,31 @@
+<!DOCTYPE>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/default}" th:with="currentPage='camiones'">
+<head>
+<title th:text="#{page_rutas}"></title>
+</head>
+
+<body class="formularios">
+	<!-- id="viewBody" -->
+	<div id="content" class="container" th:fragment="content"
+		th:remove="tag">
+		<div
+			class="col-sm-offset-1 col-sm-10 col-md-offset-3 col-md-6 col-lg-offset-3 col-lg-6">
+			<div class="panel panel-default" th:if="${rutaForm}">
+				<div class="panel-heading ">
+					<h3 th:if="${rutaForm.id}==null" class="text-center text-success"
+						th:text="${#strings.toUpperCase('__#{frm_registro_rutas}__')}"></h3>
+				</div>
+				<div class="panel-body">
+					<div th:fragment="formularios"
+						th:replace="rutas/rutaEditarForm :: rutaEditarForm(${rutaForm}, ${error})"></div>
+				</div>
+			</div>
+			<div class="panel-footer"></div>
+		</div>
+	</div>
+</body>
+</html>

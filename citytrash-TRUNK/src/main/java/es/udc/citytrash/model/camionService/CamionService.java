@@ -81,6 +81,7 @@ public interface CamionService {
 	 */
 	boolean cambiarEstadoCamion(long id) throws InstanceNotFoundException;
 
+	
 	/**
 	 * Lista de camiones
 	 * 
@@ -238,4 +239,11 @@ public interface CamionService {
 	List<CamionModeloTipoDeBasura> guardarOActualizarModeloTipoDeBasura(int modeloId, List<CamionModeloTipoDeBasuraDto> tipos)
 			throws InstanceNotFoundException;
 
+	/**
+	 * Buscar camiones
+	 * @param mostrarSoloActivos
+	 * @param mostrarSoloCamionesDeAlta
+	 * @return
+	 */
+	List<Camion> buscarCamiones(boolean mostrarSoloActivos, boolean mostrarSoloCamionesDeAlta);
 }

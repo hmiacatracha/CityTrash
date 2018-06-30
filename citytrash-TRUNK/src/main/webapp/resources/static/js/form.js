@@ -183,6 +183,13 @@ jQuery(function($) {
 
 
 	$(document).ready(function() {
+
+		/* searchForm change*/
+		/*$("#searchForm").change(function() {
+			console.log("searchForm change");
+			$("form").submit();
+		});*/
+
 		$('#confirmDelete').on('show.bs.modal', function(e) {
 			console.log("confirmDelete1");
 			$message = $(e.relatedTarget).attr('data-message');
@@ -213,7 +220,7 @@ jQuery(function($) {
 				name : $(this).data('name'),
 				value : $(this).data('value')
 			});
-			
+
 			$.ajax({
 				type : type,
 				url : url,

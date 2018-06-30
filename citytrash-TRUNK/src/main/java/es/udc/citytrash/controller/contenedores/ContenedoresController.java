@@ -70,9 +70,6 @@ public class ContenedoresController {
 	@Autowired
 	ContenedorService cServicio;
 
-	@Autowired
-	private ModelMapper modelMapper;
-
 	final Logger logger = LoggerFactory.getLogger(ContenedoresController.class);
 
 	@ModelAttribute("numeroDeSensores")

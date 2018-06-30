@@ -1,0 +1,246 @@
+<!DOCTYPE>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:sd="http://www.thymeleaf.org/spring-data"
+	layout:decorate="~{layouts/default}" th:with="currentPage='rutas'">
+<head>
+<title th:text="#{page_rutas}"></title>
+</head>
+<body class="blanco">
+	<div id="content" class="container" th:fragment="content"
+		th:if="${pageRutas}">
+		<!-- pagination size and add button -->
+		<div class="form-group row">
+			<div class="col-xs-6">
+				<div class="pull-left">
+					<a class="btn btn-default" th:href="@{#{link.rutas.registro}}"
+						role="button"><i class="glyphicon glyphicon-plus"
+						data-toggle="tooltip" th:title="#{frm_registro_rutas}"></i></a> <a
+						class="btn btn-default" th:href="@{#{link.mapa.rutas}}"
+						role="button"><i class="fa fa-map-o" data-toggle="tooltip"
+						th:title="#{mapa}"></i></a>
+				</div>
+			</div>
+			<div class="col-xs-6">
+				<div class="pull-right">
+					<!-- page size selector (dropdrwown) -->
+					<div id="size_page_selector" class="dbtn-group dropup"
+						sd:page-size-selector="dropdown" th:title="#{page_size}"></div>
+					<!-- //page size selector -->
+				</div>
+			</div>
+		</div>
+		<!-- titulo -->
+		<div class="row container center-block">
+			<h3 class="text-center text-success col-xs-12"
+				th:text="${#strings.toUpperCase('__#{lbl_lista_rutas}__')}"></h3>
+		</div>
+		<!-- FIN pagination size and add button -->
+		<div class="row">
+			<!-- search form -->
+			<div id="searchForm" class="col-xs-12 col-sm-12">
+				<form id="busquedaRutasForm" role="form"
+					class="form-narrow form-horizontal" method="get" action="#"
+					th:action="@{#{link.rutas}}" th:object="${busquedaForm}"
+					th:fragment="busquedaForm">
+					<fieldset>
+						<div class="pull-center col-xs-12  col-sm-12">
+							<div class="form-check">
+								<div class="col-xs-12 col-sm-6 pull-left">
+									<label> <input id="activos" type="checkbox"
+										th:field="*{mostrarSoloRutasActivas}"
+										th:value="${mostrarSoloRutasActivas}" name="check"> <span
+										class="label-text" th:text="#{lbl_rutas_activas}"></span>
+									</label>
+								</div>
+							</div>
+						</div>
+						<div class="form-group row">
+							<!-- tipos de basura -->
+							<div th:if="${listaTiposDeBasura}"
+								class="text-center col-xs-6 col-sm-3 col-md-3">
+								<select th:title="#{lbl_tipos_basura}" class="selectpicker"
+									data-style="btn btn-default" th:field="*{tiposDeBasura}"
+									id="tiposBasuras" multiple>
+									<option th:each="row, index: ${listaTiposDeBasura}"
+										th:value="${row.id}" th:text="#{${row.tipo}}"></option>
+								</select>
+							</div>
+
+							<!-- trabajadores -->
+							<div th:if="${listaTrabajadores}"
+								class="text-center col-xs-6 col-sm-3 col-md-3">
+								<select th:title="#{lbl_trabajadores}" class="selectpicker"
+									data-style="btn btn-default" th:field="*{trabajadores}"
+									id="trabajadores" multiple>
+									<option th:each="row, index: ${listaTrabajadores}"
+										th:value="${row.id}"
+										th:text="#{${row.nombre} + ' ' + ${row.apellidos}}"></option>
+								</select>
+							</div>
+
+							<!-- contenedores -->
+							<div th:if="${listaContenedores}"
+								class="text-center col-xs-6 col-sm-3 col-md-3">
+								<select th:title="#{lbl_contenedores}" class="selectpicker"
+									data-style="btn btn-default" th:field="*{contenedores}"
+									id="contenedores" multiple>
+									<option th:each="row, index: ${listaContenedores}"
+										th:value="${row.id}" th:text="#{${row.nombre}}"></option>
+								</select>
+							</div>
+
+							<!-- camiones -->
+							<div th:if="${listaCamiones}"
+								class="text-center col-xs-6 col-sm-3 col-md-3">
+								<select th:title="#{lbl_camiones}" class="selectpicker"
+									data-style="btn btn-default" th:field="*{camiones}"
+									id="camiones" multiple>
+									<option th:each="row, index: ${listaCamiones}"
+										th:value="${row.id}" th:text="#{${row.nombre}}"></option>
+								</select>
+							</div>
+						</div>
+						<!-- buscar -->
+						<div class="text-center">
+							<button class="btn btn-default btn-success center-block"
+								type="submit" th:text="#{btn_buscar}" name="filtrarBuqueda"
+								th:value="#{btn_buscar_camiones}"></button>
+						</div>
+					</fieldset>
+				</form>
+			</div>
+			<div id="listaContent" th:fragment="listaContent" class="col-xs-12">
+				<!-- list -->
+				<div id="resultMsgDiv">
+					<th:block th:if="${msg!=null}">
+						<div th:if="${type!=null}"
+							th:replace="fragments/alert :: alert (type='success',  message=#{${type}(${key})})"></div>
+					</th:block>
+				</div>
+				<!-- tabla -->
+				<div class="table-responsive">
+					<table class="table">
+						<thead class="thead-dark">
+							<tr>
+								<th><a class="sorted" sd:pagination-sort="id"
+									th:text="${#strings.capitalize('__#{lbl_id}__')}"> </a></th>
+
+
+								<th><a class="sorted" sd:pagination-sort="camion.nombre"
+									th:text="${#strings.capitalize('__#{lbl_camion}__')}"> </a></th>
+
+								<th
+									th:text="${#strings.toUpperCase('__#{lbl_camion_tipos_basura}__')}"></th>
+
+								<th th:text="${#strings.toUpperCase('__#{lbl_punto_inicio}__')}"></th>
+
+								<th th:text="${#strings.toUpperCase('__#{lbl_punto_final}__')}"></th>
+
+								<th
+									th:text="${#strings.toUpperCase('__#{frm_header_ruta_tipos}__')}"></th>
+
+								<th th:text="${#strings.toUpperCase('__#{lbl_acciones}__')}"></th>
+							</tr>
+						</thead>
+
+						<tbody>
+							<tr th:each="ruta : ${pageRutas.content}">
+								<!-- ruta id -->
+								<td class="align-middle"><span
+									class="articleTitle truncated" data-toggle="tooltip"
+									data-placement="bottom" th:title="${ruta.id}"
+									th:text="${ruta.id}"> </span></td>
+
+								<!-- camion -->
+								<td class="align-middle"><a
+									th:text="${#strings.toUpperCase(ruta.camion.nombre)}"
+									th:href="@{#{link.camiones.detalles}(id=${ruta.camion.id})}"
+									class="btn-sm"><i class="glyphicon glyphicon-pencil"
+										data-toggle="tooltip" th:title="#{lbl_editar}"></i></a></td>
+								<td>
+									<table>
+										<tr>
+											<th
+												th:each="item, row: ${ruta.camion.modeloCamion.tiposDeBasura}"
+												th:style="'background: #' + ${item.tipo.color}"
+												class="basura_color_cuadro"></th>
+										</tr>
+									</table>
+								</td>
+								<td class="align-middle" th:if="${ruta.puntoInicio}"
+									th:text="'(DD) '+ ${ruta.puntoInicio.lat} + ',' + ${ruta.puntoInicio.lng}+ ''"></td>
+
+								<td class="align-middle" th:if="${ruta.puntoFinal}"
+									th:text="'(DD) '+ ${ruta.puntoFinal.lat} + ',' + ${ruta.puntoFinal.lng}+ ''"></td>
+								<td>
+									<table>
+										<tr>
+											<th th:each="item, row: ${ruta.tiposDeBasura}"
+												th:style="'background: #' + ${item.tipo.color}"
+												class="basura_color_cuadro"></th>
+										</tr>
+									</table>
+								</td>
+								<!-- acciones -->
+								<td>
+									<div class="btn-group text-center" id="options">
+
+										<!-- view details -->
+										<div id="otherOptions" class="btn-group text-center">
+											<a id="link_ver_detalles"
+												th:href="@{#{link.rutas.detalles}(id=${ruta.id})}"
+												class="btn-sm"><i class="glyphicon glyphicon-eye-open"
+												data-toggle="tooltip" th:title="#{lbl_ver_detalles}"></i></a>
+
+											<!-- edit -->
+											<a id="link_editar"
+												th:href="@{#{link.rutas.editar}(id=${ruta.id})}"
+												class="btn-sm"><i class="glyphicon glyphicon-pencil"
+												data-toggle="tooltip" th:title="#{lbl_editar}"></i></a>
+										</div>
+										<div id="changeState" class="btn-group text-center">
+											<a id="link_change_state"
+												th:href="@{#{link.rutas.estado}(id=${ruta.id})}"
+												class="btn-sm"> <i id="iconState"
+												th:class="${ruta.activo == true}? 'fa fa-toggle-on' : 'fa fa-toggle-off'"
+												data-toggle="tooltip" th:title="#{lbl_estado}"> </i>
+											</a>
+										</div>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<!-- fin table -->
+				<!-- paginacion -->
+				<div id="pagionationInformation" class="col-xs-12">
+					<div class="col-xs-12">
+						<div class="text-left">
+							<div sd:pagination-summary="info">info</div>
+						</div>
+					</div>
+					<div class="col-xs-12">
+						<nav class="text-right">
+							<ul class="pagination" sd:pagination="full">
+								<li class="btn disabled"><a href="#" aria-label="Previous"><span
+										aria-hidden="true">&laquo;</span></a></li>
+								<li class="btn active"><a href="#">1 <span
+										class="sr-only">(current)</span></a></li>
+							</ul>
+						</nav>
+					</div>
+				</div>
+				<!-- fin paginacion -->
+				<p th:unless="${pageRutas!=null}"></p>
+				<!-- fin  list -->
+			</div>
+		</div>
+		<!-- row -->
+	</div>
+	<!-- content -->
+</body>
+</html>

@@ -39,13 +39,13 @@ import es.udc.citytrash.util.GlobalNames;
 
 @Entity
 @Table(name = GlobalNames.TBL_CONTENEDOR)
-@BatchSize(size = 10)
+@BatchSize(size = 20)
 public class Contenedor implements Serializable {
 
 	/**
 	 * 
 	 */
-	Contenedor() {
+	public Contenedor() {
 
 	}
 

@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -21,6 +22,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import es.udc.citytrash.model.camion.Camion;
 import es.udc.citytrash.model.contenedor.Contenedor;
+import es.udc.citytrash.model.rutaTipoDeBasura.RutaTipoDeBasura;
 
 @Entity
 @Table(name = "TBL_RUTAS")
@@ -31,24 +33,24 @@ public class Ruta implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public Ruta() {
+	Ruta() {
 		/**
 		 * A persistent class should has a empty constructor.
 		 **/
 	}
 
-	int id;
-	private Localizacion puntoInicio;
-	private Localizacion puntoFinal;
-	private boolean activo;
-	private Camion camion;
-	private List<Contenedor> contenedores;
+	public Ruta(Localizacion puntoInicio, Localizacion puntoFinal, boolean activo, Camion camion) {
+		this.puntoInicio = puntoInicio;
+		this.puntoFinal = puntoFinal;
+		this.activo = activo;
+		this.camion = camion;
+	}
 
 	@Id
 	@Column(name = "RUTA_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "RutaIdGenerator")
 	@GenericGenerator(name = "RutaIdGenerator", strategy = "native")
-	public long getId() {
+	public Integer getId() {
 		return id;
 	}
 
@@ -96,7 +98,7 @@ public class Ruta implements Serializable {
 		this.camion = camion;
 	}
 
-	@OneToMany(mappedBy = "ruta")
+	@OneToMany(mappedBy = "ruta", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	public List<Contenedor> getContenedores() {
 		return contenedores;
 	}
@@ -105,9 +107,26 @@ public class Ruta implements Serializable {
 		this.contenedores = contenedores;
 	}
 
+	@OneToMany(mappedBy = "pk.ruta", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	public List<RutaTipoDeBasura> getTiposDeBasura() {
+		return tiposDeBasura;
+	}
+
+	public void setTiposDeBasura(List<RutaTipoDeBasura> tiposDeBasura) {
+		this.tiposDeBasura = tiposDeBasura;
+	}
+
+	int id;
+	private Localizacion puntoInicio = new Localizacion();
+	private Localizacion puntoFinal = new Localizacion();
+	private boolean activo;
+	private Camion camion;
+	private List<Contenedor> contenedores;
+	private List<RutaTipoDeBasura> tiposDeBasura;
+
 	@Override
 	public String toString() {
 		return "Ruta [id=" + id + ", puntoInicio=" + puntoInicio + ", puntoFinal=" + puntoFinal + ", activo=" + activo
-				+ ", camion=" + camion + ", contenedores=" + contenedores + "]";
+				+ ", camion=" + camion.getId() + ", contenedores=" + contenedores + "]";
 	}
 }

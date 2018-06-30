@@ -495,6 +495,11 @@ public class CamionServiceImpl implements CamionService {
 	}
 
 	@Override
+	public List<Camion> buscarCamiones(boolean mostrarSoloActivos, boolean mostrarSoloCamionesDeAlta) {
+		return camionDao.buscarCamiones(mostrarSoloActivos, mostrarSoloCamionesDeAlta);
+	}
+
+	@Override
 	public Page<Camion> buscarCamiones(Pageable pageable, CamionFormBusq formBusqueda) throws FormBusquedaException {
 		logger.info("IMPRIMIENDO formbusqueda buscar camiones => " + formBusqueda.toString());
 		CampoBusqPalabrasClavesCamion campo = CampoBusqPalabrasClavesCamion.matricula;
@@ -517,7 +522,7 @@ public class CamionServiceImpl implements CamionService {
 					logger.info("tipo encontrado =>" + tb.toString());
 					tipos.add(tb);
 				} catch (NumberFormatException | InstanceNotFoundException e) {
-					
+
 				}
 			}
 		}

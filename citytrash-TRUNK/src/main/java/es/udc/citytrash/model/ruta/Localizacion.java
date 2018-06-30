@@ -3,11 +3,12 @@ package es.udc.citytrash.model.ruta;
 import java.math.BigDecimal;
 
 import javax.persistence.Embeddable;
+import javax.validation.constraints.NotNull;
 
 @Embeddable
 public class Localizacion {
 
-	Localizacion() {
+	public Localizacion() {
 
 	}
 
@@ -15,10 +16,12 @@ public class Localizacion {
 		this.lat = lat;
 		this.lng = lng;
 	}
-	
-	private BigDecimal lat;
 
-	private BigDecimal lng;
+	@NotNull
+	private BigDecimal lat = new BigDecimal(0);
+
+	@NotNull
+	private BigDecimal lng = new BigDecimal(0);
 
 	public BigDecimal getLat() {
 		return lat;
@@ -34,6 +37,11 @@ public class Localizacion {
 
 	public void setLng(BigDecimal lng) {
 		this.lng = lng;
+	}
+
+	@Override
+	public String toString() {
+		return "Localizacion [lat=" + lat + ", lng=" + lng + "]";
 	}
 
 }

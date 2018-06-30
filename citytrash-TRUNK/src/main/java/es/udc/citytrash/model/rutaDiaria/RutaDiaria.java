@@ -160,4 +160,12 @@ public class RutaDiaria {
 	private Trabajador trabajadorActualiza;
 	private Calendar fHUltimaActualizacion;
 	private Camion camion;
+	
+	@Override
+	public String toString() {
+		return "RutaDiaria [id=" + id + ", ruta=" + ruta + ", fecha=" + fecha + ", fechaHoraInicio=" + fechaHoraInicio
+				+ ", fechaHoraFin=" + fechaHoraFin + ", recogedor1=" + recogedor1 + ", recogedor2=" + recogedor2
+				+ ", conductor=" + conductor + ", trabajadorActualiza=" + trabajadorActualiza
+				+ ", fHUltimaActualizacion=" + fHUltimaActualizacion + ", camion=" + camion + "]";
+	}
 }

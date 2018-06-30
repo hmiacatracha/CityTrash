@@ -106,6 +106,12 @@ public class WebUtils {
 	public static final String VISTA_MAPA_RUTAS = VISTA_MAPA_PREFIX + "/rutas";
 	public static final String VISTA_MAPA_RUTA_NAVEGAR = VISTA_MAPA_PREFIX + "/navegar";
 
+	/* PAQUETES RUTAS */
+	public static final String VISTA_RUTAS_PREFIX = "rutas/";
+	public static final String VISTA_RUTAS = VISTA_RUTAS_PREFIX + "rutas";
+	public static final String VISTA_RUTA_REGISTRO = VISTA_RUTAS_PREFIX + "rutaRegistro";
+	public static final String VISTA_RUTA_EDITAR = VISTA_RUTAS_PREFIX + "rutaEditar";
+
 	/**
 	 * URLS
 	 */
@@ -273,16 +279,29 @@ public class WebUtils {
 
 	public static final String URL_MAPPING_CONTENEDORES_SENSORES_DETALLES_CHART = "/contenedores/{contenedorId}/sensores/{sensorId}";
 	public static final String REQUEST_MAPPING_CONTENEDORES_SENSORES_DETALLES_CHART = "/{contenedorId}/sensores/{sensorId}";
-	
+
 	// URLS MAPAS
 	public static final String URL_MAPPING_MAPA_CONTENEDORES = "/contenedores/map";
 	public static final String REQUEST_MAPPING_MAPA_CONTENEDORES = "contenedores/map";
 
-	public static final String URL_MAPPING_MAPA_RUTAS = "rutas/map";
-	public static final String REQUEST_MAPPING_MAPA_RUTAS = "rutas/map";
-
 	public static final String URL_MAPPING_MAPA_RUTA_NAVEGAR = "rutas/id/map";
 	public static final String REQUEST_MAPPING_MAPA_RUTA_NAVEGAR = "rutas/id/map";
+
+	/* URL RUTAS */
+	public static final String URL_MAPPING_RUTAS = "/rutas";
+	public static final String REQUEST_MAPPING_RUTAS = "/";
+
+	public static final String URL_MAPPING_MAPA_RUTAS = "rutas/map";
+	public static final String REQUEST_MAPPING_MAPA_RUTAS = "/map";
+
+	public static final String URL_MAPPING_RUTAS_REGISTRO = "/rutas/registro";
+	public static final String REQUEST_MAPPING_RUTAS_REGISTRO = "/registro";
+
+	public static final String URL_MAPPING_RUTAS_EDITAR = "/rutas/{id}/editar";
+	public static final String REQUEST_MAPPING_RUTAS_EDITAR = "/{id}/editar";
+
+	public static final String URL_MAPPING_RUTAS_DETALLES = "/rutas/{id}/detalles";
+	public static final String REQUEST_MAPPING_RUTAS_DETALLES = "/{id}/detalles";
 
 	public static String getUrlWithContextPath(HttpServletRequest request) {
 		return request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()

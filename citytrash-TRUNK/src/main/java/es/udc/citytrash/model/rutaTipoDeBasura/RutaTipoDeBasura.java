@@ -1,22 +1,19 @@
 package es.udc.citytrash.model.rutaTipoDeBasura;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 import javax.persistence.AssociationOverride;
 import javax.persistence.AssociationOverrides;
-import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.validation.constraints.Digits;
 
-import es.udc.citytrash.model.camionModelo.CamionModelo;
+import org.hibernate.annotations.BatchSize;
+
 import es.udc.citytrash.model.ruta.Ruta;
 import es.udc.citytrash.model.tipoDeBasura.TipoDeBasura;
-import es.udc.citytrash.util.GlobalNames;
 
 /**
  * Tabla RutaTipoDeBasura
@@ -25,23 +22,24 @@ import es.udc.citytrash.util.GlobalNames;
  * 
  *
  */
-@Entity
-@Table(name = "TBL_RU_TP")
-public class RutaTipoDeBasura implements Serializable {
 
+@Entity
+@BatchSize(size = 5)
+@Table(name = "TBL_RU_TP")
+@AssociationOverrides({ @AssociationOverride(name = "pk.ruta", joinColumns = @JoinColumn(name = "RUTA_ID")),
+		@AssociationOverride(name = "pk.tipo", joinColumns = @JoinColumn(name = "TIPO_BASURA")) })
+public class RutaTipoDeBasura implements Serializable {
 	/**
 	 * 
 	 */
-	RutaTipoDeBasura() {
+	public RutaTipoDeBasura() {
 
 	}
 
 	/**
 	 * 
-	 * @param modelo
-	 *            modelo camion
+	 * @param ruta
 	 * @param tipo
-	 *            tipo de basura
 	 */
 	public RutaTipoDeBasura(Ruta ruta, TipoDeBasura tipo) {
 		this.pk.setRuta(ruta);
@@ -49,8 +47,6 @@ public class RutaTipoDeBasura implements Serializable {
 	}
 
 	@EmbeddedId
-	@AssociationOverrides({ @AssociationOverride(name = "pk.ruta", joinColumns = @JoinColumn(name = "RUTA_ID")),
-			@AssociationOverride(name = "pk.tipo", joinColumns = @JoinColumn(name = "TIPO_BASURA")) })
 	public RutaTipoDeBasuraPK getPk() {
 		return pk;
 	}

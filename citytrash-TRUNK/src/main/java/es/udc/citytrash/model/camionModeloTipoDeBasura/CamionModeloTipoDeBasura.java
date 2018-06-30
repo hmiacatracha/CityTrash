@@ -26,6 +26,9 @@ import es.udc.citytrash.util.GlobalNames;
  */
 @Entity
 @Table(name = GlobalNames.TBL_MODELO_CAMION_TIPO_DE_BASURA)
+/* @AssociationOverrides => siempre al inicio de la clase, nunca con el atributo sino da error => 'modelocami0_.tipo_TIPO_BASURA_ID' in 'field list'*/
+@AssociationOverrides({ @AssociationOverride(name = "pk.modelo", joinColumns = @JoinColumn(name = "MODELO_CAMION")),
+		@AssociationOverride(name = "pk.tipo", joinColumns = @JoinColumn(name = "TIPO_BASURA")) })
 public class CamionModeloTipoDeBasura implements Serializable {
 
 	/**
@@ -49,8 +52,6 @@ public class CamionModeloTipoDeBasura implements Serializable {
 	}
 
 	@EmbeddedId
-	@AssociationOverrides({ @AssociationOverride(name = "pk.modelo", joinColumns = @JoinColumn(name = "MODELO_CAMION")),
-			@AssociationOverride(name = "pk.tipo", joinColumns = @JoinColumn(name = "TIPO_BASURA")) })
 	public CamionModeloTipoDeBasuraPK getPk() {
 		return pk;
 	}

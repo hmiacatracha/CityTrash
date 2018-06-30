@@ -492,11 +492,11 @@ public class ContenedorServiceImpl implements ContenedorService {
 	public Page<Valor> buscarValoresBySensor(Pageable pageable, Long sensorId) {
 		return valorDao.buscarValoresBySensor(pageable, sensorId);
 	}
-	
+
 	@Transactional(readOnly = true)
 	@Override
 	public List<Valor> buscarValoresBySensor(Long sensorId, Date fechaInicio, Date fechaFin) {
-		return valorDao.buscarValoresBySensor(sensorId,fechaInicio, fechaFin);
+		return valorDao.buscarValoresBySensor(sensorId, fechaInicio, fechaFin);
 	}
 
 	private static Calendar dateToCalendar(Date date) {
