@@ -57,6 +57,13 @@ public interface CamionDao extends GenericDAO<Camion, Long> {
 	List<Camion> buscarCamiones(boolean mostrarSoloActivos, boolean mostrarSoloCamionesDeAlta);
 
 	/**
+	 * Buscar camiones disponibles para una ruta by tipos de basura
+	 * @param tipos
+	 * @return
+	 */
+	List<Camion> buscarCamionesDisponiblesParaUnaRutaByTipo(List<TipoDeBasura> tipos);
+
+	/**
 	 * Buscar camiones x paginacion
 	 * 
 	 * @param pageable
@@ -101,8 +108,9 @@ public interface CamionDao extends GenericDAO<Camion, Long> {
 	 * @param tipos
 	 * @return
 	 */
-	Page<Camion> buscarCamionesByModeloTiposDeBasuraYNombre(Pageable pageable, String palabrasClaves, CamionModelo modelo,
-			boolean mostrarSoloActivos, boolean mostrarSoloCamionesDeAlta,List<TipoDeBasura> tipos);
+	Page<Camion> buscarCamionesByModeloTiposDeBasuraYNombre(Pageable pageable, String palabrasClaves,
+			CamionModelo modelo, boolean mostrarSoloActivos, boolean mostrarSoloCamionesDeAlta,
+			List<TipoDeBasura> tipos);
 
 	/**
 	 * 
@@ -113,11 +121,12 @@ public interface CamionDao extends GenericDAO<Camion, Long> {
 	 *            camiones activos
 	 * @param mostrarSoloCamionesDeAlta
 	 *            camiones de alta
-	 * @param tipos          
+	 * @param tipos
 	 * @return
 	 */
-	Page<Camion> buscarCamionesByModeloTiposDeBasuraYMatricula(Pageable pageable, String palabrasClaves, CamionModelo modelo,
-			boolean mostrarSoloActivos, boolean mostrarSoloCamionesDeAlta,List<TipoDeBasura> tipos);
+	Page<Camion> buscarCamionesByModeloTiposDeBasuraYMatricula(Pageable pageable, String palabrasClaves,
+			CamionModelo modelo, boolean mostrarSoloActivos, boolean mostrarSoloCamionesDeAlta,
+			List<TipoDeBasura> tipos);
 
 	/**
 	 * 
@@ -132,6 +141,6 @@ public interface CamionDao extends GenericDAO<Camion, Long> {
 	 * @return
 	 */
 	Page<Camion> buscarCamionesByModeloTiposDeBasuraYVin(Pageable pageable, String palabrasClaves, CamionModelo modelo,
-			boolean mostrarSoloActivos, boolean mostrarSoloCamionesDeAlta,List<TipoDeBasura> tipos);
+			boolean mostrarSoloActivos, boolean mostrarSoloCamionesDeAlta, List<TipoDeBasura> tipos);
 
 }

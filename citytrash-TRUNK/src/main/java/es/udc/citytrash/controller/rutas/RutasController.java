@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -40,7 +41,6 @@ import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorFormBusq;
 import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorModeloDto;
 import es.udc.citytrash.controller.util.dtos.ruta.RutaContenedorDto;
 import es.udc.citytrash.controller.util.dtos.ruta.RutaDto;
-import es.udc.citytrash.controller.util.dtos.ruta.RutaTipoBasuraDto;
 import es.udc.citytrash.controller.util.dtos.ruta.RutasFormBusq;
 import es.udc.citytrash.controller.util.dtos.sensor.SensorDto;
 import es.udc.citytrash.controller.util.dtos.tipoDeBasura.TipoDeBasuraDto;
@@ -78,6 +78,12 @@ public class RutasController {
 
 	final Logger logger = LoggerFactory.getLogger(RutasController.class);
 
+	@ModelAttribute("rutaForm")
+	public RutaDto rutaForm() {
+		RutaDto ruta = new RutaDto();
+		return ruta;
+	}
+
 	@ModelAttribute("listaTiposDeBasura")
 	public List<TipoDeBasura> getTiposDeBasura() {
 		List<TipoDeBasura> tipos = new ArrayList<TipoDeBasura>();
@@ -109,14 +115,6 @@ public class RutasController {
 		/* Mostrar todos los camiones */
 		List<Camion> camiones = new ArrayList<Camion>();
 		camiones = camServicio.buscarCamiones(false, false);
-		return camiones;
-	}
-
-	@ModelAttribute("listaCamionesActivos")
-	public List<Camion> getCamionesActivos() {
-		/* Mostrar todos los camiones */
-		List<Camion> camiones = new ArrayList<Camion>();
-		camiones = camServicio.buscarCamiones(true, true);
 		return camiones;
 	}
 
@@ -219,7 +217,14 @@ public class RutasController {
 
 		try {
 			ruta = rServicio.buscarRuta(id);
-			model.addAttribute("rutaForm", new RutaDto(ruta));
+			RutaDto dto = new RutaDto(ruta);
+			List<Contenedor> contenedores = contServicio
+					.buscarContenedoresDiponiblesParaUnaRuta(dto.getTiposDeBasura());
+			List<Camion> camiones = camServicio.buscarCamionesDisponiblesParaUnaRutaByTipos(dto.getTiposDeBasura());
+
+			model.addAttribute("rutaForm", dto);
+			model.addAttribute("listaCamionesDisponibles", camiones);
+			model.addAttribute("listaContenedoresDisponibles", contenedores);
 
 			if (AjaxUtils.isAjaxRequest(requestedWith))
 				return WebUtils.VISTA_RUTA_EDITAR.concat(" ::content");
@@ -280,8 +285,15 @@ public class RutasController {
 			throws ResourceNotFoundException {
 		logger.info("paso1 POST REQUEST_MAPPING_RUTAS_REGISTRO");
 		model.addAttribute("rutaForm", form);
+		List<Contenedor> contenedores = contServicio.buscarContenedoresDiponiblesParaUnaRuta(form.getTiposDeBasura());
+		List<Camion> camiones = camServicio.buscarCamionesDisponiblesParaUnaRutaByTipos(form.getTiposDeBasura());
+		model.addAttribute("listaCamionesDisponibles", camiones);
+		model.addAttribute("listaContenedoresDisponibles", contenedores);
+		
 		try {
+
 			rServicio.buscarRuta(form.getId());
+
 		} catch (InstanceNotFoundException e1) {
 			throw new ResourceNotFoundException(form.getId());
 		}
@@ -319,116 +331,6 @@ public class RutasController {
 
 	@RequestMapping(value = { WebUtils.REQUEST_MAPPING_RUTAS_REGISTRO,
 			WebUtils.REQUEST_MAPPING_RUTAS_EDITAR }, params = { "addContenedor" }, method = RequestMethod.POST)
-	public String addContenedorRow(@ModelAttribute("rutaForm") final RutaDto form, final HttpServletRequest req,
-			Model model, @RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
-		logger.info("POST REQUEST_MAPPING_RUTAS_REGISTRO, REQUEST_MAPPING_RUTAS_EDITAR addContenedor");
-		logger.info("Imprimir lista => " + form.getContenedores().toString());
-		RutaContenedorDto contenedor = new RutaContenedorDto();
-		form.getContenedores().add(contenedor);
-		model.addAttribute("contenedorForm", form);
-		logger.info("Imprimir lista => " + form.getContenedores().toString());
-		if (form.getId() == null) {
-			if (AjaxUtils.isAjaxRequest(requestedWith)) {
-				return WebUtils.VISTA_RUTA_REGISTRO.concat("::contenedoresList");
-			}
-			return WebUtils.VISTA_RUTA_REGISTRO;
-		} else {
-			if (AjaxUtils.isAjaxRequest(requestedWith)) {
-				return WebUtils.VISTA_RUTA_EDITAR.concat("::contenedoresList");
-			}
-			return WebUtils.VISTA_RUTA_EDITAR;
-		}
-	}
-
-	@RequestMapping(value = { WebUtils.REQUEST_MAPPING_RUTAS_REGISTRO,
-			WebUtils.REQUEST_MAPPING_RUTAS_EDITAR }, params = { "addTipoBasura" }, method = RequestMethod.POST)
-	public String addTipoBasuraRow(@ModelAttribute("rutaForm") final RutaDto form, final HttpServletRequest req,
-			Model model, @RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
-
-		logger.info("POST REQUEST_MAPPING_RUTAS_REGISTRO, REQUEST_MAPPING_RUTAS_EDITAR addTipoBasura");
-		logger.info("Imprimir lista => " + form.getContenedores().toString());
-		RutaTipoBasuraDto tipo = new RutaTipoBasuraDto();
-		form.getTiposDeBasura().add(tipo);
-		model.addAttribute("contenedorForm", form);
-		logger.info("Imprimir lista => " + form.getContenedores().toString());
-		if (form.getId() == null) {
-			if (AjaxUtils.isAjaxRequest(requestedWith)) {
-				return WebUtils.VISTA_RUTA_REGISTRO.concat("::tiposList");
-			}
-			return WebUtils.VISTA_RUTA_REGISTRO;
-		} else {
-			if (AjaxUtils.isAjaxRequest(requestedWith)) {
-				return WebUtils.VISTA_RUTA_EDITAR.concat("::tiposList");
-			}
-			return WebUtils.VISTA_RUTA_EDITAR;
-		}
-	}
-
-	@RequestMapping(value = { WebUtils.REQUEST_MAPPING_RUTAS_REGISTRO,
-			WebUtils.REQUEST_MAPPING_RUTAS_EDITAR }, method = RequestMethod.POST, params = { "eliminarTipoBasura" })
-	public String eliminarTipoBasura(RutaDto form, Model model,
-			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith,
-			final HttpServletRequest req, @RequestParam("eliminarTipoBasura") int row) {
-
-		logger.info("POST REQUEST_MAPPING_CAMIONES_POST_MODELO add CamionModeloTipoDeBasuraDto");
-
-		try {
-
-			RutaTipoBasuraDto tipoAELiminar = form.getTiposDeBasura().get(row);
-			form.getTiposDeBasura().remove(tipoAELiminar);
-
-		} catch (IndexOutOfBoundsException e) {
-			logger.info("row =>" + row);
-			logger.info("IndexOutOfBoundsException =>");
-		}
-
-		model.addAttribute("rutaForm", form);
-		if (form.getId() == null) {
-			if (AjaxUtils.isAjaxRequest(requestedWith)) {
-				return WebUtils.VISTA_RUTA_REGISTRO.concat("::tiposList");
-			}
-			return WebUtils.VISTA_RUTA_REGISTRO;
-		} else {
-			if (AjaxUtils.isAjaxRequest(requestedWith)) {
-				return WebUtils.VISTA_RUTA_EDITAR.concat("::tiposList");
-			}
-			return WebUtils.VISTA_RUTA_EDITAR;
-		}
-	}
-
-	@RequestMapping(value = { WebUtils.REQUEST_MAPPING_RUTAS_REGISTRO,
-			WebUtils.REQUEST_MAPPING_RUTAS_EDITAR }, method = RequestMethod.POST, params = { "eliminarContenedor" })
-	public String eliminarContedor(RutaDto form, Model model,
-			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith,
-			final HttpServletRequest req, @RequestParam("eliminarContenedor") int row) {
-
-		logger.info("POST REQUEST_MAPPING_RUTAS_REGISTRO,REQUEST_MAPPING_RUTAS_EDITAR eliminar eliminarContenedor");
-
-		try {
-			logger.info("imprimir form =>" + form.toString());
-			RutaContenedorDto contenedorAEliminar = form.getContenedores().get(row);
-			logger.info("imprimir form =>" + contenedorAEliminar.toString());
-			form.getContenedores().remove(row);
-			logger.info("imprimir form =>" + form.toString());
-
-		} catch (IndexOutOfBoundsException e) {
-			logger.info("row =>" + row);
-			logger.info("IndexOutOfBoundsException =>");
-		}
-
-		model.addAttribute("rutaForm", form);
-		if (form.getId() == null) {
-			if (AjaxUtils.isAjaxRequest(requestedWith)) {
-				return WebUtils.VISTA_RUTA_REGISTRO.concat("::contenedoresList");
-			}
-			return WebUtils.VISTA_RUTA_REGISTRO;
-		} else {
-			if (AjaxUtils.isAjaxRequest(requestedWith)) {
-				return WebUtils.VISTA_RUTA_EDITAR.concat("::contenedoresList");
-			}
-			return WebUtils.VISTA_RUTA_EDITAR;
-		}
-	}
 
 	@ResponseStatus(HttpStatus.FORBIDDEN)
 	@ExceptionHandler(DuplicateInstanceException.class)

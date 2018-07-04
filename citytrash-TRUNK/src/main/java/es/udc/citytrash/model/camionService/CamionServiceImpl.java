@@ -500,6 +500,25 @@ public class CamionServiceImpl implements CamionService {
 	}
 
 	@Override
+	public List<Camion> buscarCamionesDisponiblesParaUnaRutaByTipos(List<Integer> tiposDeBasura) {
+
+		List<TipoDeBasura> tipos = new ArrayList<TipoDeBasura>();
+		/* Agregamos los tipos de basura */
+		if (tiposDeBasura != null) {
+			for (Integer t : tiposDeBasura) {
+				try {
+					TipoDeBasura tb = tipoDao.buscarById(Integer.valueOf(t.toString()));
+					logger.info("tipo encontrado =>" + tb.toString());
+					tipos.add(tb);
+				} catch (NumberFormatException | InstanceNotFoundException e) {
+
+				}
+			}
+		}
+		return camionDao.buscarCamionesDisponiblesParaUnaRutaByTipo(tipos);
+	}
+
+	@Override
 	public Page<Camion> buscarCamiones(Pageable pageable, CamionFormBusq formBusqueda) throws FormBusquedaException {
 		logger.info("IMPRIMIENDO formbusqueda buscar camiones => " + formBusqueda.toString());
 		CampoBusqPalabrasClavesCamion campo = CampoBusqPalabrasClavesCamion.matricula;

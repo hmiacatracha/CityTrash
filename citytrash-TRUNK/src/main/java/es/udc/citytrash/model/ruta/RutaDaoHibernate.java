@@ -47,11 +47,10 @@ public class RutaDaoHibernate extends GenericHibernateDAOImpl<Ruta, Integer> imp
 		String alias = "r";
 		// http://www.sergiy.ca/how-to-write-many-to-many-search-queries-in-mysql-and-hibernate/
 		// "inner join mc.tiposDeBasura t inner join t.pk pk"
-		StringBuilder hql = new StringBuilder(
-				"Select distinct " + alias + " FROM Ruta " + alias + " left join " + alias + ".camion cam "
-						+ " left join " + alias + ".contenedores cont " + " left join " + alias + ".tiposDeBasura tbs"
-						+ " left join tbs.pk tb" + " left join cam.recogedor1 t1 " + "	left join cam.recogedor2 t2 "
-						+ " left join cam.conductor t3 " + "	left join cam.conductorSuplente t4");
+		StringBuilder hql = new StringBuilder("Select distinct " + alias + " FROM Ruta " + alias + " left join " + alias
+				+ ".camion cam " + " left join " + alias + ".contenedores cont " + " left join " + alias
+				+ ".tiposDeBasura tbs " + " left join cam.recogedor1 t1 " + "	left join cam.recogedor2 t2 "
+				+ " left join cam.conductor t3 " + "	left join cam.conductorSuplente t4");
 
 		logger.info("buscarRutasDao 3");
 		// mostrar rutas activas
@@ -61,9 +60,9 @@ public class RutaDaoHibernate extends GenericHibernateDAOImpl<Ruta, Integer> imp
 		logger.info("buscarRutasDao 4");
 		// mostrar por tipos de basura
 		if (mostrarSoloRutasActivas && tiposList.size() > 0) {
-			hql.append(" AND tb.tipo in   (:tiposDeBasura) ");
+			hql.append(" AND tbs in   (:tiposDeBasura) ");
 		} else if (tiposList.size() > 0) {
-			hql.append(" WHERE tb.tipo in   (:tiposDeBasura) ");
+			hql.append(" WHERE tbs in   (:tiposDeBasura) ");
 		}
 
 		logger.info("buscarRutasDao 5");

@@ -14,6 +14,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -22,7 +24,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import es.udc.citytrash.model.camion.Camion;
 import es.udc.citytrash.model.contenedor.Contenedor;
-import es.udc.citytrash.model.rutaTipoDeBasura.RutaTipoDeBasura;
+import es.udc.citytrash.model.tipoDeBasura.TipoDeBasura;
 
 @Entity
 @Table(name = "TBL_RUTAS")
@@ -98,22 +100,64 @@ public class Ruta implements Serializable {
 		this.camion = camion;
 	}
 
-	@OneToMany(mappedBy = "ruta", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "ruta")
 	public List<Contenedor> getContenedores() {
 		return contenedores;
 	}
 
-	public void setContenedores(List<Contenedor> contenedores) {
+	protected void setContenedores(List<Contenedor> contenedores) {
 		this.contenedores = contenedores;
 	}
 
-	@OneToMany(mappedBy = "pk.ruta", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	public List<RutaTipoDeBasura> getTiposDeBasura() {
+	public void eliminarContenedor(Contenedor contenedor) {
+		if (contenedor != null)
+			this.contenedores.remove(contenedor);
+	}
+
+	public void addContenedor(Contenedor contenedor) {
+		if (contenedor != null)
+			if (!contenedores.contains(contenedor)) {
+				this.contenedores.add(contenedor);
+			}
+	}
+
+	public boolean contaisContenedor(Contenedor contenedor) {
+		if (contenedor != null)
+			return this.contenedores.contains(contenedor);
+		else
+			return false;
+	}
+
+	/* http://www.baeldung.com/hibernate-many-to-many */
+	@ManyToMany(cascade = { CascadeType.ALL })
+	@JoinTable(name = "TBL_RU_TP", joinColumns = { @JoinColumn(name = "RUTA_ID") }, inverseJoinColumns = {
+			@JoinColumn(name = "TIPO_BASURA") })
+	public List<TipoDeBasura> getTiposDeBasura() {
 		return tiposDeBasura;
 	}
 
-	public void setTiposDeBasura(List<RutaTipoDeBasura> tiposDeBasura) {
+	public void setTiposDeBasura(List<TipoDeBasura> tiposDeBasura) {
 		this.tiposDeBasura = tiposDeBasura;
+	}
+
+	public void eliminarTipoDeBasura(TipoDeBasura tipo) {
+		if (tipo != null)
+			this.tiposDeBasura.remove(tipo);
+	}
+
+	public void addTipoDeBasura(TipoDeBasura tipo) {
+		if (tipo != null) {
+			if (!tiposDeBasura.contains(tipo)) {
+				this.tiposDeBasura.add(tipo);
+			}
+		}
+	}
+
+	public boolean contaisTipoDeBasura(TipoDeBasura tipo) {
+		if (tipo != null && this.tiposDeBasura != null)
+			return this.tiposDeBasura.contains(tipo);
+		else
+			return false;
 	}
 
 	int id;
@@ -122,11 +166,11 @@ public class Ruta implements Serializable {
 	private boolean activo;
 	private Camion camion;
 	private List<Contenedor> contenedores;
-	private List<RutaTipoDeBasura> tiposDeBasura;
+	private List<TipoDeBasura> tiposDeBasura;
 
 	@Override
 	public String toString() {
 		return "Ruta [id=" + id + ", puntoInicio=" + puntoInicio + ", puntoFinal=" + puntoFinal + ", activo=" + activo
-				+ ", camion=" + camion.getId() + ", contenedores=" + contenedores + "]";
+				+ ", camion=" + camion + ", contenedores=" + contenedores + "]";
 	}
 }

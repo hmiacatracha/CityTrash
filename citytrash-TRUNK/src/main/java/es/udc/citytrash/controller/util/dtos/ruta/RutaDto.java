@@ -13,7 +13,6 @@ import es.udc.citytrash.model.camion.Camion;
 import es.udc.citytrash.model.contenedor.Contenedor;
 import es.udc.citytrash.model.ruta.Localizacion;
 import es.udc.citytrash.model.ruta.Ruta;
-import es.udc.citytrash.model.rutaTipoDeBasura.RutaTipoDeBasura;
 import es.udc.citytrash.model.tipoDeBasura.TipoDeBasura;
 
 /**
@@ -35,19 +34,15 @@ public class RutaDto {
 		this.puntoFinal = r.getPuntoFinal();
 		this.activo = r.isActivo();
 		this.camion = r.getCamion().getId();
-		List<RutaContenedorDto> contDtos = new ArrayList<RutaContenedorDto>();
+		List<Long> contDtos = new ArrayList<Long>();
 		for (Contenedor c : r.getContenedores()) {
-			RutaContenedorDto rc = new RutaContenedorDto();
-			rc.setId(c.getId());
-			contDtos.add(rc);
+			contDtos.add(c.getId());
 		}
 		this.contenedores = contDtos;
 
-		List<RutaTipoBasuraDto> tipos = new ArrayList<RutaTipoBasuraDto>();
-		for (RutaTipoDeBasura t : r.getTiposDeBasura()) {
-			RutaTipoBasuraDto rt = new RutaTipoBasuraDto();
-			rt.setId(t.getPk().getTipo().getId());
-			tipos.add(rt);
+		List<Integer> tipos = new ArrayList<Integer>();
+		for (TipoDeBasura t : r.getTiposDeBasura()) {
+			tipos.add(t.getId());
 		}
 		this.tiposDeBasura = tipos;
 	}
@@ -63,16 +58,17 @@ public class RutaDto {
 	private boolean activo = true;
 
 	@NotNull
-	private Long camion = null;
+	@Size(min = 2, max = 40, message = "{validador.rutas.size.contenedores}")
+	@UniqueElements
+	private List<Long> contenedores = new ArrayList<Long>();
 
 	@NotNull
-	@Size(min = 5, max = 40)
+	@Size(min = 1, max = 3, message = "{validador.rutas.size.tipoDeBasura}")
 	@UniqueElements
-	private List<RutaContenedorDto> contenedores = new ArrayList<RutaContenedorDto>();
+	private List<Integer> tiposDeBasura = new ArrayList<Integer>();
 
-	@Size(min = 1, max = 3)
-	@UniqueElements
-	private List<RutaTipoBasuraDto> tiposDeBasura = new ArrayList<RutaTipoBasuraDto>();
+	@NotNull
+	private Long camion = null;
 
 	public Integer getId() {
 		return id;
@@ -114,19 +110,19 @@ public class RutaDto {
 		this.camion = camion;
 	}
 
-	public List<RutaContenedorDto> getContenedores() {
+	public List<Long> getContenedores() {
 		return contenedores;
 	}
 
-	public void setContenedores(List<RutaContenedorDto> contenedores) {
+	public void setContenedores(List<Long> contenedores) {
 		this.contenedores = contenedores;
 	}
 
-	public List<RutaTipoBasuraDto> getTiposDeBasura() {
+	public List<Integer> getTiposDeBasura() {
 		return tiposDeBasura;
 	}
 
-	public void setTiposDeBasura(List<RutaTipoBasuraDto> tiposDeBasura) {
+	public void setTiposDeBasura(List<Integer> tiposDeBasura) {
 		this.tiposDeBasura = tiposDeBasura;
 	}
 

@@ -29,6 +29,8 @@ import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorModeloDto;
 import es.udc.citytrash.controller.util.dtos.contenedor.Localizacion;
 import es.udc.citytrash.controller.util.dtos.contenedor.MapaContenedoresDto;
 import es.udc.citytrash.controller.util.dtos.contenedor.SensorValores;
+import es.udc.citytrash.model.camion.Camion;
+import es.udc.citytrash.model.camionService.CamionService;
 import es.udc.citytrash.model.contenedor.Contenedor;
 import es.udc.citytrash.model.contenedorModelo.ContenedorModelo;
 import es.udc.citytrash.model.contenedorService.ContenedorService;
@@ -49,7 +51,10 @@ public class PublicRestController {
 	TrabajadorService tservicio;
 
 	@Autowired
-	ContenedorService cServicio;	
+	ContenedorService contServicio;
+
+	@Autowired
+	CamionService camServicio;
 
 	@Autowired
 	UsuarioService usuarioService;
@@ -63,7 +68,7 @@ public class PublicRestController {
 	public @ResponseBody FeatureCollection getContenedoresGeoJson() {
 		ContenedorFormBusq form = new ContenedorFormBusq();
 		FeatureCollection featureCollection = new FeatureCollection();
-		List<Contenedor> contenedores = cServicio.buscarContenedores(form);
+		List<Contenedor> contenedores = contServicio.buscarContenedores(form);
 		TipoDeBasura tipo;
 		ContenedorModelo modelo;
 
@@ -75,8 +80,8 @@ public class PublicRestController {
 			feature.setProperty("nombre", contenedor.getNombre());
 
 			try {
-				modelo = cServicio.buscarModeloById(contenedor.getModelo().getId());
-				tipo = cServicio.buscarTipoDeBasuraByModelo(contenedor.getModelo().getId());
+				modelo = contServicio.buscarModeloById(contenedor.getModelo().getId());
+				tipo = contServicio.buscarTipoDeBasuraByModelo(contenedor.getModelo().getId());
 				feature.setProperty("tipo", tipo.getTipo());
 				feature.setProperty("color", "#" + tipo.getColor());
 				feature.setProperty("capacidad_nominal", modelo.getCapacidadNominal());
@@ -99,7 +104,7 @@ public class PublicRestController {
 	@RequestMapping(value = "/contenedores/json", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody List<MapaContenedoresDto> getContenedoresByLocalizacion() {
 		ContenedorFormBusq form = new ContenedorFormBusq();
-		List<Contenedor> contenedores = cServicio.buscarContenedores(form);
+		List<Contenedor> contenedores = contServicio.buscarContenedores(form);
 		return contenedores.stream().map(contenedor -> convertToDto(contenedor)).collect(Collectors.toList());
 	}
 
@@ -107,7 +112,7 @@ public class PublicRestController {
 		MapaContenedoresDto dto = new MapaContenedoresDto();
 
 		try {
-			TipoDeBasura tipo = cServicio.buscarTipoDeBasuraByModelo(contenedor.getModelo().getId());
+			TipoDeBasura tipo = contServicio.buscarTipoDeBasuraByModelo(contenedor.getModelo().getId());
 			dto.setTipo(tipo.getTipo());
 		} catch (InstanceNotFoundException e) {
 			dto.setTipo("");
@@ -150,7 +155,7 @@ public class PublicRestController {
 	@RequestMapping(value = "/contenedor/modelo/tipo", method = RequestMethod.GET, produces = "text/plain")
 	public @ResponseBody String getTipoBasura(@RequestParam(value = "modeloId", required = true) int id) {
 		try {
-			return cServicio.buscarTipoDeBasuraByModelo(id).getTipo();
+			return contServicio.buscarTipoDeBasuraByModelo(id).getTipo();
 		} catch (InstanceNotFoundException e) {
 			return "";
 		}
@@ -164,16 +169,29 @@ public class PublicRestController {
 		logger.info("contenedores/sensores/id/json");
 		List<Valor> valores = new ArrayList<Valor>();
 
-		cServicio.buscarSensorById(sensorId);
-		
+		contServicio.buscarSensorById(sensorId);
+
 		if (fromDate != null)
 			logger.info("fromDate =>" + fromDate.toString());
 		if (toDate != null)
 			logger.info("toDate =>" + toDate.toString());
-		
-		valores = cServicio.buscarValoresBySensor(sensorId, fromDate, toDate);
+
+		valores = contServicio.buscarValoresBySensor(sensorId, fromDate, toDate);
 		return valores.stream().map(valor -> convertToDto(valor)).collect(Collectors.toList());
 	}
+
+	/*@RequestMapping(value = "/rutas/listaContenedoresDisponibles", method = RequestMethod.GET)
+	@ResponseBody
+	public List<Contenedor> getContenedoresDiponibles(
+			@RequestParam(value = "tiposDeBasura") List<Integer> tiposDeBasura) {
+		return contServicio.buscarContenedoresDiponiblesParaUnaRuta(tiposDeBasura);
+	}
+	
+	@RequestMapping(value = "/rutas/listaCamionesDisponibles", method = RequestMethod.GET)
+	@ResponseBody
+	public List<Camion> getCamionesDiponibles(@RequestParam(value = "tiposDeBasura") List<Integer> tiposDeBasura) {
+		return camServicio.buscarCamionesDisponiblesParaUnaRutaByTipos(tiposDeBasura);
+	}*/
 
 	private SensorValores convertToDto(Valor valor) {
 		Timestamp timestamp = new Timestamp(valor.getPk().getFechaHora().getTimeInMillis());

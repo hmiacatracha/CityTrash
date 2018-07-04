@@ -1,16 +1,11 @@
 package es.udc.citytrash.model.rutaService;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import es.udc.citytrash.controller.util.dtos.ruta.RutaDto;
 import es.udc.citytrash.controller.util.dtos.ruta.RutasFormBusq;
-import es.udc.citytrash.model.contenedor.Contenedor;
 import es.udc.citytrash.model.ruta.Ruta;
-import es.udc.citytrash.model.tipoDeBasura.TipoDeBasura;
-import es.udc.citytrash.model.trabajador.Trabajador;
 import es.udc.citytrash.model.util.excepciones.DuplicateInstanceException;
 import es.udc.citytrash.model.util.excepciones.InstanceNotFoundException;
 

@@ -282,6 +282,8 @@ public class ContenedorDaoHibernate extends GenericHibernateDAOImpl<Contenedor, 
 					+ ".fechaBaja)  > DATE(:fecha)) OR  ( DATE(" + alias + ".fechaAlta)  <= DATE(:fecha) and " + alias
 					+ ".fechaBaja  is null))");
 		}
+
+		hql.append(" ORDER BY " + alias + ".nombre");
 		query = getSession().createQuery(hql.toString(), Contenedor.class);
 		/* set parameters */
 		for (int i = 0; i < palabras.length; i++) {
@@ -296,6 +298,35 @@ public class ContenedorDaoHibernate extends GenericHibernateDAOImpl<Contenedor, 
 		}
 		if (mostrarSoloContenedoresDeAlta)
 			query.setParameter("fecha", Calendar.getInstance().getTime());
+		return query.list();
+	}
+
+	@Override
+	public List<Contenedor> buscarContenedoresDisponilesParaUnaRutaByTipoDeBasura(List<TipoDeBasura> tiposDeBasura) {
+		Query<Contenedor> query;
+		String alias = "c";
+		List<TipoDeBasura> tipos = tiposDeBasura != null ? tiposDeBasura : new ArrayList<TipoDeBasura>();
+		StringBuilder hql = new StringBuilder("Select " + alias + " FROM Contenedor " + alias);
+
+		// muestra solo los contenedores de alta, los de baja no
+		hql.append(" WHERE " + alias + ".ruta is null and " + alias + ".activo = :activo ");
+
+		// mostrar por tipos
+		if (tipos.size() > 0) {
+			hql.append(" AND (" + alias + ".modelo.tipo) in   (:tipos) ");
+		}
+
+		hql.append(" AND ((DATE(" + alias + ".fechaAlta)  <= DATE(:fecha) and DATE(" + alias
+				+ ".fechaBaja)  > DATE(:fecha)) OR  ( DATE(" + alias + ".fechaAlta)  <= DATE(:fecha) and " + alias
+				+ ".fechaBaja  is null))");
+
+		hql.append(" ORDER BY " + alias + ".nombre");
+		query = getSession().createQuery(hql.toString(), Contenedor.class);
+
+		if (tipos.size() > 0)
+			query.setParameter("tipos", tipos);
+		query.setParameter("activo", true);
+		query.setParameter("fecha", Calendar.getInstance().getTime());
 		return query.list();
 	}
 

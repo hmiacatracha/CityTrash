@@ -24,8 +24,6 @@ import es.udc.citytrash.model.ruta.Ruta;
 import es.udc.citytrash.model.ruta.RutaDao;
 import es.udc.citytrash.model.rutaDiaria.RutaDiariaDao;
 import es.udc.citytrash.model.rutaDiariaContenedores.RutaDiariaContenedoresDao;
-import es.udc.citytrash.model.rutaTipoDeBasura.RutaTipoDeBasura;
-import es.udc.citytrash.model.rutaTipoDeBasura.RutaTipoDeBasuraDao;
 import es.udc.citytrash.model.tipoDeBasura.TipoDeBasura;
 import es.udc.citytrash.model.tipoDeBasura.TipoDeBasuraDao;
 import es.udc.citytrash.model.trabajador.Trabajador;
@@ -54,9 +52,6 @@ public class RutaServiceImpl implements RutaService {
 
 	@Autowired
 	RutaDiariaDao rutaDiariaDao;
-
-	@Autowired
-	RutaTipoDeBasuraDao rutaTipoDeBasuraDao;
 
 	@Autowired
 	RutaDiariaContenedoresDao rutaDiariaContenedoresDao;
@@ -101,19 +96,6 @@ public class RutaServiceImpl implements RutaService {
 		logger.info("actualizarRuta paso5");
 		// ruta.setContenedores(form.getContenedores());
 		logger.info("actualizarRuta paso6");
-		/*
-		 * List<RutaTipoDeBasura> lTp = new ArrayList<RutaTipoDeBasura>();
-		 * logger.info("actualizarRuta paso7"); for (RutaTipoBasuraDto rt :
-		 * form.getTiposDeBasura()) { if (tipoDao.existe(rt.getId())) {
-		 * TipoDeBasura t = tipoDao.buscarById(rt.getId()); RutaTipoDeBasura tp
-		 * = new RutaTipoDeBasura(ruta, t); lTp.add(tp); } }
-		 * logger.info("actualizarRuta paso8"); ruta.setTiposDeBasura(lTp);
-		 * logger.info("actualizarRuta paso9"); List<Contenedor> contenedores =
-		 * new ArrayList<Contenedor>(); for (RutaContenedorDto c :
-		 * form.getContenedores()) { if (contenedorDao.existe(c.getId())) {
-		 * Contenedor contenedor = contenedorDao.buscarById(c.getId());
-		 * contenedores.add(contenedor); } } ruta.setContenedores(contenedores);
-		 */
 		logger.info("actualizarRuta paso10");
 		rutaDao.guardar(ruta);
 		return ruta;
@@ -160,35 +142,34 @@ public class RutaServiceImpl implements RutaService {
 		logger.info("actualizarRuta paso5");
 		// ruta.setContenedores(form.getContenedores());
 		logger.info("actualizarRuta paso6");
-		List<RutaTipoDeBasura> lTp = new ArrayList<RutaTipoDeBasura>();
+		// List<TipoDeBasura> lTp = new ArrayList<TipoDeBasura>();
 		logger.info("actualizarRuta paso7");
-		for (RutaTipoBasuraDto rt : form.getTiposDeBasura()) {
-			if (tipoDao.existe(rt.getId())) {
-				TipoDeBasura t = tipoDao.buscarById(rt.getId());
-				RutaTipoDeBasura tp = new RutaTipoDeBasura(ruta, t);
-				logger.info("iterador contenedores =>" + tp.toString());				
-				lTp.add(tp);
-			}
+
+		for (Integer tipoDeBasuraId : form.getTiposDeBasura()) {
+			if (tipoDeBasuraId != null)
+				if (tipoDao.existe(tipoDeBasuraId)) {
+					TipoDeBasura t = tipoDao.buscarById(tipoDeBasuraId);
+					// logger.info("iterador contenedores =>" + t.toString());
+					ruta.addTipoDeBasura(t);
+				}
 		}
-		logger.info("actualizarRuta paso8");
-		ruta.setTiposDeBasura(lTp);
-		
 		logger.info("actualizarRuta paso9");
 		List<Contenedor> contenedores = new ArrayList<Contenedor>();
-		for (RutaContenedorDto c : form.getContenedores()) {
-			if (contenedorDao.existe(c.getId())) {
-				Contenedor contenedor = contenedorDao.buscarById(c.getId());
-				logger.info("iterador contenedores =>" + contenedor.toString());
-				contenedores.add(contenedor);
-				//RutaDiariaContenedores
-				//rutaDiariaContenedoresDao.guardar(tp);
+		for (Long contenedorId : form.getContenedores()) {
+			if (contenedorId != null) {
+				if (contenedorDao.existe(contenedorId)) {
+					Contenedor contenedor = contenedorDao.buscarById(contenedorId);
+					// logger.info("iterador contenedores =>" +
+					// contenedor.toString());
+					contenedores.add(contenedor);
+					ruta.addContenedor(contenedor);
+				}
 			}
 		}
-		ruta.setContenedores(contenedores);
-		logger.info("actualizarRuta paso10");
+		// ruta.setContenedores(contenedores);
+		logger.info("actualizarRuta paso10 => " + ruta.getContenedores().toString());
 		rutaDao.guardar(ruta);
 		return ruta;
-
 	}
 
 	@Transactional(readOnly = true)
@@ -248,10 +229,39 @@ public class RutaServiceImpl implements RutaService {
 				}
 			}
 		}
+
 		logger.info("buscarContenedores paso3");
 		page = rutaDao.buscarRutas(pageable, tipos, trabajadores, contenedores, camiones,
 				form.isMostrarSoloRutasActivas());
 		logger.info("buscarContenedores paso4");
 		return page;
+	}
+
+	public void eliminarTipoBasuraByRuta(int rutaId, int tipoId) throws InstanceNotFoundException {
+		Ruta r = rutaDao.buscarById(rutaId);
+		TipoDeBasura t = tipoDao.buscarById(tipoId);
+		if (r.contaisTipoDeBasura(t)) {
+			r.eliminarTipoDeBasura(t);
+			rutaDao.guardar(r);
+		} else {
+			throw new InstanceNotFoundException(t, Ruta.class.getName());
+		}
+	}
+
+	public boolean existeTipoBasuraByRuta(int rutaId, int tipoId) {
+		Ruta r = null;
+		TipoDeBasura t = null;
+		try {
+			r = rutaDao.buscarById(rutaId);
+			t = tipoDao.buscarById(tipoId);
+		} catch (InstanceNotFoundException e) {
+			return false;
+		}
+
+		if (r.contaisTipoDeBasura(t)) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }

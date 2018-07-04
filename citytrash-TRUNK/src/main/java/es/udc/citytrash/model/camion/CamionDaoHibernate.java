@@ -75,6 +75,43 @@ public class CamionDaoHibernate extends GenericHibernateDAOImpl<Camion, Long> im
 	}
 
 	@Override
+	public List<Camion> buscarCamionesDisponiblesParaUnaRutaByTipo(List<TipoDeBasura> tipos) {
+		List<TipoDeBasura> tiposAux = tipos != null ? tipos : new ArrayList<TipoDeBasura>();
+		Query<Camion> query;
+		List<Camion> camiones = new ArrayList<Camion>();
+
+		String alias = "c";
+
+		StringBuilder hql = new StringBuilder("Select " + alias + " FROM Camion " + alias + " inner join " + alias
+				+ ".modeloCamion mc " + "inner join mc.tiposDeBasura t inner join t.pk pk");
+
+		hql.append(" WHERE (" + alias + ".activo = :activo) ");
+
+		hql.append(" AND ((DATE(" + alias + ".fechaAlta)  <= DATE(:fecha) and DATE(" + alias
+				+ ".fechaBaja)  > DATE(:fecha)) OR  ( DATE(" + alias + ".fechaAlta)  <= DATE(:fecha) and " + alias
+				+ ".fechaBaja  is null))");
+
+		if (tiposAux.size() > 0) {
+			hql.append(" AND pk.tipo in (:tipos) ");
+		}
+
+		hql.append(" ORDER BY " + alias + ".nombre");
+
+		query = getSession().createQuery(hql.toString(), Camion.class);
+
+		query.setParameter("activo", true);
+
+		query.setParameter("fecha", Calendar.getInstance().getTime());
+
+		if (tiposAux.size() > 0) {
+			query.setParameter("tipos", tiposAux);
+		}
+
+		camiones = query.list();
+		return camiones;
+	}
+
+	@Override
 	public List<Camion> buscarCamiones(boolean mostrarSoloActivos, boolean mostrarSoloCamionesDeAlta) {
 		Query<Camion> query;
 		List<Camion> camiones = new ArrayList<Camion>();

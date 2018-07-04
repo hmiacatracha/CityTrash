@@ -246,4 +246,11 @@ public interface CamionService {
 	 * @return
 	 */
 	List<Camion> buscarCamiones(boolean mostrarSoloActivos, boolean mostrarSoloCamionesDeAlta);
+
+	/**
+	 * 
+	 * @param tiposDeBasura
+	 * @return
+	 */
+	List<Camion> buscarCamionesDisponiblesParaUnaRutaByTipos(List<Integer> tiposDeBasura);
 }

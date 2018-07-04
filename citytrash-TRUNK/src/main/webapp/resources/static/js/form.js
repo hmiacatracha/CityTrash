@@ -57,6 +57,9 @@ jQuery(function($) {
 	});
 	*/
 	/*Si perteneces a la clase registroDialog y se hace un submit => se realiza el registro vía ajax*/
+
+
+
 	$(document).on("submit", "#registroDialog", function(e) {
 		event.preventDefault();
 		//console.log("EVENT => submit #registroDialog");
@@ -65,6 +68,8 @@ jQuery(function($) {
 		var $form = $('#registroForm');
 		var $target = $($form.attr('data-target'));
 		var formData = $form.serializeArray();
+
+
 
 		$.ajax({
 			type : $form.attr('method'),
@@ -183,12 +188,36 @@ jQuery(function($) {
 
 
 	$(document).ready(function() {
+		$(function() {
+			$('#tiposDeBasura').on('change', function() {
+				var rutaForm = $('form').serializeArray();
+				var camion = $("#camion");
+				var contenedores = $("#contenedores");
+				console.log("#tiposDeBasura change 1");
+				
+				/*Load contenedores */
+				$.ajax({
+					type : "GET",
+					url : '/citytrash/ajax/listaContenedoresDisponibles',
+					data : rutaForm,
+					success : function(data, status) {
+						//console.log("#tiposDeBasura frag 2 antes=>" + contenedores.html());
+						contenedores.html(data).selectpicker("refresh");
+					}
+				});
 
-		/* searchForm change*/
-		/*$("#searchForm").change(function() {
-			console.log("searchForm change");
-			$("form").submit();
-		});*/
+				/*Load camiones */
+				$.ajax({
+					type : "GET",
+					url : '/citytrash/ajax/listaCamionesDisponibles',
+					data : rutaForm,
+					success : function(data, status) {
+						//console.log("#tiposDeBasura frag 1 antes =>" + camion.html());
+						camion.html(data).selectpicker("refresh");
+					}
+				});
+			});
+		});
 
 		$('#confirmDelete').on('show.bs.modal', function(e) {
 			console.log("confirmDelete1");

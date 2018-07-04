@@ -67,6 +67,7 @@ public interface ContenedorDao extends GenericDAO<Contenedor, Long> {
 
 	/**
 	 * Buscar by modelo y/0 nombre y/o tipo
+	 * 
 	 * @param palabrasClaves
 	 * @param modelo
 	 * @param tiposDeBasura
@@ -76,5 +77,12 @@ public interface ContenedorDao extends GenericDAO<Contenedor, Long> {
 	 */
 	List<Contenedor> buscarContenedores(String palabrasClaves, ContenedorModelo modelo,
 			List<TipoDeBasura> tiposDeBasura, boolean mostrarSoloActivos, boolean mostrarSoloContenedoresDeAlta);
+
+	/**
+	 * Lista de contenedores disponibles en una ruta by id
+	 * @param tiposDeBasura
+	 * @return
+	 */
+	List<Contenedor> buscarContenedoresDisponilesParaUnaRutaByTipoDeBasura(List<TipoDeBasura> tiposDeBasura);
 
 }

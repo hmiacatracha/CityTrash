@@ -221,10 +221,20 @@ public interface ContenedorService {
 
 	/**
 	 * Buscar valores by sensor
+	 * 
 	 * @param sensorId
 	 * @param fechaInicio
 	 * @param fechaFin
 	 * @return
 	 */
 	List<Valor> buscarValoresBySensor(Long sensorId, Date fechaInicio, Date fechaFin);
+
+	/**
+	 * Buscar contenedores disponibles para una ruta by tipo de basura
+	 * 
+	 * @param tiposDeBasura
+	 *            List de ids de tipos
+	 * @return
+	 */
+	List<Contenedor> buscarContenedoresDiponiblesParaUnaRuta(List<Integer> tiposDeBasura);
 }

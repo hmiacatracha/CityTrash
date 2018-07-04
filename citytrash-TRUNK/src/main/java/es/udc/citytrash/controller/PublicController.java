@@ -1,9 +1,11 @@
 package es.udc.citytrash.controller;
 
+import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +18,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,8 +30,14 @@ import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 import es.udc.citytrash.controller.cuenta.CustomUserDetails;
+import es.udc.citytrash.controller.util.AjaxUtils;
 import es.udc.citytrash.controller.util.WebUtils;
 import es.udc.citytrash.controller.util.anotaciones.UsuarioActual;
+import es.udc.citytrash.controller.util.dtos.ruta.RutaDto;
+import es.udc.citytrash.model.camion.Camion;
+import es.udc.citytrash.model.camionService.CamionService;
+import es.udc.citytrash.model.contenedor.Contenedor;
+import es.udc.citytrash.model.contenedorService.ContenedorService;
 import es.udc.citytrash.model.trabajadorService.TrabajadorService;
 import es.udc.citytrash.model.usuarioService.UsuarioService;
 import es.udc.citytrash.model.util.excepciones.InstanceNotFoundException;
@@ -42,6 +52,12 @@ public class PublicController {
 
 	@Autowired
 	UsuarioService usuarioService;
+
+	@Autowired
+	ContenedorService contServicio;
+
+	@Autowired
+	CamionService camServicio;
 
 	final Logger logger = LoggerFactory.getLogger(PublicController.class);
 
@@ -104,6 +120,80 @@ public class PublicController {
 			return false;
 		}
 	}
+	//
+	// @RequestMapping(value = "/ajax/listaCamionesDisponibles", method =
+	// RequestMethod.POST)
+	// public String ajaxCamionesDisponibles(Model model,
+	// @ModelAttribute("rutaForm") RutaDto form) {
+	// logger.info("POST /ajax/listaCamionesDisponibles");
+	// RutaDto rutaForm = form;
+	// rutaForm.setTiposDeBasura(rutaForm.getTiposDeBasura());
+	// List<Contenedor> contenedores = contServicio
+	// .buscarContenedoresDiponiblesParaUnaRuta(rutaForm.getTiposDeBasura());
+	// List<Camion> camiones =
+	// camServicio.buscarCamionesDisponiblesParaUnaRutaByTipos(rutaForm.getTiposDeBasura());
+	//
+	// model.addAttribute("listaCamionesDisponibles", camiones);
+	// model.addAttribute("listaContenedoresDisponibles", contenedores);
+	// model.addAttribute("rutaForm", rutaForm);
+	// // logger.info("html =>" +
+	// // WebUtils.VISTA_RUTA_EDITAR.concat("::fragmentoCamiones"));
+	// return WebUtils.VISTA_RUTA_EDITAR.concat("::fragmentoCamiones");
+	// }
+	//
+	// @RequestMapping(value = "/ajax/listaContenedoresDisponibles", method =
+	// RequestMethod.POST)
+	// public String ajaxContenedoresDisponibles(Model model,
+	// @ModelAttribute("rutaForm") RutaDto form) {
+	// logger.info("POST /ajax/listaContenedoresDisponibles");
+	// RutaDto rutaForm = form;
+	// rutaForm.setTiposDeBasura(rutaForm.getTiposDeBasura());
+	// List<Camion> camiones =
+	// camServicio.buscarCamionesDisponiblesParaUnaRutaByTipos(rutaForm.getTiposDeBasura());
+	// List<Contenedor> contenedores = contServicio
+	// .buscarContenedoresDiponiblesParaUnaRuta(rutaForm.getTiposDeBasura());
+	//
+	// model.addAttribute("listaCamionesDisponibles", camiones);
+	// model.addAttribute("listaContenedoresDisponibles", contenedores);
+	// model.addAttribute("rutaForm", rutaForm);
+	// // logger.info("html =>" +
+	// // WebUtils.VISTA_RUTA_EDITAR.concat("::fragmentoContenedores"));
+	// return WebUtils.VISTA_RUTA_EDITAR.concat(" ::fragmentoContenedores");
+	// }
+
+	@RequestMapping(value = "/ajax/listaCamionesDisponibles", method = RequestMethod.GET)
+	public String ajaxCamionesDisponibles(Model model, @ModelAttribute("rutaForm") RutaDto form) {
+		logger.info("POST /ajax/listaCamionesDisponibles");
+		RutaDto rutaForm = form;
+		rutaForm.setTiposDeBasura(rutaForm.getTiposDeBasura());
+		List<Contenedor> contenedores = contServicio
+				.buscarContenedoresDiponiblesParaUnaRuta(rutaForm.getTiposDeBasura());
+		List<Camion> camiones = camServicio.buscarCamionesDisponiblesParaUnaRutaByTipos(rutaForm.getTiposDeBasura());
+
+		model.addAttribute("listaCamionesDisponibles", camiones);
+		model.addAttribute("listaContenedoresDisponibles", contenedores);
+		model.addAttribute("rutaForm", rutaForm);
+		// logger.info("html =>" +
+		// WebUtils.VISTA_RUTA_EDITAR.concat("::fragmentoCamiones"));
+		return WebUtils.VISTA_RUTA_EDITAR.concat("::fragmentoCamiones");
+	}
+
+	@RequestMapping(value = "/ajax/listaContenedoresDisponibles", method = RequestMethod.GET)
+	public String ajaxContenedoresDisponibles(Model model, @ModelAttribute("rutaForm") RutaDto form) {
+		logger.info("POST /ajax/listaContenedoresDisponibles");
+		RutaDto rutaForm = form;
+		rutaForm.setTiposDeBasura(rutaForm.getTiposDeBasura());
+		List<Camion> camiones = camServicio.buscarCamionesDisponiblesParaUnaRutaByTipos(rutaForm.getTiposDeBasura());
+		List<Contenedor> contenedores = contServicio
+				.buscarContenedoresDiponiblesParaUnaRuta(rutaForm.getTiposDeBasura());
+
+		model.addAttribute("listaCamionesDisponibles", camiones);
+		model.addAttribute("listaContenedoresDisponibles", contenedores);
+		model.addAttribute("rutaForm", rutaForm);
+		// logger.info("html =>" +
+		// WebUtils.VISTA_RUTA_EDITAR.concat("::fragmentoContenedores"));
+		return WebUtils.VISTA_RUTA_EDITAR.concat(" ::fragmentoContenedores");
+	}
 
 	@ResponseStatus(HttpStatus.FORBIDDEN)
 	@ExceptionHandler(InstanceNotFoundException.class)
@@ -134,4 +224,5 @@ public class PublicController {
 		model.addAttribute("key", ex.getMessage());
 		return model;
 	}
+
 }

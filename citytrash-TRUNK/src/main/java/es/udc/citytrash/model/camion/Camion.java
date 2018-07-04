@@ -195,4 +195,10 @@ public class Camion implements Serializable {
 	private Trabajador conductor;
 	private Trabajador conductorSuplente;
 	private Boolean activo;
+
+	@Override
+	public String toString() {
+		return "Camion [id=" + id + ", vin=" + vin + ", nombre=" + nombre + ", matricula=" + matricula + ", fechaAlta="
+				+ fechaAlta + " activo=" + activo + "]";
+	}
 }
