@@ -37,20 +37,13 @@ public class ContenedorDaoHibernate extends GenericHibernateDAOImpl<Contenedor, 
 		Query<Contenedor> query;
 		String hql = String.format("Select " + alias + " FROM Contenedor " + alias + " WHERE UPPER(TRIM(" + alias
 				+ ".nombre)) LIKE UPPER(TRIM(:nombre))");
-		logger.info("paso1 buscarByNombre");
-		logger.info("paso2 buscarByNombre");
 		query = getSession().createQuery(hql.toString(), Contenedor.class);
-		logger.info("paso3 buscarByNombre");
 		query.setParameter("nombre", nombre);
-		logger.info("paso4 buscarByNombre");
 		Contenedor contenedor = query.uniqueResult();
 
-		logger.info("paso5 buscarByNombre");
 		if (contenedor == null) {
-			logger.info("paso3 buscarByNombre");
 			throw new InstanceNotFoundException(nombre, Contenedor.class.getName());
 		}
-		logger.info("paso4 buscarByNombre");
 		return contenedor;
 	}
 
@@ -108,7 +101,6 @@ public class ContenedorDaoHibernate extends GenericHibernateDAOImpl<Contenedor, 
 					+ ".fechaBaja)  > DATE(:fecha)) OR  ( DATE(" + alias + ".fechaAlta)  <= DATE(:fecha) and " + alias
 					+ ".fechaBaja is null))");
 
-		logger.info("IMPRIMIENDO 1 => " + hql.toString());
 		/* Sorted */
 		String order = StringUtils
 				.collectionToCommaDelimitedString(StreamSupport.stream(pageable.getSort().spliterator(), false)
@@ -122,9 +114,6 @@ public class ContenedorDaoHibernate extends GenericHibernateDAOImpl<Contenedor, 
 
 		if (mostrarSoloContenedoresDeAlta)
 			query.setParameter("fecha", Calendar.getInstance().getTime());
-
-		logger.info("IMPRIMIENDO 2 => " + query.getQueryString());
-		logger.info("IMPRIMIENDO 3 => " + query.getParameters().toString());
 
 		contenedores = query.list();
 		int start = pageable.getOffset();
@@ -197,7 +186,6 @@ public class ContenedorDaoHibernate extends GenericHibernateDAOImpl<Contenedor, 
 						.map(o -> alias + "." + o.getProperty() + " " + o.getDirection()).collect(Collectors.toList()));
 		hql.append(" ORDER BY " + order);
 
-		logger.info("HQL=>" + hql.toString());
 		query = getSession().createQuery(hql.toString(), Contenedor.class);
 
 		/* set parameters */
@@ -219,7 +207,6 @@ public class ContenedorDaoHibernate extends GenericHibernateDAOImpl<Contenedor, 
 			query.setParameter("fecha", Calendar.getInstance().getTime());
 
 		contenedores = query.list();
-		logger.info("Econtrados =>" + contenedores.toString());
 		int start = pageable.getOffset();
 		int end = (start + pageable.getPageSize()) > contenedores.size() ? contenedores.size()
 				: (start + pageable.getPageSize());
@@ -302,12 +289,33 @@ public class ContenedorDaoHibernate extends GenericHibernateDAOImpl<Contenedor, 
 	}
 
 	@Override
+	public List<Contenedor> buscarContenedores(List<Long> ids) {
+		Query<Contenedor> query;
+		List<Long> listaIds = ids != null ? ids : new ArrayList<Long>();
+
+		if (listaIds.size() > 0) {
+			String alias = "c";
+
+			StringBuilder hql = new StringBuilder("Select " + alias + " FROM Contenedor " + alias);
+
+			hql.append(" WHERE " + alias + ".id in (:lista)");
+			hql.append(" ORDER BY " + alias + ".id");
+			query = getSession().createQuery(hql.toString(), Contenedor.class);
+
+			query.setParameter("lista", listaIds);
+			return query.list();
+		} else {
+			return new ArrayList<Contenedor>();
+		}
+	}
+
+	@Override
 	public List<Contenedor> buscarContenedoresDisponilesParaUnaRutaByTipoDeBasura(List<TipoDeBasura> tiposDeBasura) {
 		Query<Contenedor> query;
 		String alias = "c";
 		List<TipoDeBasura> tipos = tiposDeBasura != null ? tiposDeBasura : new ArrayList<TipoDeBasura>();
 		StringBuilder hql = new StringBuilder("Select " + alias + " FROM Contenedor " + alias);
-
+		List<Contenedor> contenedores = new ArrayList<Contenedor>();
 		// muestra solo los contenedores de alta, los de baja no
 		hql.append(" WHERE " + alias + ".ruta is null and " + alias + ".activo = :activo ");
 
@@ -321,13 +329,17 @@ public class ContenedorDaoHibernate extends GenericHibernateDAOImpl<Contenedor, 
 				+ ".fechaBaja  is null))");
 
 		hql.append(" ORDER BY " + alias + ".nombre");
-		query = getSession().createQuery(hql.toString(), Contenedor.class);
 
+		query = getSession().createQuery(hql.toString(), Contenedor.class);
 		if (tipos.size() > 0)
 			query.setParameter("tipos", tipos);
 		query.setParameter("activo", true);
 		query.setParameter("fecha", Calendar.getInstance().getTime());
-		return query.list();
+
+		if (tipos.size() > 0) {
+			contenedores = query.list();
+		}
+		return contenedores;
 	}
 
 }

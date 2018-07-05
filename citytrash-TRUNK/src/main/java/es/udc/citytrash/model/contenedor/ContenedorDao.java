@@ -85,4 +85,11 @@ public interface ContenedorDao extends GenericDAO<Contenedor, Long> {
 	 */
 	List<Contenedor> buscarContenedoresDisponilesParaUnaRutaByTipoDeBasura(List<TipoDeBasura> tiposDeBasura);
 
+	/**
+	 * Buscar contenedores by list ids
+	 * @param ids
+	 * @return
+	 */
+	List<Contenedor> buscarContenedores(List<Long> ids);
+
 }

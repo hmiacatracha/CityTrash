@@ -2,6 +2,7 @@ package es.udc.citytrash.model.camion;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -76,14 +77,14 @@ public class CamionDaoHibernate extends GenericHibernateDAOImpl<Camion, Long> im
 
 	@Override
 	public List<Camion> buscarCamionesDisponiblesParaUnaRutaByTipo(List<TipoDeBasura> tipos) {
-		List<TipoDeBasura> tiposAux = tipos != null ? tipos : new ArrayList<TipoDeBasura>();
+		HashSet<TipoDeBasura> tiposAux = tipos != null ? new HashSet<TipoDeBasura>(tipos) : new HashSet<TipoDeBasura>();
 		Query<Camion> query;
 		List<Camion> camiones = new ArrayList<Camion>();
 
 		String alias = "c";
 
-		StringBuilder hql = new StringBuilder("Select " + alias + " FROM Camion " + alias + " inner join " + alias
-				+ ".modeloCamion mc " + "inner join mc.tiposDeBasura t inner join t.pk pk");
+		StringBuilder hql = new StringBuilder(
+				"Select " + alias + " FROM Camion " + alias + " inner join " + alias + ".modeloCamion mc ");
 
 		hql.append(" WHERE (" + alias + ".activo = :activo) ");
 
@@ -91,23 +92,29 @@ public class CamionDaoHibernate extends GenericHibernateDAOImpl<Camion, Long> im
 				+ ".fechaBaja)  > DATE(:fecha)) OR  ( DATE(" + alias + ".fechaAlta)  <= DATE(:fecha) and " + alias
 				+ ".fechaBaja  is null))");
 
+		/*
+		 * if (tiposAux.size() > 0) { hql.append(" AND pk.tipo in (:tipos) "); }
+		 */
+
 		if (tiposAux.size() > 0) {
-			hql.append(" AND pk.tipo in (:tipos) ");
+			hql.append(" AND :items = (select count(distinct pk.tipo) "
+					+ "			from CamionModelo mc2 inner join mc2.tiposDeBasura t inner join t.pk pk"
+					+ "  		where mc2.id = mc.id and pk.tipo in (:tipos)" + ")");
 		}
 
 		hql.append(" ORDER BY " + alias + ".nombre");
-
 		query = getSession().createQuery(hql.toString(), Camion.class);
-
 		query.setParameter("activo", true);
-
 		query.setParameter("fecha", Calendar.getInstance().getTime());
 
 		if (tiposAux.size() > 0) {
+			long items = tiposAux.size();
+			query.setParameter("items", items);
 			query.setParameter("tipos", tiposAux);
 		}
-
-		camiones = query.list();
+		// logger.info("fin camionDaoHibernate camiones 1");
+		if (tiposAux.size() > 0)
+			camiones = query.list();
 		return camiones;
 	}
 

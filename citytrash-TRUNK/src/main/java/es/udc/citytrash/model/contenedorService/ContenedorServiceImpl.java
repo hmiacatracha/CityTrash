@@ -62,7 +62,6 @@ public class ContenedorServiceImpl implements ContenedorService {
 
 	@Override
 	public boolean esModeloExistenteById(int modelo) {
-		logger.info("esModeloExistenteById");
 		boolean existe = false;
 		try {
 			modeloDao.buscarById(modelo);
@@ -76,7 +75,6 @@ public class ContenedorServiceImpl implements ContenedorService {
 	@Transactional(readOnly = true)
 	@Override
 	public boolean esContenedorByNombreExistente(String nombre) {
-		logger.info("esContenedorByNombreExistente");
 		try {
 			contenedorDao.buscarByNombre(nombre);
 			return true;
@@ -88,7 +86,6 @@ public class ContenedorServiceImpl implements ContenedorService {
 	@Transactional(readOnly = true)
 	@Override
 	public boolean esModeloContenedorByNombreExistente(String nombre) {
-		logger.info("esModeloContenedorByNombreExistente");
 		try {
 			modeloDao.buscarModeloPorNombre(nombre);
 			return true;
@@ -99,7 +96,6 @@ public class ContenedorServiceImpl implements ContenedorService {
 
 	@Override
 	public boolean cambiarEstadoContenedor(long id) throws InstanceNotFoundException {
-		logger.info("cambiarEstadoContenedor");
 		Contenedor contenedor = contenedorDao.buscarById(id);
 		contenedor.setActivo(!contenedor.getActivo());
 		contenedorDao.guardar(contenedor);
@@ -109,7 +105,6 @@ public class ContenedorServiceImpl implements ContenedorService {
 	@Transactional(readOnly = true)
 	@Override
 	public Contenedor buscarContenedorById(long id) throws InstanceNotFoundException {
-		logger.info("buscarContenedorById");
 		try {
 			return contenedorDao.buscarById(id);
 		} catch (InstanceNotFoundException e) {
@@ -120,7 +115,6 @@ public class ContenedorServiceImpl implements ContenedorService {
 	@Transactional(readOnly = true)
 	@Override
 	public ContenedorModelo buscarModeloById(int id) throws InstanceNotFoundException {
-		logger.info("buscarModeloById");
 		ContenedorModelo modelo = modeloDao.buscarById(id);
 		return modelo;
 	}
@@ -128,7 +122,6 @@ public class ContenedorServiceImpl implements ContenedorService {
 	@Transactional(readOnly = true)
 	@Override
 	public List<ContenedorModelo> buscarTodosLosModelosOrderByModelo() {
-		// logger.info("buscarTodosLosModelosOrderByModelo");
 		List<ContenedorModelo> modelos = modeloDao.buscarTodosOrderByModelo();
 		return modelos;
 	}
@@ -136,28 +129,24 @@ public class ContenedorServiceImpl implements ContenedorService {
 	@Transactional(readOnly = true)
 	@Override
 	public List<TipoDeBasura> buscarTiposDeBasura() {
-		logger.info("buscarTiposDeBasura");
 		return tipoDao.buscarTodos();
 	}
 
 	@Transactional(readOnly = true)
 	@Override
 	public TipoDeBasura buscarTipoDeBasuraByModelo(int id) throws InstanceNotFoundException {
-		logger.info("buscarTiposDeBasuraByModelo");
 		return tipoDao.buscarById(modeloDao.buscarById(id).getTipo().getId());
 	}
 
 	@Transactional(readOnly = true)
 	@Override
 	public TipoDeBasura buscarTiposDeBasuraByContenedor(long id) throws InstanceNotFoundException {
-		logger.info("buscarTiposDeBasuraByContenedor");
 		return contenedorDao.buscarById(id).getModelo().getTipo();
 	}
 
 	@Override
 	public Contenedor registrarContenedor(ContenedorRegistroDto form)
 			throws InstanceNotFoundException, DuplicateInstanceException {
-		logger.info("registrarContenedor");
 		Contenedor contenedor = null;
 		ContenedorModelo modelo;
 		/* Verificamos que el modelo exista */
@@ -185,7 +174,6 @@ public class ContenedorServiceImpl implements ContenedorService {
 	@Override
 	public Contenedor modificarContenedor(ContenedorEditarDto form)
 			throws InstanceNotFoundException, DuplicateInstanceException {
-		logger.info("modificarContenedor");
 		Contenedor contenedor = null;
 		ContenedorModelo modelo;
 		/* Verificamos que exista el contenedor */
@@ -215,7 +203,6 @@ public class ContenedorServiceImpl implements ContenedorService {
 		contenedor.setLatitud(form.getLatitud() != null ? form.getLatitud() : null);
 		contenedor.setLongitud(form.getLongitud() != null ? form.getLongitud() : null);
 		contenedorDao.guardar(contenedor);
-		logger.info("modificarContenedor sensores");
 		if (form.isUpdateChildren()) {
 			if (form.getSensores() != null) {
 				for (SensorDto sensor : form.getSensores()) {
@@ -252,40 +239,29 @@ public class ContenedorServiceImpl implements ContenedorService {
 	@Override
 	public ContenedorModelo registrarModelo(ContenedorModeloRegistroDto form)
 			throws DuplicateInstanceException, InvalidFieldException {
-		logger.info("registrarModelo => " + form.getNombre());
 		ContenedorModelo modelo;
 		TipoDeBasura tipo;
 		try {
-			logger.info("paso0");
 			modeloDao.buscarModeloPorNombre(form.getNombre());
-			logger.info("paso1");
 			throw new DuplicateInstanceException(form.getNombre(), ContenedorModelo.class.getName());
 		} catch (InstanceNotFoundException e) {
-			logger.info("paso2");
 		}
 		/* Verificamos el tipo de basura */
 		try {
 			if (form.getTipo() != null) {
-				logger.info("paso2.1");
 				tipo = tipoDao.buscarById(form.getTipo());
-				logger.info("paso3");
 			} else {
-				logger.info("paso4");
 				throw new InvalidFieldException("TipoDeBasuraException", "tipo", Contenedor.class.getName());
 			}
 		} catch (InstanceNotFoundException e) {
-			logger.info("paso5");
 			throw new InvalidFieldException("TipoDeBasuraException", "tipo", Contenedor.class.getName());
 		}
 
 		if (form.getCapacidadNominal().compareTo(new BigDecimal(0)) != 1) {
-			logger.info("paso6");
 			throw new InvalidFieldException("capacidadNominalException", "", Contenedor.class.getName());
 		}
 
-		logger.info("registrarModelo paso4");
 		if (form.getCargaNominal().compareTo(new BigDecimal(0)) != 1) {
-			logger.info("paso7");
 			throw new InvalidFieldException("cargaNominalException", "", Contenedor.class.getName());
 		}
 
@@ -295,16 +271,13 @@ public class ContenedorServiceImpl implements ContenedorService {
 		modelo.setPesoVacio(form.getPesoVacio());
 		modelo.setProfundidad(form.getProfundidad());
 		modelo.setTipo(tipo);
-		logger.info("paso8");
 		modeloDao.guardar(modelo);
-		logger.info("paso9");
 		return modelo;
 	}
 
 	@Override
 	public ContenedorModelo modificarModelo(ContenedorModeloEditarDto form)
 			throws InstanceNotFoundException, DuplicateInstanceException, InvalidFieldException {
-		logger.info("modificarModelo");
 		ContenedorModelo modelo = modeloDao.buscarById(form.getId());
 		TipoDeBasura tipo;
 		ContenedorModelo contenedorModeloEncontrado;
@@ -348,16 +321,10 @@ public class ContenedorServiceImpl implements ContenedorService {
 	@Transactional(readOnly = true)
 	@Override
 	public Page<ContenedorModelo> buscarModelos(Pageable pageable, ContenedorModeloFormBusq formBusqueda) {
-		logger.info("IMPRIMIENDO formbusqueda buscar modelos de contenedores => " + formBusqueda.toString());
-		logger.info("buscarModelos1");
-
 		List<ContenedorModelo> contenedoresList = new ArrayList<ContenedorModelo>();
-		logger.info("buscarModelos2");
 		Page<ContenedorModelo> page = new PageImpl<ContenedorModelo>(contenedoresList, pageable,
 				contenedoresList.size());
-		logger.info("buscarModelos3");
 		String search = formBusqueda.getPalabrasClaveModelo() == null ? "" : formBusqueda.getPalabrasClaveModelo();
-		logger.info("buscarModelos4");
 		List<TipoDeBasura> tipos = new ArrayList<TipoDeBasura>();
 
 		/* Agregamos los tipos de basura */
@@ -365,7 +332,6 @@ public class ContenedorServiceImpl implements ContenedorService {
 			for (Integer t : formBusqueda.getTipos()) {
 				try {
 					TipoDeBasura tb = tipoDao.buscarById(Integer.valueOf(t.toString()));
-					logger.info("tipo encontrado =>" + tb.toString());
 					tipos.add(tb);
 				} catch (NumberFormatException | InstanceNotFoundException e) {
 
@@ -373,15 +339,10 @@ public class ContenedorServiceImpl implements ContenedorService {
 			}
 		}
 
-		logger.info("buscarModelos5");
 		if (tipos.size() > 0 || search.length() > 0) {
-			logger.info("buscarModelos antes de buscar1");
 			page = modeloDao.buscarContenedorModelo(pageable, search, tipos);
-			logger.info("buscarModelos despues de buscar1");
 		} else {
-			logger.info("buscarModelos antes de buscar2");
 			page = modeloDao.buscarContenedorModelo(pageable);
-			logger.info("buscarModelos despues de buscar2");
 		}
 
 		return page;
@@ -420,10 +381,15 @@ public class ContenedorServiceImpl implements ContenedorService {
 
 	@Transactional(readOnly = true)
 	@Override
+	public List<Contenedor> buscarContenedores(List<Long> idsContenedores) {
+		return contenedorDao.buscarContenedores(idsContenedores);
+	}
+
+	@Transactional(readOnly = true)
+	@Override
 	public List<Contenedor> buscarContenedoresDiponiblesParaUnaRuta(List<Integer> tiposDeBasura) {
 		List<TipoDeBasura> tipos = new ArrayList<TipoDeBasura>();
 
-		logger.info("buscarContenedores paso2");
 		/* Agregamos los tipos de basura */
 		if (tiposDeBasura != null) {
 			for (Integer t : tiposDeBasura) {
@@ -441,13 +407,11 @@ public class ContenedorServiceImpl implements ContenedorService {
 	@Transactional(readOnly = true)
 	@Override
 	public Page<Contenedor> buscarContenedores(Pageable pageable, ContenedorFormBusq form) {
-		logger.info("buscarContenedores");
 		ContenedorModelo modelo = null;
 		List<Contenedor> contenedoresList = new ArrayList<Contenedor>();
 		Page<Contenedor> page = new PageImpl<Contenedor>(contenedoresList, pageable, contenedoresList.size());
 		List<TipoDeBasura> tipos = new ArrayList<TipoDeBasura>();
 
-		logger.info("buscarContenedores paso2");
 		/* Agregamos los tipos de basura */
 		if (form.getTiposDeBasura() != null) {
 			for (Integer t : form.getTiposDeBasura()) {
@@ -459,7 +423,6 @@ public class ContenedorServiceImpl implements ContenedorService {
 				}
 			}
 		}
-		logger.info("buscarContenedores paso3");
 		/* Bucamos el modelo */
 		try {
 			if (form.getModelo() != null) {
@@ -471,20 +434,14 @@ public class ContenedorServiceImpl implements ContenedorService {
 			modelo = null;
 		}
 
-		logger.info("buscarContenedores paso4");
 		/* Realiamos la búsqueda */
 		if (tipos.isEmpty() && modelo == null && form.getBuscar() == null) {
-			logger.info("buscarContenedores paso5");
 			page = contenedorDao.buscarContenedores(pageable, form.getMostrarSoloContenedoresActivos(),
 					form.getMostrarSoloContenedoresDeAlta());
-			logger.info("buscarContenedores paso5.1");
 		} else {
-			logger.info("buscarContenedores paso6");
 			page = contenedorDao.buscarContenedores(pageable, form.getBuscar(), modelo, tipos,
 					form.getMostrarSoloContenedoresActivos(), form.getMostrarSoloContenedoresDeAlta());
-			logger.info("buscarContenedores paso6.1");
 		}
-		logger.info("buscarContenedores paso6");
 		return page;
 	}
 
@@ -503,7 +460,6 @@ public class ContenedorServiceImpl implements ContenedorService {
 	@Transactional(readOnly = true)
 	@Override
 	public List<Sensor> buscarSensorsByContenedor(Long contenedorId) throws InstanceNotFoundException {
-		logger.info("buscar sensores by contenedor servicio");
 		return sensorDao.buscarSensoresByContenedor(contenedorId);
 	}
 

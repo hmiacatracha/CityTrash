@@ -237,4 +237,11 @@ public interface ContenedorService {
 	 * @return
 	 */
 	List<Contenedor> buscarContenedoresDiponiblesParaUnaRuta(List<Integer> tiposDeBasura);
+
+	/**
+	 * Buscar contenedores por lista de ids
+	 * @param idsContenedores
+	 * @return
+	 */
+	List<Contenedor> buscarContenedores(List<Long> idsContenedores);
 }

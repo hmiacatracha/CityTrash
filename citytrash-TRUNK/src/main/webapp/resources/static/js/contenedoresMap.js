@@ -3,6 +3,9 @@
 //https://savaslabs.com/2015/05/18/mapping-geojson.html
 //https://www.atomicsmash.co.uk/blog/build-interactive-map-leaflet-js/
 
+var shownLayer,
+	polygon;
+
 var map = L.map('mapa', {
 	center : [ 41.3818, 2.1685 ],
 	minZoom : 0,
@@ -16,6 +19,12 @@ L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 	minZoom : 5
 }).addTo(map)
 
+var markerClusters = L.markerClusterGroup({
+	maxClusterRadius : 120,
+	spiderfyOnMaxZoom : false,
+	showCoverageOnHover : false,
+	zoomToBoundsOnClick : false
+});
 
 
 //Load the GeoJSON
@@ -24,6 +33,7 @@ $.ajax({
 	dataType : "json",
 	success : function(data) {
 
+		markerClusters.clearLayers();
 		$.each(data.features, function(i, feature) {
 			console.log("PASO tipo =>" + feature.properties.tipo);
 			var latlng = feature.geometry.coordinates;
@@ -60,12 +70,57 @@ $.ajax({
 				popupAnchor : [ -3, -76 ] // point from which the popup should open relative to the iconAnchor
 			});
 
-			L.marker(latlng, {
+			var marker = L.marker(latlng, {
+				icon : ICONO
+			});
+
+			marker.bindPopup(popupHtml(feature));
+			markerClusters.addLayer(marker);
+
+			/*L.marker(latlng, {
 				icon : ICONO
 			}).bindPopup(popupHtml(feature))
-				.addTo(map);
+				.addTo(map);*/
+
+
 		});
 
+
+		function removePolygon() {
+			if (shownLayer) {
+				shownLayer.setOpacity(1);
+				shownLayer = null;
+			}
+			if (polygon) {
+				map.removeLayer(polygon);
+				polygon = null;
+			}
+		}
+
+
+		markerClusters.on('clustermouseover', function(a) {
+			removePolygon();
+			a.layer.setOpacity(0.2);
+			shownLayer = a.layer;
+			polygon = L.polygon(a.layer.getConvexHull());
+			map.addLayer(polygon);
+		});
+
+		markerClusters.on('clustermouseout', removePolygon);
+		map.on('zoomend', removePolygon);
+
+		markerClusters.on('clusterclick', function(a) {
+			var group = a.layer.getAllChildMarkers();
+			group.forEach(function(m) {
+				markerClusters.zoomToShowLayer(m, function() {
+					m.openPopup();
+				});
+			});
+		});
+
+		map.addLayer(markerClusters);
+
+		map.addLayer(markerClusters);
 
 	/*L.geoJson(data, {
 		onEachFeature : onEachFeature,

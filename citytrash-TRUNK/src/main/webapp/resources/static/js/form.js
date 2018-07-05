@@ -188,36 +188,6 @@ jQuery(function($) {
 
 
 	$(document).ready(function() {
-		$(function() {
-			$('#tiposDeBasura').on('change', function() {
-				var rutaForm = $('form').serializeArray();
-				var camion = $("#camion");
-				var contenedores = $("#contenedores");
-				console.log("#tiposDeBasura change 1");
-				
-				/*Load contenedores */
-				$.ajax({
-					type : "GET",
-					url : '/citytrash/ajax/listaContenedoresDisponibles',
-					data : rutaForm,
-					success : function(data, status) {
-						//console.log("#tiposDeBasura frag 2 antes=>" + contenedores.html());
-						contenedores.html(data).selectpicker("refresh");
-					}
-				});
-
-				/*Load camiones */
-				$.ajax({
-					type : "GET",
-					url : '/citytrash/ajax/listaCamionesDisponibles',
-					data : rutaForm,
-					success : function(data, status) {
-						//console.log("#tiposDeBasura frag 1 antes =>" + camion.html());
-						camion.html(data).selectpicker("refresh");
-					}
-				});
-			});
-		});
 
 		$('#confirmDelete').on('show.bs.modal', function(e) {
 			console.log("confirmDelete1");

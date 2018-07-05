@@ -130,7 +130,6 @@ public class RutasController {
 			throws ResourceNotFoundException {
 		List<Ruta> RutasList = new ArrayList<Ruta>();
 		Page<Ruta> page = new PageImpl<Ruta>(RutasList, pageRequest, RutasList.size());
-		logger.info("GET REQUEST_MAPPING_RUTAS");
 		RutasFormBusq busquedaForm = new RutasFormBusq(tiposDeBasura, trabajadores, camiones, contenedores,
 				mostrarSoloRutasActivas);
 		model.addAttribute("busquedaForm", busquedaForm);
@@ -145,7 +144,6 @@ public class RutasController {
 
 		if (page.getNumberOfElements() == 0) {
 			if (!page.isFirst()) {
-				logger.info("PageNotFoundException");
 				throw new PageNotFoundException(
 						String.format("The requested page (%s) of the contenedores list was not found.",
 								pageRequest.getPageNumber()));
@@ -168,7 +166,7 @@ public class RutasController {
 		List<Ruta> rutasList = new ArrayList<Ruta>();
 		Page<Ruta> page = new PageImpl<Ruta>(rutasList, pageRequest, rutasList.size());
 		model.addAttribute("busquedaForm", form);
-
+		
 		if (result.hasErrors()) {
 			model.addAttribute("pageRutas", page);
 			if (AjaxUtils.isAjaxRequest(requestedWith)) {
@@ -289,7 +287,7 @@ public class RutasController {
 		List<Camion> camiones = camServicio.buscarCamionesDisponiblesParaUnaRutaByTipos(form.getTiposDeBasura());
 		model.addAttribute("listaCamionesDisponibles", camiones);
 		model.addAttribute("listaContenedoresDisponibles", contenedores);
-		
+
 		try {
 
 			rServicio.buscarRuta(form.getId());
@@ -318,7 +316,6 @@ public class RutasController {
 			model.addAttribute("key", e.getKey());
 
 		} catch (Exception ex) {
-			logger.info("Exception =>" + ex.toString());
 			model.addAttribute("error", ex);
 			model.addAttribute("type", "Exception");
 		}
