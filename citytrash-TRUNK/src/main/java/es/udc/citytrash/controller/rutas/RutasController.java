@@ -93,10 +93,10 @@ public class RutasController {
 
 	@ModelAttribute("listaTrabajadores")
 	public List<Trabajador> getTrabajadores() {
-		List<Trabajador> contenedores = new ArrayList<Trabajador>();
+		List<Trabajador> trabajadores = new ArrayList<Trabajador>();
 		/* Mostrar todos los trabajadores */
-		contenedores = tServicio.buscarTrabajadores(false);
-		return contenedores;
+		trabajadores = tServicio.buscarTrabajadores(false);
+		return trabajadores;
 	}
 
 	@ModelAttribute("listaContenedores")
@@ -166,7 +166,7 @@ public class RutasController {
 		List<Ruta> rutasList = new ArrayList<Ruta>();
 		Page<Ruta> page = new PageImpl<Ruta>(rutasList, pageRequest, rutasList.size());
 		model.addAttribute("busquedaForm", form);
-		
+
 		if (result.hasErrors()) {
 			model.addAttribute("pageRutas", page);
 			if (AjaxUtils.isAjaxRequest(requestedWith)) {
@@ -197,9 +197,13 @@ public class RutasController {
 
 	@RequestMapping(value = WebUtils.REQUEST_MAPPING_RUTAS_REGISTRO, method = RequestMethod.GET)
 	public String registroRuta(Model model,
-			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
-		logger.info("GET REQUEST_MAPPING_RUTAS_REGISTRO");
+			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith,
+			@RequestParam(value = "msg", required = false) String msg,
+			@RequestParam(value = "type", required = false) String type) {
 
+		logger.info("GET REQUEST_MAPPING_RUTAS_REGISTRO");
+		model.addAttribute("msg", msg);
+		model.addAttribute("type", type);
 		model.addAttribute("rutaForm", new RutaDto());
 		if (AjaxUtils.isAjaxRequest(requestedWith))
 			return WebUtils.VISTA_RUTA_REGISTRO.concat(" ::content");
@@ -208,8 +212,9 @@ public class RutasController {
 
 	@RequestMapping(value = WebUtils.REQUEST_MAPPING_RUTAS_EDITAR, method = RequestMethod.GET)
 	public String editarRuta(@PathVariable("id") int id, Model model,
-			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith)
-			throws ResourceNotFoundException {
+			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith,
+			@RequestParam(value = "msg", required = false) String msg,
+			@RequestParam(value = "type", required = false) String type) throws ResourceNotFoundException {
 		logger.info("GET REQUEST_MAPPING_RUTAS_EDITAR");
 		Ruta ruta;
 
@@ -223,6 +228,9 @@ public class RutasController {
 			model.addAttribute("rutaForm", dto);
 			model.addAttribute("listaCamionesDisponibles", camiones);
 			model.addAttribute("listaContenedoresDisponibles", contenedores);
+			model.addAttribute("msg", msg);
+			model.addAttribute("type", type);
+			model.addAttribute("key", ruta.getId());
 
 			if (AjaxUtils.isAjaxRequest(requestedWith))
 				return WebUtils.VISTA_RUTA_EDITAR.concat(" ::content");
@@ -326,8 +334,28 @@ public class RutasController {
 		return WebUtils.VISTA_RUTA_EDITAR;
 	}
 
-	@RequestMapping(value = { WebUtils.REQUEST_MAPPING_RUTAS_REGISTRO,
-			WebUtils.REQUEST_MAPPING_RUTAS_EDITAR }, params = { "addContenedor" }, method = RequestMethod.POST)
+	@RequestMapping(value = WebUtils.REQUEST_MAPPING_RUTAS_DETALLES, method = RequestMethod.GET)
+	public String detallesRuta(@PathVariable("id") int id, Model model,
+			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith)
+			throws ResourceNotFoundException {
+		logger.info("GET REQUEST_MAPPING_RUTAS_DETALLES");
+		Ruta ruta;
+		try {
+
+			ruta = rServicio.buscarRuta(id);
+			RutaDto dto = new RutaDto(ruta);
+			model.addAttribute("rutaForm", dto);
+			model.addAttribute("camionAsignado", camServicio.buscarCamionById(dto.getCamion()));
+			model.addAttribute("tiposDeBasuraAsignadas", ruta.getTiposDeBasura());
+			model.addAttribute("contenedoresAsignados", ruta.getContenedores());
+
+			if (AjaxUtils.isAjaxRequest(requestedWith))
+				return WebUtils.VISTA_RUTA_DETALLES.concat(" ::content");
+			return WebUtils.VISTA_RUTA_DETALLES;
+		} catch (InstanceNotFoundException e) {
+			throw new ResourceNotFoundException(id);
+		}
+	}
 
 	@ResponseStatus(HttpStatus.FORBIDDEN)
 	@ExceptionHandler(DuplicateInstanceException.class)

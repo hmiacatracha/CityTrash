@@ -48,8 +48,8 @@
 	integrity="sha512-v5YmWLm8KqAAmg5808pETiccEohtt8rPVMGQ1jA6jqkWVydV5Cuz3nJ9fQ7ittSxvuqsvI9RSGfVoKPaAJZ/AQ=="
 	crossorigin="">
 
-<!-- rutas -->
 
+<!-- boostrap -->
 <link rel="stylesheet" media="screen"
 	th:href="@{/webjars/bootstrap/3.3.7-1/css/bootstrap.min.css}" />
 
@@ -59,7 +59,7 @@
 <link rel="stylesheet"
 	th:href="@{/resources/static/js/leaflet/cluster/MarkerCluster.css}" />
 <link rel="stylesheet"
-	th:href="@{/resources/static/js/leaflet/cluster/MarkerCluster.Default.css}" />
+	th:href="@{/resources/static/css/leaflet/cluster/MarkerCluster.Default.css}" />
 -->
 <!-- Leaflet.markercluster assets -->
 <link rel="stylesheet"
@@ -67,6 +67,9 @@
 <link rel="stylesheet"
 	href="https://unpkg.com/leaflet.markercluster@1.3.0/dist/MarkerCluster.Default.css">
 
+<!-- routing -->
+<link rel="stylesheet"
+	th:href="@{/resources/static/css/leaflet/leaflet-routing-machine.css}" />
 
 <title th:text="#{page_mapa_contenedores}"></title>
 </head>
@@ -88,13 +91,18 @@
 		integrity="sha512-QXchymy6PyEfYFQeOUuoz5pH5q9ng0eewZN8Sv0wvxq3ZhujTGF4eS/ySpnl6YfTQRWmA2Nn3Bezi9xuF8yNiw=="
 		crossorigin=""></script>
 	<!-- <script
-		th:src="@{/resources/static/js/leaflet/cluster/leaflet.markercluster.js}"></script>
+		th:src="@{/resources/static/js/leaflet/leaflet.markercluster-src.js}"></script>
 	-->
 	<script
 		src="https://unpkg.com/leaflet.markercluster@1.3.0/dist/leaflet.markercluster-src.js"></script>
 
-	<script th:src="@{/resources/static/js/rutaFormMap.js}"></script>
-	
+	<script
+		th:src="@{/resources/static/js/leaflet/leaflet-routing-machine.js}"></script>
+
+	<script th:src="@{/resources/static/js/Control.Geocoder.js}"></script>
+	<script th:src="@{/resources/static/js/config.js}"></script>
+	<script th:src="@{/resources/static/js/mapbox.js}"></script>
+
 
 </body>
 </html>

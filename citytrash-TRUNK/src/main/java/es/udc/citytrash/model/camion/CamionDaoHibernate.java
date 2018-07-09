@@ -101,7 +101,7 @@ public class CamionDaoHibernate extends GenericHibernateDAOImpl<Camion, Long> im
 					+ "			from CamionModelo mc2 inner join mc2.tiposDeBasura t inner join t.pk pk"
 					+ "  		where mc2.id = mc.id and pk.tipo in (:tipos)" + ")");
 		}
-
+		
 		hql.append(" ORDER BY " + alias + ".nombre");
 		query = getSession().createQuery(hql.toString(), Camion.class);
 		query.setParameter("activo", true);

@@ -3,15 +3,14 @@ $(document).ready(function() {
 		var rutaForm = $('form').serializeArray();
 		var camion = $("#camion");
 		var contenedores = $("#contenedores");
-		//console.log("#tiposDeBasura change 1");
-
+		console.log("#tiposDeBasura change rutaForm=>" + JSON.stringify(rutaForm));
 		/*Load contenedores */
 		$.ajax({
 			type : "GET",
 			url : '/citytrash/ajax/listaContenedoresDisponibles',
 			data : rutaForm,
 			success : function(data, status) {
-				console.log("response =>" + JSON.stringify(data));
+				//console.log("response =>" + JSON.stringify(data));
 				//console.log("#tiposDeBasura frag 2 antes=>" + contenedores.html());
 				contenedores.html(data).selectpicker("refresh");
 			}
@@ -30,20 +29,6 @@ $(document).ready(function() {
 	});
 });
 
-/*var map = L.map('mapa', {
-	center : [ 41.3818, 2.1685 ],
-	minZoom : 0,
-	zoom : 10
-})
-
-L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-	attribution : '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-	subdomains : [ 'a', 'b', 'c' ],
-	maxZoom : 20,
-	minZoom : 5
-}).addTo(map)
-
-*/
 
 var shownLayer,
 	polygon;
@@ -61,6 +46,7 @@ var map = L.map('mapa', {
 	layers : [ tiles ]
 });
 
+
 //Custom radius and icon create function
 var markerClusters = L.markerClusterGroup({
 	maxClusterRadius : 120,
@@ -68,6 +54,43 @@ var markerClusters = L.markerClusterGroup({
 	showCoverageOnHover : false,
 	zoomToBoundsOnClick : false
 });
+
+
+var searchControl = L.esri.Geocoding.geosearch({
+	providers : [
+		L.esri.Geocoding.arcgisOnlineProvider({
+			categories : [ 'Address', 'Postal', 'Populated Place', ],
+			maxResults : 3
+		}),
+		L.esri.Geocoding.mapServiceProvider({
+			label : 'States and Counties',
+			url : 'http://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer',
+			layers : [ 2, 3 ],
+			searchFields : [ 'NAME', 'STATE_NAME', 'ORGANIZATION' ]
+		})
+	]
+}).addTo(map);
+
+
+searchControl.on('results', function(data) {
+	//results.clearLayers();
+	for (var i = data.results.length - 1; i >= 0; i--) {
+		console.log("result =>" + data.results[i].latlng);
+		$('#direccion').val(data.results[i].text);
+		$('#lat').val(data.results[i].latlng.lat);
+		$('#lng').val(data.results[i].latlng.lng);
+		//var id = $('#id').val();
+		var nombre = $('#nombre').val();
+		var modeloId = $("#modelo").val();
+		console.log("nombre =>" + nombre)
+		console.log("modeloId =>" + modeloId)
+		//console.log("id =>" + id)
+		//results.addLayer(L.marker(data.results[i].latlng));
+		//results.addLayer(getMarket(data.results[i].latlng.lat, data.results[i].latlng.lng, modeloId, id, nombre))
+		results.addLayer(getMarket(data.results[i].latlng, modeloId, nombre))
+	}
+});
+
 
 
 
@@ -93,7 +116,6 @@ $('#contenedores').on('change', function() {
 	});
 
 	console.log("#contenedores change =>" + JSON.stringify(contenedoresIds));
-	//console.log("#contenedores change =>" + contenedoresIds.serializeArray());
 
 	/*Load contenedores */
 	$.ajax({
@@ -109,7 +131,7 @@ $('#contenedores').on('change', function() {
 
 
 			$.each(data.features, function(i, feature) {
-				console.log("PASO tipo =>" + feature.properties.tipo);
+				//console.log("PASO tipo =>" + feature.properties.tipo);
 				var id = feature.properties.id
 
 				var latlng = feature.geometry.coordinates;
@@ -117,23 +139,23 @@ $('#contenedores').on('change', function() {
 				switch (feature.properties.tipo) {
 				case 'INORG':
 					iconUrl = '/citytrash/resources/static/img/contenedores/c_amarrillo_di.png';
-					console.log("INORG");
+					//console.log("INORG");
 					break;
 				case 'ORGAN':
 					iconUrl = '/citytrash/resources/static/img/contenedores/c_marron.png';
-					console.log("ORGAN");
+					//console.log("ORGAN");
 					break;
 				case 'GLASS':
 					iconUrl = '/citytrash/resources/static/img/contenedores/c_verde.png';
-					console.log("GLASS");
+					//console.log("GLASS");
 					break;
 				case 'PAPER':
 					iconUrl = '/citytrash/resources/static/img/contenedores/c_azul_claro.png';
-					console.log("PAPER");
+					//console.log("PAPER");
 					break;
 				case 'PLAST':
 					iconUrl = '/citytrash/resources/static/img/contenedores/c_rojo.png';
-					console.log("PLAST");
+					//console.log("PLAST");
 					break;
 				default:
 					iconUrl = '/citytrash/resources/static/img/contenedores/c_negro.png';
@@ -190,7 +212,7 @@ $('#contenedores').on('change', function() {
 			map.addLayer(markerClusters);
 		},
 		error : function(xhr, error) {
-			console.log(" error al cargar los contenedores de la ruta =>" + error);
+			//console.log(" error al cargar los contenedores de la ruta =>" + error);
 		}
 	});
 });

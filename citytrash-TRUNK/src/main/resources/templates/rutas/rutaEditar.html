@@ -8,30 +8,30 @@
 <title th:text="#{page_rutas}"></title>
 </head>
 
+
 <body class="formularios">
-	<!-- id="viewBody" -->
 	<div id="content" class="container" th:fragment="content"
 		th:remove="tag">
 		<div
 			class="col-sm-offset-1 col-sm-10 col-md-offset-3 col-md-6 col-lg-offset-3 col-lg-6">
 			<div class="panel panel-default" th:if="${rutaForm}">
-
-				<!-- titulo -->
-				<div class="row center-block">
-					<h3 class="text-center text-success col-xs-12"
+				<div class="panel-heading ">
+					<h3 class="text-center text-success"
 						th:text="${#strings.toUpperCase('__#{lbl_editar_ruta}__')} + ' #' + *{id}"></h3>
+
+					<div class="row">
+						<a th:href="@{#{link.rutas}}"> <i
+							class="glyphicon glyphicon-list"></i> &nbsp; <label
+							th:text="#{rutas}"></label>
+						</a>
+					</div>
 				</div>
-
 				<div class="panel-body">
-					<!-- 
-					<div th:fragment="formularios"
-						th:replace="rutas/rutaEditarForm :: rutaEditarForm(${rutaForm}, ${error})"></div>
-					 -->
-
 					<form th:if="rutaRegistroForm" role="form"
 						class="form-narrow form-horizontal" method="post" action="#"
-						th:action="@{#{link.rutas.editar}}" th:object="${rutaForm}"
-						th:fragment="rutaRegistroForm" id="rutaRegistroForm">
+						th:action="@{#{link.rutas.editar}(id=${rutaForm.id})}"
+						th:object="${rutaForm}" th:fragment="rutaRegistroForm"
+						id="rutaRegistroForm">
 						<fieldset>
 							<!-- mensaje ok -->
 							<th:block th:if="${msg!=null}">
@@ -171,6 +171,7 @@
 							<!-- fin camion -->
 
 							<!-- mapa -->
+							
 							<legend class="col-xs-12 text-success" th:text="#{mapa}"></legend>
 							<div class="col-xs-offset-1 col-xs-10 map_canvas" id="mapa"></div>
 
@@ -180,19 +181,36 @@
 							<legend class="col-xs-12 text-success"
 								th:text="#{lbl_localizacion}"></legend>
 							<!-- punto de inicio -->
-							<div id="puntoInicio" th:object="${rutaForm.puntoInicio}"
-								class="form-group">
+
+							<!-- direccion del punto de inicio -->
+
+							<div id="puntoInicio" class="form-group">
 
 								<div class="pull-left col-xs-3 col-sm-4 col-md-4">
 									<label for="puntoInicio" class="col-form-label"
 										th:text="#{lbl_punto_inicio} + '*'"></label>
 								</div>
 
-								<div id="latitud" class="form-group"
+
+								<div class="col-xs-8 col-sm-7 col-md-7"
+									th:classappend="${#fields.hasErrors('puntoInicioDir')}? 'has-error'">
+									<div class="form-group has-feedback">
+										<input type="text" class="mayusculas form-control"
+											maxlength="255" id="puntoInicioDir"
+											th:placeholder="#{lbl_search}" th:field="*{puntoInicioDir}" />
+										<span class="glyphicon glyphicon-search form-control-feedback"
+											aria-hidden="true"></span>
+									</div>
+								</div>
+
+								<div th:object="${rutaForm.puntoInicio}" id="latitud"
+									class="form-group"
 									th:classappend="${#fields.hasErrors('lat')}? 'has-error'">
-									<div class="has-feedback col-xs-4 col-sm-4 col-md-4">
-										<input id="lat" data-geo="lat" type="text"
-											pattern="-?\d{1,3}\.\d+" class="col-sm-6 form-control"
+									<div
+										class="has-feedback  col-xs-offset-3 col-sm-offset-4 col-md-offset-4 col-xs-4 col-sm-4 col-md-4">
+										<input id="puntoInicioLat" data-geo="puntoInicioLat"
+											type="text" pattern="-?\d{1,3}\.\d+"
+											class="col-sm-6 form-control"
 											th:with="format=#{decimales_formato}" th:field="*{lat}"
 											th:title="#{constraints.pattern}" required="required" /> <span
 											class="form-control-feedback"><var>Lat</var> </span>
@@ -203,12 +221,14 @@
 									</div>
 								</div>
 
-								<div id="longitud" class="form-group"
+								<div th:object="${rutaForm.puntoInicio}" id="longitud"
+									class="form-group"
 									th:classappend="${#fields.hasErrors('lng')}? 'has-error'">
 									<div
 										class="has-feedback col-xs-offset-3 col-sm-offset-4 col-md-offset-4 col-xs-4 col-sm-4 col-md-4">
-										<input id="lng" data-geo="lng" type="text"
-											pattern="-?\d{1,3}\.\d+" th:title="#{constraints.pattern}"
+										<input id="puntoInicioLng" data-geo="puntoInicioLng"
+											type="text" pattern="-?\d{1,3}\.\d+"
+											th:title="#{constraints.pattern}"
 											class="col-sm-6 form-control" th:field="*{lng}"
 											required="required" /> <span class="form-control-feedback"><var>Lng
 											</var> </span>
@@ -222,18 +242,32 @@
 
 							<!-- fin punto inicio -->
 							<!-- punto final -->
-							<div id="puntoFinal" th:object="${rutaForm.puntoFinal}"
-								class="form-group">
+
+
+							<div id="puntoFinal" class="form-group">
 
 								<div class="pull-left col-xs-3 col-sm-4 col-md-4">
 									<label for="puntoFinal" class="col-form-label"
 										th:text="#{lbl_punto_final} + '*'"></label>
 								</div>
 
-								<div id="latitud" class="form-group"
+								<div class="col-xs-8 col-sm-7 col-md-7"
+									th:classappend="${#fields.hasErrors('puntoFinalDir')}? 'has-error'">
+									<div class="form-group has-feedback">
+										<input type="text" class="mayusculas form-control"
+											maxlength="255" id="puntoFinalDir"
+											th:placeholder="#{lbl_search}" th:field="*{puntoFinalDir}" />
+										<span class="glyphicon glyphicon-search form-control-feedback"
+											aria-hidden="true"></span>
+									</div>
+								</div>
+
+								<div th:object="${rutaForm.puntoFinal}" id="latitud"
+									class="form-group"
 									th:classappend="${#fields.hasErrors('lat')}? 'has-error'">
-									<div class="has-feedback col-xs-4 col-sm-4 col-md-4">
-										<input id="lat" data-geo="lat" type="text"
+									<div
+										class="has-feedback col-xs-offset-3 col-sm-offset-4 col-md-offset-4 col-xs-4 col-sm-4 col-md-4">
+										<input id="puntoFinalLat" data-geo="puntoFinalLat" type="text"
 											pattern="-?\d{1,3}\.\d+" class="col-sm-6 form-control"
 											th:with="format=#{decimales_formato}" th:field="*{lat}"
 											th:title="#{constraints.pattern}" required="required" /> <span
@@ -245,11 +279,12 @@
 									</div>
 								</div>
 
-								<div id="longitud" class="form-group"
+								<div th:object="${rutaForm.puntoFinal}" id="longitud"
+									class="form-group"
 									th:classappend="${#fields.hasErrors('lng')}? 'has-error'">
 									<div
 										class="has-feedback col-xs-offset-3 col-sm-offset-4 col-md-offset-4 col-xs-4 col-sm-4 col-md-4">
-										<input id="lng" data-geo="lng" type="text"
+										<input id="puntoFinalLng" data-geo="puntoFinalLng" type="text"
 											pattern="-?\d{1,3}\.\d+" th:title="#{constraints.pattern}"
 											class="col-sm-6 form-control" th:field="*{lng}"
 											required="required" /> <span class="form-control-feedback"><var>Lng

@@ -111,6 +111,7 @@ public class WebUtils {
 	public static final String VISTA_RUTAS = VISTA_RUTAS_PREFIX + "rutas";
 	public static final String VISTA_RUTA_REGISTRO = VISTA_RUTAS_PREFIX + "rutaRegistro";
 	public static final String VISTA_RUTA_EDITAR = VISTA_RUTAS_PREFIX + "rutaEditar";
+	public static final String VISTA_RUTA_DETALLES = VISTA_RUTAS_PREFIX + "rutaDetalles";
 
 	/**
 	 * URLS

@@ -49,12 +49,6 @@ public class RutaDto {
 
 	Integer id = null;
 
-	@Valid
-	private Localizacion puntoInicio = new Localizacion();
-
-	@Valid
-	private Localizacion puntoFinal = new Localizacion();
-
 	private boolean activo = true;
 
 	@NotNull
@@ -69,6 +63,16 @@ public class RutaDto {
 
 	@NotNull
 	private Long camion = null;
+
+	private String puntoInicioDir = "";
+
+	private String puntoFinalDir = "";
+
+	@Valid
+	private Localizacion puntoInicio = new Localizacion();
+
+	@Valid
+	private Localizacion puntoFinal = new Localizacion();
 
 	public Integer getId() {
 		return id;
@@ -124,6 +128,22 @@ public class RutaDto {
 
 	public void setTiposDeBasura(List<Integer> tiposDeBasura) {
 		this.tiposDeBasura = tiposDeBasura;
+	}
+
+	public String getPuntoInicioDir() {
+		return puntoInicioDir;
+	}
+
+	public void setPuntoInicioDir(String puntoInicioDir) {
+		this.puntoInicioDir = puntoInicioDir;
+	}
+
+	public String getPuntoFinalDir() {
+		return puntoFinalDir;
+	}
+
+	public void setPuntoFinalDir(String puntoFinalDir) {
+		this.puntoFinalDir = puntoFinalDir;
 	}
 
 	@Override

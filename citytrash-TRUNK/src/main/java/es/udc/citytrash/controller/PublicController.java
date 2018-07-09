@@ -170,6 +170,10 @@ public class PublicController {
 				.buscarContenedoresDiponiblesParaUnaRuta(rutaForm.getTiposDeBasura());
 		List<Camion> camiones = camServicio.buscarCamionesDisponiblesParaUnaRutaByTipos(rutaForm.getTiposDeBasura());
 
+		logger.info("listaCamionesDisponibles contenedores  => " + form.getContenedores().toString());
+		logger.info("listaCamionesDisponibles camion  => " + form.getClass().toString());
+		rutaForm.setContenedores(form.getContenedores());
+		rutaForm.setCamion(form.getCamion());
 		model.addAttribute("listaCamionesDisponibles", camiones);
 		model.addAttribute("listaContenedoresDisponibles", contenedores);
 		model.addAttribute("rutaForm", rutaForm);
@@ -187,6 +191,10 @@ public class PublicController {
 		List<Contenedor> contenedores = contServicio
 				.buscarContenedoresDiponiblesParaUnaRuta(rutaForm.getTiposDeBasura());
 
+		logger.info("listaCamionesDisponibles contenedores  => " + form.getContenedores().toString());
+		logger.info("listaCamionesDisponibles camion  => " + form.getClass().toString());
+		rutaForm.setContenedores(form.getContenedores());
+		rutaForm.setCamion(form.getCamion());
 		model.addAttribute("listaCamionesDisponibles", camiones);
 		model.addAttribute("listaContenedoresDisponibles", contenedores);
 		model.addAttribute("rutaForm", rutaForm);

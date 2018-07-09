@@ -65,41 +65,42 @@ public class RutaServiceImpl implements RutaService {
 
 	@Override
 	public Ruta registrarRuta(RutaDto form) throws DuplicateInstanceException, InstanceNotFoundException {
-		logger.info("actualizarRuta");
 		Ruta ruta = null;
 		Camion camion = null;
-		logger.info("actualizarRuta paso1");
 		/* Verificamos que el camion exista */
 		try {
 			camion = camionDao.buscarById(form.getCamion());
 		} catch (InstanceNotFoundException e) {
 			throw new InstanceNotFoundException(form.getCamion(), Camion.class.getName());
 		}
-
-		logger.info("actualizarRuta paso2");
 		/*
 		 * Verificamos que la ruta exista (modificar), sino existe entonces es
 		 * un registro de ruta
 		 */
-
-		if (form.getId() != null) {
-			throw new DuplicateInstanceException(form.getId(), Ruta.class.getName());
-		} else {
+		if (form.getId() == null) {
 			ruta = new Ruta(form.getPuntoInicio(), form.getPuntoFinal(), form.isActivo(), camion);
-			logger.info("Ruta =>" + ruta.toString());
+		} else {
+			throw new InstanceNotFoundException(form.getId(), Ruta.class.getName());
 		}
-		/* verificamos que la lista de basura sea unico */
-		logger.info("actualizarRuta paso3");
-		/* Veificamos que en la lista de contenedores no hayan repetidos */
-		logger.info("actualizarRuta paso4");
-		/* Registramos la ruta */
-		logger.info("actualizarRuta paso5");
-		// ruta.setContenedores(form.getContenedores());
-		logger.info("actualizarRuta paso6");
-		logger.info("actualizarRuta paso10");
+
+		for (Integer tipoDeBasuraId : form.getTiposDeBasura()) {
+			if (tipoDeBasuraId != null)
+				if (tipoDao.existe(tipoDeBasuraId)) {
+					TipoDeBasura t = tipoDao.buscarById(tipoDeBasuraId);
+					ruta.addTipoDeBasura(t);
+				}
+		}
+
+		for (Long contenedorId : form.getContenedores()) {
+			if (contenedorId != null) {
+				if (contenedorDao.existe(contenedorId)) {
+					Contenedor contenedor = contenedorDao.buscarById(contenedorId);
+					ruta.addContenedor(contenedor);
+				}
+			}
+		}
 		rutaDao.guardar(ruta);
 		return ruta;
-
 	}
 
 	@Override
@@ -107,15 +108,12 @@ public class RutaServiceImpl implements RutaService {
 		logger.info("actualizarRuta");
 		Ruta ruta = null;
 		Camion camion = null;
-		logger.info("actualizarRuta paso1");
 		/* Verificamos que el camion exista */
 		try {
 			camion = camionDao.buscarById(form.getCamion());
 		} catch (InstanceNotFoundException e) {
 			throw new InstanceNotFoundException(form.getCamion(), Camion.class.getName());
 		}
-
-		logger.info("actualizarRuta paso2");
 		/*
 		 * Verificamos que la ruta exista (modificar), sino existe entonces es
 		 * un registro de ruta
@@ -127,6 +125,7 @@ public class RutaServiceImpl implements RutaService {
 				ruta.setPuntoInicio(form.getPuntoInicio());
 				ruta.setPuntoFinal(form.getPuntoFinal());
 				ruta.setCamion(camion);
+				ruta.setActivo(form.isActivo());
 			} else {
 				throw new InstanceNotFoundException(form.getId(), Ruta.class.getName());
 			}
@@ -134,41 +133,31 @@ public class RutaServiceImpl implements RutaService {
 			throw new InstanceNotFoundException(form.getId(), Ruta.class.getName());
 		}
 
-		/* verificamos que la lista de basura sea unico */
-		logger.info("actualizarRuta paso3");
-		/* Veificamos que en la lista de contenedores no hayan repetidos */
-		logger.info("actualizarRuta paso4");
-		/* Registramos la ruta */
-		logger.info("actualizarRuta paso5");
-		// ruta.setContenedores(form.getContenedores());
-		logger.info("actualizarRuta paso6");
-		// List<TipoDeBasura> lTp = new ArrayList<TipoDeBasura>();
-		logger.info("actualizarRuta paso7");
-
+		List<TipoDeBasura> tiposDeBasura = new ArrayList<TipoDeBasura>();
 		for (Integer tipoDeBasuraId : form.getTiposDeBasura()) {
 			if (tipoDeBasuraId != null)
 				if (tipoDao.existe(tipoDeBasuraId)) {
 					TipoDeBasura t = tipoDao.buscarById(tipoDeBasuraId);
-					// logger.info("iterador contenedores =>" + t.toString());
-					ruta.addTipoDeBasura(t);
+					tiposDeBasura.add(t);
 				}
 		}
-		logger.info("actualizarRuta paso9");
+
+		ruta.getTiposDeBasura().clear();
+		ruta.getTiposDeBasura().addAll(tiposDeBasura);
 		List<Contenedor> contenedores = new ArrayList<Contenedor>();
 		for (Long contenedorId : form.getContenedores()) {
 			if (contenedorId != null) {
 				if (contenedorDao.existe(contenedorId)) {
 					Contenedor contenedor = contenedorDao.buscarById(contenedorId);
-					// logger.info("iterador contenedores =>" +
-					// contenedor.toString());
 					contenedores.add(contenedor);
-					ruta.addContenedor(contenedor);
 				}
 			}
 		}
-		// ruta.setContenedores(contenedores);
-		logger.info("actualizarRuta paso10 => " + ruta.getContenedores().toString());
+		ruta.getContenedores().clear();
+		ruta.getContenedores().addAll(contenedores);
+		logger.info("actualizarRuta contenedores => " + ruta.getContenedores().toString());
 		rutaDao.guardar(ruta);
+		logger.info("actualizarRuta fin");
 		return ruta;
 	}
 
@@ -240,7 +229,7 @@ public class RutaServiceImpl implements RutaService {
 	public void eliminarTipoBasuraByRuta(int rutaId, int tipoId) throws InstanceNotFoundException {
 		Ruta r = rutaDao.buscarById(rutaId);
 		TipoDeBasura t = tipoDao.buscarById(tipoId);
-		if (r.contaisTipoDeBasura(t)) {
+		if (r.containsTipoDeBasura(t)) {
 			r.eliminarTipoDeBasura(t);
 			rutaDao.guardar(r);
 		} else {
@@ -258,7 +247,7 @@ public class RutaServiceImpl implements RutaService {
 			return false;
 		}
 
-		if (r.contaisTipoDeBasura(t)) {
+		if (r.containsTipoDeBasura(t)) {
 			return true;
 		} else {
 			return false;

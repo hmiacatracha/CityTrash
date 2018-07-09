@@ -159,7 +159,7 @@
 									th:text="${#strings.toUpperCase(ruta.camion.nombre)}"
 									th:href="@{#{link.camiones.detalles}(id=${ruta.camion.id})}"
 									class="btn-sm"><i class="glyphicon glyphicon-pencil"
-										data-toggle="tooltip" th:title="#{lbl_editar}"></i></a></td>
+										data-toggle="tooltip" th:title="#{lbl_detalles}"></i></a></td>
 								<td>
 									<table>
 										<tr>
@@ -191,7 +191,7 @@
 										<!-- view details -->
 										<div id="otherOptions" class="btn-group text-center">
 											<a id="link_ver_detalles"
-												th:href="@{#{link.rutas.detalles}(id=${ruta.id})}"
+												th:href="@{#{link.rutas.detalle}(id=${ruta.id})}"
 												class="btn-sm"><i class="glyphicon glyphicon-eye-open"
 												data-toggle="tooltip" th:title="#{lbl_ver_detalles}"></i></a>
 

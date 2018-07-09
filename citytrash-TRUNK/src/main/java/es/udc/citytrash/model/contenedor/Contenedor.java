@@ -183,7 +183,7 @@ public class Contenedor implements Serializable {
 	public Ruta getRuta() {
 		return ruta;
 	}
-
+	
 	public void setRuta(Ruta ruta) {
 		this.ruta = ruta;
 	}
@@ -200,7 +200,7 @@ public class Contenedor implements Serializable {
 	private Boolean activo;
 	private List<Sensor> sensores = new ArrayList<Sensor>();
 	private Ruta ruta;
-
+	
 	@Override
 	public String toString() {
 		return "Contenedor [id=" + id + ", nombre=" + nombre + ", latitud=" + latitud + ", longitud=" + longitud

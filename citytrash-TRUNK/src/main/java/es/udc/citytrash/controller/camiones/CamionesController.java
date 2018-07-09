@@ -221,7 +221,6 @@ public class CamionesController {
 		logger.info("GET REQUEST_MAPPING_CAMIONES_EDITAR");
 		Camion camion;
 		try {
-
 			logger.info("GET REQUEST_MAPPING_CAMIONES_EDITAR");
 			camion = cServicio.buscarCamionById(id);
 			// model.addAttribute("camionForm", new CamionDto());

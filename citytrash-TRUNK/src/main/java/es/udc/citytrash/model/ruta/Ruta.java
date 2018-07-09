@@ -1,6 +1,7 @@
 package es.udc.citytrash.model.ruta;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.AttributeOverride;
@@ -20,8 +21,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import es.udc.citytrash.controller.PublicController;
 import es.udc.citytrash.model.camion.Camion;
 import es.udc.citytrash.model.contenedor.Contenedor;
 import es.udc.citytrash.model.tipoDeBasura.TipoDeBasura;
@@ -34,6 +39,7 @@ public class Ruta implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	final Logger logger = LoggerFactory.getLogger(Ruta.class);
 
 	Ruta() {
 		/**
@@ -100,13 +106,16 @@ public class Ruta implements Serializable {
 		this.camion = camion;
 	}
 
-	@OneToMany(mappedBy = "ruta")
+	@OneToMany(mappedBy = "ruta", cascade = CascadeType.ALL, orphanRemoval = true)
 	public List<Contenedor> getContenedores() {
 		return contenedores;
 	}
 
-	protected void setContenedores(List<Contenedor> contenedores) {
-		this.contenedores = contenedores;
+	public void setContenedores(List<Contenedor> contenedores) {
+		if (contenedores == null)
+			this.contenedores = new ArrayList<Contenedor>();
+		else
+			this.contenedores = contenedores;
 	}
 
 	public void eliminarContenedor(Contenedor contenedor) {
@@ -115,21 +124,28 @@ public class Ruta implements Serializable {
 	}
 
 	public void addContenedor(Contenedor contenedor) {
-		if (contenedor != null)
-			if (!contenedores.contains(contenedor)) {
+		if (this.contenedores == null) {
+			this.contenedores = new ArrayList<Contenedor>();
+		}
+		if (contenedor != null) {
+			if (!this.contenedores.contains(contenedor)) {
 				this.contenedores.add(contenedor);
 			}
+
+		}
 	}
 
-	public boolean contaisContenedor(Contenedor contenedor) {
-		if (contenedor != null)
-			return this.contenedores.contains(contenedor);
-		else
+	public boolean containsContenedor(Contenedor contenedor) {
+		if (contenedor == null)
 			return false;
+		if (this.contenedores == null)
+			return false;
+		else
+			return this.contenedores.contains(contenedor);
 	}
-
+	
 	/* http://www.baeldung.com/hibernate-many-to-many */
-	@ManyToMany(cascade = { CascadeType.ALL })
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinTable(name = "TBL_RU_TP", joinColumns = { @JoinColumn(name = "RUTA_ID") }, inverseJoinColumns = {
 			@JoinColumn(name = "TIPO_BASURA") })
 	public List<TipoDeBasura> getTiposDeBasura() {
@@ -137,7 +153,10 @@ public class Ruta implements Serializable {
 	}
 
 	public void setTiposDeBasura(List<TipoDeBasura> tiposDeBasura) {
-		this.tiposDeBasura = tiposDeBasura;
+		if (tiposDeBasura == null)
+			this.tiposDeBasura = new ArrayList<TipoDeBasura>();
+		else
+			this.tiposDeBasura = tiposDeBasura;
 	}
 
 	public void eliminarTipoDeBasura(TipoDeBasura tipo) {
@@ -145,19 +164,26 @@ public class Ruta implements Serializable {
 			this.tiposDeBasura.remove(tipo);
 	}
 
-	public void addTipoDeBasura(TipoDeBasura tipo) {
-		if (tipo != null) {
-			if (!tiposDeBasura.contains(tipo)) {
-				this.tiposDeBasura.add(tipo);
+	public void addTipoDeBasura(TipoDeBasura t) {
+		if (this.tiposDeBasura == null) {
+			this.tiposDeBasura = new ArrayList<TipoDeBasura>();
+		}
+
+		if (t != null) {
+			if (!this.tiposDeBasura.contains(t)) {
+				this.tiposDeBasura.add(t);
 			}
+
 		}
 	}
 
-	public boolean contaisTipoDeBasura(TipoDeBasura tipo) {
-		if (tipo != null && this.tiposDeBasura != null)
-			return this.tiposDeBasura.contains(tipo);
-		else
+	public boolean containsTipoDeBasura(TipoDeBasura tipo) {
+		if (tipo == null)
 			return false;
+		if (this.tiposDeBasura == null)
+			return false;
+		else
+			return this.tiposDeBasura.contains(tipo);
 	}
 
 	int id;

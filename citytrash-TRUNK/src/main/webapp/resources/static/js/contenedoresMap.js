@@ -19,6 +19,42 @@ L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 	minZoom : 5
 }).addTo(map)
 
+
+var searchControl = L.esri.Geocoding.geosearch({
+	providers : [
+		L.esri.Geocoding.arcgisOnlineProvider({
+			categories : [ 'Address', 'Postal', 'Populated Place', ],
+			maxResults : 3
+		}),
+		L.esri.Geocoding.mapServiceProvider({
+			label : 'States and Counties',
+			url : 'http://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer',
+			layers : [ 2, 3 ],
+			searchFields : [ 'NAME', 'STATE_NAME', 'ORGANIZATION' ]
+		})
+	]
+}).addTo(map);
+
+
+searchControl.on('results', function(data) {
+	//results.clearLayers();
+	for (var i = data.results.length - 1; i >= 0; i--) {
+		console.log("result =>" + data.results[i].latlng);
+	//$('#direccion').val(data.results[i].text);
+	//$('#lat').val(data.results[i].latlng.lat);
+	//$('#lng').val(data.results[i].latlng.lng);
+	//var id = $('#id').val();
+	//var nombre = $('#nombre').val();
+	//var modeloId = $("#modelo").val();
+	//console.log("nombre =>" + nombre)
+	//console.log("modeloId =>" + modeloId)
+	//console.log("id =>" + id)
+	//results.addLayer(L.marker(data.results[i].latlng));
+	//results.addLayer(getMarket(data.results[i].latlng.lat, data.results[i].latlng.lng, modeloId, id, nombre))
+	//results.addLayer(getMarket(data.results[i].latlng, modeloId, nombre))
+	}
+});
+
 var markerClusters = L.markerClusterGroup({
 	maxClusterRadius : 120,
 	spiderfyOnMaxZoom : false,

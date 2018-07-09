@@ -36,12 +36,21 @@
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
 	rel="stylesheet">
 
+
 <!-- owner -->
 <link th:href="@{/resources/static/css/styles.css}" rel="stylesheet"></link>
 
 <!-- leaflet -->
 <link rel="stylesheet"
 	th:href="@{/resources/static/css/leaflet/leaflet.css}" />
+
+<!-- Geocoder -->
+<link rel="stylesheet"
+	href="https://unpkg.com/esri-leaflet-geocoder@2.2.9/dist/esri-leaflet-geocoder.css"
+	integrity="sha512-v5YmWLm8KqAAmg5808pETiccEohtt8rPVMGQ1jA6jqkWVydV5Cuz3nJ9fQ7ittSxvuqsvI9RSGfVoKPaAJZ/AQ=="
+	crossorigin="">
+
+
 
 <!-- markercluster -->
 <!-- 
@@ -71,6 +80,14 @@
 	<!-- LEAFLET -->
 	<script th:src="@{/resources/static/js/leaflet/leaflet.js}"></script>
 
+	<!-- Load Esri Leaflet from CDN -->
+	<script src="https://unpkg.com/esri-leaflet@2.1.4"></script>
+	
+	<!-- Esri Leaflet Geocoder -->
+	<link rel="stylesheet"
+		href="https://unpkg.com/esri-leaflet-geocoder@2.2.12/dist/esri-leaflet-geocoder.css">
+	<script src="https://unpkg.com/esri-leaflet-geocoder"></script>
+
 
 	<!-- <script
 		th:src="@{/resources/static/js/leaflet/cluster/leaflet.markercluster.js}"></script>
@@ -78,7 +95,9 @@
 	<script
 		src="https://unpkg.com/leaflet.markercluster@1.3.0/dist/leaflet.markercluster-src.js"></script>
 
+
 	<script th:src="@{/resources/static/js/contenedoresMap.js}"></script>
+
 </body>
 </html>
 
