@@ -20,10 +20,14 @@
 						th:text="${#strings.toUpperCase('__#{lbl_editar_ruta}__')} + ' #' + *{id}"></h3>
 
 					<div class="row">
-						<a th:href="@{#{link.rutas}}"> <i
-							class="glyphicon glyphicon-list"></i> &nbsp; <label
-							th:text="#{rutas}"></label>
-						</a>
+						<a id="link_ver_detalles" th:href="@{#{link.rutas}}"
+							class="pull-right btn-sm"><i class="glyphicon glyphicon-list"
+							data-toggle="tooltip" th:title="#{rutas}"></i></a> <a
+							id="link_ver_detalles"
+							th:href="@{#{link.rutas.detalle}(id=${rutaForm.id})}"
+							class="pull-right btn-sm"><i
+							class="glyphicon glyphicon-eye-open" data-toggle="tooltip"
+							th:title="#{lbl_ver_detalles}"></i></a>
 					</div>
 				</div>
 				<div class="panel-body">
@@ -171,7 +175,7 @@
 							<!-- fin camion -->
 
 							<!-- mapa -->
-							
+
 							<legend class="col-xs-12 text-success" th:text="#{mapa}"></legend>
 							<div class="col-xs-offset-1 col-xs-10 map_canvas" id="mapa"></div>
 
@@ -196,9 +200,10 @@
 									th:classappend="${#fields.hasErrors('puntoInicioDir')}? 'has-error'">
 									<div class="form-group has-feedback">
 										<input type="text" class="mayusculas form-control"
-											maxlength="255" id="puntoInicioDir"
+											maxlength="255" id="puntoInicioDir" disabled="disabled"
 											th:placeholder="#{lbl_search}" th:field="*{puntoInicioDir}" />
-										<span class="glyphicon glyphicon-search form-control-feedback"
+										<span
+											class="glyphicon glyphicon-map-marker form-control-feedback"
 											aria-hidden="true"></span>
 									</div>
 								</div>
@@ -256,8 +261,9 @@
 									<div class="form-group has-feedback">
 										<input type="text" class="mayusculas form-control"
 											maxlength="255" id="puntoFinalDir"
-											th:placeholder="#{lbl_search}" th:field="*{puntoFinalDir}" />
-										<span class="glyphicon glyphicon-search form-control-feedback"
+											th:placeholder="#{lbl_search}" th:field="*{puntoFinalDir}"
+											disabled="disabled" /> <span
+											class="glyphicon glyphicon-map-marker form-control-feedback"
 											aria-hidden="true"></span>
 									</div>
 								</div>

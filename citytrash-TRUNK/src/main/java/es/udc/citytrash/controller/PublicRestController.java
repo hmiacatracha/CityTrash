@@ -2,7 +2,6 @@ package es.udc.citytrash.controller;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,8 +23,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import es.udc.citytrash.controller.excepciones.ResourceNotFoundException;
 import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorFormBusq;
-import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorModeloDto;
 import es.udc.citytrash.controller.util.dtos.contenedor.Localizacion;
 import es.udc.citytrash.controller.util.dtos.contenedor.MapaContenedoresDto;
 import es.udc.citytrash.controller.util.dtos.contenedor.SensorValores;
@@ -34,6 +33,7 @@ import es.udc.citytrash.model.camionService.CamionService;
 import es.udc.citytrash.model.contenedor.Contenedor;
 import es.udc.citytrash.model.contenedorModelo.ContenedorModelo;
 import es.udc.citytrash.model.contenedorService.ContenedorService;
+import es.udc.citytrash.model.rutaService.RutaService;
 import es.udc.citytrash.model.sensorValor.Valor;
 import es.udc.citytrash.model.tipoDeBasura.TipoDeBasura;
 import es.udc.citytrash.model.trabajadorService.TrabajadorService;
@@ -58,6 +58,9 @@ public class PublicRestController {
 
 	@Autowired
 	UsuarioService usuarioService;
+
+	@Autowired
+	RutaService rutaServicio;
 
 	@Autowired
 	private ModelMapper modelMapper;
@@ -99,6 +102,52 @@ public class PublicRestController {
 			featureCollection.add(feature);
 		}
 		return featureCollection;
+	}
+
+	@RequestMapping(value = "/rutas/{id}/contenedores/geojson", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody FeatureCollection getContenedoresGeoJson(@PathVariable("id") Integer rutaId)
+			throws ResourceNotFoundException {
+		FeatureCollection featureCollection = new FeatureCollection();
+		List<Contenedor> contenedores;
+		try {
+			contenedores = rutaServicio.buscarRuta(rutaId).getContenedores();
+
+			logger.info("get contenedores ruta geoson =>" + contenedores.toString());
+			TipoDeBasura tipo;
+			ContenedorModelo modelo;
+
+			for (Contenedor contenedor : contenedores) {
+				Feature feature = new Feature();
+				Point geometry = new Point(contenedor.getLatitud().doubleValue(),
+						contenedor.getLongitud().doubleValue());
+				feature.setGeometry(geometry);
+				feature.setProperty("id", contenedor.getId());
+				feature.setProperty("nombre", contenedor.getNombre());
+
+				try {
+					modelo = contServicio.buscarModeloById(contenedor.getModelo().getId());
+					tipo = contServicio.buscarTipoDeBasuraByModelo(contenedor.getModelo().getId());
+					feature.setProperty("tipo", tipo.getTipo());
+					feature.setProperty("color", "#" + tipo.getColor());
+					feature.setProperty("capacidad_nominal", modelo.getCapacidadNominal());
+					feature.setProperty("carga_nominal", modelo.getCargaNominal());
+					feature.setProperty("profundidad", modelo.getProfundidad());
+					feature.setProperty("peso_Vacio", modelo.getPesoVacio());
+				} catch (InstanceNotFoundException e) {
+					feature.setProperty("tipo", "UNKOWN");
+					feature.setProperty("color", "#000000");
+					feature.setProperty("capacidad_nominal", "0");
+					feature.setProperty("carga_nominal", "0");
+					feature.setProperty("profundidad", "0");
+					feature.setProperty("peso_Vacio", "0");
+				}
+				featureCollection.add(feature);
+			}
+			return featureCollection;
+
+		} catch (InstanceNotFoundException e1) {
+			throw new ResourceNotFoundException(rutaId);
+		}
 	}
 
 	@RequestMapping(value = "/rutas/contenedores/geojson", method = RequestMethod.GET, produces = "application/json")

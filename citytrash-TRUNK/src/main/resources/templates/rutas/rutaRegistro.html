@@ -184,15 +184,14 @@
 									<label for="puntoInicio" class="col-form-label"
 										th:text="#{lbl_punto_inicio} + '*'"></label>
 								</div>
-
-
+								
 								<div class="col-xs-8 col-sm-7 col-md-7"
 									th:classappend="${#fields.hasErrors('puntoInicioDir')}? 'has-error'">
 									<div class="form-group has-feedback">
 										<input type="text" class="mayusculas form-control"
-											maxlength="255" id="puntoInicioDir"
+											maxlength="255" id="puntoInicioDir" disabled="disabled"
 											th:placeholder="#{lbl_search}" th:field="*{puntoInicioDir}" />
-										<span class="glyphicon glyphicon-search form-control-feedback"
+										<span class="glyphicon glyphicon-map-marker form-control-feedback"
 											aria-hidden="true"></span>
 									</div>
 								</div>
@@ -249,9 +248,9 @@
 									th:classappend="${#fields.hasErrors('puntoFinalDir')}? 'has-error'">
 									<div class="form-group has-feedback">
 										<input type="text" class="mayusculas form-control"
-											maxlength="255" id="puntoFinalDir"
+											maxlength="255" id="puntoFinalDir" disabled="disabled"
 											th:placeholder="#{lbl_search}" th:field="*{puntoFinalDir}" />
-										<span class="glyphicon glyphicon-search form-control-feedback"
+										<span class="glyphicon glyphicon-map-marker form-control-feedback"
 											aria-hidden="true"></span>
 									</div>
 								</div>

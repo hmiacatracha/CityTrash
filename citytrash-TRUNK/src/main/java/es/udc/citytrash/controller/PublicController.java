@@ -166,8 +166,15 @@ public class PublicController {
 		logger.info("POST /ajax/listaCamionesDisponibles");
 		RutaDto rutaForm = form;
 		rutaForm.setTiposDeBasura(rutaForm.getTiposDeBasura());
-		List<Contenedor> contenedores = contServicio
-				.buscarContenedoresDiponiblesParaUnaRuta(rutaForm.getTiposDeBasura());
+		List<Contenedor> contenedores;
+		
+		if (form.getId() != null)
+			contenedores = contServicio
+					.buscarContenedoresDiponiblesParaUnaRuta(form.getId(),rutaForm.getTiposDeBasura());
+		else
+			contenedores = contServicio
+			.buscarContenedoresDiponiblesParaUnaRuta(rutaForm.getTiposDeBasura());
+			
 		List<Camion> camiones = camServicio.buscarCamionesDisponiblesParaUnaRutaByTipos(rutaForm.getTiposDeBasura());
 
 		logger.info("listaCamionesDisponibles contenedores  => " + form.getContenedores().toString());
@@ -188,9 +195,12 @@ public class PublicController {
 		RutaDto rutaForm = form;
 		rutaForm.setTiposDeBasura(rutaForm.getTiposDeBasura());
 		List<Camion> camiones = camServicio.buscarCamionesDisponiblesParaUnaRutaByTipos(rutaForm.getTiposDeBasura());
-		List<Contenedor> contenedores = contServicio
-				.buscarContenedoresDiponiblesParaUnaRuta(rutaForm.getTiposDeBasura());
-
+		List<Contenedor> contenedores;
+		if (form.getId() != null)
+			contenedores = contServicio.buscarContenedoresDiponiblesParaUnaRuta(form.getId(),
+					rutaForm.getTiposDeBasura());
+		else
+			contenedores = contServicio.buscarContenedoresDiponiblesParaUnaRuta(rutaForm.getTiposDeBasura());
 		logger.info("listaCamionesDisponibles contenedores  => " + form.getContenedores().toString());
 		logger.info("listaCamionesDisponibles camion  => " + form.getClass().toString());
 		rutaForm.setContenedores(form.getContenedores());

@@ -63,7 +63,6 @@ import es.udc.citytrash.model.util.excepciones.InvalidFieldException;
 // @PreAuthorize("hasRole('" + GlobalNames.ROL_ADMINISTRADOR + "')")
 @RequestMapping("rutas")
 public class RutasController {
-
 	@Autowired
 	ContenedorService contServicio;
 
@@ -217,12 +216,11 @@ public class RutasController {
 			@RequestParam(value = "type", required = false) String type) throws ResourceNotFoundException {
 		logger.info("GET REQUEST_MAPPING_RUTAS_EDITAR");
 		Ruta ruta;
-
 		try {
 			ruta = rServicio.buscarRuta(id);
 			RutaDto dto = new RutaDto(ruta);
-			List<Contenedor> contenedores = contServicio
-					.buscarContenedoresDiponiblesParaUnaRuta(dto.getTiposDeBasura());
+			List<Contenedor> contenedores = contServicio.buscarContenedoresDiponiblesParaUnaRuta(id,
+					dto.getTiposDeBasura());
 			List<Camion> camiones = camServicio.buscarCamionesDisponiblesParaUnaRutaByTipos(dto.getTiposDeBasura());
 
 			model.addAttribute("rutaForm", dto);
@@ -312,6 +310,7 @@ public class RutasController {
 		}
 		try {
 			Ruta ruta = rServicio.actualizarRuta(form);
+			logger.info("fin actualizar ruta controller");
 			redirectAttributes.addAttribute("msg", "ok");
 			redirectAttributes.addAttribute("type", "mod_ruta");
 			response.setHeader("X-Requested-With", requestedWith);

@@ -392,15 +392,15 @@ select.form-control, input.form-control, option.form-control {
 	margin: 0 auto;
 }
 
-=======
-}
-#mapa {
-	height: 400px;
+
+#ruta {
+	height: 100%;
 	position: relative;
 	outline: none;
 	width: 100%;
 	margin: 0 auto;
 }
+
 
 .filter-group {
 	font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;

@@ -550,7 +550,7 @@ module.exports = function(version) {
                 return anyCountry.locale;
             }
 
-            return 'en';
+            return 'es';
         }
     };
 };
@@ -10875,7 +10875,7 @@ module.exports={
 		options: {
 			units: 'metric',
 			unitNames: null,
-			language: 'en',
+			language: 'es',
 			roundingSensitivity: 1,
 			distanceTemplate: '{value} {unit}'
 		},
@@ -10885,7 +10885,7 @@ module.exports={
 
 			var langs = L.Util.isArray(this.options.language) ?
 				this.options.language :
-				[this.options.language, 'en'];
+				[this.options.language, 'es'];
 			this._localization = new Localization(langs);
 		},
 
@@ -11083,7 +11083,7 @@ module.exports={
 			},
 			maxGeocoderTolerance: 200,
 			autocompleteOptions: {},
-			language: 'en',
+			language: 'es',
 		},
 
 		initialize: function(wp, i, nWps, options) {
@@ -11748,7 +11748,7 @@ module.exports = L.Routing = {
 
 	var Localization = L.Class.extend({
 		initialize: function(langs) {
-			this._langs = L.Util.isArray(langs) ? langs : [langs, 'en'];
+			this._langs = L.Util.isArray(langs) ? langs : [langs, 'es'];
 
 			for (var i = 0, l = this._langs.length; i < l; i++) {
 				if (!Localization[this._langs[i]]) {
@@ -12460,7 +12460,7 @@ module.exports = L.Routing = {
 			polylinePrecision: 5,
 			useHints: true,
 			suppressDemoServerWarning: false,
-			language: 'en'
+			language: 'es'
 		},
 
 		initialize: function(options) {
@@ -12822,7 +12822,7 @@ module.exports = L.Routing = {
 			addWaypoints: true,
 			reverseWaypoints: false,
 			addButtonClassName: '',
-			language: 'en',
+			language: 'es',
 			createGeocoderElement: function(wp, i, nWps, plan) {
 				return new GeocoderElement(wp, i, nWps, plan);
 			},

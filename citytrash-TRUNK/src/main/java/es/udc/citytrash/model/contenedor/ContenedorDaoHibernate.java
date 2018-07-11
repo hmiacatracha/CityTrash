@@ -310,14 +310,19 @@ public class ContenedorDaoHibernate extends GenericHibernateDAOImpl<Contenedor, 
 	}
 
 	@Override
-	public List<Contenedor> buscarContenedoresDisponilesParaUnaRutaByTipoDeBasura(List<TipoDeBasura> tiposDeBasura) {
+	public List<Contenedor> buscarContenedoresDisponilesParaUnaRutaByTipoDeBasura(Integer rutaId,
+			List<TipoDeBasura> tiposDeBasura) {
 		Query<Contenedor> query;
 		String alias = "c";
 		List<TipoDeBasura> tipos = tiposDeBasura != null ? tiposDeBasura : new ArrayList<TipoDeBasura>();
 		StringBuilder hql = new StringBuilder("Select " + alias + " FROM Contenedor " + alias);
 		List<Contenedor> contenedores = new ArrayList<Contenedor>();
 		// muestra solo los contenedores de alta, los de baja no
-		hql.append(" WHERE " + alias + ".ruta is null and " + alias + ".activo = :activo ");
+		if (rutaId != null)
+			hql.append(" WHERE (" + alias + ".ruta.id =  (:rutaId) OR " + alias + ".ruta is null) and " + alias
+					+ ".activo = :activo ");
+		else
+			hql.append(" WHERE " + alias + ".ruta is null and " + alias + ".activo = :activo ");
 
 		// mostrar por tipos
 		if (tipos.size() > 0) {
@@ -335,6 +340,8 @@ public class ContenedorDaoHibernate extends GenericHibernateDAOImpl<Contenedor, 
 			query.setParameter("tipos", tipos);
 		query.setParameter("activo", true);
 		query.setParameter("fecha", Calendar.getInstance().getTime());
+		if (rutaId != null)
+			query.setParameter("rutaId", rutaId);
 
 		if (tipos.size() > 0) {
 			contenedores = query.list();

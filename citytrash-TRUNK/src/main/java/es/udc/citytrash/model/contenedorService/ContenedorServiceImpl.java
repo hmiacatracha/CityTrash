@@ -401,7 +401,26 @@ public class ContenedorServiceImpl implements ContenedorService {
 				}
 			}
 		}
-		return contenedorDao.buscarContenedoresDisponilesParaUnaRutaByTipoDeBasura(tipos);
+		return contenedorDao.buscarContenedoresDisponilesParaUnaRutaByTipoDeBasura(null, tipos);
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public List<Contenedor> buscarContenedoresDiponiblesParaUnaRuta(int rutaId, List<Integer> tiposDeBasura) {
+		List<TipoDeBasura> tipos = new ArrayList<TipoDeBasura>();
+
+		/* Agregamos los tipos de basura */
+		if (tiposDeBasura != null) {
+			for (Integer t : tiposDeBasura) {
+				try {
+					TipoDeBasura tb = tipoDao.buscarById(Integer.valueOf(t.toString()));
+					tipos.add(tb);
+				} catch (NumberFormatException | InstanceNotFoundException e) {
+
+				}
+			}
+		}
+		return contenedorDao.buscarContenedoresDisponilesParaUnaRutaByTipoDeBasura(rutaId, tipos);
 	}
 
 	@Transactional(readOnly = true)

@@ -13,7 +13,7 @@
 		th:remove="tag" th:if="${rutaForm}!=null">
 
 		<div
-			class="col-sm-offset-1 col-sm-10 col-md-offset-3 col-md-6 col-lg-offset-3 col-lg-6">
+			class="col-sm-12 col-md-offset-2 col-md-8 col-lg-offset-2 col-lg-8">
 			<div class="panel panel-default" th:object="${rutaForm}">
 
 				<div class="panel-heading">
@@ -37,9 +37,10 @@
 				</div>
 
 				<div class="panel-body">
+					<input th:if="*{id}" type="hidden"
+						class="mayusculas col-sm-6 form-control" id="id" th:field="*{id}" />
+
 					<div class="table-responsive">
-
-
 						<table class="table table-hover">
 							<tbody th:object="${rutaForm}">
 								<tr>
@@ -74,83 +75,7 @@
 											<a th:text="${#strings.toUpperCase(camionAsignado.nombre)}"
 												th:href="@{#{link.camiones.detalles}(id=${camionAsignado.id})}"
 												class="btn-sm"> </a>
-										</p> <!-- 
-										<table class="table table-responsive">
-											<thead class="text-success">
-												<tr>
-													<th scope="col">#</th>
-													<th scope="col" th:text="#{lbl_tipo}">Tipo</th>
-													<th scope="col" th:text="#{lbl_color}">Color</th>
-												</tr>
-											</thead>
-											<tbody th:if="${tiposDeBasuraAsignadas.size()> 0}"
-												class="text-success">
-
-												<tr
-													th:each="item, rowStat: ${camionAsignado.modeloCamion.tiposDeBasura}">
-													<td th:text="${rowStat.index+1}"></td>
-													<td th:text="#{${item.tipo.tipo}}">Name</td>
-													<td><div
-															th:style="'background: #' + ${item.tipo.color}"
-															class="basura_color_cuadro"></div>
-												</tr>
-											</tbody>
-										</table>
-										 --> <!-- 
-										<table class="table table-hover table-responsive">
-											<thead class="text-success">
-												<tr>
-													<th scope="col">#</th>
-													<th scope="col" th:text="#{lbl_trabajador}">Trabajador</th>
-													<th scope="col" th:text="#{lbl_rol}"></th>
-												</tr>
-											</thead>
-											<tbody th:if="${camionAsignado}" class="text-success">
-
-												<tr th:if="${camionAsignado.recogedor1!=null}">
-													<td></td>
-
-													<td><a
-														th:text="${#strings.toUpperCase(camionAsignado.recogedor1.nombre)}"
-														th:href="@{#{link.trabajadores.detalles}(id=${camionAsignado.recogedor1.id})}"
-														class="btn-sm"> </a></td>
-													<td></td>
-													<td th:text="#{lbl_camion_recogedor}"></td>
-												</tr>
-												<tr th:if="${camionAsignado.recogedor2!=null}">
-													<td></td>
-
-													<td><a
-														th:text="${#strings.toUpperCase(camionAsignado.recogedor2.nombre)}"
-														th:href="@{#{link.trabajadores.detalles}(id=${camionAsignado.recogedor2.id})}"
-														class="btn-sm"> </a></td>
-													<td></td>
-													<td th:text="#{lbl_camion_recogedor}"></td>
-												</tr>
-
-												<tr th:if="${camionAsignado.conductor!=null}">
-													<td></td>
-
-													<td><a
-														th:text="${#strings.toUpperCase(camionAsignado.conductor.nombre)}"
-														th:href="@{#{link.trabajadores.detalles}(id=${camionAsignado.conductor.id})}"
-														class="btn-sm"> </a></td>
-													<td></td>
-													<td th:text="#{lbl_camion_conductor}"></td>
-												</tr>
-												<tr th:if="${camionAsignado.conductorSuplente!=null}">
-													<td></td>
-
-													<td><a
-														th:text="${#strings.toUpperCase(camionAsignado.conductorSuplente.nombre)}"
-														th:href="@{#{link.trabajadores.detalles}(id=${camionAsignado.conductorSuplente.id})}"
-														class="btn-sm"> </a></td>
-													<td></td>
-													<td th:text="#{lbl_camion_conductor}"></td>
-												</tr>
-											</tbody>
-										</table>
-										 -->
+										</p>
 									</td>
 								</tr>
 								<tr>
@@ -195,26 +120,32 @@
 										th:text="${#strings.capitalize('__#{lbl_localizacion}__')}"></td>
 
 									<td colspan="2">
-										<div th:object="${rutaForm.puntoInicio}">
-											<label
-												th:text="${#strings.capitalize('__#{lbl_punto_inicio}__')} + ' [' +
-											${#numbers.formatDecimal(__*{lat}__, 0, 2, 'POINT')} + ','
-											 + ${#numbers.formatDecimal(__*{lng}__, 0, 2, 'POINT')}  + ']' ">
 
-											</label> <label th:if="*{lat}" class="text-left text-success">
-												<var>(DD)</var>
+										<div th:object="${rutaForm.puntoInicio}">
+											<span class="glyphicon glyphicon-map-marker"></span> <label
+												for="puntoInicio" class="col-form-label"
+												th:text="#{lbl_punto_inicio}"></label> <label
+												id="puntoInicio" th:data-lat="${rutaForm.puntoInicio.lat}"
+												th:data-lng="${rutaForm.puntoInicio.lng}"
+												th:text="${#strings.toUpperCase(rutaForm.puntoInicio)}">
+											</label> <label class="text-left text-success"> <var>(DD)</var>
 											</label>
+
+
 										</div>
+										<p id="puntoInicioDir" class="text-info"></p>
 
 										<div th:object="${rutaForm.puntoFinal}">
-											<label
-												th:text="${#strings.capitalize('__#{lbl_punto_final}__')} + ' [' +
-											${#numbers.formatDecimal(__*{lat}__, 0, 2, 'POINT')} + ','
-											 + ${#numbers.formatDecimal(__*{lng}__, 0, 2, 'POINT')}  + ']' ">
-											</label> <label th:if="*{lat}" class="text-left text-success">
-												<var>(DD)</var>
+											<span class="glyphicon glyphicon-map-marker"></span> <label
+												for="puntoFinal" class="col-form-label"
+												th:text="#{lbl_punto_final}"></label> <label id="puntoFinal"
+												th:data-lat="${rutaForm.puntoFinal.lat}"
+												th:data-lng="${rutaForm.puntoFinal.lng}"
+												th:text="${#strings.toUpperCase(rutaForm.puntoFinal)}">
+											</label> <label class="text-left text-success"> <var>(DD)</var>
 											</label>
 										</div>
+										<p id="puntoFinalDir" class="text-info"></p>
 									</td>
 								</tr>
 								<!-- activo -->
@@ -227,13 +158,13 @@
 									<td th:unless="*{activo == true}"><i
 										class="fa fa-toggle-off"> </i></td>
 								</tr>
-
-
 							</tbody>
 						</table>
-						<!-- mapa -->
-						<div id="mapa" class="container" th:fragment="mapa">
-							<div id="map" class="container"></div>
+					</div>
+					<!-- mapa -->
+					<div class="table-responsive">
+						<div id="ruta" th:fragment="mapa">
+							<div id="map"></div>
 						</div>
 					</div>
 				</div>

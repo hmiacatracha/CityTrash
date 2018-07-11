@@ -41,7 +41,7 @@ public class Localizacion {
 
 	@Override
 	public String toString() {
-		return "Localizacion [lat=" + lat + ", lng=" + lng + "]";
+		return "[lat=" + lat + ", lng=" + lng + "]";
 	}
 
 }

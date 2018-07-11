@@ -58,26 +58,26 @@
 							</div>
 						</div>
 						<div class="form-group row">
-							<!-- tipos de basura -->
-							<div th:if="${listaTiposDeBasura}"
-								class="text-center col-xs-6 col-sm-3 col-md-3">
-								<select th:title="#{lbl_tipo_basura_recoger}"
-									class="selectpicker" data-style="btn btn-default"
-									th:field="*{tiposDeBasura}" id="tiposBasuras" multiple>
-									<option th:each="row, index: ${listaTiposDeBasura}"
-										th:value="${row.id}" th:text="#{${row.tipo}}"></option>
-								</select>
-							</div>
-
 							<!-- trabajadores -->
 							<div th:if="${listaTrabajadores}"
 								class="text-center col-xs-6 col-sm-3 col-md-3">
 								<select th:title="#{lbl_trabajadores}" class="selectpicker"
 									data-style="btn btn-default" th:field="*{trabajadores}"
-									id="trabajadores" multiple>
+									id="trabajadores" multiple data-live-search="true">
 									<option th:each="row, index: ${listaTrabajadores}"
 										th:value="${row.id}"
 										th:text="${row.apellidos} + ' ' + ${row.nombre} + '-' + ${row.docId}"></option>
+								</select>
+							</div>
+							<!-- tipos de basura -->
+							<div th:if="${listaTiposDeBasura}"
+								class="text-center col-xs-6 col-sm-3 col-md-3">
+								<select th:title="#{lbl_tipo_basura_recoger}"
+									class="selectpicker" data-style="btn btn-default"
+									data-live-search="true" th:field="*{tiposDeBasura}"
+									id="tiposBasuras" multiple>
+									<option th:each="row, index: ${listaTiposDeBasura}"
+										th:value="${row.id}" th:text="#{${row.tipo}}"></option>
 								</select>
 							</div>
 							<!-- contenedores -->
@@ -86,7 +86,7 @@
 								class="text-center col-xs-6 col-sm-3 col-md-3">
 								<select th:title="#{lbl_contenedores}" class="selectpicker"
 									data-style="btn btn-default" th:field="*{contenedores}"
-									id="contenedores" multiple>
+									id="contenedores" multiple data-live-search="true">
 									<option th:each="row, index: ${listaContenedores}"
 										th:value="${row.id}" th:text="#{${row.nombre}}"></option>
 								</select>
@@ -97,7 +97,7 @@
 								class="text-center col-xs-6 col-sm-3 col-md-3">
 								<select th:title="#{lbl_camiones}" class="selectpicker"
 									data-style="btn btn-default" th:field="*{camiones}"
-									id="camiones" multiple>
+									id="camiones" multiple data-live-search="true">
 									<option th:each="row, index: ${listaCamiones}"
 										th:value="${row.id}" th:text="#{${row.nombre}}"></option>
 								</select>
@@ -132,12 +132,25 @@
 								<th><a class="sorted" sd:pagination-sort="camion.nombre"
 									th:text="${#strings.capitalize('__#{lbl_camion}__')}"> </a></th>
 
+								<!-- 
+
+								<th th:text="${#strings.toUpperCase('__#{lbl_conductor}__')}"></th>
+
+								<th
+									th:text="${#strings.toUpperCase('__#{lbl_conductor_suplente}__')}"></th>
+
+								<th th:text="${#strings.toUpperCase('__#{lbl_recolector}__')}"></th>
+
+								<th th:text="${#strings.toUpperCase('__#{lbl_recolector}__')}"></th>
+								 -->
+
 								<th
 									th:text="${#strings.toUpperCase('__#{lbl_camion_tipos_basura}__')}"></th>
 
-								<th th:text="${#strings.toUpperCase('__#{lbl_punto_inicio}__')}"></th>
+								<!-- <th th:text="${#strings.toUpperCase('__#{lbl_punto_inicio}__')}"></th>
 
 								<th th:text="${#strings.toUpperCase('__#{lbl_punto_final}__')}"></th>
+								 -->
 
 								<th
 									th:text="${#strings.toUpperCase('__#{frm_header_ruta_tipos}__')}"></th>
@@ -155,7 +168,7 @@
 									th:text="${ruta.id}"> </span></td>
 
 								<!-- camion -->
-								<td class="align-middle"><a
+								<td class="align-middle"><a th:if="${ruta.camion!=null}"
 									th:text="${#strings.toUpperCase(ruta.camion.nombre)}"
 									th:href="@{#{link.camiones.detalles}(id=${ruta.camion.id})}"
 									class="btn-sm"><i class="glyphicon glyphicon-pencil"
@@ -170,11 +183,13 @@
 										</tr>
 									</table>
 								</td>
+								<!-- 
 								<td class="align-middle" th:if="${ruta.puntoInicio}"
 									th:text="'(DD) '+ ${ruta.puntoInicio.lat} + ',' + ${ruta.puntoInicio.lng}+ ''"></td>
 
 								<td class="align-middle" th:if="${ruta.puntoFinal}"
 									th:text="'(DD) '+ ${ruta.puntoFinal.lat} + ',' + ${ruta.puntoFinal.lng}+ ''"></td>
+								 -->
 								<td>
 									<table>
 										<tr>

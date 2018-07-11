@@ -91,11 +91,13 @@ public class RutaServiceImpl implements RutaService {
 				}
 		}
 
+		/* Añadimos los contenedores nuevos */
 		for (Long contenedorId : form.getContenedores()) {
 			if (contenedorId != null) {
 				if (contenedorDao.existe(contenedorId)) {
 					Contenedor contenedor = contenedorDao.buscarById(contenedorId);
-					ruta.addContenedor(contenedor);
+					contenedor.setRuta(ruta);
+					contenedorDao.guardar(contenedor);
 				}
 			}
 		}
@@ -144,18 +146,29 @@ public class RutaServiceImpl implements RutaService {
 
 		ruta.getTiposDeBasura().clear();
 		ruta.getTiposDeBasura().addAll(tiposDeBasura);
+		List<Contenedor> contenedoresGuardados = new ArrayList<Contenedor>();
+		contenedoresGuardados = ruta.getContenedores();
+
 		List<Contenedor> contenedores = new ArrayList<Contenedor>();
+
+		/* Eliminanos los contenedores que ya no pertenecen a esta ruta */
+		for (Contenedor c : contenedoresGuardados) {
+			if (!form.getContenedores().contains(c.getId())) {
+				c.setRuta(null);
+				contenedorDao.guardar(c);
+			}
+		}
+
+		/* Añadimos los contenedores nuevos */
 		for (Long contenedorId : form.getContenedores()) {
 			if (contenedorId != null) {
 				if (contenedorDao.existe(contenedorId)) {
 					Contenedor contenedor = contenedorDao.buscarById(contenedorId);
-					contenedores.add(contenedor);
+					contenedor.setRuta(ruta);
+					contenedorDao.guardar(contenedor);
 				}
 			}
 		}
-		ruta.getContenedores().clear();
-		ruta.getContenedores().addAll(contenedores);
-		logger.info("actualizarRuta contenedores => " + ruta.getContenedores().toString());
 		rutaDao.guardar(ruta);
 		logger.info("actualizarRuta fin");
 		return ruta;
