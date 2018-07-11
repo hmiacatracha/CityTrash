@@ -32,6 +32,13 @@ public interface ContenedorModeloDao extends GenericDAO<ContenedorModelo, Intege
 	 * @return
 	 */
 	List<ContenedorModelo> buscarTodosOrderByModelo();
+	
+	/**
+	 * Buscar modelos by tipo de basura
+	 * @param tipos
+	 * @return
+	 */
+	List<ContenedorModelo> buscarTodosOrderByModelo(List<Integer> tipos);
 
 	/**
 	 * Buscar todos los modelos by pageable
@@ -51,5 +58,7 @@ public interface ContenedorModeloDao extends GenericDAO<ContenedorModelo, Intege
 	 */
 	Page<ContenedorModelo> buscarContenedorModelo(Pageable pageable, String palabrasClaveModelo,
 			List<TipoDeBasura> tipos);
+
+	
 
 }

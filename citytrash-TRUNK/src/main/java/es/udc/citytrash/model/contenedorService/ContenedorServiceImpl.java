@@ -119,10 +119,17 @@ public class ContenedorServiceImpl implements ContenedorService {
 		return modelo;
 	}
 
-	@Transactional(readOnly = true)
+	/*@Transactional(readOnly = true)
 	@Override
 	public List<ContenedorModelo> buscarTodosLosModelosOrderByModelo() {
 		List<ContenedorModelo> modelos = modeloDao.buscarTodosOrderByModelo();
+		return modelos;
+	}*/
+
+	@Transactional(readOnly = true)
+	@Override
+	public List<ContenedorModelo> buscarTodosLosModelosOrderByModelo(List<Integer> tipos) {
+		List<ContenedorModelo> modelos = modeloDao.buscarTodosOrderByModelo(tipos);
 		return modelos;
 	}
 

@@ -85,7 +85,16 @@ public interface ContenedorService {
 	 * 
 	 * @return
 	 */
-	List<ContenedorModelo> buscarTodosLosModelosOrderByModelo();
+	//List<ContenedorModelo> buscarTodosLosModelosOrderByModelo();
+
+	/**
+	 * Busca modelos by tipo de basura
+	 * 
+	 * @param tipos
+	 *            tipos de basura
+	 * @return
+	 */
+	List<ContenedorModelo> buscarTodosLosModelosOrderByModelo(List<Integer> tipos);
 
 	/**
 	 * Busca los tipos de basura
@@ -228,17 +237,16 @@ public interface ContenedorService {
 	 * @return
 	 */
 	List<Valor> buscarValoresBySensor(Long sensorId, Date fechaInicio, Date fechaFin);
-	
 
 	/**
 	 * Lista de contenedores disponibles para una ruta by ruta id
+	 * 
 	 * @param rutaId
 	 * @param tiposDeBasura
 	 * @return
 	 */
 	List<Contenedor> buscarContenedoresDiponiblesParaUnaRuta(int rutaId, List<Integer> tiposDeBasura);
 
-	
 	/**
 	 * Buscar contenedores disponibles para una ruta by tipo de basura
 	 * 
@@ -247,17 +255,13 @@ public interface ContenedorService {
 	 * @return
 	 */
 	List<Contenedor> buscarContenedoresDiponiblesParaUnaRuta(List<Integer> tiposDeBasura);
-	
-	
-	
 
 	/**
 	 * Buscar contenedores por lista de ids
+	 * 
 	 * @param idsContenedores
 	 * @return
 	 */
 	List<Contenedor> buscarContenedores(List<Long> idsContenedores);
 
-	
-	
 }

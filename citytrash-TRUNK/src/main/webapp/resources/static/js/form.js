@@ -187,6 +187,28 @@ jQuery(function($) {
 		});
 	});
 
+	/*Mustra el filtro de los modelos by tipo de basura en las paginas de contenedores */
+	$(document).on('change', '#tipoDeBasuraPageContenedores', function(e) {
+		try {
+			var busquedaForm = $('form').serializeArray();
+			var modelo = $("#modelo");
+			//console.log("#tiposDeBasura change contenedores=>" + JSON.stringify(busquedaForm));
+
+			/*Load modelos de contenedores */
+			$.ajax({
+				type : "GET",
+				url : '/citytrash/ajax/contenedores/listaModelosContenedores',
+				data : busquedaForm,
+				success : function(data, status) {
+					modelo.html(data).selectpicker("refresh");
+				}
+			});
+
+		} catch (err) {
+			console.log("error tipoDeBasuraPageContenedores change");
+		}
+	});
+
 
 	$(document).ready(function() {
 
@@ -247,6 +269,7 @@ jQuery(function($) {
 		/*Activamos el tooltip*/
 		$('[data-toggle="tooltip"]').tooltip();
 	});
+
 
 
 

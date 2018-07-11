@@ -80,7 +80,7 @@ public class ContenedoresController {
 	@ModelAttribute("todosLosModelos")
 	public List<ContenedorModelo> getModelos() {
 		List<ContenedorModelo> modelos = new ArrayList<ContenedorModelo>();
-		modelos = cServicio.buscarTodosLosModelosOrderByModelo();
+		modelos = cServicio.buscarTodosLosModelosOrderByModelo(null);
 		return modelos;
 		// return modelos.stream().map(modelo ->
 		// convertToDto(modelo)).collect(Collectors.toList());
@@ -139,7 +139,8 @@ public class ContenedoresController {
 
 	}
 
-	@RequestMapping(value = { WebUtils.REQUEST_MAPPING_CONTENEDORES }, method = RequestMethod.POST)
+	@RequestMapping(value = { WebUtils.REQUEST_MAPPING_CONTENEDORES, "" }, params = {
+			"filtrarBuqueda" }, method = RequestMethod.GET)
 	public String buscarContenedores(
 			@PageableDefault(size = WebUtils.DEFAULT_PAGE_SIZE, page = WebUtils.DEFAULT_PAGE_NUMBER, direction = Direction.DESC) @SortDefault("id") Pageable pageRequest,
 			@Valid ContenedorFormBusq form, BindingResult result, Model model,

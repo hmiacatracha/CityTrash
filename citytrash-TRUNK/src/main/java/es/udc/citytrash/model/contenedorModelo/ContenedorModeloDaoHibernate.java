@@ -50,6 +50,30 @@ public class ContenedorModeloDaoHibernate extends GenericHibernateDAOImpl<Conten
 	}
 
 	@Override
+	public List<ContenedorModelo> buscarTodosOrderByModelo(List<Integer> tipos) {
+		String alias = "m";
+		Query<ContenedorModelo> query;
+		List<Integer> tiposAux = tipos != null ? tipos : new ArrayList<Integer>();
+		List<ContenedorModelo> modelos = new ArrayList<ContenedorModelo>();
+		String hql = "";
+
+		if (tiposAux.size() > 0) {
+			hql = String.format("Select " + alias + " FROM ContenedorModelo " + alias + " WHERE " + alias
+					+ ".tipo.id in (:tipos) ORDER BY " + alias + ".modelo, " + alias + ".tipo.tipo");
+
+		} else {
+			hql = String.format("Select " + alias + " FROM ContenedorModelo " + alias + " ORDER BY " + alias
+					+ ".modelo, " + alias + ".tipo.tipo");
+		}
+
+		query = getSession().createQuery(hql.toString(), ContenedorModelo.class);
+		if (tiposAux.size() > 0)
+			query.setParameter("tipos", tiposAux);
+		modelos = query.list();
+		return modelos;
+	}
+
+	@Override
 	public Page<ContenedorModelo> buscarContenedorModelo(Pageable pageable) {
 		String alias = "m";
 		Query<ContenedorModelo> query;

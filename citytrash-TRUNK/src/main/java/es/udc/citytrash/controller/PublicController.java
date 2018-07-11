@@ -1,5 +1,6 @@
 package es.udc.citytrash.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -10,6 +11,11 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.DisabledException;
@@ -30,13 +36,16 @@ import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 import es.udc.citytrash.controller.cuenta.CustomUserDetails;
+import es.udc.citytrash.controller.excepciones.PageNotFoundException;
 import es.udc.citytrash.controller.util.AjaxUtils;
 import es.udc.citytrash.controller.util.WebUtils;
 import es.udc.citytrash.controller.util.anotaciones.UsuarioActual;
+import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorFormBusq;
 import es.udc.citytrash.controller.util.dtos.ruta.RutaDto;
 import es.udc.citytrash.model.camion.Camion;
 import es.udc.citytrash.model.camionService.CamionService;
 import es.udc.citytrash.model.contenedor.Contenedor;
+import es.udc.citytrash.model.contenedorModelo.ContenedorModelo;
 import es.udc.citytrash.model.contenedorService.ContenedorService;
 import es.udc.citytrash.model.trabajadorService.TrabajadorService;
 import es.udc.citytrash.model.usuarioService.UsuarioService;
@@ -167,14 +176,13 @@ public class PublicController {
 		RutaDto rutaForm = form;
 		rutaForm.setTiposDeBasura(rutaForm.getTiposDeBasura());
 		List<Contenedor> contenedores;
-		
+
 		if (form.getId() != null)
-			contenedores = contServicio
-					.buscarContenedoresDiponiblesParaUnaRuta(form.getId(),rutaForm.getTiposDeBasura());
+			contenedores = contServicio.buscarContenedoresDiponiblesParaUnaRuta(form.getId(),
+					rutaForm.getTiposDeBasura());
 		else
-			contenedores = contServicio
-			.buscarContenedoresDiponiblesParaUnaRuta(rutaForm.getTiposDeBasura());
-			
+			contenedores = contServicio.buscarContenedoresDiponiblesParaUnaRuta(rutaForm.getTiposDeBasura());
+
 		List<Camion> camiones = camServicio.buscarCamionesDisponiblesParaUnaRutaByTipos(rutaForm.getTiposDeBasura());
 
 		logger.info("listaCamionesDisponibles contenedores  => " + form.getContenedores().toString());
@@ -211,6 +219,38 @@ public class PublicController {
 		// logger.info("html =>" +
 		// WebUtils.VISTA_RUTA_EDITAR.concat("::fragmentoContenedores"));
 		return WebUtils.VISTA_RUTA_EDITAR.concat(" ::fragmentoContenedores");
+	}
+
+	@RequestMapping(value = "/ajax/contenedores/listaModelosContenedores", method = RequestMethod.GET)
+	public String ajaxContenedoresDisponibles(Model model, @ModelAttribute("busquedaForm") ContenedorFormBusq form) {
+
+		Pageable pageRequest = new PageRequest(0, 1, Sort.Direction.DESC, "id");
+		logger.info("GET listaModelosContenedores");
+		List<Contenedor> contenedoresList = new ArrayList<Contenedor>();
+		Page<Contenedor> page = new PageImpl<Contenedor>(contenedoresList, pageRequest, contenedoresList.size());
+
+		try {
+			List<ContenedorModelo> modelos = new ArrayList<ContenedorModelo>();
+			modelos = contServicio.buscarTodosLosModelosOrderByModelo(form.getTiposDeBasura());
+			model.addAttribute("pageContenedores", page);
+			model.addAttribute("todosLosModelos", modelos);
+			model.addAttribute("busquedaForm", form);
+
+			if (page.getNumberOfElements() == 0) {
+				if (!page.isFirst()) {
+					logger.info("PageNotFoundException");
+					throw new PageNotFoundException(String.format(
+							"The requested page (%s) of the worker list was not found.", pageRequest.getPageNumber()));
+				}
+			}
+
+		} catch (Exception e) {
+			throw new PageNotFoundException(String.format("The requested page (%s) of the worker list was not found.",
+					pageRequest.getPageNumber()));
+		}
+
+		return WebUtils.VISTA_CONTENEDORES.concat("::fragmentoModelos");
+
 	}
 
 	@ResponseStatus(HttpStatus.FORBIDDEN)
