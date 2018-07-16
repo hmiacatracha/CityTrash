@@ -20,14 +20,20 @@
 						th:text="${#strings.toUpperCase('__#{lbl_editar_ruta}__')} + ' #' + *{id}"></h3>
 
 					<div class="row">
-						<a id="link_ver_detalles" th:href="@{#{link.rutas}}"
-							class="pull-right btn-sm"><i class="glyphicon glyphicon-list"
-							data-toggle="tooltip" th:title="#{rutas}"></i></a> <a
-							id="link_ver_detalles"
-							th:href="@{#{link.rutas.detalle}(id=${rutaForm.id})}"
-							class="pull-right btn-sm"><i
-							class="glyphicon glyphicon-eye-open" data-toggle="tooltip"
-							th:title="#{lbl_ver_detalles}"></i></a>
+						<div class="col-xs-11 text-right">
+							<div class="btn-group">
+								<a id="link_ver_detalles"
+									th:href="@{#{link.rutas.detalle}(id=${rutaForm.id})}"
+									class="btn-sm"><i class="glyphicon glyphicon-eye-open"
+									data-toggle="tooltip" th:title="#{lbl_ver_detalles}"></i> </a> <a
+									th:href="@{#{link.rutas.registro}}" class="btn-sm"><i
+									class="glyphicon glyphicon-plus" data-toggle="tooltip"
+									th:title="#{lbl_add}"></i> </a> <a th:href="@{#{link.rutas}}"
+									class="btn-sm"> <i class="glyphicon glyphicon-list"
+									data-toggle="tooltip" th:title="#{rutas}"></i>
+								</a>
+							</div>
+						</div>
 					</div>
 				</div>
 				<div class="panel-body">

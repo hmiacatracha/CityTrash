@@ -100,7 +100,7 @@ public class CamionesController {
 	@ModelAttribute("todosLosModelos")
 	public List<CamionModelo> getModelos() {
 		List<CamionModelo> modelos = new ArrayList<CamionModelo>();
-		modelos = cServicio.buscarTodosLosModelosOrderByModelo();
+		modelos = cServicio.buscarTodosLosModelosOrderByModelo(null);
 		return modelos;
 	}
 
@@ -140,7 +140,6 @@ public class CamionesController {
 
 			if (page.getNumberOfElements() == 0) {
 				if (!page.isFirst()) {
-					logger.info("PageNotFoundException");
 					throw new PageNotFoundException(
 							String.format("The requested page (%s) of the camiones list was not found.",
 									pageRequest.getPageNumber()));
@@ -157,50 +156,6 @@ public class CamionesController {
 			throw new PageNotFoundException(String.format("The requested page (%s) of the worker list was not found.",
 					pageRequest.getPageNumber()));
 		}
-	}
-
-	@RequestMapping(value = { WebUtils.REQUEST_MAPPING_CAMIONES }, method = RequestMethod.POST)
-	public String buscarCamiones(
-			@PageableDefault(size = WebUtils.DEFAULT_PAGE_SIZE, page = WebUtils.DEFAULT_PAGE_NUMBER, direction = Direction.DESC) @SortDefault("id") Pageable pageRequest,
-			@Valid CamionFormBusq form, BindingResult result, Model model,
-			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
-
-		logger.info("POST REQUEST_MAPPING_CAMIONES");
-		List<Camion> camionesList = new ArrayList<Camion>();
-		Page<Camion> page = new PageImpl<Camion>(camionesList, pageRequest, camionesList.size());
-		model.addAttribute("busquedaForm", form);
-
-		try {
-			logger.info("POST REQUEST_MAPPING_CAMIONES 2");
-			if (result.hasErrors()) {
-				model.addAttribute("pageCamiones", page);
-				if (AjaxUtils.isAjaxRequest(requestedWith)) {
-					return WebUtils.VISTA_CAMIONES.concat("::content");
-				}
-				return WebUtils.VISTA_CAMIONES;
-			}
-			logger.info("POST REQUEST_MAPPING_CAMIONES 3");
-			page = cServicio.buscarCamiones(pageRequest, form);
-			model.addAttribute("pageCamiones", page);
-
-			if (page.getNumberOfElements() == 0) {
-				if (!page.isFirst()) {
-					logger.info("PageNotFoundException");
-					throw new PageNotFoundException(String.format(
-							"The requested page (%s) of the worker list was not found.", pageRequest.getPageNumber()));
-				}
-			}
-
-		} catch (FormBusquedaException e) {
-			model.addAttribute("pageCamiones", page);
-			logger.info("formBusquedaError => " + e.getMessage());
-		} catch (Exception e) {
-			throw new PageNotFoundException(String.format("The requested page (%s) of the worker list was not found.",
-					pageRequest.getPageNumber()));
-		}
-		if (AjaxUtils.isAjaxRequest(requestedWith))
-			return WebUtils.VISTA_CAMIONES.concat("::content");
-		return WebUtils.VISTA_CAMIONES;
 	}
 
 	@RequestMapping(value = WebUtils.REQUEST_MAPPING_CAMIONES_REGISTRO, method = RequestMethod.GET)
@@ -221,7 +176,6 @@ public class CamionesController {
 		logger.info("GET REQUEST_MAPPING_CAMIONES_EDITAR");
 		Camion camion;
 		try {
-			logger.info("GET REQUEST_MAPPING_CAMIONES_EDITAR");
 			camion = cServicio.buscarCamionById(id);
 			// model.addAttribute("camionForm", new CamionDto());
 			CamionDto dto = new CamionDto(camion);
@@ -245,47 +199,35 @@ public class CamionesController {
 			RedirectAttributes redirectAttributes,
 			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith)
 			throws ResourceNotFoundException {
-		logger.info("paso1 POST REQUEST_MAPPING_CAMIONES_REGISTRO");
-		logger.info("paso2 POST REQUEST_MAPPING_CAMIONES_REGISTRO IMPRIMIR FORMULARIO => " + form.toString());
 		model.addAttribute("camionForm", form);
 		CamionDto camionDto;
 		/* CHECK THE FORM */
 		if (result.hasErrors()) {
-			logger.info("paso3 POST REQUEST_MAPPING_CAMIONES_REGISTRO IMPRIMIR FORMULARIO => " + form.toString());
 			if (AjaxUtils.isAjaxRequest(requestedWith)) {
 				return WebUtils.VISTA_CAMIONES_REGISTRO.concat("::content");
 			}
 			return WebUtils.VISTA_CAMIONES_REGISTRO;
 		}
 		try {
-			logger.info("paso4 POST REQUEST_MAPPING_CAMIONES_REGISTRO IMPRIMIR FORMULARIO => " + form.toString());
-
 			camionDto = new CamionDto(cServicio.registrarCamion(form));
-			logger.info("paso5 POST REQUEST_MAPPING_CAMIONES_REGISTRO IMPRIMIR FORMULARIO => " + form.toString());
 			redirectAttributes.addAttribute("msg", "ok");
 			redirectAttributes.addAttribute("type", "reg_cam");
-			// redirectAttributes.addAttribute("key", camionDto.getNombre());
 			response.setHeader("X-Requested-With", requestedWith);
 			return "redirect:"
 					+ WebUtils.URL_MAPPING_CAMIONES_EDITAR.replace("{id}", String.valueOf(camionDto.getId()));
 
 		} catch (DuplicateInstanceException e) {
-			logger.info("paso6 POST REQUEST_MAPPING_CAMIONES_REGISTRO IMPRIMIR FORMULARIO => " + form.toString());
 			model = duplicateInstanceException(model, e);
 
 			if (AjaxUtils.isAjaxRequest(requestedWith))
 				return WebUtils.VISTA_CAMIONES_REGISTRO.concat("::content");
 			return WebUtils.VISTA_CAMIONES_REGISTRO;
 		} catch (InstanceNotFoundException e) {
-			logger.info("paso7 POST REQUEST_MAPPING_CAMIONES_REGISTRO IMPRIMIR FORMULARIO => " + form.toString());
-			logger.debug("error trabajador => " + e.toString());
 			return WebUtils.VISTA_CAMIONES_MODELOS;
 
 		} catch (InvalidFieldException e) {
 			return "redirect:" + WebUtils.VISTA_CAMIONES;
 		} catch (Exception e) {
-			logger.info("paso8 POST REQUEST_MAPPING_CAMIONES_REGISTRO IMPRIMIR FORMULARIO => " + form.toString());
-			logger.info("error register a user => " + e.getMessage());
 			return WebUtils.VISTA_CAMIONES_REGISTRO;
 		}
 
@@ -317,7 +259,6 @@ public class CamionesController {
 			return WebUtils.VISTA_CAMIONES_EDITAR;
 
 		} catch (Exception e) {
-			logger.debug("error register a user => " + e.toString());
 			return WebUtils.VISTA_CAMIONES_EDITAR;
 		}
 
@@ -421,14 +362,12 @@ public class CamionesController {
 			CamionModeloFormBusq busquedaForm = new CamionModeloFormBusq();
 			busquedaForm.setPalabrasClaveModelo(palabrasClaves);
 			busquedaForm.setTipos(types);
-			logger.info("GET REQUEST_MAPPING_CAMIONES_MODELOS tipos 2 => " + busquedaForm.getTipos());
 			model.addAttribute("busquedaForm", busquedaForm);
 			page = cServicio.buscarModelos(pageRequest, busquedaForm);
 			model.addAttribute("page", page);
 
 			if (page.getNumberOfElements() == 0) {
 				if (!page.isFirst()) {
-					logger.info("PageNotFoundException");
 					throw new PageNotFoundException(
 							String.format("The requested page (%s) of the camiones list was not found.",
 									pageRequest.getPageNumber()));
@@ -445,51 +384,6 @@ public class CamionesController {
 			throw new PageNotFoundException(String.format("The requested page (%s) of the worker list was not found.",
 					pageRequest.getPageNumber()));
 		}
-	}
-
-	@RequestMapping(value = { WebUtils.REQUEST_MAPPING_CAMIONES_MODELOS }, method = RequestMethod.POST)
-	public String postModelos(
-			@PageableDefault(size = WebUtils.DEFAULT_PAGE_SIZE, page = WebUtils.DEFAULT_PAGE_NUMBER, direction = Direction.DESC) @SortDefault("id") Pageable pageRequest,
-			@Valid CamionModeloFormBusq form, BindingResult result, Model model,
-			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
-
-		logger.info("POST REQUEST_MAPPING_CAMIONES_MODELOS");
-		List<CamionModelo> modeloList = new ArrayList<CamionModelo>();
-		Page<CamionModelo> page = new PageImpl<CamionModelo>(modeloList, pageRequest, modeloList.size());
-		model.addAttribute("busquedaForm", form);
-
-		try {
-			logger.info("POST REQUEST_MAPPING_CAMIONES_MODELOS 2");
-			if (result.hasErrors()) {
-				model.addAttribute("page", page);
-				if (AjaxUtils.isAjaxRequest(requestedWith)) {
-					return WebUtils.VISTA_CAMIONES.concat("::content");
-				}
-				return WebUtils.VISTA_CAMIONES;
-			}
-			logger.info("POST REQUEST_MAPPING_CAMIONES_MODELOS 3");
-			page = cServicio.buscarModelos(pageRequest, form);
-			logger.info("POST REQUEST_MAPPING_CAMIONES_MODELOS 4");
-			model.addAttribute("page", page);
-
-			if (page.getNumberOfElements() == 0) {
-				if (!page.isFirst()) {
-					logger.info("PageNotFoundException");
-					throw new PageNotFoundException(String.format(
-							"The requested page (%s) of the worker list was not found.", pageRequest.getPageNumber()));
-				}
-			}
-
-		} catch (FormBusquedaException e) {
-			model.addAttribute("page", page);
-			logger.info("formBusquedaError => " + e.getMessage());
-		} catch (Exception e) {
-			model.addAttribute("page", page);
-			logger.info("formBusquedaError => " + e.getMessage());
-		}
-		if (AjaxUtils.isAjaxRequest(requestedWith))
-			return WebUtils.VISTA_CAMIONES_MODELOS.concat("::content");
-		return WebUtils.VISTA_CAMIONES_MODELOS;
 	}
 
 	@RequestMapping(value = WebUtils.REQUEST_MAPPING_CAMIONES_REGISTRO_MODELO, method = RequestMethod.GET)
@@ -767,58 +661,7 @@ public class CamionesController {
 		}
 	}
 
-	@RequestMapping(value = {
-			WebUtils.REQUEST_MAPPING_CAMIONES_DETALLES_MODELO_INFO_CAMIONES }, method = RequestMethod.POST)
-	public String modelosDetallesCamiones(@PathVariable("id") int id,
-			@PageableDefault(size = WebUtils.DEFAULT_PAGE_SIZE, page = WebUtils.DEFAULT_PAGE_NUMBER, direction = Direction.DESC) @SortDefault("id") Pageable pageRequest,
-			@Valid CamionFormBusq busquedaForm, BindingResult result, Model model,
-			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith)
-			throws ResourceNotFoundException {
-		logger.info("POST REQUEST_MAPPING_CAMIONES_DETALLES_MODELO_CAMIONES");
-		try {
-
-			List<Camion> camionesList = new ArrayList<Camion>();
-			Page<Camion> page = new PageImpl<Camion>(camionesList, pageRequest, camionesList.size());
-			model.addAttribute("pageCamiones", page);
-			model.addAttribute("busquedaForm", busquedaForm);
-
-			CamionModelo modelo = cServicio.buscarModeloById(id);
-			model.addAttribute("nombreDelModelo", modelo.getModelo());
-			model.addAttribute("coloresTiposDeBasura", getColoresTiposDeBasuraByModel(id));
-
-			if (result.hasErrors()) {
-				if (AjaxUtils.isAjaxRequest(requestedWith)) {
-					return WebUtils.VISTA_CAMIONES_MODELOS_DETALLES_CAMIONES.concat("::content");
-				}
-				return WebUtils.VISTA_CAMIONES_MODELOS_DETALLES_CAMIONES;
-			}
-			/* Verificamos que exista el modelo */
-			busquedaForm.setModelo(modelo.getId());
-			page = cServicio.buscarCamiones(pageRequest, busquedaForm);
-			model.addAttribute("pageCamiones", page);
-
-			if (page.getNumberOfElements() == 0) {
-				if (!page.isFirst()) {
-					logger.info("PageNotFoundException");
-					throw new PageNotFoundException(String.format(
-							"The requested page (%s) of the worker list was not found.", pageRequest.getPageNumber()));
-				}
-			}
-
-			if (AjaxUtils.isAjaxRequest(requestedWith))
-				return WebUtils.VISTA_CAMIONES_MODELOS_DETALLES_CAMIONES.concat("::content");
-			return WebUtils.VISTA_CAMIONES_MODELOS_DETALLES_CAMIONES;
-
-		} catch (InstanceNotFoundException e) {
-			throw new ResourceNotFoundException(id);
-		} catch (FormBusquedaException e) {
-			throw new ResourceNotFoundException(id);
-		} catch (Exception e) {
-			throw new PageNotFoundException(String.format("The requested page (%s) of the worker list was not found.",
-					pageRequest.getPageNumber()));
-		}
-	}
-
+	
 	@ResponseStatus(HttpStatus.FORBIDDEN)
 	@ExceptionHandler(DuplicateInstanceException.class)
 	public Model duplicateInstanceException(Model model, DuplicateInstanceException ex) {

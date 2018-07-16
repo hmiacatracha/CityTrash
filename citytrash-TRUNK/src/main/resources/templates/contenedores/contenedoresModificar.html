@@ -53,19 +53,15 @@
 <title th:text="#{page_mapa_contenedores}"></title>
 </head>
 
-<body class="fondoBlanco">
+<body class="formularios">
 	<div th:replace="fragments/navigation :: nav(${menu})"></div>
 	<div id="content" class="container" th:fragment="content">
 		<div
 			class="col-sm-offset-1 col-sm-10 col-md-offset-3 col-md-6 col-lg-offset-2 col-lg-8">
 			<div class="panel panel-default" th:if="${contenedorForm}">
-				<div class="panel-heading ">
-
+				<div class="panel-heading">
 					<h3 class="text-center text-success"
 						th:text="${#strings.toUpperCase(contenedorForm.nombre)}"></h3>
-				</div>
-				<div class="panel-body">
-
 					<div class="row">
 						<div class="col-xs-11 text-right">
 							<div class="btn-group">
@@ -74,7 +70,7 @@
 									class="btn-sm"><i class="glyphicon glyphicon-eye-open"
 									data-toggle="tooltip" th:title="#{lbl_ver_detalles}"></i> </a> <a
 									th:href="@{#{link.contenedores.registro}}" class="btn-sm"><i
-									class="glyphicon glyphicon-plus"  data-toggle="tooltip"
+									class="glyphicon glyphicon-plus" data-toggle="tooltip"
 									th:title="#{lbl_add}"></i> </a> <a
 									th:href="@{#{link.contenedores}}" class="btn-sm"> <i
 									class="glyphicon glyphicon-list" data-toggle="tooltip"
@@ -83,6 +79,8 @@
 							</div>
 						</div>
 					</div>
+				</div>
+				<div class="panel-body">
 					<div th:fragment="formularios"
 						th:replace="contenedores/contenedoresModificarForm :: form(${contenedorForm}, ${error})"></div>
 				</div>

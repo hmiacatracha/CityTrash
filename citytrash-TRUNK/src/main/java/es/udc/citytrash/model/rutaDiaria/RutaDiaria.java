@@ -18,6 +18,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
 import es.udc.citytrash.model.camion.Camion;
@@ -25,6 +26,7 @@ import es.udc.citytrash.model.ruta.Ruta;
 import es.udc.citytrash.model.trabajador.Trabajador;
 
 @Entity
+@BatchSize(size = 10)
 @Table(name = "TBL_RUTAS_DIARIAS")
 public class RutaDiaria {
 

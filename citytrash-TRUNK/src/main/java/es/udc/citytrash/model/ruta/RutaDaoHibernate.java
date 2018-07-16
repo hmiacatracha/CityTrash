@@ -31,26 +31,26 @@ public class RutaDaoHibernate extends GenericHibernateDAOImpl<Ruta, Integer> imp
 	final Logger logger = LoggerFactory.getLogger(RutaDaoHibernate.class);
 
 	@Override
-	public Page<Ruta> buscarRutas(Pageable pageable, List<TipoDeBasura> tiposDeBasura, List<Trabajador> trabajadores,
-			List<Contenedor> contenedores, List<Camion> camiones, boolean mostrarSoloRutasActivas) {
+	public Page<Ruta> buscarRutas(Pageable pageable, List<Integer> tiposDeBasura, List<Long> trabajadores,
+			List<Long> contenedores, List<Long> camiones, boolean mostrarSoloRutasActivas) {
 
-		logger.info("buscarRutasDao 1");
+		logger.info("buscarRutasDao2 1");
 		Query<Ruta> query;
 		List<Ruta> rutas = new ArrayList<Ruta>();
 		Page<Ruta> page = new PageImpl<Ruta>(rutas, pageable, rutas.size());
-		List<TipoDeBasura> tiposList = tiposDeBasura != null ? tiposDeBasura : new ArrayList<TipoDeBasura>();
-		List<Trabajador> trabajList = trabajadores != null ? trabajadores : new ArrayList<Trabajador>();
-		List<Contenedor> contenList = contenedores != null ? contenedores : new ArrayList<Contenedor>();
-		List<Camion> camionList = contenedores != null ? camiones : new ArrayList<Camion>();
+		List<Integer> tiposList = tiposDeBasura != null ? tiposDeBasura : new ArrayList<Integer>();
+		List<Long> trabajList = trabajadores != null ? trabajadores : new ArrayList<Long>();
+		List<Long> contenList = contenedores != null ? contenedores : new ArrayList<Long>();
+		List<Long> camionList = contenedores != null ? camiones : new ArrayList<Long>();
 
-		logger.info("buscarRutasDao 2");
+		logger.info("buscarRutasDao2 2");
 		String alias = "r";
 		// http://www.sergiy.ca/how-to-write-many-to-many-search-queries-in-mysql-and-hibernate/
-		// "inner join mc.tiposDeBasura t inner join t.pk pk"
+
 		StringBuilder hql = new StringBuilder("Select distinct " + alias + " FROM Ruta " + alias + " left join " + alias
 				+ ".camion cam " + " left join " + alias + ".contenedores cont " + " left join " + alias
 				+ ".tiposDeBasura tbs " + " left join cam.recogedor1 t1 " + "	left join cam.recogedor2 t2 "
-				+ " left join cam.conductor t3 " + "	left join cam.conductorSuplente t4");
+				+ " left join cam.conductor t3 " + " left join cam.conductorSuplente t4");
 
 		logger.info("buscarRutasDao 3");
 		// mostrar rutas activas
@@ -60,33 +60,33 @@ public class RutaDaoHibernate extends GenericHibernateDAOImpl<Ruta, Integer> imp
 		logger.info("buscarRutasDao 4");
 		// mostrar por tipos de basura
 		if (mostrarSoloRutasActivas && tiposList.size() > 0) {
-			hql.append(" AND tbs in   (:tiposDeBasura) ");
+			hql.append(" AND tbs.id in   (:tiposDeBasura) ");
 		} else if (tiposList.size() > 0) {
-			hql.append(" WHERE tbs in   (:tiposDeBasura) ");
+			hql.append(" WHERE tbs.id in   (:tiposDeBasura) ");
 		}
 
 		logger.info("buscarRutasDao 5");
 		if ((mostrarSoloRutasActivas || tiposList.size() > 0) && trabajList.size() > 0) {
 			hql.append(
-					" AND ( t1 in   (:trabajadores) OR t2 in (:trabajadores) OR t3 in (:trabajadores) OR t4 in (:trabajadores)) ");
+					" AND ( t1.id in   (:trabajadores) OR t2.id in (:trabajadores) OR t3.id in (:trabajadores) OR t4.id in (:trabajadores)) ");
 		} else if (trabajList.size() > 0) {
 			hql.append(
-					" WHERE ( t1 in   (:trabajadores) OR t2 in (:trabajadores) OR t3 in (:trabajadores) OR t4 in (:trabajadores)) ");
+					" WHERE ( t1.id in   (:trabajadores) OR t2.id in (:trabajadores) OR t3.id in (:trabajadores) OR t4.id in (:trabajadores)) ");
 		}
 
 		logger.info("buscarRutasDao 6");
 		if ((mostrarSoloRutasActivas || tiposList.size() > 0 || trabajList.size() > 0) && camionList.size() > 0) {
-			hql.append(" AND cam in (:camiones) ");
+			hql.append(" AND cam.id in (:camiones) ");
 		} else if (camionList.size() > 0) {
-			hql.append(" WHERE cam in (:camiones) ");
+			hql.append(" WHERE cam.id in (:camiones) ");
 		}
 
 		logger.info("buscarRutasDao 7");
 		if ((mostrarSoloRutasActivas || tiposList.size() > 0 || trabajList.size() > 0 || camionList.size() > 0)
 				&& contenList.size() > 0) {
-			hql.append(" AND cont in (:contenedores) ");
+			hql.append(" AND cont.id in (:contenedores) ");
 		} else if (contenList.size() > 0) {
-			hql.append(" WHERE cont in (:contenedores) ");
+			hql.append(" WHERE cont.id in (:contenedores) ");
 		}
 
 		logger.info("buscarRutasDao 8");
@@ -129,7 +129,7 @@ public class RutaDaoHibernate extends GenericHibernateDAOImpl<Ruta, Integer> imp
 		logger.info("buscarRutasDao 16");
 		rutas = query.list();
 		logger.info("buscarRutasDao 17");
-		logger.info("Econtrados =>" + rutas.toString());
+		// logger.info("Econtrados =>" + rutas.toString());
 		int start = pageable.getOffset();
 		int end = (start + pageable.getPageSize()) > rutas.size() ? rutas.size() : (start + pageable.getPageSize());
 		boolean rangoExistente = (rutas.size() - start >= 0) && (rutas.size() - end >= 0);

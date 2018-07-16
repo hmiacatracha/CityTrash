@@ -152,11 +152,10 @@
 					</div>
 					<div class="col-xs-3"></div>
 				</div>
-				<!-- Lista de sensores -->				
+				<!-- Lista de sensores -->
 				<legend class="col-xs-12 text-success"
 					th:text="#{frm_contenedores_sensores}"></legend>
-				<table th:fragment="sensoresList" id="sensoresList"
-					class="table table-striped">
+				<table class="table table-striped">
 					<tr>
 						<th class="col-xs-1 col-sm-1">#</th>
 						<th th:text="#{lbl_sensor_tipo}">tipo</th>
@@ -165,8 +164,9 @@
 						<th></th>
 						<th></th>
 					</tr>
-					<tr th:if="*{sensores.size()> 0}"
-						th:each="sensor, rowStat : *{sensores}" th:field="*{sensores}">
+					<tr th:if="*{sensores.size()> 0}" th:fragment="sensoresList"
+						id="sensoresList" th:each="sensor, rowStat : *{sensores}"
+						th:field="*{sensores}">
 
 						<td class="col-xs-1" th:text="${rowStat.index+1}"></td>
 
@@ -174,17 +174,18 @@
 							th:field="*{sensores[__${rowStat.index}__].id}" /></td>
 
 						<td
-							th:classappend="${#fields.hasErrors('sensores[__${rowStat.index}__].sensorType')}? 'has-error'"><select
-							th:field="*{sensores[__${rowStat.index}__].sensorType}"
+							th:classappend="${#fields.hasErrors('sensores[__${rowStat.index}__].sensorType')}? 'has-error'">
+							<select th:field="*{sensores[__${rowStat.index}__].sensorType}"
 							class="form-control mySelect" data-style="btn-default"
-							id="tipoSensor">
+							th:id="${rowStat.index}">
 								<option
 									th:each="tipoSensor : ${T(es.udc.citytrash.util.enums.TipoSensor).values()}"
 									th:value="${tipoSensor}" th:text="#{${tipoSensor}}"></option>
 						</select> <span class="help-block"
 							th:if="${#fields.hasErrors('sensores[__${rowStat.index}__].sensorType')}"
 							th:errors="*{sensores[__${rowStat.index}__].sensorType}">
-						</span></td>
+						</span>
+						</td>
 						<td
 							th:classappend="${#fields.hasErrors('sensores[__${rowStat.index}__].nombre')}? 'has-error'"><input
 							type="text" class="form-control input-button-right"
@@ -232,7 +233,7 @@
 					class="col-lg-12">
 
 					<button class="btn btn-default btn-md pull-right" type="submit"
-						th:text="#{btn_add_sensor}" name="addSensor"></button>
+						id="addSensor" th:text="#{btn_add_sensor}" name="addSensor"></button>
 				</div>
 			</div>
 			<br> <br> <br>

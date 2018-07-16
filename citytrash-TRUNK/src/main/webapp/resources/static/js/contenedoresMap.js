@@ -3,6 +3,7 @@
 //https://savaslabs.com/2015/05/18/mapping-geojson.html
 //https://www.atomicsmash.co.uk/blog/build-interactive-map-leaflet-js/
 
+
 var shownLayer,
 	polygon;
 
@@ -211,3 +212,7 @@ function popupHtml(feature) {
 		+ feature.properties.carga_nominal + ' kg';
 	return html;
 }
+
+
+
+

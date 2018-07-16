@@ -16,11 +16,11 @@
 			<div class="col-xs-6">
 				<div class="pull-left">
 					<a class="btn btn-default" th:href="@{#{link.rutas.registro}}"
-						role="button"><i class="glyphicon glyphicon-plus"
-						data-toggle="tooltip" th:title="#{frm_registro_rutas}"></i></a> <a
+						data-toggle="tooltip" th:title="#{frm_registro_rutas}"
+						role="button"><i class="glyphicon glyphicon-plus"></i></a> <a
 						class="btn btn-default" th:href="@{#{link.mapa.rutas}}"
-						role="button"><i class="fa fa-map-o" data-toggle="tooltip"
-						th:title="#{mapa}"></i></a>
+						role="button" data-toggle="tooltip" th:title="#{mapa}"><i
+						class="fa fa-map-o"></i></a>
 				</div>
 			</div>
 			<div class="col-xs-6">
@@ -75,7 +75,7 @@
 								<select th:title="#{lbl_tipo_basura_recoger}"
 									class="selectpicker" data-style="btn btn-default"
 									data-live-search="true" th:field="*{tiposDeBasura}"
-									id="tiposBasuras" multiple>
+									id="tipoDeBasuraFormBusqPageRutas" multiple>
 									<option th:each="row, index: ${listaTiposDeBasura}"
 										th:value="${row.id}" th:text="#{${row.tipo}}"></option>
 								</select>
@@ -87,19 +87,20 @@
 								<select th:title="#{lbl_contenedores}" class="selectpicker"
 									data-style="btn btn-default" th:field="*{contenedores}"
 									id="contenedores" multiple data-live-search="true">
-									<option th:each="row, index: ${listaContenedores}"
+									<option th:fragment="listaContenedores"
+										th:each="row, index: ${listaContenedores}"
 										th:value="${row.id}" th:text="#{${row.nombre}}"></option>
 								</select>
 							</div>
-
 							<!-- camiones -->
 							<div th:if="${listaCamiones}"
 								class="text-center col-xs-6 col-sm-3 col-md-3">
 								<select th:title="#{lbl_camiones}" class="selectpicker"
 									data-style="btn btn-default" th:field="*{camiones}"
 									id="camiones" multiple data-live-search="true">
-									<option th:each="row, index: ${listaCamiones}"
-										th:value="${row.id}" th:text="#{${row.nombre}}"></option>
+									<option th:fragment="listaCamiones"
+										th:each="row, index: ${listaCamiones}" th:value="${row.id}"
+										th:text="#{${row.nombre}}"></option>
 								</select>
 							</div>
 						</div>

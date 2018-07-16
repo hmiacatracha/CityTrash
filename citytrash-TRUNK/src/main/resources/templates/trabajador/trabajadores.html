@@ -4,7 +4,8 @@
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	xmlns:sd="http://www.thymeleaf.org/spring-data"
-	layout:decorate="~{layouts/default}" th:with="currentPage='trabajadores'">
+	layout:decorate="~{layouts/default}"
+	th:with="currentPage='trabajadores'">
 <head>
 <title th:text="#{page_trabajadores}"></title>
 </head>
@@ -47,7 +48,7 @@
 			<!-- search form -->
 			<div id="searchForm" class="col-xs-12 col-sm-12">
 				<form id="busquedaTrabajadoresForm" role="form"
-					class="form-narrow form-horizontal" method="post" action="#"
+					class="form-narrow form-horizontal" method="get" action="#"
 					th:action="@{#{link.trabajadores}}"
 					th:object="${busquedaTrabajadoresForm}"
 					th:fragment="busquedaTrabajadoresForm">

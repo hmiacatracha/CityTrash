@@ -37,7 +37,23 @@ public interface RutaDao extends GenericDAO<Ruta, Integer> {
 	 * @param mostrarSoloContenedoresDeAlta
 	 * @return
 	 */
-	Page<Ruta> buscarRutas(Pageable pageable, List<TipoDeBasura> tiposDeBasura, List<Trabajador> trabajadores,
-			List<Contenedor> contenedores, List<Camion> camiones, boolean mostrarSoloContenedoresDeAlta);
+	/*
+	 * Page<Ruta> buscarRutas(Pageable pageable, List<TipoDeBasura>
+	 * tiposDeBasura, List<Trabajador> trabajadores, List<Contenedor>
+	 * contenedores, List<Camion> camiones, boolean
+	 * mostrarSoloContenedoresDeAlta);
+	 */
 
+	/**
+	 * 
+	 * @param pageable
+	 * @param tiposDeBasura
+	 * @param trabajadores
+	 * @param contenedores
+	 * @param camiones
+	 * @param mostrarSoloRutasActivas
+	 * @return
+	 */
+	Page<Ruta> buscarRutas(Pageable pageable, List<Integer> tiposDeBasura, List<Long> trabajadores,
+			List<Long> contenedores, List<Long> camiones, boolean mostrarSoloRutasActivas);
 }

@@ -13,6 +13,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import es.udc.citytrash.controller.util.dtos.sensor.SensorDto;
@@ -47,7 +48,7 @@ public class ContenedorEditarDto {
 	@NotNull
 	private long id;
 
-	@NotBlank
+	@NotNull
 	@Size(min = 2, max = 100)
 	private String nombre = "";
 
@@ -73,6 +74,7 @@ public class ContenedorEditarDto {
 	private boolean updateChildren = true;
 
 	@Valid
+	@UniqueElements(message = "{constraints.sensores.duplicados}")
 	private List<SensorDto> sensores = new ArrayList<SensorDto>();
 
 	private static Date calendarToDate(Calendar calendar) {

@@ -304,6 +304,9 @@ public class WebUtils {
 	public static final String URL_MAPPING_RUTAS_DETALLES = "/rutas/{id}/detalles";
 	public static final String REQUEST_MAPPING_RUTAS_DETALLES = "/{id}/detalles";
 
+	public static final String URL_MAPPING_RUTAS_ESTADO = "/rutas/{id}/estado";
+	public static final String REQUEST_MAPPING_RUTAS_ESTADO = "/{id}/estado";
+
 	public static String getUrlWithContextPath(HttpServletRequest request) {
 		return request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
 				+ request.getContextPath();

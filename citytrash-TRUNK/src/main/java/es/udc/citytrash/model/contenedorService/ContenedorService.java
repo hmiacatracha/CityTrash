@@ -85,7 +85,7 @@ public interface ContenedorService {
 	 * 
 	 * @return
 	 */
-	//List<ContenedorModelo> buscarTodosLosModelosOrderByModelo();
+	// List<ContenedorModelo> buscarTodosLosModelosOrderByModelo();
 
 	/**
 	 * Busca modelos by tipo de basura
@@ -255,6 +255,15 @@ public interface ContenedorService {
 	 * @return
 	 */
 	List<Contenedor> buscarContenedoresDiponiblesParaUnaRuta(List<Integer> tiposDeBasura);
+	
+	
+	/**
+	 * 
+	 * @param tiposDeBasura
+	 * @return
+	 */
+	List<Contenedor> buscarContenedoresByTiposDeBasura(List<Integer> tiposDeBasura);
+
 
 	/**
 	 * Buscar contenedores por lista de ids

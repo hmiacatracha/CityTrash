@@ -103,11 +103,11 @@ public interface CamionService {
 	Page<CamionModelo> buscarModelos(Pageable pageable, CamionModeloFormBusq formBusqueda) throws FormBusquedaException;
 
 	/**
-	 * Buscar todos los modelos ordenados por nombre del modelo;
+	 * Buscar todos los modelos ordenados por nombre del modelo y por tipos de basura si la lista es distinta de nulo
 	 * 
 	 * @return
 	 */
-	List<CamionModelo> buscarTodosLosModelosOrderByModelo();
+	List<CamionModelo> buscarTodosLosModelosOrderByModelo(List<Integer> tiposDeBasura);
 
 	/**
 	 * Registrar un camion
@@ -247,8 +247,16 @@ public interface CamionService {
 	 */
 	List<Camion> buscarCamiones(boolean mostrarSoloActivos, boolean mostrarSoloCamionesDeAlta);
 
+	
 	/**
-	 * 
+	 * Buscar camiones by tipos de basura
+	 * @param tiposDeBasura
+	 * @return
+	 */
+	List<Camion> buscarCamionesByTipos(List<Integer> tiposDeBasura);
+	
+	/**
+	 * Buscar camiones disponibles para una ruta by tipos de basura
 	 * @param tiposDeBasura
 	 * @return
 	 */

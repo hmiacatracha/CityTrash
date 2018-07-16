@@ -40,13 +40,17 @@ import es.udc.citytrash.controller.excepciones.PageNotFoundException;
 import es.udc.citytrash.controller.util.AjaxUtils;
 import es.udc.citytrash.controller.util.WebUtils;
 import es.udc.citytrash.controller.util.anotaciones.UsuarioActual;
+import es.udc.citytrash.controller.util.dtos.camion.CamionFormBusq;
 import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorFormBusq;
 import es.udc.citytrash.controller.util.dtos.ruta.RutaDto;
+import es.udc.citytrash.controller.util.dtos.ruta.RutasFormBusq;
 import es.udc.citytrash.model.camion.Camion;
+import es.udc.citytrash.model.camionModelo.CamionModelo;
 import es.udc.citytrash.model.camionService.CamionService;
 import es.udc.citytrash.model.contenedor.Contenedor;
 import es.udc.citytrash.model.contenedorModelo.ContenedorModelo;
 import es.udc.citytrash.model.contenedorService.ContenedorService;
+import es.udc.citytrash.model.ruta.Ruta;
 import es.udc.citytrash.model.trabajadorService.TrabajadorService;
 import es.udc.citytrash.model.usuarioService.UsuarioService;
 import es.udc.citytrash.model.util.excepciones.InstanceNotFoundException;
@@ -129,46 +133,6 @@ public class PublicController {
 			return false;
 		}
 	}
-	//
-	// @RequestMapping(value = "/ajax/listaCamionesDisponibles", method =
-	// RequestMethod.POST)
-	// public String ajaxCamionesDisponibles(Model model,
-	// @ModelAttribute("rutaForm") RutaDto form) {
-	// logger.info("POST /ajax/listaCamionesDisponibles");
-	// RutaDto rutaForm = form;
-	// rutaForm.setTiposDeBasura(rutaForm.getTiposDeBasura());
-	// List<Contenedor> contenedores = contServicio
-	// .buscarContenedoresDiponiblesParaUnaRuta(rutaForm.getTiposDeBasura());
-	// List<Camion> camiones =
-	// camServicio.buscarCamionesDisponiblesParaUnaRutaByTipos(rutaForm.getTiposDeBasura());
-	//
-	// model.addAttribute("listaCamionesDisponibles", camiones);
-	// model.addAttribute("listaContenedoresDisponibles", contenedores);
-	// model.addAttribute("rutaForm", rutaForm);
-	// // logger.info("html =>" +
-	// // WebUtils.VISTA_RUTA_EDITAR.concat("::fragmentoCamiones"));
-	// return WebUtils.VISTA_RUTA_EDITAR.concat("::fragmentoCamiones");
-	// }
-	//
-	// @RequestMapping(value = "/ajax/listaContenedoresDisponibles", method =
-	// RequestMethod.POST)
-	// public String ajaxContenedoresDisponibles(Model model,
-	// @ModelAttribute("rutaForm") RutaDto form) {
-	// logger.info("POST /ajax/listaContenedoresDisponibles");
-	// RutaDto rutaForm = form;
-	// rutaForm.setTiposDeBasura(rutaForm.getTiposDeBasura());
-	// List<Camion> camiones =
-	// camServicio.buscarCamionesDisponiblesParaUnaRutaByTipos(rutaForm.getTiposDeBasura());
-	// List<Contenedor> contenedores = contServicio
-	// .buscarContenedoresDiponiblesParaUnaRuta(rutaForm.getTiposDeBasura());
-	//
-	// model.addAttribute("listaCamionesDisponibles", camiones);
-	// model.addAttribute("listaContenedoresDisponibles", contenedores);
-	// model.addAttribute("rutaForm", rutaForm);
-	// // logger.info("html =>" +
-	// // WebUtils.VISTA_RUTA_EDITAR.concat("::fragmentoContenedores"));
-	// return WebUtils.VISTA_RUTA_EDITAR.concat(" ::fragmentoContenedores");
-	// }
 
 	@RequestMapping(value = "/ajax/listaCamionesDisponibles", method = RequestMethod.GET)
 	public String ajaxCamionesDisponibles(Model model, @ModelAttribute("rutaForm") RutaDto form) {
@@ -197,6 +161,80 @@ public class PublicController {
 		return WebUtils.VISTA_RUTA_EDITAR.concat("::fragmentoCamiones");
 	}
 
+	@RequestMapping(value = "/ajax/rutas/listaCamiones", method = RequestMethod.GET)
+	public String ajaxCamiones(Model model, @ModelAttribute("busquedaForm") RutasFormBusq busquedaForm) {
+		logger.info("GET /ajax/listaCamiones");
+		Pageable pageRequest = new PageRequest(0, 1, Sort.Direction.DESC, "id");
+		List<Camion> camionesList = new ArrayList<Camion>();
+		List<Contenedor> contenedoresList = new ArrayList<Contenedor>();
+		List<Ruta> RutasList = new ArrayList<Ruta>();
+		Page<Ruta> page = new PageImpl<Ruta>(RutasList, pageRequest, RutasList.size());
+		model.addAttribute("busquedaForm", busquedaForm);
+
+		try {
+			logger.info("GET /ajax/listaCamiones paso 2");
+			camionesList = camServicio.buscarCamionesByTipos(busquedaForm.getTiposDeBasura());
+			logger.info("GET /ajax/listaCamiones paso 3");
+			model.addAttribute("listaCamiones", camionesList);
+			logger.info("GET /ajax/listaCamiones paso 4");
+			// contenedoresList =
+			// contServicio.buscarContenedoresByTiposDeBasura(busquedaForm.getTiposDeBasura());
+			logger.info("GET /ajax/listaCamiones paso 5");
+			model.addAttribute("listaContenedores", contenedoresList);
+			model.addAttribute("pageRutas", page);
+			logger.info("GET /ajax/listaCamiones paso 6");
+		} catch (Exception e) {
+			throw new PageNotFoundException(String.format("The requested page (%s) of the worker list was not found.",
+					pageRequest.getPageNumber()));
+		}
+
+		if (page.getNumberOfElements() == 0) {
+			if (!page.isFirst()) {
+				throw new PageNotFoundException(
+						String.format("The requested page (%s) of the contenedores list was not found.",
+								pageRequest.getPageNumber()));
+			}
+		}
+		return WebUtils.VISTA_RUTAS.concat("::listaCamiones");
+	}
+
+	@RequestMapping(value = "/ajax/rutas/listaContenedores", method = RequestMethod.GET)
+	public String ajaxContenedores(Model model, @ModelAttribute("busquedaForm") RutasFormBusq busquedaForm) {
+		logger.info("GET /ajax/rutas/listaContenedores");
+
+		Pageable pageRequest = new PageRequest(0, 1, Sort.Direction.DESC, "id");
+		List<Camion> camionesList = new ArrayList<Camion>();
+		List<Contenedor> contenedoresList = new ArrayList<Contenedor>();
+		List<Ruta> RutasList = new ArrayList<Ruta>();
+		Page<Ruta> page = new PageImpl<Ruta>(RutasList, pageRequest, RutasList.size());
+		model.addAttribute("busquedaForm", busquedaForm);
+
+		try {
+			logger.info("GET /ajax/rutas/listaContenedores paso 1");
+			contenedoresList = contServicio.buscarContenedoresByTiposDeBasura(busquedaForm.getTiposDeBasura());
+			logger.info("GET /ajax/rutas/listaContenedores paso 2");
+			model.addAttribute("listaContenedores", contenedoresList);
+			logger.info("GET /ajax/rutas/listaContenedores paso 3");
+			logger.info("GET /ajax/rutas/listaContenedores paso 4");
+			model.addAttribute("listaCamiones", camionesList);
+			logger.info("GET /ajax/rutas/listaContenedores paso 5");
+			model.addAttribute("pageRutas", page);
+			logger.info("GET /ajax/rutas/listaContenedores paso 6");
+		} catch (Exception e) {
+			throw new PageNotFoundException(String.format("The requested page (%s) of the worker list was not found.",
+					pageRequest.getPageNumber()));
+		}
+
+		if (page.getNumberOfElements() == 0) {
+			if (!page.isFirst()) {
+				throw new PageNotFoundException(
+						String.format("The requested page (%s) of the contenedores list was not found.",
+								pageRequest.getPageNumber()));
+			}
+		}
+		return WebUtils.VISTA_RUTAS.concat("::listaContenedores");
+	}
+
 	@RequestMapping(value = "/ajax/listaContenedoresDisponibles", method = RequestMethod.GET)
 	public String ajaxContenedoresDisponibles(Model model, @ModelAttribute("rutaForm") RutaDto form) {
 		logger.info("POST /ajax/listaContenedoresDisponibles");
@@ -222,8 +260,7 @@ public class PublicController {
 	}
 
 	@RequestMapping(value = "/ajax/contenedores/listaModelosContenedores", method = RequestMethod.GET)
-	public String ajaxContenedoresDisponibles(Model model, @ModelAttribute("busquedaForm") ContenedorFormBusq form) {
-
+	public String ajaxModelosContenedores(Model model, @ModelAttribute("busquedaForm") ContenedorFormBusq form) {
 		Pageable pageRequest = new PageRequest(0, 1, Sort.Direction.DESC, "id");
 		logger.info("GET listaModelosContenedores");
 		List<Contenedor> contenedoresList = new ArrayList<Contenedor>();
@@ -250,7 +287,33 @@ public class PublicController {
 		}
 
 		return WebUtils.VISTA_CONTENEDORES.concat("::fragmentoModelos");
+	}
 
+	@RequestMapping(value = "/ajax/camiones/listaModelosCamiones", method = RequestMethod.GET)
+	public String ajaxModelosCamiones(Model model, @ModelAttribute("busquedaForm") CamionFormBusq form) {
+		// citytrash/ajax/camiones/listaModelosCamiones
+		Pageable pageRequest = new PageRequest(0, 1, Sort.Direction.DESC, "id");
+		logger.info("GET listaModelosCamiones");
+		List<Camion> camionesList = new ArrayList<Camion>();
+		Page<Camion> page = new PageImpl<Camion>(camionesList, pageRequest, camionesList.size());
+		try {
+			List<CamionModelo> modelos = new ArrayList<CamionModelo>();
+			modelos = camServicio.buscarTodosLosModelosOrderByModelo(form.getTipos());
+			model.addAttribute("pageContenedores", page);
+			model.addAttribute("todosLosModelos", modelos);
+			model.addAttribute("busquedaForm", form);
+			if (page.getNumberOfElements() == 0) {
+				if (!page.isFirst()) {
+					logger.info("PageNotFoundException");
+					throw new PageNotFoundException(String.format(
+							"The requested page (%s) of the worker list was not found.", pageRequest.getPageNumber()));
+				}
+			}
+		} catch (Exception e) {
+			throw new PageNotFoundException(String.format("The requested page (%s) of the worker list was not found.",
+					pageRequest.getPageNumber()));
+		}
+		return WebUtils.VISTA_CONTENEDORES.concat("::fragmentoModelos");
 	}
 
 	@ResponseStatus(HttpStatus.FORBIDDEN)

@@ -4,7 +4,8 @@
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	xmlns:sd="http://www.thymeleaf.org/spring-data"
-	layout:decorate="~{layouts/default}" th:with="currentPage='contenedores'">
+	layout:decorate="~{layouts/default}"
+	th:with="currentPage='contenedores'">
 <head>
 <title th:text="#{page_contenedores_modelos}"></title>
 </head>
@@ -16,9 +17,15 @@
 			<div class="col-xs-6">
 				<div class="pull-left">
 					<a class="btn btn-default"
-						th:href="@{#{link.contenedores.modelos.registro}}" role="button"><i
-						class="glyphicon glyphicon-plus" data-toggle="tooltip"
-						th:title="#{frm_registro_contenedores_modelos}"></i></a>
+						th:href="@{#{link.contenedores.modelos.registro}}" role="button"
+						data-toggle="tooltip"
+						th:title="#{frm_registro_contenedores_modelos}"><i
+						class="glyphicon glyphicon-plus"></i></a> <a data-toggle="tooltip"
+						th:title="#{page_contenedores}" class="btn btn-default"
+						th:href="@{#{link.contenedores}}" role="button"><img
+						th:src="@{/resources/static/img/contenedoresIcon1.svg}"
+						th:alt="#{page_contenedores}" width=25 height=15 /></a>
+
 				</div>
 			</div>
 			<div class="col-xs-6">
@@ -35,14 +42,14 @@
 		<!-- titulo -->
 		<div class="row container center-block">
 			<h3 class="text-center text-success col-xs-12"
-				th:text="${#strings.toUpperCase('__#{lbl_listado_contenedores_modelos}__')}"></h3>
+				th:text="${#strings.toUpperCase('__#{page_contenedores_modelos}__')}"></h3>
 		</div>
 		<!-- FIN pagination size and add button -->
 		<div class="row">
 			<!-- search form -->
 			<div id="searchForm" class="col-xs-12 col-sm-12">
 				<form id="busquedaForm" role="form"
-					class="form-narrow form-horizontal" method="post" action="#"
+					class="form-narrow form-horizontal" method="get" action="#"
 					th:action="@{#{link.contenedores.modelos}}"
 					th:object="${busquedaForm}" th:fragment="busquedaForm">
 					<fieldset>
@@ -84,7 +91,7 @@
 					</th:block>
 				</div>
 
-				<!-- tabla -->
+				<!-- tabla -->				
 				<div class="table-responsive">
 					<table class="table">
 						<thead class="thead-dark">
@@ -156,8 +163,17 @@
 									:${#numbers.formatDecimal(item.pesoVacio, 0, 2, format)}">
 								</td>
 
+								<!-- tipos de basura -->
+								<!-- <td class="align-middle" th:text="#{lbl_colores}"></td>-->
 
-								<td class="align-middle" th:text="#{lbl_colores}"></td>
+								<td>
+									<table>
+										<tr th:if="${item.tipo}">
+											<th th:style="'background: #' + ${item.tipo.color}"
+												class="basura_color_cuadro"></th>
+										</tr>
+									</table>
+								</td>
 
 								<td>
 									<div class="btn-group text-center" id="options">

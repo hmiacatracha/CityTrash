@@ -157,7 +157,7 @@ jQuery(function($) {
 		});
 	});*/
 
-	/*Habilita o deshabilita el estado de los trabajadores, camiones, etc  */
+	/*Habilita o deshabilita el estado de los trabajadores, camiones, contenedores, rutas etc  */
 	$(document).on("click", "tr #link_change_state", function(e) {
 		event.preventDefault();
 		console.log("cambiar de estado");
@@ -187,8 +187,8 @@ jQuery(function($) {
 		});
 	});
 
-	/*Mustra el filtro de los modelos by tipo de basura en las paginas de contenedores */
-	$(document).on('change', '#tipoDeBasuraPageContenedores', function(e) {
+	/*Muestra el filtro de los modelos by tipo de basura en las paginas de contenedores */
+	$(document).on('change', '#tipoDeBasuraFormBusqPageContenedores', function(e) {
 		try {
 			var busquedaForm = $('form').serializeArray();
 			var modelo = $("#modelo");
@@ -205,9 +205,64 @@ jQuery(function($) {
 			});
 
 		} catch (err) {
-			console.log("error tipoDeBasuraPageContenedores change");
+			console.log("error tipoDeBasuraFormBusqPageContenedores change");
 		}
 	});
+
+	/*Muestra el filtro de los modelos by tipo de basura en las paginas de rutas */
+	$(document).on('change', '#tipoDeBasuraFormBusqPageRutas', function(e) {
+		try {
+			var busquedaForm = $('form').serializeArray();
+			var contenedores = $("#contenedores");
+			var camiones = $("#camiones");
+			//console.log("#tiposDeBasura change contenedores=>" + JSON.stringify(busquedaForm));
+
+			/*Load contenedores */
+			$.ajax({
+				type : "GET",
+				url : '/citytrash/ajax/rutas/listaContenedores',
+				data : busquedaForm,
+				success : function(data, status) {
+					contenedores.html(data).selectpicker("refresh");
+				}
+			});
+
+			/*Load camiones */
+			$.ajax({
+				type : "GET",
+				url : '/citytrash/ajax/rutas/listaCamiones',
+				data : busquedaForm,
+				success : function(data, status) {
+					camiones.html(data).selectpicker("refresh");
+				}
+			});
+
+		} catch (err) {
+			console.log("error tipoDeBasuraFormBusqPageContenedores change");
+		}
+	});
+
+
+	/*Muestra elfiltro de los modelos by tipo de basura en las paginas de contenedores */
+	$(document).on('change', '#tipoDeBasuraFormBusqPageCamiones', function(e) {
+		try {
+			var busquedaForm = $('form').serializeArray();
+			var modelo = $("#modelo");
+			/*Load modelos de contenedores */
+			$.ajax({
+				type : "GET",
+				url : '/citytrash/ajax/camiones/listaModelosCamiones',
+				data : busquedaForm,
+				success : function(data, status) {
+					modelo.html(data).selectpicker("refresh");
+				}
+			});
+		} catch (err) {
+			console.log("error tipoDeBasuraFormBusqPageCamiones change");
+		}
+	});
+
+
 
 
 	$(document).ready(function() {

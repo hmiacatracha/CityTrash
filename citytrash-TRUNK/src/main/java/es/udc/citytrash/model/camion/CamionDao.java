@@ -57,7 +57,16 @@ public interface CamionDao extends GenericDAO<Camion, Long> {
 	List<Camion> buscarCamiones(boolean mostrarSoloActivos, boolean mostrarSoloCamionesDeAlta);
 
 	/**
+	 * Busar camiones by tipos de basura
+	 * 
+	 * @param tipos
+	 * @return
+	 */
+	List<Camion> buscarCamiones(List<Integer> tipos);
+
+	/**
 	 * Buscar camiones disponibles para una ruta by tipos de basura
+	 * 
 	 * @para rutaId
 	 * @param tipos
 	 * @return

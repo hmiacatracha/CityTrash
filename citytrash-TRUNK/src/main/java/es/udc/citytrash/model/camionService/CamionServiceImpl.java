@@ -156,8 +156,8 @@ public class CamionServiceImpl implements CamionService {
 	}
 
 	@Override
-	public List<CamionModelo> buscarTodosLosModelosOrderByModelo() {
-		List<CamionModelo> modelos = modeloDao.buscarTodosOrderByModelo();
+	public List<CamionModelo> buscarTodosLosModelosOrderByModelo(List<Integer> tiposDeBasura) {
+		List<CamionModelo> modelos = modeloDao.buscarTodosOrderByModelo(tiposDeBasura);
 		return modelos;
 	}
 
@@ -497,6 +497,11 @@ public class CamionServiceImpl implements CamionService {
 	@Override
 	public List<Camion> buscarCamiones(boolean mostrarSoloActivos, boolean mostrarSoloCamionesDeAlta) {
 		return camionDao.buscarCamiones(mostrarSoloActivos, mostrarSoloCamionesDeAlta);
+	}
+
+	@Override
+	public List<Camion> buscarCamionesByTipos(List<Integer> tiposDeBasura) {
+		return camionDao.buscarCamiones(tiposDeBasura);
 	}
 
 	@Override

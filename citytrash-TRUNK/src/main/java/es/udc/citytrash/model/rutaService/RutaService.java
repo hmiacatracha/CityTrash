@@ -56,4 +56,12 @@ public interface RutaService {
 	 */
 	Page<Ruta> buscarRutas(Pageable pageable, RutasFormBusq form);
 
+	/**
+	 * Cambiar el estado de una ruta
+	 * @param id
+	 * @return
+	 * @throws InstanceNotFoundException
+	 */
+	boolean cambiarEstadoRuta(int id) throws InstanceNotFoundException;
+
 }

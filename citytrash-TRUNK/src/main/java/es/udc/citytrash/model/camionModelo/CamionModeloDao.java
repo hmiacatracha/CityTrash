@@ -27,11 +27,12 @@ public interface CamionModeloDao extends GenericDAO<CamionModelo, Integer> {
 	CamionModelo buscarModeloPorNombre(String nombre) throws InstanceNotFoundException;
 
 	/**
-	 * Lista de modelos de camiones ordenador por nombre del modelo
+	 * Lista de modelos de camiones ordenador por nombre del modelo y por tipos
+	 * de basura si el array no es nulo
 	 * 
 	 * @return
 	 */
-	List<CamionModelo> buscarTodosOrderByModelo();
+	List<CamionModelo> buscarTodosOrderByModelo(List<Integer> tiposDeBasura);
 
 	/**
 	 * Buscar modelo by pageable

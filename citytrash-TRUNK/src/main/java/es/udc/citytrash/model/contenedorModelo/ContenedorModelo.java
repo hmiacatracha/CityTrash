@@ -14,6 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Digits;
 
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
 
 import es.udc.citytrash.model.tipoDeBasura.TipoDeBasura;
@@ -27,6 +28,7 @@ import es.udc.citytrash.util.GlobalNames;
 
 @Entity
 @Table(name = GlobalNames.TBL_MODELO_CONTENEDOR)
+@BatchSize(size = 20)
 public class ContenedorModelo implements Serializable {
 
 	/**

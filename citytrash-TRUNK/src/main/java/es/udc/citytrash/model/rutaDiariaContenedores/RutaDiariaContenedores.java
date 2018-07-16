@@ -17,12 +17,14 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Type;
 
 import es.udc.citytrash.model.contenedor.Contenedor;
 import es.udc.citytrash.model.rutaDiaria.RutaDiaria;
 import es.udc.citytrash.model.trabajador.Trabajador;
 
+@BatchSize(size = 10)
 @Entity
 @Table(name = "TBL_RD_CONT")
 public class RutaDiariaContenedores {

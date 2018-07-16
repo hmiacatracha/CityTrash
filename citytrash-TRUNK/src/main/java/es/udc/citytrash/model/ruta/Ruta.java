@@ -21,18 +21,18 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import es.udc.citytrash.controller.PublicController;
 import es.udc.citytrash.model.camion.Camion;
 import es.udc.citytrash.model.contenedor.Contenedor;
 import es.udc.citytrash.model.tipoDeBasura.TipoDeBasura;
 
 @Entity
 @Table(name = "TBL_RUTAS")
+@BatchSize(size = 10)
 public class Ruta implements Serializable {
 
 	/**
@@ -143,7 +143,7 @@ public class Ruta implements Serializable {
 		else
 			return this.contenedores.contains(contenedor);
 	}
-	
+
 	/* http://www.baeldung.com/hibernate-many-to-many */
 	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinTable(name = "TBL_RU_TP", joinColumns = { @JoinColumn(name = "RUTA_ID") }, inverseJoinColumns = {

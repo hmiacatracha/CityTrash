@@ -76,6 +76,44 @@ public class CamionDaoHibernate extends GenericHibernateDAOImpl<Camion, Long> im
 	}
 
 	@Override
+	public List<Camion> buscarCamiones(List<Integer> tipos) {
+		HashSet<Integer> tiposAux = tipos != null ? new HashSet<Integer>(tipos) : new HashSet<Integer>();
+		Query<Camion> query;
+		List<Camion> camiones = new ArrayList<Camion>();
+		String alias = "c";
+
+		StringBuilder hql;
+
+		if (tiposAux.size() == 0) {
+			hql = new StringBuilder("Select " + alias + " FROM Camion " + alias);
+		} else {
+			hql = new StringBuilder("Select " + alias + " FROM Camion " + alias + " inner join " + alias
+					+ ".modeloCamion mc " + " WHERE :items = (SELECT COUNT(distinct pk.tipo) "
+					+ " FROM CamionModelo mc2 inner join mc2.tiposDeBasura mtb inner join  mtb.pk pk inner join pk.tipo t"
+					+ " WHERE mc2.id = mc.id AND t.id in (:tipos)" + ")");
+		}
+
+		logger.info("buscarCamiones by tipos de basura dao paso 3");
+		hql.append(" ORDER BY " + alias + ".nombre");
+		logger.info("buscarCamiones by tipos de basura dao paso 4");
+		logger.info("buscarCamiones by tipos de basura dao paso hql =>" + hql.toString());
+		query = getSession().createQuery(hql.toString(), Camion.class);
+
+		logger.info("buscarCamiones by tipos de basura dao paso 5");
+
+		if (tiposAux.size() > 0) {
+			long items = tiposAux.size();
+			query.setParameter("items", items);
+			query.setParameter("tipos", tiposAux);
+		}
+
+		logger.info("buscarCamiones by tipos de basura dao paso 6");
+		camiones = query.list();
+		logger.info("buscarCamiones by tipos de basura dao paso 7");
+		return camiones;
+	}
+
+	@Override
 	public List<Camion> buscarCamionesDisponiblesParaUnaRutaByTipo(List<TipoDeBasura> tipos) {
 		HashSet<TipoDeBasura> tiposAux = tipos != null ? new HashSet<TipoDeBasura>(tipos) : new HashSet<TipoDeBasura>();
 		Query<Camion> query;
@@ -83,8 +121,11 @@ public class CamionDaoHibernate extends GenericHibernateDAOImpl<Camion, Long> im
 
 		String alias = "c";
 
-		StringBuilder hql = new StringBuilder(
-				"Select " + alias + " FROM Camion " + alias + " inner join " + alias + ".modeloCamion mc ");
+		StringBuilder hql = new StringBuilder("Select " + alias + " FROM Camion " + alias);
+
+		if (tiposAux.size() > 0)
+			hql = new StringBuilder(
+					"Select " + alias + " FROM Camion " + alias + " inner join " + alias + ".modeloCamion mc ");
 
 		hql.append(" WHERE (" + alias + ".activo = :activo) ");
 
@@ -101,7 +142,7 @@ public class CamionDaoHibernate extends GenericHibernateDAOImpl<Camion, Long> im
 					+ "			from CamionModelo mc2 inner join mc2.tiposDeBasura t inner join t.pk pk"
 					+ "  		where mc2.id = mc.id and pk.tipo in (:tipos)" + ")");
 		}
-		
+
 		hql.append(" ORDER BY " + alias + ".nombre");
 		query = getSession().createQuery(hql.toString(), Camion.class);
 		query.setParameter("activo", true);
@@ -214,7 +255,7 @@ public class CamionDaoHibernate extends GenericHibernateDAOImpl<Camion, Long> im
 		List<TipoDeBasura> tiposAux = tipos != null ? tipos : new ArrayList<TipoDeBasura>();
 		String alias = "c";
 		StringBuilder hql = new StringBuilder("Select " + alias + " FROM Camion " + alias + " inner join " + alias
-				+ ".modeloCamion mc " + "inner join mc.tiposDeBasura t inner join t.pk pk");
+				+ ".modeloCamion mc " + " inner join mc.tiposDeBasura t inner join t.pk pk");
 
 		// muestra solo los trabajadores de alta, los de baja no
 		if (mostrarSoloActivos) {
@@ -303,7 +344,7 @@ public class CamionDaoHibernate extends GenericHibernateDAOImpl<Camion, Long> im
 		// StringBuilder hql = new StringBuilder("Select " + alias + " FROM
 		// Camion " + alias);
 		StringBuilder hql = new StringBuilder("Select " + alias + " FROM Camion " + alias + " inner join " + alias
-				+ ".modeloCamion mc " + "inner join mc.tiposDeBasura t inner join t.pk pk");
+				+ ".modeloCamion mc " + " inner join mc.tiposDeBasura t inner join t.pk pk");
 
 		/* Palabras claves */
 		for (int i = 0; i < palabras.length; i++) {

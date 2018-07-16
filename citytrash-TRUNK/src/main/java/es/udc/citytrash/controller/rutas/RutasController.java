@@ -93,28 +93,8 @@ public class RutasController {
 	@ModelAttribute("listaTrabajadores")
 	public List<Trabajador> getTrabajadores() {
 		List<Trabajador> trabajadores = new ArrayList<Trabajador>();
-		/* Mostrar todos los trabajadores */
 		trabajadores = tServicio.buscarTrabajadores(false);
 		return trabajadores;
-	}
-
-	@ModelAttribute("listaContenedores")
-	public List<Contenedor> getContenedores() {
-		/* Mostrar todos los contenedores */
-		List<Contenedor> contenedores = new ArrayList<Contenedor>();
-		ContenedorFormBusq form = new ContenedorFormBusq();
-		form.setMostrarSoloContenedoresActivos(true);
-		form.setMostrarSoloContenedoresDeAlta(false);
-		contenedores = contServicio.buscarContenedores(form);
-		return contenedores;
-	}
-
-	@ModelAttribute("listaCamiones")
-	public List<Camion> getCamiones() {
-		/* Mostrar todos los camiones */
-		List<Camion> camiones = new ArrayList<Camion>();
-		camiones = camServicio.buscarCamiones(false, false);
-		return camiones;
 	}
 
 	@RequestMapping(value = { WebUtils.REQUEST_MAPPING_RUTAS, "" }, method = RequestMethod.GET)
@@ -129,17 +109,24 @@ public class RutasController {
 			throws ResourceNotFoundException {
 		List<Ruta> RutasList = new ArrayList<Ruta>();
 		Page<Ruta> page = new PageImpl<Ruta>(RutasList, pageRequest, RutasList.size());
+		List<Camion> camionesList = new ArrayList<Camion>();
+		List<Contenedor> contenedoresList = new ArrayList<Contenedor>();
 		RutasFormBusq busquedaForm = new RutasFormBusq(tiposDeBasura, trabajadores, camiones, contenedores,
 				mostrarSoloRutasActivas);
 		model.addAttribute("busquedaForm", busquedaForm);
 		try {
 			page = rServicio.buscarRutas(pageRequest, busquedaForm);
-
+			camionesList = camServicio.buscarCamionesByTipos(busquedaForm.getTiposDeBasura());
+			contenedoresList = contServicio.buscarContenedoresByTiposDeBasura(busquedaForm.getTiposDeBasura());
+			logger.info("get rutas despues de buscar rutas 1");
+			model.addAttribute("listaCamiones", camionesList);
+			model.addAttribute("listaContenedores", contenedoresList);
+			model.addAttribute("pageRutas", page);
+			logger.info("get rutas despues de buscar rutas 2");
 		} catch (Exception e) {
 			throw new PageNotFoundException(String.format("The requested page (%s) of the worker list was not found.",
 					pageRequest.getPageNumber()));
 		}
-		model.addAttribute("pageRutas", page);
 
 		if (page.getNumberOfElements() == 0) {
 			if (!page.isFirst()) {
@@ -148,50 +135,11 @@ public class RutasController {
 								pageRequest.getPageNumber()));
 			}
 		}
+		logger.info("get rutas despues de buscar rutas fin");
 		if (AjaxUtils.isAjaxRequest(requestedWith))
 			return WebUtils.VISTA_RUTAS.concat("::content");
 		return WebUtils.VISTA_RUTAS;
 
-	}
-
-	@RequestMapping(value = { WebUtils.REQUEST_MAPPING_RUTAS, "" }, params = {
-			"filtrarBuqueda" }, method = RequestMethod.GET)
-	public String buscarContenedores(
-			@PageableDefault(size = WebUtils.DEFAULT_PAGE_SIZE, page = WebUtils.DEFAULT_PAGE_NUMBER, direction = Direction.DESC) @SortDefault("id") Pageable pageRequest,
-			@Valid RutasFormBusq form, BindingResult result, Model model,
-			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
-
-		logger.info("get REQUEST_MAPPING_CONTENEDORES params buscar");
-		List<Ruta> rutasList = new ArrayList<Ruta>();
-		Page<Ruta> page = new PageImpl<Ruta>(rutasList, pageRequest, rutasList.size());
-		model.addAttribute("busquedaForm", form);
-
-		if (result.hasErrors()) {
-			model.addAttribute("pageRutas", page);
-			if (AjaxUtils.isAjaxRequest(requestedWith)) {
-				return WebUtils.VISTA_RUTAS.concat("::content");
-			}
-			return WebUtils.VISTA_RUTAS;
-		}
-		try {
-			page = rServicio.buscarRutas(pageRequest, form);
-			model.addAttribute("pageRutas", page);
-
-			if (page.getNumberOfElements() == 0) {
-				if (!page.isFirst()) {
-					logger.info("PageNotFoundException");
-					throw new PageNotFoundException(String.format(
-							"The requested page (%s) of the worker list was not found.", pageRequest.getPageNumber()));
-				}
-			}
-
-		} catch (Exception e) {
-			throw new PageNotFoundException(String.format("The requested page (%s) of the worker list was not found.",
-					pageRequest.getPageNumber()));
-		}
-		if (AjaxUtils.isAjaxRequest(requestedWith))
-			return WebUtils.VISTA_RUTAS.concat("::content");
-		return WebUtils.VISTA_RUTAS;
 	}
 
 	@RequestMapping(value = WebUtils.REQUEST_MAPPING_RUTAS_REGISTRO, method = RequestMethod.GET)
@@ -353,6 +301,18 @@ public class RutasController {
 			return WebUtils.VISTA_RUTA_DETALLES;
 		} catch (InstanceNotFoundException e) {
 			throw new ResourceNotFoundException(id);
+		}
+	}
+
+	/* Activar o desactivar camion */
+	@RequestMapping(path = WebUtils.REQUEST_MAPPING_RUTAS_ESTADO, method = RequestMethod.POST)
+	@ResponseBody
+	public boolean cambiarEstadoActivarODesactivar(@PathVariable(name = "id") int id) throws ResourceNotFoundException {
+		logger.info("URL_MAPPING_CAMIONES_ESTADO");
+		try {
+			return rServicio.cambiarEstadoRuta(id);
+		} catch (InstanceNotFoundException e) {
+			throw new ResourceNotFoundException(e.getMessage());
 		}
 	}
 

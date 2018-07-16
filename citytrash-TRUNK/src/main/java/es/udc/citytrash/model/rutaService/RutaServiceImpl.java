@@ -181,62 +181,20 @@ public class RutaServiceImpl implements RutaService {
 		List<Ruta> rutasList = new ArrayList<Ruta>();
 		Page<Ruta> page = new PageImpl<Ruta>(rutasList, pageable, rutasList.size());
 
-		List<Trabajador> trabajadores = new ArrayList<Trabajador>();
-		List<Contenedor> contenedores = new ArrayList<Contenedor>();
-		List<TipoDeBasura> tipos = new ArrayList<TipoDeBasura>();
-		List<Camion> camiones = new ArrayList<Camion>();
-
 		logger.info("buscarRutas paso2");
-		/* Agregamos los tipos de basura */
-		if (form.getTiposDeBasura() != null) {
-			for (Integer t : form.getTiposDeBasura()) {
-				try {
-					TipoDeBasura tb = tipoDao.buscarById(Integer.valueOf(t.toString()));
-					tipos.add(tb);
-				} catch (NumberFormatException | InstanceNotFoundException e) {
-
-				}
-			}
-		}
-		logger.info("buscarRutas paso2.1");
-		/* Agregamos los trabajadores */
-		if (form.getTrabajadores() != null) {
-			for (Long t : form.getTrabajadores()) {
-				try {
-					Trabajador trabajador = trabajadorDao.buscarById(Long.valueOf(t.toString()));
-					trabajadores.add(trabajador);
-				} catch (NumberFormatException | InstanceNotFoundException e) {
-				}
-			}
-		}
-		logger.info("buscarRutas paso2.2");
-		/* Agregamos los camiones */
-		if (form.getCamiones() != null) {
-			for (Long t : form.getCamiones()) {
-				try {
-					Camion camion = camionDao.buscarById(Long.valueOf(t.toString()));
-					camiones.add(camion);
-				} catch (NumberFormatException | InstanceNotFoundException e) {
-				}
-			}
-		}
-		logger.info("buscarRutas paso2.3");
-		/* Agregamos contenedores */
-		if (form.getContenedores() != null) {
-			for (Long t : form.getContenedores()) {
-				try {
-					Contenedor contenedor = contenedorDao.buscarById(Long.valueOf(t.toString()));
-					contenedores.add(contenedor);
-				} catch (NumberFormatException | InstanceNotFoundException e) {
-				}
-			}
-		}
-
-		logger.info("buscarContenedores paso3");
-		page = rutaDao.buscarRutas(pageable, tipos, trabajadores, contenedores, camiones,
-				form.isMostrarSoloRutasActivas());
-		logger.info("buscarContenedores paso4");
+		page = rutaDao.buscarRutas(pageable, form.getTiposDeBasura(), form.getTrabajadores(), form.getContenedores(),
+				form.getCamiones(), form.isMostrarSoloRutasActivas());
+		logger.info("buscarRutas paso 3");
 		return page;
+	}
+
+	@Override
+	public boolean cambiarEstadoRuta(int id) throws InstanceNotFoundException {
+		logger.info("URL_MAPPING_CAMIONES_ESTADO1");
+		Ruta ruta = rutaDao.buscarById(id);
+		ruta.setActivo(!ruta.isActivo());
+		rutaDao.guardar(ruta);
+		return ruta.isActivo();
 	}
 
 	public void eliminarTipoBasuraByRuta(int rutaId, int tipoId) throws InstanceNotFoundException {

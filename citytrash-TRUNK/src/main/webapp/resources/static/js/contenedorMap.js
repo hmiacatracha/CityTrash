@@ -1,7 +1,46 @@
-/*https://esri.github.io/esri-leaflet/api-reference/controls/geosearch.html
- * https://github.com/Esri/esri-leaflet-geocoder/
- * 
- */
+/*Lista de sensores en el formulario editar Contenedor */
+jQuery(function($) {
+
+	$(document).on('change', 'select', function(e) {
+		console.log("select 1");
+	});
+
+	$(document).on('change', 'select #1', function(e) {
+		console.log("select #1");
+	});
+
+	$(document).on('change', 'select #2', function(e) {
+		console.log("select #2");
+	});
+
+	$(document).on('click', 'form #addSensor', function(e) {
+		//event.preventDefault();
+		/*console.log("add sensor ");
+		try {
+			var $form = $('form');
+			var contenedorForm = $form.serializeArray();
+			var sensores = $("#sensores");
+			console.log("form contenedor #addSensor click =>" + JSON.stringify(contenedorForm));
+			$.ajax({
+				type : $form.attr('method'),
+				url : $form.attr('action') + '?addSensor',
+				data : contenedorForm,
+				success : function(data, status) {
+					//console.log("success add sensor");
+					console.log("success add sensor data status=>" + status);
+					console.log("success add sensor data =>" + data);
+					sensores.html(data);
+					console.log("bien ad =>" + data);
+
+				}
+			});
+		} catch (err) {
+			console.log("error add sensor click");
+		}*/
+	});
+
+
+});
 
 var map = L.map('mapa').setView([ 40.0000000, -4.0000000 ], 5);
 //var geocodeService = new L.esri.Services.Geocoding();
@@ -77,15 +116,12 @@ function getMarket(latlng, modeloId, nombre) {
 	switch (tipo) {
 	case 'INORG':
 		iconUrl = '/citytrash/resources/static/img/contenedores/c_amarrillo_di.png';
-		console.log("INORG");
 		break;
 	case 'ORGAN':
 		iconUrl = '/citytrash/resources/static/img/contenedores/c_marron.png';
-		console.log("ORGAN");
 		break;
 	case 'GLASS':
 		iconUrl = '/citytrash/resources/static/img/contenedores/c_verde.png';
-		console.log("GLASS");
 		break;
 	case 'PAPER':
 		iconUrl = '/citytrash/resources/static/img/contenedores/c_azul_claro.png';
@@ -93,7 +129,6 @@ function getMarket(latlng, modeloId, nombre) {
 		break;
 	case 'PLAST':
 		iconUrl = '/citytrash/resources/static/img/contenedores/c_rojo.png';
-		console.log("PLAST");
 		break;
 	default:
 		iconUrl = '/citytrash/resources/static/img/contenedores/c_negro.png';
@@ -139,7 +174,7 @@ function centerLeafletMapOnMarker(map, marker) {
  */
 
 $(document).ready(function() {
-	console.log("ready!");
+	//console.log("ready!");
 	initialize();
 
 
@@ -170,25 +205,18 @@ function initialize() {
 	var nombre = $('#nombre').val();
 
 	try {
-		console.log("paso 1");
-		console.log("paso 1 lat =>" + inputLatitud.val());
-		console.log("paso 1 lng =>" + inputLongitud.val());
 
 		var point = {
 			lat : inputLatitud.val(),
 			lng : inputLongitud.val()
 		};
 
-		console.log("paso 2 =>" + point);
 		//clear layers
-		console.log("paso 3");
 		results.clearLayers();
-		console.log("paso 4");
 		var marker = getMarket(point, modeloId, nombre);
 		results.addLayer(marker);
 		//centra el mapa 
 		centerLeafletMapOnMarker(map, marker);
-		console.log("paso 5");
 		L.esri.Geocoding.reverseGeocode().latlng(point).run(function(error, result, response) {
 			// callback is called with error, result, and response.
 			// result.latlng contains the latlng of the located address
@@ -197,7 +225,7 @@ function initialize() {
 			//console.log("adrress =>" + JSON.stringify(result.address));
 			/*adrress =>{"Match_addr":"Carrer de Castella 18-28, 08018, El Poblenou, Barcelona, Catalunya","LongLabel":"Carrer de Castella 18-28, 08018, El Poblenou, Barcelona, Catalunya, ESP","ShortLabel":"Carrer de Castella 18-28","Addr_type":"StreetAddress","Type":"","PlaceName":"","AddNum":"20","Address":"Carrer de Castella 20","Block":"","Sector":"","Neighborhood":"El Poblenou","District":"Barcelona","City":"Barcelona","MetroArea":"","Subregion":"Barcelona","Region":"Catalunya","Territory":"","Postal":"08018","PostalExt":"","CountryCode":"ESP"}		 
 			 */
-			console.log("direccion inside=>" + direccion);
+			//console.log("direccion inside=>" + direccion);
 			$('#direccion').val("" + direccion);
 		});
 

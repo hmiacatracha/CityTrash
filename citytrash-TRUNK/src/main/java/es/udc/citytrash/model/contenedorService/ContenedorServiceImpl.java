@@ -119,12 +119,13 @@ public class ContenedorServiceImpl implements ContenedorService {
 		return modelo;
 	}
 
-	/*@Transactional(readOnly = true)
-	@Override
-	public List<ContenedorModelo> buscarTodosLosModelosOrderByModelo() {
-		List<ContenedorModelo> modelos = modeloDao.buscarTodosOrderByModelo();
-		return modelos;
-	}*/
+	/*
+	 * @Transactional(readOnly = true)
+	 * 
+	 * @Override public List<ContenedorModelo>
+	 * buscarTodosLosModelosOrderByModelo() { List<ContenedorModelo> modelos =
+	 * modeloDao.buscarTodosOrderByModelo(); return modelos; }
+	 */
 
 	@Transactional(readOnly = true)
 	@Override
@@ -210,6 +211,7 @@ public class ContenedorServiceImpl implements ContenedorService {
 		contenedor.setLatitud(form.getLatitud() != null ? form.getLatitud() : null);
 		contenedor.setLongitud(form.getLongitud() != null ? form.getLongitud() : null);
 		contenedorDao.guardar(contenedor);
+
 		if (form.isUpdateChildren()) {
 			if (form.getSensores() != null) {
 				for (SensorDto sensor : form.getSensores()) {
@@ -409,6 +411,12 @@ public class ContenedorServiceImpl implements ContenedorService {
 			}
 		}
 		return contenedorDao.buscarContenedoresDisponilesParaUnaRutaByTipoDeBasura(null, tipos);
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public List<Contenedor> buscarContenedoresByTiposDeBasura(List<Integer> tiposDeBasura) {
+		return contenedorDao.buscarContenedoresByTiposDeBasura(tiposDeBasura);
 	}
 
 	@Transactional(readOnly = true)

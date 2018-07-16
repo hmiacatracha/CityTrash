@@ -5,6 +5,7 @@ import java.util.Date;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.validator.constraints.UniqueElements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -105,6 +106,7 @@ public class SensorDto {
 		this.actualizoLista = actualizoLista;
 	}
 
+	
 	public TipoSensor getSensorType() {
 		return sensorType;
 	}

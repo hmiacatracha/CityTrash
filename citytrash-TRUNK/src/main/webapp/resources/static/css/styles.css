@@ -392,7 +392,6 @@ select.form-control, input.form-control, option.form-control {
 	margin: 0 auto;
 }
 
-
 #ruta {
 	height: 100%;
 	position: relative;
@@ -400,7 +399,6 @@ select.form-control, input.form-control, option.form-control {
 	width: 100%;
 	margin: 0 auto;
 }
-
 
 .filter-group {
 	font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
@@ -476,4 +474,13 @@ select.form-control, input.form-control, option.form-control {
 	-webkit-user-select: none;
 	-ms-user-select: none;
 	height: auto;
+}
+
+/*icons */
+#iconsLinks {
+	padding-bottom: 20px;
+}
+
+#iconsLinks img {
+	width: 30px;
 }

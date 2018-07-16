@@ -30,7 +30,7 @@ import es.udc.citytrash.util.GlobalNames;
 
 @Entity
 @Table(name = GlobalNames.TBL_MODELO_CAMION)
-@BatchSize(size = 10)
+@BatchSize(size = 20)
 public class CamionModelo implements Serializable {
 
 	CamionModelo() {

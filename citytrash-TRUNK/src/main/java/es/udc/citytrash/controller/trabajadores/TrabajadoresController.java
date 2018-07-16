@@ -134,65 +134,7 @@ public class TrabajadoresController {
 		return WebUtils.VISTA_TRABAJADORES;
 	}
 
-	@RequestMapping(value = { "", WebUtils.REQUEST_MAPPING_TRABAJADORES }, method = RequestMethod.POST)
-	public String listaTrabajadoresPost(@RequestParam(value = "page", required = false, defaultValue = "0") Integer p,
-			@PageableDefault(size = WebUtils.DEFAULT_PAGE_SIZE, page = WebUtils.DEFAULT_PAGE_NUMBER, direction = Direction.DESC) @SortDefault("id") Pageable pageRequest,
-			Model model, @Valid TrabajadorBusqFormDto busquedaForm, BindingResult result,
-			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
-
-		logger.info("POST FROM TRABAJADORES");
-		model.addAttribute("busquedaTrabajadoresForm", busquedaForm);
-
-		if (result.hasErrors()) {
-			logger.info("ERRORS: => " + result.getAllErrors().toString());
-			if (AjaxUtils.isAjaxRequest(requestedWith)) {
-				return WebUtils.VISTA_TRABAJADORES.concat("::content");
-			}
-			logger.info("POST LISTA_TRABAJADORES has errores no ajax");
-			return WebUtils.VISTA_TRABAJADORES;
-		}
-
-		Page<Trabajador> trabajadoresPage;
-
-		try {
-			trabajadoresPage = tservicio.buscarTrabajadores(pageRequest, busquedaForm);
-
-		} catch (FormBusquedaException e) {
-			throw new PageNotFoundException(String.format("The requested page (%s) of the worker list was not found.",
-					pageRequest.getPageNumber()));
-		} catch (Exception e) {
-			throw new PageNotFoundException(String.format("The requested page (%s) of the worker list was not found.",
-					pageRequest.getPageNumber()));
-		}
-
-		Page<TrabajadorDto> page = trabajadoresPage.map(new Converter<Trabajador, TrabajadorDto>() {
-			@Override
-			public TrabajadorDto convert(Trabajador t) {
-				// return ConvertidorTrabajador.trabajadorToDto(t);
-				TrabajadorDto dto = new TrabajadorDto(t);
-				return dto;
-			}
-		});
-
-		if (page.getNumberOfElements() == 0) {
-			if (!page.isFirst()) {
-				logger.info("PageNotFoundException");
-				throw new PageNotFoundException(String.format(
-						"The requested page (%s) of the worker list was not found.", pageRequest.getPageNumber()));
-			}
-		}
-
-		model.addAttribute("listaTrabajadores", page);
-		if (AjaxUtils.isAjaxRequest(requestedWith)) {
-			logger.info("resultado con ajax");
-			return WebUtils.VISTA_TRABAJADORES.concat("::listaTrabajadoresContent");
-		}
-		logger.info("sin resultado");
-		return WebUtils.VISTA_TRABAJADORES;
-	}
-
 	/* Detalles del trabajador */
-
 	@RequestMapping(value = { WebUtils.REQUEST_MAPPING_TRABAJADOR_DETALLES,
 			WebUtils.REQUEST_MAPPING_TRABAJADOR_DETALLES + "/" }, method = RequestMethod.GET)
 	public String trabajadorDetalles(@PathVariable("trabajadorId") long id, Model model,

@@ -349,4 +349,32 @@ public class ContenedorDaoHibernate extends GenericHibernateDAOImpl<Contenedor, 
 		return contenedores;
 	}
 
+	@Override
+	public List<Contenedor> buscarContenedoresByTiposDeBasura(List<Integer> tiposDeBasura) {
+		Query<Contenedor> query;
+		String alias = "c";
+		List<Integer> tipos = tiposDeBasura != null ? tiposDeBasura : new ArrayList<Integer>();
+		logger.info("buscarContenedoresByTiposDeBasura dao paso 1");
+		StringBuilder hql = new StringBuilder("Select " + alias + " FROM Contenedor " + alias);
+		List<Contenedor> contenedores = new ArrayList<Contenedor>();
+
+		logger.info("buscarContenedoresByTiposDeBasura dao paso 2");
+		// mostrar por tipos
+		if (tipos.size() > 0) {
+			hql.append(" WHERE (" + alias + ".modelo.tipo.id) in   (:tipos) ");
+		}
+
+		logger.info("buscarContenedoresByTiposDeBasura dao paso 3");
+		hql.append(" ORDER BY " + alias + ".nombre");
+
+		query = getSession().createQuery(hql.toString(), Contenedor.class);
+		if (tipos.size() > 0)
+			query.setParameter("tipos", tipos);
+
+		logger.info("buscarContenedoresByTiposDeBasura dao paso 4");
+		contenedores = query.list();
+		logger.info("buscarContenedoresByTiposDeBasura dao paso 5");
+		return contenedores;
+	}
+
 }

@@ -13,6 +13,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Digits;
 
+import org.hibernate.annotations.BatchSize;
+
 import es.udc.citytrash.model.camionModelo.CamionModelo;
 import es.udc.citytrash.model.tipoDeBasura.TipoDeBasura;
 import es.udc.citytrash.util.GlobalNames;
@@ -24,9 +26,13 @@ import es.udc.citytrash.util.GlobalNames;
  *         http://www.codejava.net/frameworks/hibernate/hibernate-many-to-many-association-with-extra-columns-in-join-table-example
  *
  */
+@BatchSize(size = 5)
 @Entity
 @Table(name = GlobalNames.TBL_MODELO_CAMION_TIPO_DE_BASURA)
-/* @AssociationOverrides => siempre al inicio de la clase, nunca con el atributo sino da error => 'modelocami0_.tipo_TIPO_BASURA_ID' in 'field list'*/
+/*
+ * @AssociationOverrides => siempre al inicio de la clase, nunca con el atributo
+ * sino da error => 'modelocami0_.tipo_TIPO_BASURA_ID' in 'field list'
+ */
 @AssociationOverrides({ @AssociationOverride(name = "pk.modelo", joinColumns = @JoinColumn(name = "MODELO_CAMION")),
 		@AssociationOverride(name = "pk.tipo", joinColumns = @JoinColumn(name = "TIPO_BASURA")) })
 public class CamionModeloTipoDeBasura implements Serializable {

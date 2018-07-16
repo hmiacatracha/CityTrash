@@ -317,8 +317,7 @@ public class ContenedoresController {
 	public String addSensorRow(@ModelAttribute("contenedorForm") final ContenedorEditarDto form,
 			final HttpServletRequest req, Model model,
 			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
-
-		logger.info("POST REQUEST_MAPPING_CONTENEDORES_EDITAR addSensorPrueba");
+		logger.info("POST REQUEST_MAPPING_CONTENEDORES_EDITAR addSensor");
 		logger.info("Imprimir lista => " + form.getSensores().toString());
 		SensorDto sensor = new SensorDto();
 		sensor.setId(WebUtils.randomNegativeId());
@@ -554,7 +553,7 @@ public class ContenedoresController {
 		}
 	}
 
-	@RequestMapping(value = { WebUtils.REQUEST_MAPPING_CONTENEDORES_MODELOS }, method = RequestMethod.POST)
+	/*@RequestMapping(value = { WebUtils.REQUEST_MAPPING_CONTENEDORES_MODELOS }, method = RequestMethod.POST)
 	public String getModelos(
 			@PageableDefault(size = WebUtils.DEFAULT_PAGE_SIZE, page = WebUtils.DEFAULT_PAGE_NUMBER, direction = Direction.DESC) @SortDefault("id") Pageable pageRequest,
 			@Valid ContenedorModeloFormBusq form, BindingResult result, Model model,
@@ -596,7 +595,7 @@ public class ContenedoresController {
 			return WebUtils.VISTA_CONTENEDORES_MODELOS.concat("::content");
 		return WebUtils.VISTA_CONTENEDORES_MODELOS;
 	}
-
+	*/
 	@RequestMapping(value = WebUtils.REQUEST_MAPPING_CONTENEDORES_REGISTRO_MODELO, method = RequestMethod.GET)
 	public String registroModelo(Model model,
 			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {

@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
+import es.udc.citytrash.model.contenedorModelo.ContenedorModelo;
 import es.udc.citytrash.model.tipoDeBasura.TipoDeBasura;
 import es.udc.citytrash.model.util.excepciones.InstanceNotFoundException;
 import es.udc.citytrash.model.util.genericdao.GenericHibernateDAOImpl;
@@ -40,13 +41,27 @@ public class CamionModeloDaoHibernate extends GenericHibernateDAOImpl<CamionMode
 	}
 
 	@Override
-	public List<CamionModelo> buscarTodosOrderByModelo() {
+	public List<CamionModelo> buscarTodosOrderByModelo(List<Integer> tiposDeBasura) {
 		String alias = "m";
+		Query<CamionModelo> query;
+		List<Integer> tiposAux = tiposDeBasura != null ? tiposDeBasura : new ArrayList<Integer>();
 		List<CamionModelo> modelos = new ArrayList<CamionModelo>();
-		String hql = String
-				.format("Select " + alias + " FROM CamionModelo " + alias + " ORDER BY " + alias + ".modelo");
+		String hql = "";
+
+		if (tiposAux.size() > 0) {
+			hql = String.format("Select " + alias + " FROM CamionModelo " + alias + " join fetch " + alias
+					+ ".tiposDeBasura cmtb join fetch cmtb.pk pk join fetch pk.tipo tipo"
+					+ " WHERE tipo.id in (:tipos)  ORDER BY " + alias + ".modelo");
+		} else {
+			hql = String.format("Select " + alias + " FROM CamionModelo " + alias + " ORDER BY " + alias + ".modelo");
+		}
+
 		logger.info("HQL buscarCamionModelosOrderByModelo => " + hql);
-		modelos = getSession().createQuery(hql, CamionModelo.class).list();
+		query = getSession().createQuery(hql, CamionModelo.class);
+
+		if (tiposAux.size() > 0)
+			query.setParameter("tipos", tiposAux);
+		modelos = query.list();
 		return modelos;
 	}
 
@@ -91,7 +106,7 @@ public class CamionModeloDaoHibernate extends GenericHibernateDAOImpl<CamionMode
 		List<TipoDeBasura> tiposAux = tipos != null ? tipos : new ArrayList<TipoDeBasura>();
 
 		StringBuilder hql = new StringBuilder("Select distinct " + alias + " FROM CamionModelo " + alias
-				+ " inner join " + alias + ".tiposDeBasura t inner join t.pk pk");
+				+ " join fetch " + alias + ".tiposDeBasura t join fetch t.pk pk");
 
 		for (int i = 0; i < palabras.length; i++) {
 			if (i != 0)
