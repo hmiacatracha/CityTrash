@@ -9,7 +9,7 @@ public class InactiveResourceException extends Exception {
 	private Object key;
 
 	private String className;
-
+	
 	public InactiveResourceException(Object key, String className) {
 		super("Inactive resource with the key:" + key + " of " + className);
 		this.key = key;

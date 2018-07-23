@@ -1,0 +1,177 @@
+<!DOCTYPE>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/rutas}" th:with="currentPage='rutas'">
+<head>
+<title th:text="#{page_rutas}"></title>
+</head>
+
+<body class="formularios">
+	<div id="content" class="container" th:fragment="content"
+		th:remove="tag" th:if="${rutaForm}!=null">
+
+		<div
+			class="col-sm-12 col-md-offset-2 col-md-8 col-lg-offset-2 col-lg-8">
+			<div class="panel panel-default" th:object="${rutaForm}">
+
+				<div class="panel-heading">
+					<!-- titutlo -->
+					<h3 th:if="${rutaForm.id}!=null" class="text-center text-success"
+						th:text="${#strings.toUpperCase('__#{lbl_detalles}__')} +  ' ' 
+						+ ${#strings.toUpperCase('__#{ruta}__')} + ' #' + *{id}"></h3>
+
+					<div class="col-xs-12 text-right">
+						<div class="btn-group text-center">
+							<a th:href="@{#{link.rutas.editar}(id=*{id})}" class="btn-sm"><i
+								class="glyphicon glyphicon-pencil"></i></a><a
+								th:href="@{#{link.rutas.registro}}" class="btn-sm"><i
+								class="glyphicon glyphicon-plus"></i> </a> <a
+								th:href="@{#{link.rutas}}" class="btn-sm"> <i
+								class="glyphicon glyphicon-list"></i>
+							</a>
+						</div>
+					</div>
+					<br>
+				</div>
+
+				<div class="panel-body">
+					<input th:if="*{id}" type="hidden"
+						class="mayusculas col-sm-6 form-control" id="id" th:field="*{id}" />
+
+					<div class="table-responsive">
+						<table class="table table-hover">
+							<tbody th:object="${rutaForm}">
+								<tr>
+									<td class="text-success" th:text="#{lbl_tipo_basura_recoger}"></td>
+									<td>
+										<table class="table table-responsive">
+											<thead class="text-success">
+												<tr>
+													<th scope="col">#</th>
+													<th scope="col" colspan="2" th:text="#{lbl_tipo}">Tipo</th>
+													<th scope="col" th:text="#{lbl_color}">Color</th>
+												</tr>
+											</thead>
+											<tbody th:if="${tiposDeBasuraAsignadas.size()> 0}"
+												class="text-success">
+												<tr th:each="item, rowStat : ${tiposDeBasuraAsignadas}">
+													<td th:text="${rowStat.index+1}"></td>
+													<td colspan="2" th:text="#{${item.tipo}}">Name</td>
+													<td><div th:style="'background: #' + ${item.color}"
+															class="basura_color_cuadro"></div>
+												</tr>
+
+											</tbody>
+										</table>
+									</td>
+								</tr>
+
+								<tr>
+									<td class="text-success" th:text="#{lbl_camion_asignado}"></td>
+									<td>
+										<p>
+											<a th:text="${#strings.toUpperCase(camionAsignado.nombre)}"
+												th:href="@{#{link.camiones.detalles}(id=${camionAsignado.id})}"
+												class="btn-sm"> </a>
+										</p>
+									</td>
+								</tr>
+								<tr>
+									<td class="text-success"
+										th:text="#{frm_header_lista_contenedores}"></td>
+									<td>
+										<table class="table table-hover table-responsive">
+											<thead class="text-success">
+												<tr>
+													<th scope="col">#</th>
+													<th scope="col" th:text="#{lbl_contenedor}"></th>
+													<th scope="col" th:text="#{lbl_tipo}"></th>
+													<th scope="col"></th>
+												</tr>
+											</thead>
+											<tbody th:if="${contenedoresAsignados.size()> 0}"
+												class="text-success">
+												<tr th:each="item, rowStat : ${contenedoresAsignados}">
+													<td th:text="${rowStat.index+1}"></td>
+													<td>
+
+														<p>
+															<a th:text="${#strings.toUpperCase(item.nombre)}"
+																th:href="@{#{link.contenedores.detalles}(id=${item.id})}"
+																class="btn-sm"> </a>
+														</p>
+													</td>
+													<td><div th:if="${item.modelo.tipo.color!=null}"
+															th:style="'background: #' + ${item.modelo.tipo.color}"
+															class="basura_color_cuadro"></div>
+													<td></td>
+												</tr>
+
+											</tbody>
+										</table>
+									</td>
+								</tr>
+
+								<!-- localizacion -->
+								<tr>
+									<td class="text-success"
+										th:text="${#strings.capitalize('__#{lbl_localizacion}__')}"></td>
+
+									<td colspan="2">
+
+										<div th:object="${rutaForm.puntoInicio}">
+											<span class="glyphicon glyphicon-map-marker"></span> <label
+												for="puntoInicio" class="col-form-label"
+												th:text="#{lbl_punto_inicio}"></label> <label
+												id="puntoInicio" th:data-lat="${rutaForm.puntoInicio.lat}"
+												th:data-lng="${rutaForm.puntoInicio.lng}"
+												th:text="${#strings.toUpperCase(rutaForm.puntoInicio)}">
+											</label> <label class="text-left text-success"> <var>(DD)</var>
+											</label>
+
+
+										</div>
+										<p id="puntoInicioDir" class="text-info"></p>
+
+										<div th:object="${rutaForm.puntoFinal}">
+											<span class="glyphicon glyphicon-map-marker"></span> <label
+												for="puntoFinal" class="col-form-label"
+												th:text="#{lbl_punto_final}"></label> <label id="puntoFinal"
+												th:data-lat="${rutaForm.puntoFinal.lat}"
+												th:data-lng="${rutaForm.puntoFinal.lng}"
+												th:text="${#strings.toUpperCase(rutaForm.puntoFinal)}">
+											</label> <label class="text-left text-success"> <var>(DD)</var>
+											</label>
+										</div>
+										<p id="puntoFinalDir" class="text-info"></p>
+									</td>
+								</tr>
+								<!-- activo -->
+								<tr>
+									<td class="text-success"
+										th:text="${#strings.capitalize('__#{lbl_ruta_activa}__')}"></td>
+
+									<td th:if="*{activo == true}"><i class="fa fa-toggle-on">
+									</i></td>
+									<td th:unless="*{activo == true}"><i
+										class="fa fa-toggle-off"> </i></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<!-- mapa -->
+					<div class="table-responsive">
+						<div id="ruta" th:fragment="mapa">
+							<div id="map"></div>
+						</div>
+					</div>
+				</div>
+
+				<div class="panel-footer"></div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

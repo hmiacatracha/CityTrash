@@ -1,7 +1,12 @@
 package es.udc.citytrash.model.rutaService;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,9 +17,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.udc.citytrash.controller.util.dtos.ruta.RutaContenedorDto;
+import es.udc.citytrash.controller.util.dtos.ruta.GenerarRutaFormDto;
 import es.udc.citytrash.controller.util.dtos.ruta.RutaDto;
-import es.udc.citytrash.controller.util.dtos.ruta.RutaTipoBasuraDto;
+import es.udc.citytrash.controller.util.dtos.ruta.RutasDiariaFormBusq;
 import es.udc.citytrash.controller.util.dtos.ruta.RutasFormBusq;
 import es.udc.citytrash.model.camion.Camion;
 import es.udc.citytrash.model.camion.CamionDao;
@@ -22,12 +27,14 @@ import es.udc.citytrash.model.contenedor.Contenedor;
 import es.udc.citytrash.model.contenedor.ContenedorDao;
 import es.udc.citytrash.model.ruta.Ruta;
 import es.udc.citytrash.model.ruta.RutaDao;
+import es.udc.citytrash.model.rutaDiaria.RutaDiaria;
 import es.udc.citytrash.model.rutaDiaria.RutaDiariaDao;
+import es.udc.citytrash.model.rutaDiariaContenedores.RutaDiariaContenedores;
 import es.udc.citytrash.model.rutaDiariaContenedores.RutaDiariaContenedoresDao;
 import es.udc.citytrash.model.tipoDeBasura.TipoDeBasura;
 import es.udc.citytrash.model.tipoDeBasura.TipoDeBasuraDao;
-import es.udc.citytrash.model.trabajador.Trabajador;
 import es.udc.citytrash.model.trabajador.TrabajadorDao;
+import es.udc.citytrash.model.util.dto.Notificacion;
 import es.udc.citytrash.model.util.excepciones.DuplicateInstanceException;
 import es.udc.citytrash.model.util.excepciones.InstanceNotFoundException;
 
@@ -149,7 +156,7 @@ public class RutaServiceImpl implements RutaService {
 		List<Contenedor> contenedoresGuardados = new ArrayList<Contenedor>();
 		contenedoresGuardados = ruta.getContenedores();
 
-		List<Contenedor> contenedores = new ArrayList<Contenedor>();
+		// List<Contenedor> contenedores = new ArrayList<Contenedor>();
 
 		/* Eliminanos los contenedores que ya no pertenecen a esta ruta */
 		for (Contenedor c : contenedoresGuardados) {
@@ -176,6 +183,143 @@ public class RutaServiceImpl implements RutaService {
 
 	@Transactional(readOnly = true)
 	@Override
+	public List<Ruta> buscarRutas(boolean mostrarSoloRutasActivas) {
+		List<Ruta> rutasList = rutaDao.buscarRutas(mostrarSoloRutasActivas);
+		return rutasList;
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public List<Ruta> buscarRutasSinGenerar(GenerarRutaFormDto form) {
+		List<Ruta> rutaList = rutaDao.buscarRutasSinGenerar(form.getFecha(), form.getTiposDeBasura(),
+				form.getCamiones());
+		return rutaList;
+	}
+
+	@Override
+	public void generarRutas(GenerarRutaFormDto form) {
+		List<RutaDiaria> rd = new ArrayList<RutaDiaria>();
+		Ruta ruta;
+		Calendar calendar = form.getFecha() != null ? dateToCalendar(form.getFecha()) : Calendar.getInstance();
+		Set<Integer> rutas = new HashSet<Integer>(form.getRutas());
+		List<Integer> listaRutas = new ArrayList<Integer>(rutas);
+
+		for (int id : listaRutas) {
+
+			List<String> listaMensajes = new ArrayList<String>();
+
+			try {
+				ruta = rutaDao.buscarById(id);
+				rd = rutaDiariaDao.buscarRutasDiarias(form.getFecha(), form.getFecha(), id);
+
+				/* Verificar que la ruta no se ha generado ya */
+				if (!rd.isEmpty()) {
+					throw new DuplicateInstanceException(id, RutaDiaria.class.getName());
+				}
+
+				RutaDiaria rutaDiaria = new RutaDiaria(ruta, calendar);
+				/*
+				 * Verificar que el camion esta activo, sino esta activo no
+				 * añade la ruta diaria
+				 */
+				if (ruta.getCamion() != null) {
+
+					/* Añadir el camion a la ruta */
+					if (!ruta.getCamion().getActivo())
+						listaMensajes.add("InactiveResourceException_ruta_diaria_camion");
+					else
+						rutaDiaria.setCamion(ruta.getCamion());
+
+					/* Añadir el conductor a la ruta */
+					if (ruta.getCamion().getConductor() == null)
+						listaMensajes.add("EmptyValueException_ruta_diaria_conductor");
+					else if (ruta.getCamion().getConductor() == null && ruta.getCamion().getConductorSuplente() == null)
+						listaMensajes.add("EmptyValueException_ruta_diaria_conductores");
+					else {
+						// Verificamos que este activo el conductor
+						if (ruta.getCamion().getConductor().isActiveWorker()) {
+							rutaDiaria.setConductor(ruta.getCamion().getConductor());
+						} else {
+							// conductor suplente
+							if (ruta.getCamion().getConductorSuplente() != null) {
+								if (ruta.getCamion().getConductorSuplente().isActiveWorker()) {
+									rutaDiaria.setConductor(ruta.getCamion().getConductorSuplente());
+								} else
+									listaMensajes.add("InactiveResourceException_ruta_diaria_conductores");
+							} else
+								listaMensajes.add("EmptyValueException_ruta_diaria_conductor_suplente");
+						}
+					}
+
+					/* Añadir conductores */
+					if (ruta.getCamion().getRecogedor1() == null && ruta.getCamion().getRecogedor2() == null) {
+						listaMensajes.add("EmptyValueException_ruta_diaria_recolectores");
+					} else {
+
+						if (ruta.getCamion().getRecogedor1() != null) {
+							if (ruta.getCamion().getRecogedor1().isActiveWorker())
+								rutaDiaria.setRecogedor1(ruta.getCamion().getRecogedor1());
+							else
+								listaMensajes.add("InactiveResourceException_ruta_diaria_recolector1");
+						} else
+							listaMensajes.add("EmptyValueException_ruta_diaria_recolector1");
+
+						if (ruta.getCamion().getRecogedor2() != null) {
+							if (ruta.getCamion().getRecogedor2().isActiveWorker())
+								rutaDiaria.setRecogedor2(ruta.getCamion().getRecogedor2());
+							else
+								listaMensajes.add("InactiveResourceException_ruta_diaria_recolector2");
+						}
+					}
+
+				} else {
+					listaMensajes.add("EmptyValueException_ruta_diaria_camion");
+					listaMensajes.add("EmptyValueException_ruta_diaria_conductor");
+					listaMensajes.add("EmptyValueException_ruta_diaria_recolectores");
+				}
+
+				/*
+				 * añadir contenedores
+				 */
+				List<Contenedor> contenedores = new ArrayList<Contenedor>();
+				HashSet<Contenedor> rcontenedores = ruta.getContenedores() != null
+						? new HashSet<Contenedor>(ruta.getContenedores()) : new HashSet<Contenedor>();
+
+				for (Contenedor contenedor : rcontenedores) {
+					if (contenedor.getActivo()) {
+						RutaDiariaContenedores rdcont = new RutaDiariaContenedores(rutaDiaria, contenedor);
+						rutaDiaria.addRutaDiariaContenedores(rdcont);
+						contenedores.add(contenedor);
+					}
+				}
+
+				if (contenedores.size() == 0) {
+					listaMensajes.add("EmptyValueException_ruta_diaria_contenedores");
+				}
+
+				/* Añade la ruta, solo si no tiene ningun error */
+				rutaDiaria = rutaDiariaDao.guardar(rutaDiaria);
+
+				if (listaMensajes.size() > 0) {
+					Notificacion notificacion = new Notificacion(RutaDiaria.class.getName(), ruta.getId(),
+							listaMensajes);
+					// guardar notificacion
+				}
+
+			} catch (InstanceNotFoundException e) {
+				listaMensajes.add("InstanceNotFoundException_ruta_diaria_ruta");
+				Notificacion notificacion = new Notificacion(RutaDiaria.class.getName(), id, listaMensajes);
+				// guardar notificacion
+			} catch (DuplicateInstanceException e) {
+				listaMensajes.add("DuplicateInstanceException_ruta_diaria");
+				Notificacion notificacion = new Notificacion(RutaDiaria.class.getName(), id, listaMensajes);
+				// guardar notifiacion
+			}
+		}
+	}
+
+	@Transactional(readOnly = true)
+	@Override
 	public Page<Ruta> buscarRutas(Pageable pageable, RutasFormBusq form) {
 		logger.info("buscarRutas");
 		List<Ruta> rutasList = new ArrayList<Ruta>();
@@ -185,6 +329,19 @@ public class RutaServiceImpl implements RutaService {
 		page = rutaDao.buscarRutas(pageable, form.getTiposDeBasura(), form.getTrabajadores(), form.getContenedores(),
 				form.getCamiones(), form.isMostrarSoloRutasActivas());
 		logger.info("buscarRutas paso 3");
+		return page;
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public Page<RutaDiaria> buscarRutasDiarias(Pageable pageable, RutasDiariaFormBusq form) {
+		logger.info("buscarRutasDiarias");
+		List<RutaDiaria> rutasList = new ArrayList<RutaDiaria>();
+		Page<RutaDiaria> page = new PageImpl<RutaDiaria>(rutasList, pageable, rutasList.size());
+		logger.info("buscarRutasDiarias paso2");
+		page = rutaDiariaDao.buscarRutasDiarias(pageable, form.getFrom(), form.getTo(), form.getRutas(),
+				form.getTrabajadores(), form.getContenedores(), form.getCamiones());
+		logger.info("buscarRutasDiarias paso 3");
 		return page;
 	}
 
@@ -224,4 +381,11 @@ public class RutaServiceImpl implements RutaService {
 			return false;
 		}
 	}
+
+	public static Calendar dateToCalendar(Date date) {
+		Calendar calendar = new GregorianCalendar();
+		calendar.setTime(date);
+		return calendar;
+	}
+
 }

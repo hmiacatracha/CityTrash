@@ -263,6 +263,62 @@ jQuery(function($) {
 	});
 
 
+	/*Muestra la lista de camiones de pagina generar rutas filtrando por tipo de basura*/
+	$(document).on('change', '#tipoDeBasuraFormBusqPageRutasAGenerar', function(e) {
+		try {
+			var form = $('form').serializeArray();
+			var camiones = $("#camionesFormBusqPageRutasAGenerar");
+			var rutas = $("#rutas");
+
+			/*Load modelos de contenedores */
+			$.ajax({
+				type : "GET",
+				url : '/citytrash/ajax/rutas/generar/listaCamiones',
+				data : form,
+				success : function(data, status) {
+					//console.log("pasa por aqui 1 data =>" + JSON.stringify(data));
+					camiones.html(data).selectpicker("refresh");
+				}
+			});
+
+			/*Load modelos de contenedores */
+			$.ajax({
+				type : "GET",
+				url : '/citytrash/ajax/rutas/generar/listaRutas',
+				data : form,
+				success : function(data, status) {
+					//console.log("pasa por aqui 3 data =>" + JSON.stringify(data));
+					rutas.html(data).selectpicker("refresh");
+				}
+			});
+		} catch (err) {
+			console.log("error tipoDeBasuraFormBusqPageRutasAGenerar change");
+		}
+	});
+
+	/*Muestra la lista de rutas filtrando por tipo de basura o por tipo de camiones*/
+	$(document).on('change', '#camionesFormBusqPageRutasAGenerar', function(e) {
+		try {
+
+			var form = $('form').serializeArray();
+			var rutas = $("#rutas");
+			//console.log("#camionesFormBusqPageRutasAGenerar change form=>" + JSON.stringify(form));
+
+			/*Load modelos de contenedores */
+			$.ajax({
+				type : "GET",
+				url : '/citytrash/ajax/rutas/generar/listaRutas',
+				data : form,
+				success : function(data, status) {
+					//console.log("pasa por aqui 1 data =>" + JSON.stringify(data));
+					rutas.html(data).selectpicker("refresh");
+				}
+			});
+
+		} catch (err) {
+			console.log("error camionesFormBusqPageRutasAGenerar change");
+		}
+	});
 
 
 	$(document).ready(function() {
@@ -326,8 +382,38 @@ jQuery(function($) {
 	});
 
 
+	/* Rank date*/
+	$(document).ready(function() {
 
 
+		$("#rankStartDate").datepicker({
+			autoclose : true,
+			firstDay : 1,
+			language : 'es'
+		}).on('changeDate', function(selected) {
+			//console.log("rank date => StartDate changeDate");
+			var minDate = new Date(selected.date.valueOf());
+			$('#rankEndDate').datepicker('setStartDate', minDate);
+		});
+
+		$("#rankEndDate").datepicker({
+			autoclose : true,
+			firstDay : 1,
+			language : 'es'
+		}).on('changeDate', function(selected) {
+			//console.log("rank date => EndDate changeDate");
+			var minDate = new Date(selected.date.valueOf());
+			$('#rankStartDate').datepicker('setEndDate', minDate);
+		});
+
+	});
+
+	$(function() {
+
+		$("#fechaNacimiento").datepicker({
+			firstDay : 1
+		});
+	});
 
 	/*Si es una venta modal y tiene un formulario, al cerrarse limpia el formulario */
 	$(document).on("submit", "#busquedaTrabajadoresForm", function(e) {

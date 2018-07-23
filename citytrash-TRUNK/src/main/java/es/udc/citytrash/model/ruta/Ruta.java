@@ -20,6 +20,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
@@ -186,6 +187,15 @@ public class Ruta implements Serializable {
 			return this.tiposDeBasura.contains(tipo);
 	}
 
+	@Transient
+	public boolean isGenerarRuta() {
+		return generarRuta;
+	}
+
+	public void setGenerarRuta(boolean generarRuta) {
+		this.generarRuta = generarRuta;
+	}
+
 	int id;
 	private Localizacion puntoInicio = new Localizacion();
 	private Localizacion puntoFinal = new Localizacion();
@@ -193,6 +203,7 @@ public class Ruta implements Serializable {
 	private Camion camion;
 	private List<Contenedor> contenedores;
 	private List<TipoDeBasura> tiposDeBasura;
+	private boolean generarRuta = false;
 
 	@Override
 	public String toString() {

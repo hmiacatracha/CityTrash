@@ -1,27 +1,24 @@
 package es.udc.citytrash.controller.contenedores;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -55,15 +52,15 @@ import es.udc.citytrash.model.contenedor.Contenedor;
 import es.udc.citytrash.model.contenedorModelo.ContenedorModelo;
 import es.udc.citytrash.model.contenedorService.ContenedorService;
 import es.udc.citytrash.model.sensor.Sensor;
-import es.udc.citytrash.model.sensorValor.Valor;
 import es.udc.citytrash.model.tipoDeBasura.TipoDeBasura;
 import es.udc.citytrash.model.util.excepciones.DuplicateInstanceException;
 import es.udc.citytrash.model.util.excepciones.InstanceNotFoundException;
 import es.udc.citytrash.model.util.excepciones.InvalidFieldException;
+import es.udc.citytrash.util.GlobalNames;
 import es.udc.citytrash.util.enums.TipoSensor;
 
 @Controller
-// @PreAuthorize("hasRole('" + GlobalNames.ROL_ADMINISTRADOR + "')")
+@PreAuthorize("hasRole('" + GlobalNames.ROL_ADMINISTRADOR + "')")
 @RequestMapping("contenedores")
 public class ContenedoresController {
 
@@ -553,49 +550,48 @@ public class ContenedoresController {
 		}
 	}
 
-	/*@RequestMapping(value = { WebUtils.REQUEST_MAPPING_CONTENEDORES_MODELOS }, method = RequestMethod.POST)
-	public String getModelos(
-			@PageableDefault(size = WebUtils.DEFAULT_PAGE_SIZE, page = WebUtils.DEFAULT_PAGE_NUMBER, direction = Direction.DESC) @SortDefault("id") Pageable pageRequest,
-			@Valid ContenedorModeloFormBusq form, BindingResult result, Model model,
-			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
-
-		logger.info("POST REQUEST_MAPPING_CONTENEDORES_MODELOS");
-		List<ContenedorModelo> modeloList = new ArrayList<ContenedorModelo>();
-		Page<ContenedorModelo> page = new PageImpl<ContenedorModelo>(modeloList, pageRequest, modeloList.size());
-		model.addAttribute("busquedaForm", form);
-
-		try {
-			logger.info("POST REQUEST_MAPPING_CONTENEDORES_MODELOS 2");
-			if (result.hasErrors()) {
-				model.addAttribute("page", page);
-				if (AjaxUtils.isAjaxRequest(requestedWith)) {
-					return WebUtils.VISTA_CONTENEDORES_MODELOS.concat("::content");
-				}
-				return WebUtils.VISTA_CONTENEDORES_MODELOS;
-			}
-			logger.info("POST REQUEST_MAPPING_CONTENEDORES_MODELOS 3");
-			page = cServicio.buscarModelos(pageRequest, form);
-			logger.info("POST REQUEST_MAPPING_CONTENEDORES_MODELOS 4");
-			model.addAttribute("page", page);
-
-			if (page.getNumberOfElements() == 0) {
-				if (!page.isFirst()) {
-					logger.info("PageNotFoundException");
-					throw new PageNotFoundException(String.format(
-							"The requested page (%s) of the worker list was not found.", pageRequest.getPageNumber()));
-				}
-			}
-
-		} catch (Exception e) {
-			model.addAttribute("page", page);
-			logger.info("formBusquedaError => " + e.getMessage());
-		}
-
-		if (AjaxUtils.isAjaxRequest(requestedWith))
-			return WebUtils.VISTA_CONTENEDORES_MODELOS.concat("::content");
-		return WebUtils.VISTA_CONTENEDORES_MODELOS;
-	}
-	*/
+	/*
+	 * @RequestMapping(value = { WebUtils.REQUEST_MAPPING_CONTENEDORES_MODELOS
+	 * }, method = RequestMethod.POST) public String getModelos(
+	 * 
+	 * @PageableDefault(size = WebUtils.DEFAULT_PAGE_SIZE, page =
+	 * WebUtils.DEFAULT_PAGE_NUMBER, direction =
+	 * Direction.DESC) @SortDefault("id") Pageable pageRequest,
+	 * 
+	 * @Valid ContenedorModeloFormBusq form, BindingResult result, Model model,
+	 * 
+	 * @RequestHeader(value = "X-Requested-With", required = false) String
+	 * requestedWith) {
+	 * 
+	 * logger.info("POST REQUEST_MAPPING_CONTENEDORES_MODELOS");
+	 * List<ContenedorModelo> modeloList = new ArrayList<ContenedorModelo>();
+	 * Page<ContenedorModelo> page = new PageImpl<ContenedorModelo>(modeloList,
+	 * pageRequest, modeloList.size()); model.addAttribute("busquedaForm",
+	 * form);
+	 * 
+	 * try { logger.info("POST REQUEST_MAPPING_CONTENEDORES_MODELOS 2"); if
+	 * (result.hasErrors()) { model.addAttribute("page", page); if
+	 * (AjaxUtils.isAjaxRequest(requestedWith)) { return
+	 * WebUtils.VISTA_CONTENEDORES_MODELOS.concat("::content"); } return
+	 * WebUtils.VISTA_CONTENEDORES_MODELOS; }
+	 * logger.info("POST REQUEST_MAPPING_CONTENEDORES_MODELOS 3"); page =
+	 * cServicio.buscarModelos(pageRequest, form);
+	 * logger.info("POST REQUEST_MAPPING_CONTENEDORES_MODELOS 4");
+	 * model.addAttribute("page", page);
+	 * 
+	 * if (page.getNumberOfElements() == 0) { if (!page.isFirst()) {
+	 * logger.info("PageNotFoundException"); throw new
+	 * PageNotFoundException(String.format(
+	 * "The requested page (%s) of the worker list was not found.",
+	 * pageRequest.getPageNumber())); } }
+	 * 
+	 * } catch (Exception e) { model.addAttribute("page", page);
+	 * logger.info("formBusquedaError => " + e.getMessage()); }
+	 * 
+	 * if (AjaxUtils.isAjaxRequest(requestedWith)) return
+	 * WebUtils.VISTA_CONTENEDORES_MODELOS.concat("::content"); return
+	 * WebUtils.VISTA_CONTENEDORES_MODELOS; }
+	 */
 	@RequestMapping(value = WebUtils.REQUEST_MAPPING_CONTENEDORES_REGISTRO_MODELO, method = RequestMethod.GET)
 	public String registroModelo(Model model,
 			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {

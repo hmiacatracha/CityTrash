@@ -18,6 +18,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -44,11 +45,7 @@ import es.udc.citytrash.controller.util.dtos.camion.CamionModeloDto;
 import es.udc.citytrash.controller.util.dtos.camion.CamionModeloFormBusq;
 import es.udc.citytrash.controller.util.dtos.camion.CamionModeloTipoDeBasuraDto;
 import es.udc.citytrash.controller.util.dtos.camion.CamionRegistroDto;
-import es.udc.citytrash.controller.util.dtos.tipoDeBasura.TipoDeBasuraDto;
-import es.udc.citytrash.controller.util.dtos.trabajador.TrabajadorDto;
-import es.udc.citytrash.controller.util.dtos.trabajador.TrabajadorUpdateFormDto;
 import es.udc.citytrash.model.camion.Camion;
-import es.udc.citytrash.model.camion.CamionDao;
 import es.udc.citytrash.model.camionModelo.CamionModelo;
 import es.udc.citytrash.model.camionModeloTipoDeBasura.CamionModeloTipoDeBasura;
 import es.udc.citytrash.model.camionService.CamionService;
@@ -61,10 +58,11 @@ import es.udc.citytrash.model.util.excepciones.DuplicateInstanceException;
 import es.udc.citytrash.model.util.excepciones.FormBusquedaException;
 import es.udc.citytrash.model.util.excepciones.InstanceNotFoundException;
 import es.udc.citytrash.model.util.excepciones.InvalidFieldException;
+import es.udc.citytrash.util.GlobalNames;
 import es.udc.citytrash.util.enums.CampoBusqPalabrasClavesCamion;
 
 @Controller
-// @PreAuthorize("hasRole('" + GlobalNames.ROL_ADMINISTRADOR + "')")
+@PreAuthorize("hasRole('" + GlobalNames.ROL_ADMINISTRADOR + "')")
 @RequestMapping("camiones")
 public class CamionesController {
 
@@ -661,7 +659,6 @@ public class CamionesController {
 		}
 	}
 
-	
 	@ResponseStatus(HttpStatus.FORBIDDEN)
 	@ExceptionHandler(DuplicateInstanceException.class)
 	public Model duplicateInstanceException(Model model, DuplicateInstanceException ex) {

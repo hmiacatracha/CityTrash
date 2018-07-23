@@ -92,14 +92,12 @@
 					<ul class="dropdown-menu">
 						<li sec:authorize="hasRole('ROLE_ADMIN')"><a
 							th:text="#{lbl_add}" th:href="@{#{link.rutas.registro}}"> </a></li>
-						<li sec:authorize="hasRole('ROLE_ADMIN')"><a
-							th:text="#{lbl_list_rutas}" th:href="@{#{link.rutas}}"> </a></li>
-						<li sec:authorize="hasRole('ROLE_ADMIN')"><a
-							th:text="#{lbl_historial_rutas}"
-							th:href="@{#{link.rutas.rutasdiarias}}"> </a></li>
 						<li sec:authorize="isAuthenticated()"><a
-							th:text="#{lbl_historial_mis_rutas}"
-							th:href="@{#{link.rutas.misrutas}}"> </a></li>
+							th:text="#{lbl_historial_rutas}"
+							th:href="@{#{link.rutas.myhistorial}}"> </a></li>
+						<li sec:authorize="hasRole('ROLE_ADMIN')"><a
+							th:text="#{lbl_list_rutas}" th:href="@{#{link.rutas.historial}}">
+						</a></li>
 					</ul></li>
 
 				<!-- estadísticas -->

@@ -27,8 +27,29 @@ import es.udc.citytrash.model.trabajador.Trabajador;
 @BatchSize(size = 10)
 @Entity
 @Table(name = "TBL_RD_CONT")
+@AssociationOverrides({
+		@AssociationOverride(name = "pk.rutaDiaria", joinColumns = @JoinColumn(name = "RUTA_DIARIA_ID")),
+		@AssociationOverride(name = "pk.contenedor", joinColumns = @JoinColumn(name = "CONTENEDOR_ID")) })
 public class RutaDiariaContenedores {
 
+	/**
+	 * 
+	 * @param ruta
+	 * @param contenedor
+	 */
+	public RutaDiariaContenedores(RutaDiaria ruta, Contenedor contenedor) {
+		this.pk = new RutaDiariaContenedoresPK(ruta, contenedor);
+	}
+
+	/**
+	 * 
+	 * @param ruta
+	 * @param contenedor
+	 * @param sugerencia
+	 * @param recogio
+	 * @param trabajadorActualiza
+	 * @param fHUltimaActualizacion
+	 */
 	public RutaDiariaContenedores(RutaDiaria ruta, Contenedor contenedor, boolean sugerencia, boolean recogio,
 			Trabajador trabajadorActualiza, Calendar fHUltimaActualizacion) {
 		this.pk = new RutaDiariaContenedoresPK(ruta, contenedor);
@@ -39,9 +60,6 @@ public class RutaDiariaContenedores {
 	}
 
 	@EmbeddedId
-	@AssociationOverrides({
-			@AssociationOverride(name = "pk.rutaDiaria", joinColumns = @JoinColumn(name = "RUTA_DIARIA_ID")),
-			@AssociationOverride(name = "pk.contenedor", joinColumns = @JoinColumn(name = "CONTENEDOR_ID")) })
 	public RutaDiariaContenedoresPK getPk() {
 		return pk;
 	}

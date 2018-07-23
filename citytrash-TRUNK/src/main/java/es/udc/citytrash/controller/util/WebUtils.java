@@ -112,7 +112,15 @@ public class WebUtils {
 	public static final String VISTA_RUTA_REGISTRO = VISTA_RUTAS_PREFIX + "rutaRegistro";
 	public static final String VISTA_RUTA_EDITAR = VISTA_RUTAS_PREFIX + "rutaEditar";
 	public static final String VISTA_RUTA_DETALLES = VISTA_RUTAS_PREFIX + "rutaDetalles";
+	public static final String VISTA_RUTA_GENERAR = VISTA_RUTAS_PREFIX + "generarRutas";
 
+	public static final String VISTA_RUTAS_DIARIAS_PREFIX = "rutasHistorial/";
+	public static final String VISTA_RUTAS_HISTORIAL = VISTA_RUTAS_DIARIAS_PREFIX + "historial";
+	public static final String VISTA_RUTAS_DIARIAS_MY_HISTORIAL = VISTA_RUTAS_DIARIAS_PREFIX + "myhistorial";
+	public static final String VISTA_RUTAS_DIARIAS_EDITAR = VISTA_RUTAS_DIARIAS_PREFIX + "historialEditar";
+	public static final String VISTA_RUTAS_DIARIAS_DETALLES = VISTA_RUTAS_DIARIAS_PREFIX + "historialDetalles";
+
+	
 	/**
 	 * URLS
 	 */
@@ -306,6 +314,31 @@ public class WebUtils {
 
 	public static final String URL_MAPPING_RUTAS_ESTADO = "/rutas/{id}/estado";
 	public static final String REQUEST_MAPPING_RUTAS_ESTADO = "/{id}/estado";
+
+	public static final String URL_MAPPING_RUTAS_GENERAR = "/rutas/generar";
+	public static final String REQUEST_MAPPING_RUTAS_GENERAR = "/generar";
+
+	/* URL RUTAS DIARIAS - HISTORIAL */
+	public static final String URL_MAPPING_RUTAS_HISTORIAL = "/rutas/historial";
+	public static final String REQUEST_MAPPING_RUTAS_HISTORIAL = "/historial";
+
+	public static final String URL_MAPPING_RUTAS_MY_HISTORIAL = "/rutas/mihistorial";
+	public static final String REQUEST_MAPPING_RUTAS_MY_HISTORIAL = "/mihistorial";
+
+	public static final String URL_MAPPING_RUTAS_HISTORIAL_EDITAR = "/rutas/historial/{id}/editar";
+	public static final String REQUEST_MAPPING_HISTORIAL_EDITAR = "/historial/{id}/editar";
+
+	public static final String URL_MAPPING_RUTAS_HISTORIAL_COMENZAR = "/rutas/historial/{id}/comenzar";
+	public static final String REQUEST_MAPPING_HISTORIAL_COMENZAR = "/historial/{id}/comenzar";
+
+	public static final String URL_MAPPING_RUTAS_HISTORIAL_FINALIZAR = "/rutas/historial/{id}/finalizar";
+	public static final String REQUEST_MAPPING_HISTORIAL_FINALIZAR = "/historial/{id}/finalizar";
+
+	public static final String URL_MAPPING_RUTAS_HISTORIAL_RECOGER = "/rutas/historial/{id}/contenedor/{contenedorId}/recoger";
+	public static final String REQUEST_MAPPING_HISTORIAL_RECOGER = "/historial/{id}/contenedor/{contenedorId}/recoger";
+
+	public static final String URL_MAPPING_RUTAS_HISTORIAL_DETALLES = "/rutas/historial/{id}/detalles";
+	public static final String REQUEST_MAPPING_HISTORIAL_DETALLES = "/historial/{id}/detalles";
 
 	public static String getUrlWithContextPath(HttpServletRequest request) {
 		return request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()

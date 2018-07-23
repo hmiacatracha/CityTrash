@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:sd="http://www.thymeleaf.org/spring-data"
+	layout:decorate="~{layouts/default}" th:with="currentPage='rutas'">
+<head>
+<title th:text="#{page_rutas_generadas}"></title>
+</head>
+<body class="blanco">
+	<div id="content" class="container" th:fragment="content"
+		th:if="${pageRutas}">
+		<!-- pagination size and add button -->
+		<div class="form-group row">
+			<div class="col-xs-6">
+				<div class="pull-left">
+					<a class="btn btn-default" th:href="@{#{link.rutas}}" role="button"
+						data-toggle="tooltip" th:title="#{lbl_listado_rutas}"><i
+						class="glyphicon glyphicon-list-alt"></i></a>
+				</div>
+			</div>
+			<div class="col-xs-6">
+				<div class="pull-right">
+					<!-- page size selector (dropdrwown) -->
+					<div id="size_page_selector" class="dbtn-group dropup"
+						sd:page-size-selector="dropdown" th:title="#{page_size}"></div>
+					<!-- //page size selector -->
+				</div>
+			</div>
+		</div>
+		<!-- formulario de generacion de rutas -->
+		<div class="col-sm-offset-1 col-sm-10">
+			<div class="panel panel-default" th:if="${generarRutaForm}">
+
+				<div class="panel-heading ">
+					<h3 class="text-center text-success"
+						th:text="${#strings.toUpperCase('__#{lbl_generar_rutas}__')}"></h3>
+
+				</div>
+
+				<div class="panel-body">
+					<form id="busquedaRutasForm" role="form"
+						class="form-narrow form-horizontal" method="post" action="#"
+						th:action="@{#{link.rutas.generar}}"
+						th:object="${generarRutaForm}" th:fragment="generarRutaForm">
+						<fieldset>
+							<!-- mensaje ok -->
+							<th:block th:if="${msg!=null}">
+								<div th:if="${type!=null}"
+									th:replace="fragments/alert :: alert (type='success',  message=#{${type}(${key})})"></div>
+							</th:block>
+								
+							<!-- mensaje error -->
+							<th:block th:if="${error!=null and msg==null}">
+								<div th:if="${type!=null}"
+									th:replace="fragments/alert :: alert (type='danger',  message=#{${type}(${key})})"></div>
+							</th:block>
+
+							<th:block th:if="${#fields.hasErrors('${generarRutaForm.*}')}">
+								<br />
+								<div
+									th:replace="fragments/alert :: alert (type='danger', message=#{verificar_campos_alerta})">Alert</div>
+
+								<ul class="list-group">
+									<li class="list-group-item"
+										th:each="err : ${#fields.errors('*')}"><span
+										class="glyphicon glyphicon-remove"> </span> <a href="#"
+										th:text="${err}"></a></li>
+								</ul>
+								<br />
+							</th:block>
+							<br />
+							<!-- fields -->
+
+							<div class="form-group">
+								<div class="col-xs-12 col-lg-3">
+									<label for="tiposDeBasura" class="col-form-label"
+										th:text="#{lbl_filtro_busqueda}"> </label>
+								</div>
+								<!-- tipos de basura -->
+								<div th:if="${listaTiposDeBasura}" class="col-xs-12 col-lg-3">
+									<select th:title="#{lbl_tipo_basura_recoger}"
+										class="selectpicker" data-style="btn btn-default"
+										data-live-search="true" th:field="*{tiposDeBasura}"
+										id="tipoDeBasuraFormBusqPageRutasAGenerar" multiple>
+										<option th:each="row, index: ${listaTiposDeBasura}"
+											th:value="${row.id}" th:text="#{${row.tipo}}"></option>
+									</select>
+								</div>
+
+								<!-- camiones -->
+								<div th:if="${listaTodosLosCamiones}" class="col-xs-12 col-lg-3">
+									<select th:title="#{lbl_camiones}" class="selectpicker"
+										data-style="btn btn-default" th:field="*{camiones}"
+										id="camionesFormBusqPageRutasAGenerar" multiple
+										data-live-search="true">
+										<option th:fragment="fragmentoCamiones"
+											th:each="row, index: ${listaTodosLosCamiones}"
+											th:value="${row.id}" th:text="#{${row.nombre}}"></option>
+									</select>
+								</div>
+							</div>
+
+
+							<!-- rutas -->
+							<div th:classappend="${#fields.hasErrors('rutas')} ? 'has-error'">
+								<div class="form-group">
+									<div class="col-xs-12 col-lg-3">
+										<label for="tiposDeBasura" class="col-form-label"
+											th:text="#{lbl_rutas_a_generar}+'*'"> </label>
+									</div>
+
+									<div th:if="${listaRutasAGenerar}"
+										class="col-xs-6 col-sm-3 col-md-3">
+										<select th:title="#{lbl_rutas_generar}" class="selectpicker"
+											data-style="btn btn-default" data-live-search="true"
+											th:field="*{rutas}" multiple>
+											<option th:fragment="fragmentoRutas"
+												th:each="row, index: ${listaRutasAGenerar}"
+												th:value="${row.id}" th:text="#{lbl_ruta} + '-' + ${row.id}"></option>
+										</select>
+									</div>
+									<div class="col-xs-4 col-sm-4 col-md-5">
+										<span class="help-block" th:if="${#fields.hasErrors('rutas')}"
+											th:errors="*{rutas}"> <br>
+										</span>
+									</div>
+								</div>
+							</div>
+
+
+							<!-- buscar -->
+							<div class="text-center">
+								<button class="btn btn-default btn-success center-block"
+									type="submit" th:text="#{btn_generar_rutas}"
+									name="generarRutas" th:value="#{btn_generar_rutas}"></button>
+							</div>
+						</fieldset>
+					</form>
+				</div>
+				<div class="panel-footer"></div>
+			</div>
+		</div>
+
+		<!-- FIN pagination size and add button -->
+		<div class="row">
+			<!-- search form -->
+			<div id="searchForm" class="col-xs-12 col-sm-12"></div>
+			<!-- titulo -->
+			<div class="row container center-block">
+				<h3 class="text-center text-success col-xs-12"
+					th:text="${#strings.toUpperCase('__#{lbl_lista_rutas_generadas}__')}"></h3>
+				<div id="listaContent" th:fragment="listaContent" class="col-xs-12">
+					<!-- tabla -->
+					<!-- tabla -->
+					<div class="table-responsive">
+						<table class="table">
+							<thead class="thead-dark">
+								<tr>
+									<th><a class="sorted" sd:pagination-sort="ruta.id"
+										th:text="${#strings.capitalize('__#{lbl_ruta}__')}"> </a></th>
+
+									<th><a class="sorted" sd:pagination-sort="fecha"
+										th:text="${#strings.capitalize('__#{lbl_fecha}__')}"> </a></th>
+
+									<th><a class="sorted" sd:pagination-sort="camion.nombre"
+										th:text="${#strings.capitalize('__#{lbl_camion}__')}"> </a></th>
+
+
+									<th><a class="sorted"
+										sd:pagination-sort="conductor.nombre"
+										th:text="${#strings.capitalize('__#{lbl_conductor}__')}">
+									</a></th>
+
+									<th><a class="sorted"
+										sd:pagination-sort="recolector1.nombre"
+										th:text="${#strings.capitalize('__#{lbl_recolector}__')}">
+									</a></th>
+
+									<th><a class="sorted"
+										sd:pagination-sort="recolector2.nombre"
+										th:text="${#strings.capitalize('__#{lbl_recolector}__')}">
+									</a></th>
+
+									<th th:text="${#strings.toUpperCase('__#{lbl_duracion}__')}"></th>
+
+									<th th:text="${#strings.toUpperCase('__#{lbl_acciones}__')}"></th>
+								</tr>
+							</thead>
+
+							<tbody>
+								<tr th:each="rutaDiaria : ${pageRutas.content}">
+
+									<td class="align-middle"><a
+										th:if="${rutaDiaria.ruta!=null}"
+										th:text="#{lbl_ruta} + '-' + ${rutaDiaria.ruta.id}"
+										th:href="@{#{link.rutas.detalle}(id=${rutaDiaria.ruta.id})}"
+										class="btn-sm"><i class="glyphicon glyphicon-pencil"
+											data-toggle="tooltip" th:title="#{lbl_detalles}"></i></a></td>
+
+									<!-- fecha -->
+									<td class="align-middle"><span
+										class="articleTitle truncated" data-toggle="tooltip"
+										th:text="${#calendars.format(rutaDiaria.fecha,'dd-MMM-yyyy')}"
+										data-placement="bottom"> </span></td>
+
+									<td class="align-middle"><a
+										th:if="${rutaDiaria.camion!=null}"
+										th:text="${#strings.toUpperCase(rutaDiaria.camion.nombre)}"
+										th:href="@{#{link.camiones.detalles}(id=${rutaDiaria.camion.id})}"
+										class="btn-sm"><i th:if="${rutaDiaria.camion!=null}"
+											class="glyphicon glyphicon-pencil" data-toggle="tooltip"
+											th:title="#{lbl_detalles}"></i></a>
+										<p th:unless="${rutaDiaria.camion!=null}">---</p></td>
+
+
+									<!-- conductor -->
+									<td class="align-middle"><a
+										th:if="${rutaDiaria.conductor!=null}"
+										th:text="${#strings.toUpperCase(rutaDiaria.conductor.nombre + ' ' + rutaDiaria.conductor.apellidos)}"
+										th:href="@{#{link.trabajadores.detalles}(id=${rutaDiaria.conductor.id})}"
+										class="btn-sm"><i class="glyphicon glyphicon-pencil"
+											data-toggle="tooltip" th:title="#{lbl_detalles}"></i></a>
+										<p th:unless="${rutaDiaria.conductor!=null}">---</td>
+
+									<!-- recolector1 -->
+									<td class="align-middle"><a
+										th:if="${rutaDiaria.recogedor1!=null}"
+										th:text="${#strings.toUpperCase(rutaDiaria.recogedor1.nombre + ' ' + rutaDiaria.recogedor1.apellidos)}"
+										th:href="@{#{link.trabajadores.detalles}(id=${rutaDiaria.recogedor1.id})}"
+										class="btn-sm"><i class="glyphicon glyphicon-pencil"
+											data-toggle="tooltip" th:title="#{lbl_detalles}"></i></a>
+										<p th:unless="${rutaDiaria.recogedor1!=null}">---</td>
+
+									<!-- recogedor2 -->
+									<td class="align-middle"><a
+										th:if="${rutaDiaria.recogedor2!=null}"
+										th:text="${#strings.toUpperCase(rutaDiaria.recogedor2.nombre + ' ' + rutaDiaria.recogedor2.apellidos)}"
+										th:href="@{#{link.trabajadores.detalles}(id=${rutaDiaria.recogedor2.id})}"
+										class="btn-sm"><i class="glyphicon glyphicon-pencil"
+											data-toggle="tooltip" th:title="#{lbl_detalles}"></i></a>
+										<p th:unless="${rutaDiaria.recogedor2!=null}">---</td>
+
+									<!-- duracion -->
+									<td class="align-middle"><span
+										th:if="${rutaDiaria.duracion!=null}"
+										class="articleTitle truncated" data-toggle="tooltip"
+										data-placement="bottom" th:title="${rutaDiaria.duracion}"
+										th:text="${rutaDiaria.duracion}"> </span> <var
+											th:text="#{lbl_minutos}"></var> <span
+										class="form-control-feedback"> </span></td>
+
+									<!-- acciones -->
+									<td>
+										<div class="btn-group text-center" id="options">
+
+											<!-- view details -->
+											<div id="otherOptions" class="btn-group text-center">
+												<a id="link_ver_detalles"
+													th:href="@{#{link.rutas.rutasDiarias.detalle}(id=${rutaDiaria.id})}"
+													class="btn-sm"><i class="glyphicon glyphicon-eye-open"
+													data-toggle="tooltip" th:title="#{lbl_ver_detalles}"></i></a> <a
+													id="link_editar"
+													th:href="@{#{link.rutas.rutasDiarias.editar}(id=${rutaDiaria.id})}"
+													class="btn-sm"><i class="glyphicon glyphicon-pencil"
+													data-toggle="tooltip" th:title="#{lbl_editar}"></i></a>
+											</div>
+
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<!-- fin table -->
+					<!-- paginacion -->
+					<div id="pagionationInformation" class="col-xs-12">
+						<div class="col-xs-12">
+							<div class="text-left">
+								<div sd:pagination-summary="info">info</div>
+							</div>
+						</div>
+						<div class="col-xs-12">
+							<nav class="text-right">
+								<ul class="pagination" sd:pagination="full">
+									<li class="btn disabled"><a href="#" aria-label="Previous"><span
+											aria-hidden="true">&laquo;</span></a></li>
+									<li class="btn active"><a href="#">1 <span
+											class="sr-only">(current)</span></a></li>
+								</ul>
+							</nav>
+						</div>
+					</div>
+					<!-- fin paginacion -->
+					<p th:unless="${pageRutas!=null}"></p>
+					<!-- fin  list -->
+				</div>
+			</div>
+			<!-- row -->
+		</div>
+		<!-- content -->
+	</div>
+</body>
+</html>

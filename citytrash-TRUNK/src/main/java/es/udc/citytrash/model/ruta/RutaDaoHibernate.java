@@ -1,6 +1,9 @@
 package es.udc.citytrash.model.ruta;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -31,6 +34,25 @@ public class RutaDaoHibernate extends GenericHibernateDAOImpl<Ruta, Integer> imp
 	final Logger logger = LoggerFactory.getLogger(RutaDaoHibernate.class);
 
 	@Override
+	public List<Ruta> buscarRutas(boolean mostrarSoloRutasActivas) {
+		Query<Ruta> query;
+		List<Ruta> rutas = new ArrayList<Ruta>();
+
+		StringBuilder hql = new StringBuilder("Select r FROM Ruta r ");
+
+		if (mostrarSoloRutasActivas)
+			hql.append(" WHERE r.activo = (:soloActivas) ");
+
+		query = getSession().createQuery(hql.toString(), Ruta.class);
+
+		if (mostrarSoloRutasActivas)
+			query.setParameter("soloActivas", mostrarSoloRutasActivas);
+
+		rutas = query.list();
+		return rutas;
+	}
+
+	@Override
 	public Page<Ruta> buscarRutas(Pageable pageable, List<Integer> tiposDeBasura, List<Long> trabajadores,
 			List<Long> contenedores, List<Long> camiones, boolean mostrarSoloRutasActivas) {
 
@@ -41,7 +63,7 @@ public class RutaDaoHibernate extends GenericHibernateDAOImpl<Ruta, Integer> imp
 		List<Integer> tiposList = tiposDeBasura != null ? tiposDeBasura : new ArrayList<Integer>();
 		List<Long> trabajList = trabajadores != null ? trabajadores : new ArrayList<Long>();
 		List<Long> contenList = contenedores != null ? contenedores : new ArrayList<Long>();
-		List<Long> camionList = contenedores != null ? camiones : new ArrayList<Long>();
+		List<Long> camionList = camiones != null ? camiones : new ArrayList<Long>();
 
 		logger.info("buscarRutasDao2 2");
 		String alias = "r";
@@ -143,6 +165,69 @@ public class RutaDaoHibernate extends GenericHibernateDAOImpl<Ruta, Integer> imp
 		}
 		logger.info("buscarRutasDao 19");
 		return page;
+	}
+
+	@Override
+	public List<Ruta> buscarRutasSinGenerar(Date fecha, List<Integer> tiposDeBasura, List<Long> camiones) {
+		logger.info("buscarRutasAGenerar 1");
+		Query<Ruta> query;
+		List<Ruta> rutas = new ArrayList<Ruta>();
+		HashSet<Integer> tiposList = tiposDeBasura != null ? new HashSet<Integer>(tiposDeBasura)
+				: new HashSet<Integer>();
+		List<Long> camionList = camiones != null ? camiones : new ArrayList<Long>();
+
+		logger.info("buscarRutasAGenerar 2");
+		String alias = "r";
+		// http://www.sergiy.ca/how-to-write-many-to-many-search-queries-in-mysql-and-hibernate/
+
+		StringBuilder select = new StringBuilder("Select distinct " + alias + " FROM Ruta " + alias);
+
+		StringBuilder condicion = new StringBuilder(" WHERE " + alias + ".activo = (:activo) and " + alias
+				+ ".id not in (Select r1.id from RutaDiaria rd inner join rd.ruta r1 " + " where r1.id = " + alias
+				+ ".id and DATE(rd.fecha) = DATE(:fecha))");
+
+		logger.info("buscarRutasAGenerar 4");
+		// mostrar por tipos de basuraF
+		if (tiposList.size() > 0) {
+			condicion.append(" AND :items  = (SELECT COUNT(distinct tb2.id)"
+					+ "	From Ruta r1 inner join r1.tiposDeBasura tb2 Where r1.id = " + alias
+					+ ".id and tb2.id in (:tiposDeBasura) " + ")");
+		}
+
+		logger.info("buscarRutasAGenerar 6");
+		if (camionList.size() > 0) {
+			select.append(" left join " + alias + ".camion cam ");
+			condicion.append(" AND cam.id in (:camiones) ");
+		}
+
+		condicion.append(" ORDER BY " + alias + ".id");
+		String querySql = select.append(" " + condicion).toString();
+		logger.info("HQL=>" + querySql);
+		query = getSession().createQuery(querySql, Ruta.class);
+
+		logger.info("buscarRutasAGenerar 10");
+		/* set parameters */
+		query.setParameter("fecha", fecha != null ? fecha : Calendar.getInstance().getTime());
+		query.setParameter("activo", true);
+
+		logger.info("buscarRutasAGenerar 12");
+		// parameter tipos de basura
+		if (tiposList.size() > 0) {
+			long items = tiposList.size();
+			query.setParameter("items", items);
+			query.setParameter("tiposDeBasura", tiposList);
+		}
+
+		logger.info("buscarRutasAGenerar 14");
+		// parameter camiones
+		if (camionList.size() > 0)
+			query.setParameter("camiones", camionList);
+
+		logger.info("buscarRutasAGenerar 16");
+		rutas = query.list();
+		logger.info("buscarRutasAGenerar 17");
+
+		return rutas;
 	}
 
 }

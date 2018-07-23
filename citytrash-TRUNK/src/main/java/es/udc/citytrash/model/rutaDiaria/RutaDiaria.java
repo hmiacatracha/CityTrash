@@ -1,11 +1,11 @@
 package es.udc.citytrash.model.rutaDiaria;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
-import javax.persistence.AssociationOverride;
-import javax.persistence.AssociationOverrides;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -13,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -21,14 +22,26 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
+
 import es.udc.citytrash.model.camion.Camion;
 import es.udc.citytrash.model.ruta.Ruta;
+import es.udc.citytrash.model.rutaDiariaContenedores.RutaDiariaContenedores;
 import es.udc.citytrash.model.trabajador.Trabajador;
 
 @Entity
 @BatchSize(size = 10)
 @Table(name = "TBL_RUTAS_DIARIAS")
 public class RutaDiaria {
+
+	RutaDiaria() {
+
+	}
+
+	public RutaDiaria(Ruta ruta, Calendar fecha) {
+		this.ruta = ruta;
+		this.fecha = fecha;
+
+	}
 
 	@Id
 	@Column(name = "RUTA_DIARIA_ID")
@@ -52,7 +65,7 @@ public class RutaDiaria {
 		this.ruta = ruta;
 	}
 
-	@Column(name = "FECHA")
+	@Column(name = "FECHA", nullable = false)
 	@Temporal(TemporalType.DATE)
 	public Calendar getFecha() {
 		return fecha;
@@ -82,7 +95,8 @@ public class RutaDiaria {
 		this.fechaHoraFin = fechaHoraFin;
 	}
 
-	@Column(name = "RECOGEDOR1")
+	@ManyToOne(optional = true, fetch = FetchType.LAZY)
+	@JoinColumn(name = "RECOGEDOR1")
 	public Trabajador getRecogedor1() {
 		return recogedor1;
 	}
@@ -91,7 +105,8 @@ public class RutaDiaria {
 		this.recogedor1 = recogedor1;
 	}
 
-	@Column(name = "RECOGEDOR2")
+	@ManyToOne(optional = true, fetch = FetchType.LAZY)
+	@JoinColumn(name = "RECOGEDOR2")
 	public Trabajador getRecogedor2() {
 		return recogedor2;
 	}
@@ -100,7 +115,8 @@ public class RutaDiaria {
 		this.recogedor2 = recogedor2;
 	}
 
-	@Column(name = "CONDUCTOR_ASIGNADO")
+	@ManyToOne(optional = true, fetch = FetchType.LAZY)
+	@JoinColumn(name = "CONDUCTOR_ASIGNADO")
 	public Trabajador getConductor() {
 		return conductor;
 	}
@@ -109,7 +125,8 @@ public class RutaDiaria {
 		this.conductor = conductor;
 	}
 
-	@Column(name = "TRABAJADOR_ACTUALIZA")
+	@ManyToOne(optional = true, fetch = FetchType.LAZY)
+	@JoinColumn(name = "TRABAJADOR_ACTUALIZA")
 	public Trabajador getTrabajadorActualiza() {
 		return trabajadorActualiza;
 	}
@@ -118,7 +135,7 @@ public class RutaDiaria {
 		this.trabajadorActualiza = trabajadorActualiza;
 	}
 
-	@Column(name = "ULTIMA_ACTUALIZACION")
+	@Column(name = "FECHA_HORA_ACTUALIZACION")
 	@Temporal(TemporalType.TIMESTAMP)
 	@UpdateTimestamp
 	public Calendar getfHUltimaActualizacion() {
@@ -134,7 +151,7 @@ public class RutaDiaria {
 	public Camion getCamion() {
 		return camion;
 	}
-
+	
 	public void setCamion(Camion camion) {
 		this.camion = camion;
 	}
@@ -151,18 +168,32 @@ public class RutaDiaria {
 		return timeDifInMilliSec / (60 * 1000);
 	}
 
+	@OneToMany(mappedBy = "pk.rutaDiaria", cascade = CascadeType.ALL)
+	public List<RutaDiariaContenedores> getRutaDiariaContenedores() {
+		return rutaDiariaContenedores;
+	}
+
+	public void setRutaDiariaContenedores(List<RutaDiariaContenedores> rutaDiariaContenedores) {
+		this.rutaDiariaContenedores = rutaDiariaContenedores;
+	}
+
+	public void addRutaDiariaContenedores(RutaDiariaContenedores rutaDiariaContenedores) {
+		this.rutaDiariaContenedores.add(rutaDiariaContenedores);
+	}
+
 	long id;
 	private Ruta ruta;
 	private Calendar fecha;
 	private Calendar fechaHoraInicio;
 	private Calendar fechaHoraFin;
-	private Trabajador recogedor1;
-	private Trabajador recogedor2;
-	private Trabajador conductor;
-	private Trabajador trabajadorActualiza;
+	private Trabajador recogedor1 = null;
+	private Trabajador recogedor2 = null;
+	private Trabajador conductor = null;
+	private Trabajador trabajadorActualiza = null;
 	private Calendar fHUltimaActualizacion;
-	private Camion camion;
-	
+	private Camion camion = null;
+	private List<RutaDiariaContenedores> rutaDiariaContenedores = new ArrayList<RutaDiariaContenedores>();
+
 	@Override
 	public String toString() {
 		return "RutaDiaria [id=" + id + ", ruta=" + ruta + ", fecha=" + fecha + ", fechaHoraInicio=" + fechaHoraInicio

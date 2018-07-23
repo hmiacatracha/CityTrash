@@ -176,19 +176,6 @@ public class CamionModelo implements Serializable {
 		this.tiposDeBasura.add(modeloCamionTipoDeBasura);
 	}
 
-	@OneToMany(mappedBy = "modeloCamion", cascade = CascadeType.ALL)
-	public List<Camion> getCamiones() {
-		return camiones;
-	}
-
-	public void setCamiones(List<Camion> camion) {
-		this.camiones = camion;
-	}
-
-	public void addCamion(Camion camion) {
-		this.camiones.add(camion);
-	}
-
 	/* Atributos */
 	private static final long serialVersionUID = 1L;
 	private int id;
@@ -200,13 +187,12 @@ public class CamionModelo implements Serializable {
 	private BigDecimal distancia;
 	private Integer pma;
 	private List<CamionModeloTipoDeBasura> tiposDeBasura = new ArrayList<CamionModeloTipoDeBasura>();
-	private List<Camion> camiones = new ArrayList<Camion>();
 
 	@Override
 	public String toString() {
 		return "CamionModelo [id=" + id + ", modelo=" + modelo + ", volumenTolva=" + volumenTolva + ", ancho=" + ancho
 				+ ", altura=" + altura + ", longitud=" + longitud + ", distancia=" + distancia + ", pma=" + pma
-				+ ", tiposDeBasura=" + tiposDeBasura + ", camiones=" + camiones + "]";
+				+ ", tiposDeBasura=" + tiposDeBasura + "]";
 	}
 
 }

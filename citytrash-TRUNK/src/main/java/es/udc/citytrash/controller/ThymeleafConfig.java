@@ -45,6 +45,11 @@ class ThymeleafConfig extends WebMvcConfigurerAdapter implements ApplicationCont
 	}
 
 	@Bean
+	public Java8TimeDialect java8TimeDialect() {
+		return new Java8TimeDialect();
+	}
+
+	@Bean
 	public SpringDataDialect springDataDialect() {
 		return new SpringDataDialect();
 	}

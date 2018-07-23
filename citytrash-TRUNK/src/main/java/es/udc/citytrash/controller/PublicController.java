@@ -1,6 +1,8 @@
 package es.udc.citytrash.controller;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -42,7 +44,9 @@ import es.udc.citytrash.controller.util.WebUtils;
 import es.udc.citytrash.controller.util.anotaciones.UsuarioActual;
 import es.udc.citytrash.controller.util.dtos.camion.CamionFormBusq;
 import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorFormBusq;
+import es.udc.citytrash.controller.util.dtos.ruta.GenerarRutaFormDto;
 import es.udc.citytrash.controller.util.dtos.ruta.RutaDto;
+import es.udc.citytrash.controller.util.dtos.ruta.RutasDiariaFormBusq;
 import es.udc.citytrash.controller.util.dtos.ruta.RutasFormBusq;
 import es.udc.citytrash.model.camion.Camion;
 import es.udc.citytrash.model.camionModelo.CamionModelo;
@@ -51,6 +55,8 @@ import es.udc.citytrash.model.contenedor.Contenedor;
 import es.udc.citytrash.model.contenedorModelo.ContenedorModelo;
 import es.udc.citytrash.model.contenedorService.ContenedorService;
 import es.udc.citytrash.model.ruta.Ruta;
+import es.udc.citytrash.model.rutaDiaria.RutaDiaria;
+import es.udc.citytrash.model.rutaService.RutaService;
 import es.udc.citytrash.model.trabajadorService.TrabajadorService;
 import es.udc.citytrash.model.usuarioService.UsuarioService;
 import es.udc.citytrash.model.util.excepciones.InstanceNotFoundException;
@@ -71,6 +77,9 @@ public class PublicController {
 
 	@Autowired
 	CamionService camServicio;
+
+	@Autowired
+	RutaService rServicio;
 
 	final Logger logger = LoggerFactory.getLogger(PublicController.class);
 
@@ -314,6 +323,49 @@ public class PublicController {
 					pageRequest.getPageNumber()));
 		}
 		return WebUtils.VISTA_CONTENEDORES.concat("::fragmentoModelos");
+	}
+
+	/**
+	 * Lista de camiones a partir del filtro de tipos de basura, sino devuelve
+	 * todos los camiones.
+	 * 
+	 * @param model
+	 * @param form
+	 * @return
+	 */
+	@RequestMapping(value = "/ajax/rutas/generar/listaCamiones", method = RequestMethod.GET)
+	public String ajaxGenerarRUtasListaDeCamiones(Model model,
+			@ModelAttribute("generarRutaForm") GenerarRutaFormDto form) {
+		logger.info("POST /ajax/listaCamionesDisponibles");
+		Pageable pageRequest = new PageRequest(0, 1, Sort.Direction.DESC, "id");
+		List<RutaDiaria> RutasDiariaList = new ArrayList<RutaDiaria>();
+		Page<RutaDiaria> page = new PageImpl<RutaDiaria>(RutasDiariaList, pageRequest, RutasDiariaList.size());
+		List<Camion> listaTodosLosCamiones = camServicio.buscarCamionesByTipos(form.getTiposDeBasura());
+		List<Ruta> listaRutasAGenerar = new ArrayList<Ruta>();
+		model.addAttribute("generarRutaForm", form);
+		model.addAttribute("listaTodosLosCamiones", listaTodosLosCamiones);
+		model.addAttribute("listaRutasAGenerar", listaRutasAGenerar);
+		model.addAttribute("pageRutas", page);
+		return WebUtils.VISTA_RUTA_GENERAR.concat("::fragmentoCamiones");
+	}
+
+	@RequestMapping(value = "/ajax/rutas/generar/listaRutas", method = RequestMethod.GET)
+	public String ajaxGenerarRutasListadoDeRutas(Model model,
+			@ModelAttribute("generarRutaForm") GenerarRutaFormDto formulario) {
+		logger.info("POST /ajax/listaCamionesDisponibles");
+		Pageable pageRequest = new PageRequest(0, 1, Sort.Direction.DESC, "id");
+		List<RutaDiaria> RutasDiariaList = new ArrayList<RutaDiaria>();
+		Page<RutaDiaria> page = new PageImpl<RutaDiaria>(RutasDiariaList, pageRequest, RutasDiariaList.size());
+
+		GenerarRutaFormDto form = formulario;
+		List<Ruta> listaRutasAGenerar = rServicio.buscarRutasSinGenerar(form);
+		RutasDiariaFormBusq busquedaForm = new RutasDiariaFormBusq(form.getFecha(), form.getFecha(), null, null, null,
+				null);
+		page = rServicio.buscarRutasDiarias(pageRequest, busquedaForm);
+		model.addAttribute("generarRutaForm", form);
+		model.addAttribute("listaRutasAGenerar", listaRutasAGenerar);
+		model.addAttribute("pageRutas", page);
+		return WebUtils.VISTA_RUTA_GENERAR.concat("::fragmentoRutas");
 	}
 
 	@ResponseStatus(HttpStatus.FORBIDDEN)

@@ -17,20 +17,10 @@
 				<div class="pull-left">
 					<a class="btn btn-default" th:href="@{#{link.rutas.registro}}"
 						data-toggle="tooltip" th:title="#{frm_registro_rutas}"
-						role="button"><i class="glyphicon glyphicon-plus"></i></a>
-					<!-- <a
+						role="button"><i class="glyphicon glyphicon-plus"></i></a> <a
 						class="btn btn-default" th:href="@{#{link.mapa.rutas}}"
 						role="button" data-toggle="tooltip" th:title="#{mapa}"><i
-						class="fa fa-map-o"></i></a> -->
-					<a class="btn btn-default" th:href="@{#{link.rutas.rutasdiarias}}"
-						role="button" data-toggle="tooltip" th:title="#{lbl_rutasDiarias}"><i
-						class="glyphicon glyphicon-list-alt"></i></a> <a
-						th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}"
-						data-toggle="tooltip" th:title="#{lbl_generar_rutas}"
-						class="btn btn-default" th:href="@{#{link.rutas.generar}}"
-						role="button"><img
-						th:src="@{/resources/static/img/route4.svg}"
-						th:alt="#{page_rutas}" width=16 height=15 /></a>
+						class="fa fa-map-o"></i></a>
 				</div>
 			</div>
 			<div class="col-xs-6">

@@ -65,7 +65,7 @@ public class RutaDiariaContenedoresPK implements Serializable {
 			return false;
 		return true;
 	}
-
+	
 	private RutaDiaria rutaDiaria;
 	private Contenedor contenedor;
 }

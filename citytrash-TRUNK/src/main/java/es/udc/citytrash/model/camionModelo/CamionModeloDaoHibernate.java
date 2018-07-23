@@ -49,8 +49,8 @@ public class CamionModeloDaoHibernate extends GenericHibernateDAOImpl<CamionMode
 		String hql = "";
 
 		if (tiposAux.size() > 0) {
-			hql = String.format("Select " + alias + " FROM CamionModelo " + alias + " join fetch " + alias
-					+ ".tiposDeBasura cmtb join fetch cmtb.pk pk join fetch pk.tipo tipo"
+			hql = String.format("Select " + alias + " FROM CamionModelo " + alias + " inner join " + alias
+					+ ".tiposDeBasura cmtb inner join cmtb.pk pk inner join pk.tipo tipo"
 					+ " WHERE tipo.id in (:tipos)  ORDER BY " + alias + ".modelo");
 		} else {
 			hql = String.format("Select " + alias + " FROM CamionModelo " + alias + " ORDER BY " + alias + ".modelo");
@@ -106,7 +106,7 @@ public class CamionModeloDaoHibernate extends GenericHibernateDAOImpl<CamionMode
 		List<TipoDeBasura> tiposAux = tipos != null ? tipos : new ArrayList<TipoDeBasura>();
 
 		StringBuilder hql = new StringBuilder("Select distinct " + alias + " FROM CamionModelo " + alias
-				+ " join fetch " + alias + ".tiposDeBasura t join fetch t.pk pk");
+				+ " inner join " + alias + ".tiposDeBasura t inner join t.pk pk");
 
 		for (int i = 0; i < palabras.length; i++) {
 			if (i != 0)
