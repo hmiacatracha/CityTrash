@@ -6,13 +6,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import es.udc.citytrash.controller.util.dtos.ruta.GenerarRutaFormDto;
+import es.udc.citytrash.controller.util.dtos.ruta.RutaDiariaDto;
 import es.udc.citytrash.controller.util.dtos.ruta.RutaDto;
 import es.udc.citytrash.controller.util.dtos.ruta.RutasDiariaFormBusq;
 import es.udc.citytrash.controller.util.dtos.ruta.RutasFormBusq;
+import es.udc.citytrash.model.contenedor.Contenedor;
 import es.udc.citytrash.model.ruta.Ruta;
 import es.udc.citytrash.model.rutaDiaria.RutaDiaria;
+import es.udc.citytrash.model.rutaDiariaContenedores.RutaDiariaContenedores;
 import es.udc.citytrash.model.util.excepciones.DuplicateInstanceException;
+import es.udc.citytrash.model.util.excepciones.InactiveResourceException;
 import es.udc.citytrash.model.util.excepciones.InstanceNotFoundException;
+import es.udc.citytrash.model.util.excepciones.RutaIniciadaException;
 
 /**
  * Servicio Rutas
@@ -79,6 +84,15 @@ public interface RutaService {
 	boolean cambiarEstadoRuta(int id) throws InstanceNotFoundException;
 
 	/**
+	 * Buscar historial de rutas
+	 * 
+	 * @param trabajadorId
+	 * @param pageable
+	 * @return
+	 */
+	Page<RutaDiaria> buscarRutasDiariasByTrabajador(long trabajadorId, Pageable pageable);
+
+	/**
 	 * Busqueda de rutas diarias
 	 * 
 	 * @param pageable
@@ -102,4 +116,34 @@ public interface RutaService {
 	 * @throws GenerarRutasException
 	 */
 	void generarRutas(GenerarRutaFormDto form);
+
+	/**
+	 * Buscar ruta diaria
+	 * 
+	 * @param rutaDiaria
+	 * @return
+	 * @throws InstanceNotFoundException
+	 */
+	RutaDiaria buscarRutaDiaria(long rutaDiaria) throws InstanceNotFoundException;
+
+	/**
+	 * 
+	 * @param form
+	 * @return Actualizar Ruta
+	 * @throws DuplicateInstanceException
+	 * @throws InstanceNotFoundException
+	 * @throws RutaIniciadaException
+	 * @throws InactiveResourceException
+	 */
+	RutaDiaria actualizarRutaDiaria(RutaDiariaDto form) throws DuplicateInstanceException, InstanceNotFoundException,
+			RutaIniciadaException, InactiveResourceException;
+
+
+	/**
+	 * Buscar los contenedores que pertenecen a una ruta diaria
+	 * @param rutaDiariaId
+	 * @return
+	 */
+	List<Contenedor> buscarContenedoresDeRutaDiaria(long rutaDiariaId);
+
 }

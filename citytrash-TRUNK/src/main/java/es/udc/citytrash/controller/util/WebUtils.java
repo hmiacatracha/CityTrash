@@ -116,10 +116,10 @@ public class WebUtils {
 
 	public static final String VISTA_RUTAS_DIARIAS_PREFIX = "rutasHistorial/";
 	public static final String VISTA_RUTAS_HISTORIAL = VISTA_RUTAS_DIARIAS_PREFIX + "historial";
-	public static final String VISTA_RUTAS_DIARIAS_MY_HISTORIAL = VISTA_RUTAS_DIARIAS_PREFIX + "myhistorial";
-	public static final String VISTA_RUTAS_DIARIAS_EDITAR = VISTA_RUTAS_DIARIAS_PREFIX + "historialEditar";
-	public static final String VISTA_RUTAS_DIARIAS_DETALLES = VISTA_RUTAS_DIARIAS_PREFIX + "historialDetalles";
-
+	public static final String VISTA_RUTAS_HISTORIAL_MY_HISTORIAL = VISTA_RUTAS_DIARIAS_PREFIX + "myhistorial";
+	public static final String VISTA_RUTAS_HISTORIAL_EDITAR = VISTA_RUTAS_DIARIAS_PREFIX + "historialEditar";
+	public static final String VISTA_RUTAS_HISTORIAL_DETALLES = VISTA_RUTAS_DIARIAS_PREFIX + "historialDetalles";
+	
 	
 	/**
 	 * URLS

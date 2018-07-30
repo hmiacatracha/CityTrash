@@ -81,19 +81,6 @@ public class TipoDeBasura implements Serializable {
 		this.tipo = tipo;
 	}
 
-	@OneToMany(mappedBy = "pk.tipo", cascade = CascadeType.ALL)
-	public Set<CamionModeloTipoDeBasura> getModeloCamionTipoDeBasura() {
-		return modeloCamionTipoDeBasura;
-	}
-
-	public void setModeloCamionTipoDeBasura(Set<CamionModeloTipoDeBasura> tipoDeBasura) {
-		this.modeloCamionTipoDeBasura = tipoDeBasura;
-	}
-
-	public void addModeloCamionTipoDeBasura(CamionModeloTipoDeBasura modeloCamionTipoDeBasura) {
-		this.modeloCamionTipoDeBasura.add(modeloCamionTipoDeBasura);
-	}
-
 	/**
 	 * atributos
 	 */
@@ -101,12 +88,10 @@ public class TipoDeBasura implements Serializable {
 	private String color;
 	private String tipo;
 	private int id;
-	private Set<CamionModeloTipoDeBasura> modeloCamionTipoDeBasura = new HashSet<CamionModeloTipoDeBasura>();
 
 	@Override
 	public String toString() {
-		return "TipoDeBasura [color=" + color + ", tipo=" + tipo + ", id=" + id + ", modeloCamionTipoDeBasura="
-				+ modeloCamionTipoDeBasura + "]";
+		return "TipoDeBasura [color=" + color + ", tipo=" + tipo + ", id=" + id + "]";
 	}
 
 }

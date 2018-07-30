@@ -87,7 +87,7 @@ public class CamionesController {
 		modelos = tServicio.buscarConductores(true);
 		return modelos;
 	}
-
+	
 	@ModelAttribute("todosLosTrabajadores")
 	public List<Trabajador> getTrabajadores() {
 		List<Trabajador> trabajadores = new ArrayList<Trabajador>();

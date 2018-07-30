@@ -12,6 +12,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -26,6 +28,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import es.udc.citytrash.model.camion.Camion;
 import es.udc.citytrash.model.ruta.Ruta;
 import es.udc.citytrash.model.rutaDiariaContenedores.RutaDiariaContenedores;
+import es.udc.citytrash.model.tipoDeBasura.TipoDeBasura;
 import es.udc.citytrash.model.trabajador.Trabajador;
 
 @Entity
@@ -40,7 +43,8 @@ public class RutaDiaria {
 	public RutaDiaria(Ruta ruta, Calendar fecha) {
 		this.ruta = ruta;
 		this.fecha = fecha;
-
+		// this.tiposDeBasura = ruta != null ? ruta.getTiposDeBasura() : new
+		// ArrayList<TipoDeBasura>();
 	}
 
 	@Id
@@ -151,7 +155,7 @@ public class RutaDiaria {
 	public Camion getCamion() {
 		return camion;
 	}
-	
+
 	public void setCamion(Camion camion) {
 		this.camion = camion;
 	}
@@ -181,6 +185,48 @@ public class RutaDiaria {
 		this.rutaDiariaContenedores.add(rutaDiariaContenedores);
 	}
 
+	/* http://www.baeldung.com/hibernate-many-to-many */
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@JoinTable(name = "TBL_RD_TP", joinColumns = { @JoinColumn(name = "RUTA_DIARIA_ID") }, inverseJoinColumns = {
+			@JoinColumn(name = "TIPO_BASURA_ID") })
+	public List<TipoDeBasura> getTiposDeBasura() {
+		return tiposDeBasura;
+	}
+
+	public void setTiposDeBasura(List<TipoDeBasura> tiposDeBasura) {
+		if (tiposDeBasura == null)
+			this.tiposDeBasura = new ArrayList<TipoDeBasura>();
+		else
+			this.tiposDeBasura = tiposDeBasura;
+	}
+
+	public void eliminarTipoDeBasura(TipoDeBasura tipo) {
+		if (tipo != null)
+			this.tiposDeBasura.remove(tipo);
+	}
+
+	public void addTipoDeBasura(TipoDeBasura t) {
+		if (this.tiposDeBasura == null) {
+			this.tiposDeBasura = new ArrayList<TipoDeBasura>();
+		}
+
+		if (t != null) {
+			if (!this.tiposDeBasura.contains(t)) {
+				this.tiposDeBasura.add(t);
+			}
+
+		}
+	}
+
+	public boolean containsTipoDeBasura(TipoDeBasura tipo) {
+		if (tipo == null)
+			return false;
+		if (this.tiposDeBasura == null)
+			return false;
+		else
+			return this.tiposDeBasura.contains(tipo);
+	}
+
 	long id;
 	private Ruta ruta;
 	private Calendar fecha;
@@ -193,12 +239,14 @@ public class RutaDiaria {
 	private Calendar fHUltimaActualizacion;
 	private Camion camion = null;
 	private List<RutaDiariaContenedores> rutaDiariaContenedores = new ArrayList<RutaDiariaContenedores>();
+	private List<TipoDeBasura> tiposDeBasura;
 
 	@Override
 	public String toString() {
 		return "RutaDiaria [id=" + id + ", ruta=" + ruta + ", fecha=" + fecha + ", fechaHoraInicio=" + fechaHoraInicio
 				+ ", fechaHoraFin=" + fechaHoraFin + ", recogedor1=" + recogedor1 + ", recogedor2=" + recogedor2
 				+ ", conductor=" + conductor + ", trabajadorActualiza=" + trabajadorActualiza
-				+ ", fHUltimaActualizacion=" + fHUltimaActualizacion + ", camion=" + camion + "]";
+				+ ", fHUltimaActualizacion=" + fHUltimaActualizacion + ", camion=" + camion
+				+ ", rutaDiariaContenedores=" + rutaDiariaContenedores + ", tiposDeBasura=" + tiposDeBasura + "]";
 	}
 }

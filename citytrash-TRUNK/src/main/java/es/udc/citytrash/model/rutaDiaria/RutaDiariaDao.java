@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import es.udc.citytrash.model.contenedor.Contenedor;
 import es.udc.citytrash.model.util.excepciones.InstanceNotFoundException;
 import es.udc.citytrash.model.util.genericdao.GenericDAO;
 
@@ -16,7 +17,6 @@ import es.udc.citytrash.model.util.genericdao.GenericDAO;
  */
 
 public interface RutaDiariaDao extends GenericDAO<RutaDiaria, Long> {
-
 
 	/**
 	 * Buscar rutas diarias by filter
@@ -34,7 +34,16 @@ public interface RutaDiariaDao extends GenericDAO<RutaDiaria, Long> {
 			List<Long> trabajadores, List<Long> contenedores, List<Long> camiones);
 
 	/**
+	 * 
+	 * @param trabajadorId
+	 * @param pageable
+	 * @return
+	 */
+	Page<RutaDiaria> buscarRutasDiariasByTrabajador(long trabajadorId, Pageable pageable);
+
+	/**
 	 * Buscar rutas generadas en un rango de fechas
+	 * 
 	 * @param fechaInicio
 	 * @param fechaFin
 	 * @param rutaId
@@ -42,4 +51,10 @@ public interface RutaDiariaDao extends GenericDAO<RutaDiaria, Long> {
 	 */
 	List<RutaDiaria> buscarRutasDiarias(Date fechaInicio, Date fechaFin, int rutaId);
 
+	/**
+	 * Buscar contenedores de una ruta diaria
+	 * @param rutaDiariaId
+	 * @return
+	 */
+	List<Contenedor> buscarContenedores(long rutaDiariaId);
 }

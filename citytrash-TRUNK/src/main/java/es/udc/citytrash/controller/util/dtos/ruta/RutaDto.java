@@ -29,22 +29,25 @@ public class RutaDto {
 	}
 
 	public RutaDto(Ruta r) {
-		this.id = r.getId();
-		this.puntoInicio = r.getPuntoInicio();
-		this.puntoFinal = r.getPuntoFinal();
-		this.activo = r.isActivo();
-		this.camion = r.getCamion().getId();
-		List<Long> contDtos = new ArrayList<Long>();
-		for (Contenedor c : r.getContenedores()) {
-			contDtos.add(c.getId());
-		}
-		this.contenedores = contDtos;
+		if (r != null) {
+			this.id = r.getId();
+			this.puntoInicio = r.getPuntoInicio();
+			this.puntoFinal = r.getPuntoFinal();
+			this.activo = r.isActivo();
+			this.camion = r.getCamion().getId();
+			List<Long> contDtos = new ArrayList<Long>();
+			for (Contenedor c : r.getContenedores()) {
+				contDtos.add(c.getId());
+			}
+			this.contenedores = contDtos;
 
-		List<Integer> tipos = new ArrayList<Integer>();
-		for (TipoDeBasura t : r.getTiposDeBasura()) {
-			tipos.add(t.getId());
+			List<Integer> tipos = new ArrayList<Integer>();
+			for (TipoDeBasura t : r.getTiposDeBasura()) {
+				tipos.add(t.getId());
+			}
+
+			this.tiposDeBasura = tipos;
 		}
-		this.tiposDeBasura = tipos;
 	}
 
 	Integer id = null;
@@ -53,7 +56,7 @@ public class RutaDto {
 
 	@NotNull
 	@Size(min = 2, max = 40, message = "{validador.rutas.size.contenedores}")
-	@UniqueElements
+	@UniqueElements(message = "{validador.rutas.unique.contenedores}")
 	private List<Long> contenedores = new ArrayList<Long>();
 
 	@NotNull

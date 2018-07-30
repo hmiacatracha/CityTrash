@@ -77,7 +77,7 @@ public class Ruta implements Serializable {
 	public void setPuntoInicio(Localizacion puntoInicio) {
 		this.puntoInicio = puntoInicio;
 	}
-
+	
 	@Embedded
 	@AttributeOverrides({ @AttributeOverride(name = "lat", column = @Column(name = "FIN_LATITUD")),
 			@AttributeOverride(name = "lng", column = @Column(name = "FIN_LONGITUD")) })

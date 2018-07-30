@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
+import es.udc.citytrash.model.contenedor.Contenedor;
 import es.udc.citytrash.model.util.genericdao.GenericHibernateDAOImpl;
 
 /**
@@ -27,6 +28,49 @@ import es.udc.citytrash.model.util.genericdao.GenericHibernateDAOImpl;
 public class RutaDiariaDaoHibernate extends GenericHibernateDAOImpl<RutaDiaria, Long> implements RutaDiariaDao {
 
 	final Logger logger = LoggerFactory.getLogger(RutaDiariaDaoHibernate.class);
+
+	@Override
+	public Page<RutaDiaria> buscarRutasDiariasByTrabajador(long trabajadorId, Pageable pageable) {
+		logger.info("buscarRutasDiarias 1");
+		Query<RutaDiaria> query;
+		List<RutaDiaria> rutasDiarias = new ArrayList<RutaDiaria>();
+		Page<RutaDiaria> page = new PageImpl<RutaDiaria>(rutasDiarias, pageable, rutasDiarias.size());
+
+		logger.info("buscarRutasDiarias 2");
+
+		StringBuilder hql = new StringBuilder(
+				"Select distinct r FROM RutaDiaria r left join r.recogedor1 t1 left join r.recogedor2 t2 left join "
+						+ " r.conductor t3 left join r.camion cam");
+		hql.append(" WHERE ( t1.id = :trabajadorId OR t2.id = :trabajadorId OR t3.id = :trabajadorId )");
+
+		/* Sorted */
+		String order = StringUtils
+				.collectionToCommaDelimitedString(StreamSupport.stream(pageable.getSort().spliterator(), false)
+						.map(o -> "r." + o.getProperty() + " " + o.getDirection()).collect(Collectors.toList()));
+		hql.append(" ORDER BY " + order);
+
+		logger.info("HQL=>" + hql.toString());
+		query = getSession().createQuery(hql.toString(), RutaDiaria.class);
+
+		query.setParameter("trabajadorId", trabajadorId);
+		rutasDiarias = query.list();
+		logger.info("buscarRutasDao 14");
+		// logger.info("Econtrados =>" + rutas.toString());
+		int start = pageable.getOffset();
+		int end = (start + pageable.getPageSize()) > rutasDiarias.size() ? rutasDiarias.size()
+				: (start + pageable.getPageSize());
+		boolean rangoExistente = (rutasDiarias.size() - start >= 0) && (rutasDiarias.size() - end >= 0);
+
+		logger.info("buscarRutasDiarias 15");
+		if (rangoExistente) {
+			page = new PageImpl<RutaDiaria>(rutasDiarias.subList(start, end), pageable, rutasDiarias.size());
+		} else {
+			List<RutaDiaria> rutasAux = new ArrayList<RutaDiaria>();
+			page = new PageImpl<RutaDiaria>(rutasAux, pageable, rutasAux.size());
+		}
+		logger.info("buscarRutasDiarias 16");
+		return page;
+	}
 
 	@Override
 	public Page<RutaDiaria> buscarRutasDiarias(Pageable pageable, Date desde, Date hasta, List<Integer> rutas,
@@ -43,18 +87,7 @@ public class RutaDiariaDaoHibernate extends GenericHibernateDAOImpl<RutaDiaria, 
 
 		logger.info("buscarRutasDiarias 2");
 		String alias = "rd";
-
-		// StringBuilder hql = new StringBuilder("Select distinct " + alias + "
-		// FROM RutaDiaria " + alias + " left join "
-		// + alias + ".ruta r " + " left join " + alias
-		// + ".rutaDiariaContenedores rdc left join rdc.pk rdcpk left join
-		// rdcpk.contenedor cont" + " left join "
-		// + alias + ".recogedor1 t1 left join " + alias + ".recogedor2 t2 left
-		// join " + alias
-		// + ".conductor t3 left join " + alias + ".camion cam");
-
-		StringBuilder hql = new StringBuilder(
-				"Select distinct " + alias + " FROM RutaDiaria " + alias + " left join " + alias + ".ruta r ");
+		StringBuilder hql = new StringBuilder("Select distinct " + alias + " FROM RutaDiaria " + alias);
 
 		logger.info("buscarRutasDiarias 2.1");
 		if (desde != null && hasta != null) {
@@ -77,22 +110,31 @@ public class RutaDiariaDaoHibernate extends GenericHibernateDAOImpl<RutaDiaria, 
 
 		logger.info("buscarRutasDiarias 3");
 		if (trabajList.size() > 0) {
-			hql.append(" AND ( t1.id in (:trabajadores) OR t2.id in (:trabajadores) OR t3.id in (:trabajadores)) ");
+			hql.append(" AND " + alias + ".id in (Select distinct(r1.id) "
+					+ "	from RutaDiaria r1 left join r1.recogedor1 t1 left join r1.recogedor2 t2 left join r1.conductor t3 	"
+					+ " where  " + alias
+					+ ".id = r1.id  and t1.id in (:trabajadores) OR t2.id in (:trabajadores) OR t3.id in (:trabajadores) )");
+
 		}
 
 		logger.info("buscarRutasDiarias 4");
 		if (camionList.size() > 0) {
-			hql.append(" AND cam.id in (:camiones) ");
+			hql.append(" AND " + alias + ".id in ( select distinct(r2.id) from RutaDiaria r2 inner join r2.camion cam "
+					+ " where " + alias + ".id = r2.id and cam.id in (:camiones) )");
 		}
 
 		logger.info("buscarRutasDiarias 5");
 		if (contenList.size() > 0) {
-			hql.append(" AND cont.id in (:contenedores) ");
+			hql.append(" AND " + alias + ".id in ( select distinct(r3.id)  "
+					+ " from RutaDiaria r3 inner join r3.rutaDiariaContenedores rdc inner join rdc.pk rdcpk inner join rdcpk.contenedor cont "
+					+ " where " + alias + ".id = r3.id and cont.id in (:contenedores) )");
 		}
 
 		logger.info("buscarRutasDiarias 5");
 		if (rutasList.size() > 0) {
-			hql.append(" AND r.id in (:rutas) ");
+			hql.append(
+					" AND " + alias + ".id in (Select distinct(r4.id) from RutaDiaria r4 inner join r4.ruta ru where "
+							+ alias + ".id = r4.id and ru.id in (:rutas) )");
 		}
 
 		logger.info("buscarRutasDiarias 6");
@@ -184,5 +226,33 @@ public class RutaDiariaDaoHibernate extends GenericHibernateDAOImpl<RutaDiaria, 
 
 		rutasDiarias = query.list();
 		return rutasDiarias;
+	}
+
+	@Override
+	public List<Contenedor> buscarContenedores(long rutaDiariaId) {
+		logger.info("buscar rutas diarias contenedores 1");
+		Query<Contenedor> query;
+		List<Contenedor> rutasDiariaContenedores = new ArrayList<Contenedor>();
+
+		logger.info("buscar rutas diarias contenedores 2");
+
+		StringBuilder hql = new StringBuilder(
+				"Select distinct c FROM RutaDiaria rd inner join rd.rutaDiariaContenedores rdc "
+						+ " inner join rdc.pk pk inner join pk.rutaDiaria rd inner join pk.contenedor c");
+
+		hql.append(
+				" WHERE rd.id = :rutaDiariaId and ((rd.fechaHoraInicio is null and c.activo = (:activo)) OR (rd.fechaHoraInicio is not null)) ");
+
+		hql.append(" ORDER BY rdc.id");
+
+		logger.info("buscar rutas diarias contenedores 3");
+		logger.info("HQL=>" + hql.toString());
+		logger.info("buscar rutas diarias contenedores 4");
+		query = getSession().createQuery(hql.toString(), Contenedor.class);
+		logger.info("buscar rutas diarias contenedores 5");
+		query.setParameter("rutaDiariaId", rutaDiariaId);
+		query.setParameter("activo", true);
+		rutasDiariaContenedores = query.list();
+		return rutasDiariaContenedores;
 	}
 }

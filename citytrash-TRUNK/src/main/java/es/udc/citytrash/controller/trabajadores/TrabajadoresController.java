@@ -149,7 +149,7 @@ public class TrabajadoresController {
 			nombre = t.getNombre() + " " + t.getApellidos();
 			model.addAttribute("trabajador_nombre_completo", nombre);
 			model.addAttribute("trabajadorId", t.getId());
-
+			
 			if (AjaxUtils.isAjaxRequest(requestedWith))
 				return WebUtils.VISTA_TRABAJADOR_DETALLES.concat("::content");
 			return WebUtils.VISTA_TRABAJADOR_DETALLES;

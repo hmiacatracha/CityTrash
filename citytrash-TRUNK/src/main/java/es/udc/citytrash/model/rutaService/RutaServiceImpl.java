@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.udc.citytrash.controller.util.dtos.ruta.GenerarRutaFormDto;
+import es.udc.citytrash.controller.util.dtos.ruta.RutaDiariaDto;
 import es.udc.citytrash.controller.util.dtos.ruta.RutaDto;
 import es.udc.citytrash.controller.util.dtos.ruta.RutasDiariaFormBusq;
 import es.udc.citytrash.controller.util.dtos.ruta.RutasFormBusq;
@@ -33,17 +34,30 @@ import es.udc.citytrash.model.rutaDiariaContenedores.RutaDiariaContenedores;
 import es.udc.citytrash.model.rutaDiariaContenedores.RutaDiariaContenedoresDao;
 import es.udc.citytrash.model.tipoDeBasura.TipoDeBasura;
 import es.udc.citytrash.model.tipoDeBasura.TipoDeBasuraDao;
+import es.udc.citytrash.model.trabajador.Conductor;
+import es.udc.citytrash.model.trabajador.ConductorDao;
+import es.udc.citytrash.model.trabajador.Recolector;
+import es.udc.citytrash.model.trabajador.RecolectorDao;
+import es.udc.citytrash.model.trabajador.Trabajador;
 import es.udc.citytrash.model.trabajador.TrabajadorDao;
 import es.udc.citytrash.model.util.dto.Notificacion;
 import es.udc.citytrash.model.util.excepciones.DuplicateInstanceException;
+import es.udc.citytrash.model.util.excepciones.InactiveResourceException;
 import es.udc.citytrash.model.util.excepciones.InstanceNotFoundException;
+import es.udc.citytrash.model.util.excepciones.RutaIniciadaException;
 
 @Service("rutaService")
 @Transactional
 public class RutaServiceImpl implements RutaService {
 
 	@Autowired
-	TrabajadorDao trabajadorDao;
+	RecolectorDao tDao;
+
+	@Autowired
+	RecolectorDao recolectorDao;
+
+	@Autowired
+	ConductorDao conductorDao;
 
 	@Autowired
 	CamionDao camionDao;
@@ -68,6 +82,11 @@ public class RutaServiceImpl implements RutaService {
 	@Override
 	public Ruta buscarRuta(int rutaId) throws InstanceNotFoundException {
 		return rutaDao.buscarById(rutaId);
+	}
+
+	@Override
+	public RutaDiaria buscarRutaDiaria(long rutaDiariaId) throws InstanceNotFoundException {
+		return rutaDiariaDao.buscarById(rutaDiariaId);
 	}
 
 	@Override
@@ -297,6 +316,13 @@ public class RutaServiceImpl implements RutaService {
 					listaMensajes.add("EmptyValueException_ruta_diaria_contenedores");
 				}
 
+				/* Añadir tipos de basura */
+				List<TipoDeBasura> tiposDeBasura = new ArrayList<TipoDeBasura>();
+				for (TipoDeBasura tipo : ruta.getTiposDeBasura()) {
+					tiposDeBasura.add(tipo);
+					rutaDiaria.addTipoDeBasura(tipo);
+				}
+
 				/* Añade la ruta, solo si no tiene ningun error */
 				rutaDiaria = rutaDiariaDao.guardar(rutaDiaria);
 
@@ -335,12 +361,20 @@ public class RutaServiceImpl implements RutaService {
 	@Transactional(readOnly = true)
 	@Override
 	public Page<RutaDiaria> buscarRutasDiarias(Pageable pageable, RutasDiariaFormBusq form) {
+		List<RutaDiaria> rutasList = new ArrayList<RutaDiaria>();
+		Page<RutaDiaria> page = new PageImpl<RutaDiaria>(rutasList, pageable, rutasList.size());
+		page = rutaDiariaDao.buscarRutasDiarias(pageable, form.getFrom(), form.getTo(), form.getRutas(),
+				form.getTrabajadores(), form.getContenedores(), form.getCamiones());
+		return page;
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public Page<RutaDiaria> buscarRutasDiariasByTrabajador(long trabajadorId, Pageable pageable) {
 		logger.info("buscarRutasDiarias");
 		List<RutaDiaria> rutasList = new ArrayList<RutaDiaria>();
 		Page<RutaDiaria> page = new PageImpl<RutaDiaria>(rutasList, pageable, rutasList.size());
-		logger.info("buscarRutasDiarias paso2");
-		page = rutaDiariaDao.buscarRutasDiarias(pageable, form.getFrom(), form.getTo(), form.getRutas(),
-				form.getTrabajadores(), form.getContenedores(), form.getCamiones());
+		page = rutaDiariaDao.buscarRutasDiariasByTrabajador(trabajadorId, pageable);
 		logger.info("buscarRutasDiarias paso 3");
 		return page;
 	}
@@ -386,6 +420,109 @@ public class RutaServiceImpl implements RutaService {
 		Calendar calendar = new GregorianCalendar();
 		calendar.setTime(date);
 		return calendar;
+	}
+
+	@Override
+	public RutaDiaria actualizarRutaDiaria(RutaDiariaDto form) throws DuplicateInstanceException,
+			InstanceNotFoundException, InactiveResourceException, RutaIniciadaException {
+		RutaDiaria rd = null;
+		Camion camion = null;
+		rd = rutaDiariaDao.buscarById(form.getId());
+
+		if (rd.getFechaHoraInicio() != null) {
+			throw new RutaIniciadaException(rd.getFechaHoraInicio());
+		}
+
+		/* Modificamos el camion */
+		try {
+			camion = camionDao.buscarById(form.getCamion());
+			if (!camion.getActivo()) {
+				throw new InactiveResourceException(camion.getNombre(), Camion.class.getName());
+			}
+			rd.setCamion(camion);
+		} catch (InstanceNotFoundException e) {
+			throw new InstanceNotFoundException(form.getCamion(), Camion.class.getName());
+		}
+
+		/* Moficamos los recolectores asignados */
+		if (form.getRecolectores() != null) {
+			int size = form.getRecolectores().size();
+			if (size == 1) {
+				try {
+					Trabajador r1 = tDao.buscarById(form.getRecolectores().get(0));
+					if (r1 instanceof Recolector) {
+						if (!r1.isActiveWorker()) {
+							throw new InactiveResourceException(r1.getNombre() + " " + r1.getApellidos(),
+									Recolector.class.getName());
+						}
+						rd.setRecogedor1(r1);
+					} else {
+						throw new InstanceNotFoundException(form.getRecolectores().get(0), Recolector.class.getName());
+					}
+				} catch (InstanceNotFoundException e) {
+					throw new InstanceNotFoundException(form.getRecolectores().get(0), Recolector.class.getName());
+				}
+			} else if (size == 2) {
+				try {
+					Trabajador r1 = recolectorDao.buscarById(form.getRecolectores().get(0));
+					Trabajador r2 = recolectorDao.buscarById(form.getRecolectores().get(1));
+					if (!r1.isActiveWorker()) {
+						throw new InactiveResourceException(r1.getNombre() + " " + r1.getApellidos(),
+								Recolector.class.getName());
+					}
+
+					if (!r2.isActiveWorker()) {
+						throw new InactiveResourceException(r2.getNombre() + " " + r2.getApellidos(),
+								Recolector.class.getName());
+					}
+					rd.setRecogedor1(r1);
+					rd.setRecogedor2(r2);
+				} catch (InstanceNotFoundException e) {
+					throw new InstanceNotFoundException(form.getRecolectores().get(0), Recolector.class.getName());
+				}
+			} else {
+				rd.setRecogedor1(null);
+				rd.setRecogedor2(null);
+			}
+		}
+		logger.info("actualizarRutaDiaria paso8");
+		/* MODIFICACAMOS EL CONDUCTOR */
+		if (form.getConductor() != null) {
+			try {
+				Trabajador t = conductorDao.buscarById(form.getConductor());
+				rd.setConductor(t);
+			} catch (InstanceNotFoundException e) {
+				throw new InstanceNotFoundException(form.getConductor(), Conductor.class.getName());
+			}
+		}
+
+		logger.info("actualizarRutaDiaria paso10");
+		List<RutaDiariaContenedores> contenedoresGuardados = new ArrayList<RutaDiariaContenedores>();
+		contenedoresGuardados = rd.getRutaDiariaContenedores();
+
+		// List<Contenedor> contenedores = new ArrayList<Contenedor>();
+		/* Eliminanos los contenedores que ya no pertenecen a esta ruta */
+		for (RutaDiariaContenedores c : contenedoresGuardados) {
+
+		}
+
+		/* Añadimos los contenedores nuevos */
+		/*
+		 * for (Long contenedorId : form.getContenedores()) { if (contenedorId
+		 * != null) { if (contenedorDao.existe(contenedorId)) { Contenedor
+		 * contenedor = contenedorDao.buscarById(contenedorId);
+		 * contenedor.setRuta(ruta); contenedorDao.guardar(contenedor); } } }
+		 */
+
+		logger.info("actualizarRutaDiaria paso11");
+		rd = rutaDiariaDao.guardar(rd);
+		logger.info("actualizarRutaDiaria fin");
+		return rd;
+	}
+
+	@Override
+	public List<Contenedor> buscarContenedoresDeRutaDiaria(long rutaDiariaId) {
+		return rutaDiariaDao.buscarContenedores(rutaDiariaId);
 	}
 
 }

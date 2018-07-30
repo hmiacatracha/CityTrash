@@ -1,5 +1,6 @@
 package es.udc.citytrash.controller.rutas;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -36,14 +37,17 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import es.udc.citytrash.controller.cuenta.CustomUserDetails;
 import es.udc.citytrash.controller.excepciones.PageNotFoundException;
 import es.udc.citytrash.controller.excepciones.ResourceNotFoundException;
 import es.udc.citytrash.controller.util.AjaxUtils;
 import es.udc.citytrash.controller.util.WebUtils;
+import es.udc.citytrash.controller.util.anotaciones.UsuarioActual;
 import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorDto;
 import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorFormBusq;
 import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorModeloDto;
 import es.udc.citytrash.controller.util.dtos.ruta.GenerarRutaFormDto;
+import es.udc.citytrash.controller.util.dtos.ruta.RutaDiariaDto;
 import es.udc.citytrash.controller.util.dtos.ruta.RutaDto;
 import es.udc.citytrash.controller.util.dtos.ruta.RutasDiariaFormBusq;
 import es.udc.citytrash.controller.util.dtos.ruta.RutasFormBusq;
@@ -56,14 +60,19 @@ import es.udc.citytrash.model.contenedorModelo.ContenedorModelo;
 import es.udc.citytrash.model.contenedorService.ContenedorService;
 import es.udc.citytrash.model.ruta.Ruta;
 import es.udc.citytrash.model.rutaDiaria.RutaDiaria;
+import es.udc.citytrash.model.rutaDiariaContenedores.RutaDiariaContenedores;
 import es.udc.citytrash.model.rutaService.RutaService;
 import es.udc.citytrash.model.sensor.Sensor;
 import es.udc.citytrash.model.tipoDeBasura.TipoDeBasura;
+import es.udc.citytrash.model.trabajador.Conductor;
+import es.udc.citytrash.model.trabajador.Recolector;
 import es.udc.citytrash.model.trabajador.Trabajador;
 import es.udc.citytrash.model.trabajadorService.TrabajadorService;
 import es.udc.citytrash.model.util.excepciones.DuplicateInstanceException;
+import es.udc.citytrash.model.util.excepciones.InactiveResourceException;
 import es.udc.citytrash.model.util.excepciones.InstanceNotFoundException;
 import es.udc.citytrash.model.util.excepciones.InvalidFieldException;
+import es.udc.citytrash.model.util.excepciones.RutaIniciadaException;
 import es.udc.citytrash.util.GlobalNames;
 
 @Controller
@@ -89,6 +98,12 @@ public class RutasController {
 		return ruta;
 	}
 
+	@ModelAttribute("rutaDiariaForm")
+	public RutaDiariaDto rutaDiariaForm() {
+		RutaDiariaDto ruta = new RutaDiariaDto();
+		return ruta;
+	}
+
 	@ModelAttribute("listaTiposDeBasura")
 	public List<TipoDeBasura> getTiposDeBasura() {
 		List<TipoDeBasura> tipos = new ArrayList<TipoDeBasura>();
@@ -101,6 +116,20 @@ public class RutasController {
 		List<Trabajador> trabajadores = new ArrayList<Trabajador>();
 		trabajadores = tServicio.buscarTrabajadores(false);
 		return trabajadores;
+	}
+
+	@ModelAttribute("conductoresActivos")
+	public List<Conductor> getConductoresActivos() {
+		List<Conductor> modelos = new ArrayList<Conductor>();
+		modelos = tServicio.buscarConductores(true);
+		return modelos;
+	}
+
+	@ModelAttribute("recolectoresActivos")
+	public List<Recolector> getRecolectoresActivos() {
+		List<Recolector> modelos = new ArrayList<Recolector>();
+		modelos = tServicio.buscarRecolectores(true);
+		return modelos;
 	}
 
 	@ModelAttribute("listaTodosLosContenedores")
@@ -363,8 +392,7 @@ public class RutasController {
 
 	/* Activar o desactivar camion */
 
-	// @PreAuthorize("hasRole('" + GlobalNames.ROL_ADMINISTRADOR + "')")
-
+	@PreAuthorize("hasRole('" + GlobalNames.ROL_ADMINISTRADOR + "')")
 	@RequestMapping(path = { WebUtils.REQUEST_MAPPING_RUTAS_GENERAR,
 			WebUtils.REQUEST_MAPPING_RUTAS_GENERAR + "/" }, method = RequestMethod.GET)
 	public String getGenerarRutas(
@@ -393,7 +421,7 @@ public class RutasController {
 
 	}
 
-	// @PreAuthorize("hasRole('" + GlobalNames.ROL_ADMINISTRADOR + "')")
+	@PreAuthorize("hasRole('" + GlobalNames.ROL_ADMINISTRADOR + "')")
 	@RequestMapping(path = { WebUtils.REQUEST_MAPPING_RUTAS_GENERAR,
 			WebUtils.REQUEST_MAPPING_RUTAS_GENERAR + "/" }, method = RequestMethod.POST)
 	public String postGenerarRutas(
@@ -407,7 +435,10 @@ public class RutasController {
 				null);
 		List<Ruta> listaRutasAGenerar = rServicio.buscarRutasSinGenerar(form);
 
+		logger.info("asdasdasd paso1");
+
 		if (result.hasErrors()) {
+			logger.info("asdasdasd paso2");
 			page = rServicio.buscarRutasDiarias(pageRequest, busquedaForm);
 			model.addAttribute("generarRutaForm", form);
 			model.addAttribute("listaRutasAGenerar", listaRutasAGenerar);
@@ -419,22 +450,30 @@ public class RutasController {
 		}
 
 		try {
+			logger.info("asdasdasd paso3");
 			rServicio.generarRutas(form);
+			logger.info("asdasdasd paso4");
 			page = rServicio.buscarRutasDiarias(pageRequest, busquedaForm);
 			listaRutasAGenerar = rServicio.buscarRutasSinGenerar(form);
 			model.addAttribute("msg", "ok");
 			model.addAttribute("type", "generarRutasCorrectamente");
 			// model.addAttribute("key", form.getRutas());
+			model.addAttribute("key", "");
+			logger.info("asdasdasd paso5");
 
 		} catch (Exception e) {
-			model.addAttribute("error", e);
-			model.addAttribute("type", e.getMessage());
+			model.addAttribute("error", "error");
+			model.addAttribute("type", "Exception");
+			model.addAttribute("key", "");
+			logger.info("asdasdasd paso6");
+			logger.info("asdasdasd paso6 =>" + e.getMessage());
 		}
 
 		logger.info("lista de rutas a generar ok");
 		model.addAttribute("listaRutasAGenerar", listaRutasAGenerar);
 		model.addAttribute("generarRutaForm", form);
 		model.addAttribute("pageRutas", page);
+		logger.info("asdasdasd paso7");
 
 		if (AjaxUtils.isAjaxRequest(requestedWith))
 			return WebUtils.VISTA_RUTA_GENERAR.concat("::content");
@@ -443,7 +482,7 @@ public class RutasController {
 	}
 
 	/*************************** RUTAS DIARIAS *************************/
-	// @PreAuthorize("hasRole('" + GlobalNames.ROL_ADMINISTRADOR + "')")
+	@PreAuthorize("hasRole('" + GlobalNames.ROL_ADMINISTRADOR + "')")
 	@RequestMapping(value = { WebUtils.REQUEST_MAPPING_RUTAS_HISTORIAL,
 			WebUtils.REQUEST_MAPPING_RUTAS_HISTORIAL + "/" }, method = RequestMethod.GET)
 	public String getRutasDiarias(
@@ -489,6 +528,172 @@ public class RutasController {
 		if (AjaxUtils.isAjaxRequest(requestedWith))
 			return WebUtils.VISTA_RUTAS_HISTORIAL.concat("::content");
 		return WebUtils.VISTA_RUTAS_HISTORIAL;
+	}
+
+	@PreAuthorize("isAuthenticated()")
+	@RequestMapping(value = { WebUtils.REQUEST_MAPPING_RUTAS_MY_HISTORIAL,
+			WebUtils.REQUEST_MAPPING_RUTAS_MY_HISTORIAL + "/" }, method = RequestMethod.GET)
+	public String getMiHistorial(@UsuarioActual CustomUserDetails usuario, Model model,
+			@PageableDefault(size = WebUtils.DEFAULT_PAGE_SIZE, page = WebUtils.DEFAULT_PAGE_NUMBER, direction = Direction.DESC) @SortDefault("id") Pageable pageRequest,
+			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith)
+			throws ResourceNotFoundException {
+		logger.info("paso 1");
+
+		List<RutaDiaria> RutasDiariaList = new ArrayList<RutaDiaria>();
+		Page<RutaDiaria> page = new PageImpl<RutaDiaria>(RutasDiariaList, pageRequest, RutasDiariaList.size());
+		logger.info("paso 2");
+		try {
+
+			Trabajador t = tServicio.buscarTrabajador(usuario.getPerfil().getId());
+			logger.info("paso 3");
+			page = rServicio.buscarRutasDiariasByTrabajador(t.getId(), pageRequest);
+			logger.info("paso 4");
+			model.addAttribute("pageRutas", page);
+			model.addAttribute("trabajador", t);
+		} catch (Exception e) {
+			throw new PageNotFoundException(String.format("The requested page (%s) of the routes list was not found.",
+					pageRequest.getPageNumber()));
+		}
+
+		if (page.getNumberOfElements() == 0) {
+			if (!page.isFirst()) {
+				throw new PageNotFoundException(String.format(
+						"The requested page (%s) of the routes list was not found.", pageRequest.getPageNumber()));
+			}
+		}
+		logger.info("GET RUTAS DIARIAS FIN");
+		if (AjaxUtils.isAjaxRequest(requestedWith))
+			return WebUtils.VISTA_RUTAS_HISTORIAL_MY_HISTORIAL.concat("::content");
+		return WebUtils.VISTA_RUTAS_HISTORIAL_MY_HISTORIAL;
+	}
+
+	@PreAuthorize("hasRole('" + GlobalNames.ROL_ADMINISTRADOR + "')")
+	@RequestMapping(value = { WebUtils.REQUEST_MAPPING_HISTORIAL_EDITAR }, method = RequestMethod.GET)
+	public String editarRutaDiaria(@PathVariable("id") long id, Model model,
+			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith,
+			@RequestParam(value = "msg", required = false) String msg,
+			@RequestParam(value = "type", required = false) String type) throws ResourceNotFoundException {
+		logger.info("GET REQUEST_MAPPING_HISTORIAL_EDITAR");
+		RutaDiaria rutaDiaria;
+		try {
+			rutaDiaria = rServicio.buscarRutaDiaria(id);
+			if (rutaDiaria.getFechaHoraInicio() != null) {
+				SimpleDateFormat format1 = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+				String formatted = format1.format(rutaDiaria.getFechaHoraInicio().getTime());
+				model.addAttribute("error", "error");
+				model.addAttribute("type", "RutaIniciadaException");
+				model.addAttribute("key", formatted);
+			}
+
+			RutaDiariaDto dto = new RutaDiariaDto(rutaDiaria);
+			List<RutaDiariaContenedores> listRutaDiariaContenedores = rutaDiaria.getRutaDiariaContenedores();
+			// rServicio.buscarRutaDiariasContenedores(rutaDiaria.getId());
+
+			List<Integer> tiposDeBasura = new ArrayList<Integer>();
+			for (TipoDeBasura tipo : rutaDiaria.getTiposDeBasura()) {
+				tiposDeBasura.add(tipo.getId());
+			}
+
+			List<Camion> camiones = camServicio.buscarCamionesDisponiblesParaUnaRutaByTipos(tiposDeBasura);
+			model.addAttribute("rutaDiariaForm", dto);
+			model.addAttribute("listaCamionesDisponibles", camiones);
+			model.addAttribute("listaContenedoresRutaDiaria", listRutaDiariaContenedores);
+			model.addAttribute("msg", msg);
+			model.addAttribute("type", type);
+			model.addAttribute("key", rutaDiaria.getId());
+			if (AjaxUtils.isAjaxRequest(requestedWith))
+				return WebUtils.VISTA_RUTAS_HISTORIAL_EDITAR.concat(" ::content");
+			return WebUtils.VISTA_RUTAS_HISTORIAL_EDITAR;
+		} catch (InstanceNotFoundException e) {
+			throw new ResourceNotFoundException(id);
+		}
+	}
+
+	@PreAuthorize("hasRole('" + GlobalNames.ROL_ADMINISTRADOR + "')")
+	@RequestMapping(value = { WebUtils.REQUEST_MAPPING_HISTORIAL_EDITAR }, method = RequestMethod.POST)
+	public String actualizarRutaDiaria(@PathVariable("id") long id,
+			@ModelAttribute("rutaDiariaForm") @Valid RutaDiariaDto form, BindingResult result,
+			HttpServletRequest request, HttpServletResponse response, Errors errors, Model model,
+			RedirectAttributes redirectAttributes,
+			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith)
+			throws ResourceNotFoundException {
+		logger.info("paso1 POST REQUEST_MAPPING_HISTORIAL_EDITAR");
+		RutaDiaria rutaDiaria;
+		List<Camion> camiones = new ArrayList<Camion>();
+		List<Integer> tiposDeBasura = new ArrayList<Integer>();
+		for (TipoDeBasura tipo : form.getTiposDeBasura()) {
+			tiposDeBasura.add(tipo.getId());
+		}
+
+		logger.info("paso2 POST REQUEST_MAPPING_HISTORIAL_EDITAR");
+		try {
+			rutaDiaria = rServicio.buscarRutaDiaria(form.getId());
+
+		} catch (InstanceNotFoundException e1) {
+			throw new ResourceNotFoundException(form.getId());
+		}
+
+		logger.info("paso3 POST REQUEST_MAPPING_HISTORIAL_EDITAR");
+		/* CHECK THE FORM */
+		if (result.hasErrors()) {
+			model.addAttribute("rutaDiariaForm", form);
+			camiones = camServicio.buscarCamionesDisponiblesParaUnaRutaByTipos(tiposDeBasura);
+			model.addAttribute("listaCamionesDisponibles", rutaDiaria.getRutaDiariaContenedores());
+			model.addAttribute("listaContenedoresRutaDiaria", rutaDiaria.getRutaDiariaContenedores());
+			if (AjaxUtils.isAjaxRequest(requestedWith)) {
+				return WebUtils.VISTA_RUTAS_HISTORIAL_EDITAR.concat("::content");
+			}
+			return WebUtils.VISTA_RUTAS_HISTORIAL_EDITAR;
+		}
+		try {
+
+			logger.info("paso4 POST REQUEST_MAPPING_HISTORIAL_EDITAR");
+			rutaDiaria = rServicio.actualizarRutaDiaria(form);
+
+			List<Long> contDtos = new ArrayList<Long>();
+			List<RutaDiariaContenedores> listRutaDiariaContenedores = rutaDiaria.getRutaDiariaContenedores();
+
+			for (RutaDiariaContenedores rdc : listRutaDiariaContenedores) {
+				contDtos.add(rdc.getPk().getContenedor().getId());
+			}
+			logger.info("fin actualizar ruta controller");
+			redirectAttributes.addAttribute("msg", "ok");
+			redirectAttributes.addAttribute("type", "mod_ruta_diaria");
+			return "redirect:"
+					+ WebUtils.URL_MAPPING_RUTAS_HISTORIAL_EDITAR.replace("{id}", String.valueOf(rutaDiaria.getId()));
+		} catch (DuplicateInstanceException e) {
+			logger.info("paso6 POST REQUEST_MAPPING_HISTORIAL_EDITAR");
+			model = duplicateInstanceException(model, e);
+		} catch (InstanceNotFoundException e) {
+			model.addAttribute("error", e);
+			model.addAttribute("type", "InstanceNotFoundException");
+			model.addAttribute("key", e.getKey());
+
+		} catch (RutaIniciadaException e) {
+			SimpleDateFormat format1 = new SimpleDateFormat("dd-MMM-yyyy HH:mm");
+			String formatted = format1.format(e.getStartingDate());
+			model.addAttribute("error", "error");
+			model.addAttribute("type", "RutaIniciadaException");
+			model.addAttribute("key", formatted);
+		} catch (InactiveResourceException e) {
+			model.addAttribute("error", e);
+			model.addAttribute("type", "InactiveResourceException");
+			model.addAttribute("key", e.getKey());
+		} catch (Exception ex) {
+			logger.info("paso7 POST REQUEST_MAPPING_HISTORIAL_EDITAR");
+			model.addAttribute("error", ex);
+			model.addAttribute("type", "Exception");
+		}
+
+		camiones = camServicio.buscarCamionesDisponiblesParaUnaRutaByTipos(tiposDeBasura);
+		model.addAttribute("rutaDiariaForm", form);
+		model.addAttribute("listaCamionesDisponibles", camiones);
+		model.addAttribute("listaContenedoresRutaDiaria", rutaDiaria.getRutaDiariaContenedores());
+
+		if (AjaxUtils.isAjaxRequest(requestedWith)) {
+			return WebUtils.VISTA_RUTAS_HISTORIAL_EDITAR.concat("::content");
+		}
+		return WebUtils.VISTA_RUTAS_HISTORIAL_EDITAR;
 	}
 
 	@ResponseStatus(HttpStatus.FORBIDDEN)

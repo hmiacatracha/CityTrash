@@ -50,7 +50,7 @@
 								<div th:if="${type!=null}"
 									th:replace="fragments/alert :: alert (type='success',  message=#{${type}(${key})})"></div>
 							</th:block>
-								
+
 							<!-- mensaje error -->
 							<th:block th:if="${error!=null and msg==null}">
 								<div th:if="${type!=null}"
@@ -258,15 +258,14 @@
 											<!-- view details -->
 											<div id="otherOptions" class="btn-group text-center">
 												<a id="link_ver_detalles"
-													th:href="@{#{link.rutas.rutasDiarias.detalle}(id=${rutaDiaria.id})}"
+													th:href="@{#{link.rutas.historial.detalles}(id=${rutaDiaria.id})}"
 													class="btn-sm"><i class="glyphicon glyphicon-eye-open"
 													data-toggle="tooltip" th:title="#{lbl_ver_detalles}"></i></a> <a
 													id="link_editar"
-													th:href="@{#{link.rutas.rutasDiarias.editar}(id=${rutaDiaria.id})}"
+													th:href="@{#{link.rutas.historial.editar}(id=${rutaDiaria.id})}"
 													class="btn-sm"><i class="glyphicon glyphicon-pencil"
 													data-toggle="tooltip" th:title="#{lbl_editar}"></i></a>
 											</div>
-
 										</div>
 									</td>
 								</tr>

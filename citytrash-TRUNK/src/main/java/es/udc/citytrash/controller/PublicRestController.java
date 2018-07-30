@@ -33,6 +33,7 @@ import es.udc.citytrash.model.camionService.CamionService;
 import es.udc.citytrash.model.contenedor.Contenedor;
 import es.udc.citytrash.model.contenedorModelo.ContenedorModelo;
 import es.udc.citytrash.model.contenedorService.ContenedorService;
+import es.udc.citytrash.model.rutaDiariaContenedores.RutaDiariaContenedores;
 import es.udc.citytrash.model.rutaService.RutaService;
 import es.udc.citytrash.model.sensorValor.Valor;
 import es.udc.citytrash.model.tipoDeBasura.TipoDeBasura;
@@ -105,7 +106,7 @@ public class PublicRestController {
 	}
 
 	@RequestMapping(value = "/rutas/{id}/contenedores/geojson", method = RequestMethod.GET, produces = "application/json")
-	public @ResponseBody FeatureCollection getContenedoresGeoJson(@PathVariable("id") Integer rutaId)
+	public @ResponseBody FeatureCollection getContenedoresDeRutaGeoJson(@PathVariable("id") Integer rutaId)
 			throws ResourceNotFoundException {
 		FeatureCollection featureCollection = new FeatureCollection();
 		List<Contenedor> contenedores;
@@ -147,6 +148,54 @@ public class PublicRestController {
 
 		} catch (InstanceNotFoundException e1) {
 			throw new ResourceNotFoundException(rutaId);
+		}
+	}
+
+	@RequestMapping(value = "/rutasDiarias/{id}/contenedores/geojson", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody FeatureCollection getContenedoresDeRutaDiariaGeoJson(@PathVariable("id") long rutaDiariaId)
+			throws ResourceNotFoundException {
+		FeatureCollection featureCollection = new FeatureCollection();
+		List<Contenedor> contenedores;
+
+		try {
+			rutaServicio.buscarRutaDiaria(rutaDiariaId);
+
+			contenedores = rutaServicio.buscarContenedoresDeRutaDiaria(rutaDiariaId);
+			logger.info("get contenedores ruta geoson =>" + contenedores.toString());
+			TipoDeBasura tipo;
+			ContenedorModelo modelo;
+
+			for (Contenedor contenedor : contenedores) {
+				Feature feature = new Feature();
+				Point geometry = new Point(contenedor.getLatitud().doubleValue(),
+						contenedor.getLongitud().doubleValue());
+				feature.setGeometry(geometry);
+				feature.setProperty("id", contenedor.getId());
+				feature.setProperty("nombre", contenedor.getNombre());
+
+				try {
+					modelo = contServicio.buscarModeloById(contenedor.getModelo().getId());
+					tipo = contServicio.buscarTipoDeBasuraByModelo(contenedor.getModelo().getId());
+					feature.setProperty("tipo", tipo.getTipo());
+					feature.setProperty("color", "#" + tipo.getColor());
+					feature.setProperty("capacidad_nominal", modelo.getCapacidadNominal());
+					feature.setProperty("carga_nominal", modelo.getCargaNominal());
+					feature.setProperty("profundidad", modelo.getProfundidad());
+					feature.setProperty("peso_Vacio", modelo.getPesoVacio());
+				} catch (InstanceNotFoundException e) {
+					feature.setProperty("tipo", "UNKOWN");
+					feature.setProperty("color", "#000000");
+					feature.setProperty("capacidad_nominal", "0");
+					feature.setProperty("carga_nominal", "0");
+					feature.setProperty("profundidad", "0");
+					feature.setProperty("peso_Vacio", "0");
+				}
+				featureCollection.add(feature);
+			}
+			return featureCollection;
+
+		} catch (InstanceNotFoundException e1) {
+			throw new ResourceNotFoundException(rutaDiariaId);
 		}
 	}
 

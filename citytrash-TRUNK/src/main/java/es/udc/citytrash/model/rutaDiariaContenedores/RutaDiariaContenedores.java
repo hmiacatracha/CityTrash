@@ -32,6 +32,10 @@ import es.udc.citytrash.model.trabajador.Trabajador;
 		@AssociationOverride(name = "pk.contenedor", joinColumns = @JoinColumn(name = "CONTENEDOR_ID")) })
 public class RutaDiariaContenedores {
 
+	RutaDiariaContenedores() {
+
+	}
+
 	/**
 	 * 
 	 * @param ruta
