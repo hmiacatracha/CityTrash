@@ -10,6 +10,7 @@ import es.udc.citytrash.controller.util.dtos.ruta.RutaDiariaDto;
 import es.udc.citytrash.controller.util.dtos.ruta.RutaDto;
 import es.udc.citytrash.controller.util.dtos.ruta.RutasDiariaFormBusq;
 import es.udc.citytrash.controller.util.dtos.ruta.RutasFormBusq;
+import es.udc.citytrash.model.alerta.Alerta;
 import es.udc.citytrash.model.contenedor.Contenedor;
 import es.udc.citytrash.model.ruta.Ruta;
 import es.udc.citytrash.model.rutaDiaria.RutaDiaria;
@@ -138,12 +139,62 @@ public interface RutaService {
 	RutaDiaria actualizarRutaDiaria(RutaDiariaDto form) throws DuplicateInstanceException, InstanceNotFoundException,
 			RutaIniciadaException, InactiveResourceException;
 
-
 	/**
 	 * Buscar los contenedores que pertenecen a una ruta diaria
+	 * 
 	 * @param rutaDiariaId
 	 * @return
 	 */
 	List<Contenedor> buscarContenedoresDeRutaDiaria(long rutaDiariaId);
+
+	/**
+	 * Ruta diaria contenedor
+	 * 
+	 * @param rutaDiariaId
+	 * @param contenedorId
+	 * @return
+	 * @throws InstanceNotFoundException
+	 */
+	RutaDiariaContenedores rutaDiariaContenedor(long rutaDiariaId, long contenedorId) throws InstanceNotFoundException;
+
+	/**
+	 * Crear alerta contenedor lleno
+	 */
+	void crearAlertaContenedoresLlenos();
+
+	/*
+	 * Crear alerta cambio brusco de volumen
+	 */
+	void crearAlertaCambioBruscoContenedor();
+
+	/**
+	 * Crear alerta ruta sin recolectores asignados
+	 */
+	void crearAlertaRutaSinRecolectoresAsignado();
+
+	/**
+	 * Crar alerta ruta sin conductor asignado
+	 */
+	void crearAlertaRutaSinConductorAsignado();
+
+	/**
+	 * Crear alerta trabajadores asignados a más de una ruta
+	 */
+	void crearAlertaTrabajadoresAsignadosAMasDeUnaRuta();
+
+	/**
+	 * Devuelve las alertas generadas
+	 * 
+	 * @param pageable
+	 * @return
+	 */
+	Page<Alerta> buscarAlertas(Pageable pageable);
+
+	/**
+	 * Obtener el número de alertas
+	 * 
+	 * @return
+	 */
+	int getNumeroAlertas();
 
 }

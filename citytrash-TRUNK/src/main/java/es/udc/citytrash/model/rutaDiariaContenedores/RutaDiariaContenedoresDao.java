@@ -12,4 +12,6 @@ import es.udc.citytrash.model.util.genericdao.GenericDAO;
 
 public interface RutaDiariaContenedoresDao extends GenericDAO<RutaDiariaContenedores, RutaDiariaContenedoresPK> {
 
+	
+	
 }

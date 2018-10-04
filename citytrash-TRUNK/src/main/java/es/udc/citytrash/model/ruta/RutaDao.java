@@ -48,5 +48,5 @@ public interface RutaDao extends GenericDAO<Ruta, Integer> {
 	 * @return
 	 */
 	List<Ruta> buscarRutas(boolean mostrarSoloRutasActivas);
-
+	
 }

@@ -43,6 +43,15 @@ input.capitalize {
 	text-transform: capitalize;
 }
 
+prioridad_cuadro {
+	width: 25;
+	height: 25;
+	border-radius: 20%;
+	color: #fff;
+	text-align: center;
+	background: #fcaf3e
+}
+
 .basura_color_cuadro {
 	width: 25;
 	height: 25;
@@ -372,6 +381,16 @@ select.form-control, input.form-control, option.form-control {
 }
 
 /* Map Styles*/
+#mapaContenedores {
+	position: absolute;
+	top: 17%;
+	bottom: 0;
+	left: 5%;
+	right: 5%;
+	width: 90%;
+	margin: 0 auto;
+}
+
 #map {
 	position: absolute;
 	top: 17%;
@@ -380,7 +399,6 @@ select.form-control, input.form-control, option.form-control {
 	right: 10%;
 	width: 90%;
 	margin: 0 auto;
-	<<<<<<<
 	HEAD
 }
 

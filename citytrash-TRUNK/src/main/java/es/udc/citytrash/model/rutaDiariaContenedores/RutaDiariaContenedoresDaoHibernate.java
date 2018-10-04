@@ -1,6 +1,7 @@
 package es.udc.citytrash.model.rutaDiariaContenedores;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -27,5 +28,6 @@ public class RutaDiariaContenedoresDaoHibernate extends
 		GenericHibernateDAOImpl<RutaDiariaContenedores, RutaDiariaContenedoresPK> implements RutaDiariaContenedoresDao {
 
 	final Logger logger = LoggerFactory.getLogger(RutaDiariaContenedoresDaoHibernate.class);
+
 
 }

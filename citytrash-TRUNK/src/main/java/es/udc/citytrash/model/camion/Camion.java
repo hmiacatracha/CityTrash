@@ -134,21 +134,21 @@ public class Camion implements Serializable {
 	@ManyToOne(optional = true, fetch = FetchType.LAZY)
 	@JoinColumn(name = "RECOGEDOR_ASIGNADO1")
 	public Trabajador getRecogedor1() {
-		return recogedor1;
+		return recolector1;
 	}
 
 	public void setRecogedor1(Trabajador recogedor) {
-		this.recogedor1 = recogedor;
+		this.recolector1 = recogedor;
 	}
 
 	@ManyToOne(optional = true, fetch = FetchType.LAZY)
 	@JoinColumn(name = "RECOGEDOR_ASIGNADO2")
 	public Trabajador getRecogedor2() {
-		return recogedor2;
+		return recolector2;
 	}
 
 	public void setRecogedor2(Trabajador recogedor) {
-		this.recogedor2 = recogedor;
+		this.recolector2 = recogedor;
 	}
 
 	@ManyToOne(optional = true, fetch = FetchType.LAZY)
@@ -190,8 +190,8 @@ public class Camion implements Serializable {
 	private Calendar fechaAlta;
 	private Calendar fechaBaja;
 	private CamionModelo modeloCamion;
-	private Trabajador recogedor1;
-	private Trabajador recogedor2;
+	private Trabajador recolector1;
+	private Trabajador recolector2;
 	private Trabajador conductor;
 	private Trabajador conductorSuplente;
 	private Boolean activo;

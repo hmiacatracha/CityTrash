@@ -21,7 +21,7 @@
 		<!-- SQL dialect -->
 		<property name="hibernate.dialect">${hibernate.dialect}</property>
 		<!-- mapping -->
-		<mapping class="es.udc.citytrash.model.prioridad.Prioridad" />
+		<mapping class="es.udc.citytrash.model.alerta.Alerta" />
 		<mapping class="es.udc.citytrash.model.trabajador.Trabajador" />
 		<mapping class="es.udc.citytrash.model.trabajador.Conductor" />
 		<mapping class="es.udc.citytrash.model.trabajador.Recolector" />
@@ -32,7 +32,6 @@
 		<mapping class="es.udc.citytrash.model.camionModeloTipoDeBasura.CamionModeloTipoDeBasura"/>
 		<mapping class="es.udc.citytrash.model.contenedor.Contenedor"/>
 		<mapping class="es.udc.citytrash.model.contenedorModelo.ContenedorModelo"/>
-		<mapping class="es.udc.citytrash.model.telefono.Telefono"/>
 		<mapping class="es.udc.citytrash.model.sensor.Sensor"/>
 		<mapping class="es.udc.citytrash.model.sensor.Bateria"/>
 		<mapping class="es.udc.citytrash.model.sensor.Temperatura"/>

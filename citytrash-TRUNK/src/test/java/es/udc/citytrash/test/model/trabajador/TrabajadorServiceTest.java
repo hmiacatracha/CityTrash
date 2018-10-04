@@ -5,6 +5,7 @@ import static es.udc.citytrash.util.GlobalNames.SPRING_CONFIG_FILE;
 import static es.udc.citytrash.util.GlobalNames.SPRING_SECURITY_FILE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -195,7 +196,7 @@ public class TrabajadorServiceTest {
 		trabajadorService.registrar(frmRegistro_CONDUCT);
 	}
 
-	//@Test
+	// @Test
 	public void verificarFormatoFormRegistroError() {
 		Trabajador t = null;
 		try {
@@ -349,140 +350,6 @@ public class TrabajadorServiceTest {
 	}
 
 	@Test
-	public void buscarTrabajadoresVacio() {
-		int psize = 1;
-		int pnum = 0;
-		String campoSort = "id";
-		Pageable pageable = createPageRequest(pnum, psize, campoSort);
-		/*
-		 * Comprobamos que no haya trabajadores en la base de datos, porque aun
-		 * no hemos registrado ninguno
-		 */
-		Page<Trabajador> page = trabajadorService.buscarTrabajadores(pageable, true);
-		assertTrue(page.getContent().isEmpty());
-	}
-
-	@Test
-	public void buscarTrabajadoresNoVacio() {
-		int psize = 3;
-		int pnum = 0;
-		String campoSort = "id";
-		Pageable pageable = createPageRequest(pnum, psize, campoSort);
-		/*
-		 * Comprobamos que no haya trabajadores en la base de datos, porque aun
-		 * no hemos registrado ninguno
-		 */
-		Page<Trabajador> page = trabajadorService.buscarTrabajadores(pageable, true);
-		List<Trabajador> trabajadores = new ArrayList<Trabajador>();
-
-		try {
-			// Añadimos tres trabajadores en la base de datos
-			trabajadores.add(trabajadorService.registrar(frmRegistro_ADMIN));
-			trabajadores.add(trabajadorService.registrar(frmRegistro_CONDUCT));
-			trabajadores.add(trabajadorService.registrar(frmRegistro_RECOLEC));
-
-		} catch (DuplicateInstanceException e) {
-			assert (false);
-		}
-		/*
-		 * Comprobamos que ahora que hemos registrado trabajadores si buscamos
-		 * aparezcan
-		 */
-		page = trabajadorService.buscarTrabajadores(pageable, true);
-		assertFalse(page.getContent().isEmpty());
-		assertEquals(psize, page.getContent().size());
-	}
-
-	@Test
-	public void buscarTrabajadoresTodosConFrmBusqueda() throws FormBusquedaException {
-		int psize = 3;
-		int pnum = 0;
-		int elementosTotales = 0;
-		String campoSort = "id";
-		TrabajadorBusqFormDto formBusqueda = new TrabajadorBusqFormDto();
-		Pageable pageable = createPageRequest(pnum, psize, campoSort);
-
-		Page<Trabajador> page = trabajadorService.buscarTrabajadores(pageable, true);
-		List<Trabajador> trabajadores = new ArrayList<Trabajador>();
-		assertTrue(page.getContent().isEmpty());
-
-		try {
-			// Añadimos tres trabajadores en la base de datos
-			trabajadores.add(trabajadorService.registrar(frmRegistro_ADMIN));
-			trabajadores.add(trabajadorService.registrar(frmRegistro_CONDUCT));
-			trabajadores.add(trabajadorService.registrar(frmRegistro_RECOLEC));
-
-		} catch (DuplicateInstanceException e) {
-			assert (false);
-		}
-		/* Realizamos busqueda sin ningun filtro de busqueda */
-		logger.info("paso1");
-		formBusqueda.setBuscar("");
-		formBusqueda.setTipo(TipoTrabajador.NONE.name());
-		formBusqueda.setCampo(CampoBusqTrabajador.nombre.name());
-		formBusqueda.setMostrarTodosLosTrabajadores(true);
-		page = trabajadorService.buscarTrabajadores(pageable, formBusqueda);
-		elementosTotales = trabajadorDao.buscarTodos().size();
-		assertFalse(page.getContent().isEmpty());
-		assertEquals(elementosTotales, page.getSize());
-	}
-
-	@Test
-	public void buscarTrabajadoresEnUnaSolaPagina() {
-		int psize = 1;
-		int pnum = 0;
-		int elementosTotales = 0;
-		int elementos = 0;
-		String campoSort = "id";
-		Pageable pageable = createPageRequest(pnum, psize, campoSort);
-		/*
-		 * Comprobamos que no haya trabajadores en la base de datos, porque aun
-		 * no hemos registrado ninguno
-		 */
-		Page<Trabajador> page = trabajadorService.buscarTrabajadores(pageable, true);
-		List<Trabajador> trabajadores = new ArrayList<Trabajador>();
-
-		try {
-			// Añadimos tres trabajadores en la base de datos
-			trabajadores.add(trabajadorService.registrar(frmRegistro_ADMIN));
-			trabajadores.add(trabajadorService.registrar(frmRegistro_CONDUCT));
-			trabajadores.add(trabajadorService.registrar(frmRegistro_RECOLEC));
-
-		} catch (DuplicateInstanceException e) {
-			assert (false);
-		}
-		// recuperamos todos los items en una sola pagina
-		elementos = 0;
-		elementosTotales = trabajadorDao.buscarTodos().size();
-		psize = elementosTotales;
-
-		pnum = 0;
-		elementos = ((pnum + 1) * psize <= elementosTotales) ? psize
-				: ((pnum + 1) * psize - elementosTotales) >= psize ? 0 : ((pnum + 1) * psize - elementosTotales);
-		pageable = createPageRequest(pnum, psize, campoSort);
-		page = trabajadorService.buscarTrabajadores(pageable, true);
-		logger.error("elementos 1 => " + elementos);
-		assertEquals(elementos, page.getNumberOfElements());
-
-		pnum = 1;
-		elementos = ((pnum + 1) * psize <= elementosTotales) ? psize
-				: ((pnum + 1) * psize - elementosTotales) >= psize ? 0 : ((pnum + 1) * psize - elementosTotales);
-		pageable = createPageRequest(pnum, psize, campoSort);
-		page = trabajadorService.buscarTrabajadores(pageable, true);
-		logger.error("elementos 2=> " + elementos);
-		assertEquals(elementos, page.getNumberOfElements());
-
-		pnum = 2;
-		elementos = ((pnum + 1) * psize <= elementosTotales) ? psize
-				: ((pnum + 1) * psize - elementosTotales) >= psize ? 0 : ((pnum + 1) * psize - elementosTotales);
-		pageable = createPageRequest(pnum, psize, campoSort);
-		page = trabajadorService.buscarTrabajadores(pageable, true);
-		logger.error("elementos 3=> " + elementos);
-		assertEquals(elementos, page.getNumberOfElements());
-
-	}
-
-	@Test
 	public void buscarTrabajadoresEnUnaSolaPaginaConFrmBusqueda() throws FormBusquedaException {
 		int psize = 3;
 		int pnum = 0;
@@ -492,7 +359,7 @@ public class TrabajadorServiceTest {
 		TrabajadorBusqFormDto formBusqueda = new TrabajadorBusqFormDto();
 		Pageable pageable = createPageRequest(pnum, psize, campoSort);
 
-		Page<Trabajador> page = trabajadorService.buscarTrabajadores(pageable, true);
+		Page<Trabajador> page = null;
 		List<Trabajador> trabajadores = new ArrayList<Trabajador>();
 
 		try {
@@ -543,56 +410,6 @@ public class TrabajadorServiceTest {
 		assertEquals(elementos, page.getNumberOfElements());
 		assertEquals(3, page.getNumberOfElements());
 
-	}
-
-	public void buscarTrabajadoresEnVariasPaginas() {
-		int psize = 1;
-		int pnum = 0;
-		int elementosTotales = 0;
-		int elementos = 0;
-		String campoSort = "id";
-		Pageable pageable = createPageRequest(pnum, psize, campoSort);
-		/*
-		 * Comprobamos que no haya trabajadores en la base de datos, porque aun
-		 * no hemos registrado ninguno
-		 */
-		Page<Trabajador> page = trabajadorService.buscarTrabajadores(pageable, true);
-		List<Trabajador> trabajadores = new ArrayList<Trabajador>();
-
-		try {
-			// Añadimos tres trabajadores en la base de datos
-			trabajadores.add(trabajadorService.registrar(frmRegistro_ADMIN));
-			trabajadores.add(trabajadorService.registrar(frmRegistro_CONDUCT));
-			trabajadores.add(trabajadorService.registrar(frmRegistro_RECOLEC));
-
-		} catch (DuplicateInstanceException e) {
-			assert (false);
-		}
-
-		/* Varias paginas */
-		elementosTotales = 3;
-		psize = elementosTotales - 1;
-
-		pnum = 0;
-		elementos = ((pnum + 1) * psize <= elementosTotales) ? psize
-				: ((pnum + 1) * psize - elementosTotales) >= psize ? 0 : ((pnum + 1) * psize - elementosTotales);
-		pageable = createPageRequest(pnum, psize, campoSort);
-		page = trabajadorService.buscarTrabajadores(pageable, true);
-		assertEquals(elementos, page.getNumberOfElements());
-
-		pnum = 1;
-		elementos = ((pnum + 1) * psize <= elementosTotales) ? psize
-				: ((pnum + 1) * psize - elementosTotales) >= psize ? 0 : ((pnum + 1) * psize - elementosTotales);
-		pageable = createPageRequest(pnum, psize, campoSort);
-		page = trabajadorService.buscarTrabajadores(pageable, true);
-		assertEquals(elementos, page.getNumberOfElements());
-
-		pnum = 2;
-		elementos = ((pnum + 1) * psize <= elementosTotales) ? psize
-				: ((pnum + 1) * psize - elementosTotales) >= psize ? 0 : ((pnum + 1) * psize - elementosTotales);
-		pageable = createPageRequest(pnum, psize, campoSort);
-		page = trabajadorService.buscarTrabajadores(pageable, true);
-		assertEquals(elementos, page.getNumberOfElements());
 	}
 
 	@Test
@@ -914,27 +731,21 @@ public class TrabajadorServiceTest {
 	}
 
 	@Test(expected = InstanceNotFoundException.class)
-	public void darDeBajaATrabajadorNoExistente() throws InstanceNotFoundException {
-		trabajadorService.desactivarTrabajador(T_ID_NO_EXISTENTE);
+	public void cambiarEstadoTrabajador() throws InstanceNotFoundException {
+		trabajadorService.cambiarEstadoTrabajador(T_ID_NO_EXISTENTE);
 	}
 
 	@Test
 	public void darDeBajaATrabajadoExistente() throws InstanceNotFoundException, DuplicateInstanceException {
 		Trabajador t = trabajadorService.registrar(frmRegistro_ADMIN);
-		trabajadorService.desactivarTrabajador(t.getId());
-		assertFalse(t.isActiveWorker());
+		boolean estado = t.isActiveWorker();
+		trabajadorService.cambiarEstadoTrabajador(t.getId());
+		assertNotEquals(estado, t.isActiveWorker());
 	}
 
 	@Test(expected = InstanceNotFoundException.class)
 	public void activarATrabajadorNoExistente() throws InstanceNotFoundException {
-		trabajadorService.activarTrabajador(T_ID_NO_EXISTENTE);
-	}
-
-	@Test
-	public void activarTrabajadoExistente() throws InstanceNotFoundException, DuplicateInstanceException {
-		Trabajador t = trabajadorService.registrar(frmRegistro_ADMIN);
-		trabajadorService.activarTrabajador(t.getId());
-		assertTrue(t.isActiveWorker());
+		trabajadorService.cambiarEstadoTrabajador(T_ID_NO_EXISTENTE);
 	}
 
 	private Pageable createPageRequest(int page, int size, String campoSort) {

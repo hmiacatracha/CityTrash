@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import es.udc.citytrash.controller.util.anotaciones.ModeloContenedorNombreUnico;
 import es.udc.citytrash.model.contenedorService.ContenedorService;
+import es.udc.citytrash.model.util.excepciones.InstanceNotFoundException;
 
 @Component
 public class ModeloContenedorNombreUnicoImpl implements ConstraintValidator<ModeloContenedorNombreUnico, String> {
@@ -25,6 +26,12 @@ public class ModeloContenedorNombreUnicoImpl implements ConstraintValidator<Mode
 
 	@Override
 	public boolean isValid(String nombre, ConstraintValidatorContext context) {
-		return !cServicio.esModeloContenedorByNombreExistente(nombre);
+		try {
+			cServicio.buscarModeloContenedorByNombre(nombre);
+			return false;
+		} catch (InstanceNotFoundException e) {
+			return true;
+		}
+
 	}
 }

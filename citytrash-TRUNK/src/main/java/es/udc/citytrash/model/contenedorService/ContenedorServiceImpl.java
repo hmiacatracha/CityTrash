@@ -1,6 +1,7 @@
 package es.udc.citytrash.model.contenedorService;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -21,6 +22,7 @@ import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorModeloEditarDt
 import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorModeloFormBusq;
 import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorModeloRegistroDto;
 import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorRegistroDto;
+import es.udc.citytrash.controller.util.dtos.estadisticas.ComparativaPorTipoReciclado;
 import es.udc.citytrash.controller.util.dtos.sensor.SensorDto;
 import es.udc.citytrash.model.contenedor.Contenedor;
 import es.udc.citytrash.model.contenedor.ContenedorDao;
@@ -38,6 +40,8 @@ import es.udc.citytrash.model.tipoDeBasura.TipoDeBasuraDao;
 import es.udc.citytrash.model.util.excepciones.DuplicateInstanceException;
 import es.udc.citytrash.model.util.excepciones.InstanceNotFoundException;
 import es.udc.citytrash.model.util.excepciones.InvalidFieldException;
+import es.udc.citytrash.util.enums.TipoComparativa;
+import es.udc.citytrash.util.enums.TipoSensor;
 
 @Service("contenedorService")
 @Transactional
@@ -60,48 +64,6 @@ public class ContenedorServiceImpl implements ContenedorService {
 
 	final Logger logger = LoggerFactory.getLogger(ContenedorServiceImpl.class);
 
-	@Override
-	public boolean esModeloExistenteById(int modelo) {
-		boolean existe = false;
-		try {
-			modeloDao.buscarById(modelo);
-			existe = true;
-		} catch (InstanceNotFoundException i) {
-			existe = false;
-		}
-		return existe;
-	}
-
-	@Transactional(readOnly = true)
-	@Override
-	public boolean esContenedorByNombreExistente(String nombre) {
-		try {
-			contenedorDao.buscarByNombre(nombre);
-			return true;
-		} catch (InstanceNotFoundException e) {
-			return false;
-		}
-	}
-
-	@Transactional(readOnly = true)
-	@Override
-	public boolean esModeloContenedorByNombreExistente(String nombre) {
-		try {
-			modeloDao.buscarModeloPorNombre(nombre);
-			return true;
-		} catch (InstanceNotFoundException e) {
-			return false;
-		}
-	}
-
-	@Override
-	public boolean cambiarEstadoContenedor(long id) throws InstanceNotFoundException {
-		Contenedor contenedor = contenedorDao.buscarById(id);
-		contenedor.setActivo(!contenedor.getActivo());
-		contenedorDao.guardar(contenedor);
-		return contenedor.getActivo();
-	}
-
 	@Transactional(readOnly = true)
 	@Override
 	public Contenedor buscarContenedorById(long id) throws InstanceNotFoundException {
@@ -114,18 +76,22 @@ public class ContenedorServiceImpl implements ContenedorService {
 
 	@Transactional(readOnly = true)
 	@Override
+	public Contenedor buscarContenedorByNombre(String nombre) throws InstanceNotFoundException {
+		return contenedorDao.buscarByNombre(nombre);
+	}
+
+	@Transactional(readOnly = true)
+	@Override
 	public ContenedorModelo buscarModeloById(int id) throws InstanceNotFoundException {
 		ContenedorModelo modelo = modeloDao.buscarById(id);
 		return modelo;
 	}
 
-	/*
-	 * @Transactional(readOnly = true)
-	 * 
-	 * @Override public List<ContenedorModelo>
-	 * buscarTodosLosModelosOrderByModelo() { List<ContenedorModelo> modelos =
-	 * modeloDao.buscarTodosOrderByModelo(); return modelos; }
-	 */
+	@Transactional(readOnly = true)
+	@Override
+	public ContenedorModelo buscarModeloContenedorByNombre(String nombre) throws InstanceNotFoundException {
+		return modeloDao.buscarModeloPorNombre(nombre);
+	}
 
 	@Transactional(readOnly = true)
 	@Override
@@ -138,12 +104,6 @@ public class ContenedorServiceImpl implements ContenedorService {
 	@Override
 	public List<TipoDeBasura> buscarTiposDeBasura() {
 		return tipoDao.buscarTodos();
-	}
-
-	@Transactional(readOnly = true)
-	@Override
-	public TipoDeBasura buscarTipoDeBasuraByModelo(int id) throws InstanceNotFoundException {
-		return tipoDao.buscarById(modeloDao.buscarById(id).getTipo().getId());
 	}
 
 	@Transactional(readOnly = true)
@@ -243,6 +203,14 @@ public class ContenedorServiceImpl implements ContenedorService {
 			}
 		}
 		return contenedorDao.buscarById(contenedor.getId());
+	}
+
+	@Override
+	public boolean cambiarEstadoContenedor(long id) throws InstanceNotFoundException {
+		Contenedor contenedor = contenedorDao.buscarById(id);
+		contenedor.setActivo(!contenedor.getActivo());
+		contenedorDao.guardar(contenedor);
+		return contenedor.getActivo();
 	}
 
 	@Override
@@ -396,7 +364,7 @@ public class ContenedorServiceImpl implements ContenedorService {
 
 	@Transactional(readOnly = true)
 	@Override
-	public List<Contenedor> buscarContenedoresDiponiblesParaUnaRuta(List<Integer> tiposDeBasura) {
+	public List<Contenedor> buscarContenedoresDiponiblesParaRutas(List<Integer> tiposDeBasura) {
 		List<TipoDeBasura> tipos = new ArrayList<TipoDeBasura>();
 
 		/* Agregamos los tipos de basura */
@@ -493,26 +461,58 @@ public class ContenedorServiceImpl implements ContenedorService {
 
 	@Transactional(readOnly = true)
 	@Override
-	public List<Sensor> buscarSensorsByContenedor(Long contenedorId) throws InstanceNotFoundException {
-		return sensorDao.buscarSensoresByContenedor(contenedorId);
-	}
-
-	@Transactional(readOnly = true)
-	@Override
-	public Page<Valor> buscarValoresBySensor(Pageable pageable, Long sensorId) {
-		return valorDao.buscarValoresBySensor(pageable, sensorId);
-	}
-
-	@Transactional(readOnly = true)
-	@Override
 	public List<Valor> buscarValoresBySensor(Long sensorId, Date fechaInicio, Date fechaFin) {
 		return valorDao.buscarValoresBySensor(sensorId, fechaInicio, fechaFin);
 	}
 
+	@Override
+	public List<ComparativaPorTipoReciclado> comparativaPorTipoReciclado(TipoComparativa tipoComparativa,
+			List<Integer> tiposDeBasura) {
+		Calendar fechaActual = Calendar.getInstance();
+		fechaActual.set(Calendar.HOUR_OF_DAY, 0);
+		Calendar fechaAnterior = Calendar.getInstance();
+		fechaAnterior.set(Calendar.HOUR_OF_DAY, 0);
+
+		switch (tipoComparativa) {
+		case DAY:
+			fechaAnterior.add(Calendar.DATE, -1);
+			break;
+		case MONTH:
+			fechaAnterior.add(Calendar.MONTH, -1);
+			break;
+		default:
+			fechaAnterior.add(Calendar.YEAR, -1);
+		}
+		List<ComparativaPorTipoReciclado> comparativa = new ArrayList<ComparativaPorTipoReciclado>();
+
+		for (Integer tipoBasuraId : tiposDeBasura) {
+			ComparativaPorTipoReciclado estadistica = new ComparativaPorTipoReciclado();
+			if (tipoBasuraId != null) {
+				try {
+					TipoDeBasura tipo = tipoDao.buscarById(tipoBasuraId);
+					estadistica.setTipoDeBasura(tipo);
+					logger.info("tipo de basura antes de buscar media" + tipo);
+					estadistica.setActual(
+							valorDao.buscarMediaDeVolumen(tipoBasuraId, tipoComparativa, fechaActual.getTime()));
+					SimpleDateFormat format1 = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+					logger.info("FECHAS hoy =" + format1.format(fechaActual.getTime()) + " ayer => "
+							+ format1.format(fechaAnterior.getTime()));
+					estadistica.setAnterior(
+							valorDao.buscarMediaDeVolumen(tipoBasuraId, tipoComparativa, fechaAnterior.getTime()));
+					comparativa.add(estadistica);
+				} catch (InstanceNotFoundException e) {
+
+				}
+			}
+		}
+		logger.info("comparativa => " + comparativa.toString());
+		return comparativa;
+	}
+
 	private static Calendar dateToCalendar(Date date) {
 		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
 		calendar.setTime(date);
 		return calendar;
 	}
-
 }

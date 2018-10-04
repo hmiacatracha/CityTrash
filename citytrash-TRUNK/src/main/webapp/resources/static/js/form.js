@@ -1,6 +1,5 @@
 
 jQuery(function($) {
-
 	/*Evento que muestra la lista de una lista al pasar con el raton, en vez de darle click que es el que trae por defecto */
 	$(document).on("mouseenter mouseleave click tap", ".dropdown", function(e) {
 		//console.log("EVENT => mouseenter mouseleave click tap");
@@ -187,6 +186,8 @@ jQuery(function($) {
 		});
 	});
 
+
+
 	/*Muestra el filtro de los modelos by tipo de basura en las paginas de contenedores */
 	$(document).on('change', '#tipoDeBasuraFormBusqPageContenedores', function(e) {
 		try {
@@ -209,6 +210,7 @@ jQuery(function($) {
 		}
 	});
 
+
 	/*Muestra el filtro de los modelos by tipo de basura en las paginas de rutas */
 	$(document).on('change', '#tipoDeBasuraFormBusqPageRutas', function(e) {
 		try {
@@ -226,7 +228,6 @@ jQuery(function($) {
 					contenedores.html(data).selectpicker("refresh");
 				}
 			});
-
 			/*Load camiones */
 			$.ajax({
 				type : "GET",
@@ -415,6 +416,27 @@ jQuery(function($) {
 		});
 	});
 
+	/*Muestra el número de items que tiene una alerta actualiza cada 10 segundos */
+	function updateAlertItems() {
+		//console.log("updateAlertItems");
+		try {
+			/*Load numero de items */
+			$.ajax({
+				type : "GET",
+				url : '/citytrash/rutas/alertas/numItems',
+				success : function(data) {
+					//console.log("updateAlertItems mumero de items =>" + data);
+					$("#numeroDeAlertas").text(data);
+				}
+			});
+		} catch (err) {
+			//console.log("error updateAlertItems");
+			$("#numeroDeAlertas").text(data);																															ext("0");
+		}
+	}
+	updateAlertItems();
+	var numberUpdate = setInterval(updateAlertItems, 120000);
+
 	/*Si es una venta modal y tiene un formulario, al cerrarse limpia el formulario */
 	$(document).on("submit", "#busquedaTrabajadoresForm", function(e) {
 		//alert("pasa por aqui");
@@ -458,7 +480,5 @@ jQuery(function($) {
 				}
 			
 		});}*/
-
 	});
-
 });

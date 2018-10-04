@@ -3,33 +3,68 @@
 	xmlns:th="http://www.thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{layouts/rutas}" th:with="currentPage='rutas'">
+	layout:decorate="~{layouts/default}" th:with="currentPage='rutas'">
 <head>
-<title th:text="#{page_rutas}"></title>
+<title th:text="#{page_rutas_navegar}"></title>
 </head>
-
 <body class="formularios">
 	<div id="content" class="container" th:fragment="content"
-		th:remove="tag" th:if="${rutaForm}!=null">
+		th:remove="tag" th:if="${rutaDiaria}!=null">
 
 		<div
-			class="col-sm-12 col-md-offset-2 col-md-8 col-lg-offset-2 col-lg-8">
-			<div class="panel panel-default" th:object="${rutaForm}">
+			class="col-sm-12 col-md-offset-1 col-md-10 col-lg-offset-2 col-lg-8">
+
+			<div class="panel panel-default" th:object="${rutaDiaria}">
 
 				<div class="panel-heading">
-					<!-- titutlo -->
-					<h3 th:if="${rutaForm.id}!=null" class="text-center text-success"
-						th:text="${#strings.toUpperCase('__#{lbl_detalles}__')} +  ' ' 
-						+ ${#strings.toUpperCase('__#{ruta}__')} + ' #' + *{id}"></h3>
+					<!--  generar rutas diarias si es admin-->
+					<a th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}"
+						data-toggle="tooltip" th:title="#{lbl_generar_rutas}"
+						class="btn btn-default" th:href="@{#{link.rutas.generar}}"
+						role="button"><img
+						th:src="@{/resources/static/img/route4.svg}"
+						th:alt="#{page_rutas}" width=32 height=32 /></a> <br>
+
+					<!-- titulo -->
+					<h3 class="text-center text-success"
+						th:text="${#strings.toUpperCase('__#{lbl_ruta_diaria}__')} + ' #' + *{ruta.id}"></h3>
+
+					<h4 class="text-center text-success"
+						th:text="${#strings.toUpperCase('__${#calendars.format(rutaDiaria.fecha,'dd-MMM-yyyy')}__')}"></h4>
+
+					<!-- tipos de basura -->
+					<table class="center">
+						<tr>
+							<th></th>
+							<th th:each="
+						item, row: ${rutaDiaria.tiposDeBasura}"
+								th:style="'background: #' + ${item.color}"
+								class="basura_color_cuadro"></th>
+						</tr>
+					</table>
 
 					<div class="col-xs-12 text-right">
 						<div class="btn-group text-center">
-							<a th:href="@{#{link.rutas.editar}(id=*{id})}" class="btn-sm"><i
-								class="glyphicon glyphicon-pencil"></i></a><a
-								th:href="@{#{link.rutas.registro}}" class="btn-sm"><i
-								class="glyphicon glyphicon-plus"></i> </a> <a
-								th:href="@{#{link.rutas}}" class="btn-sm"> <i
+							<!-- editar ruta diaria si es admin-->
+							<a
+								th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}"
+								th:href="@{#{link.rutas.historial.editar}(id=*{id})}"
+								class="btn-sm" data-toggle="tooltip" th:title="#{lbl_editar}"><i
+								class="glyphicon glyphicon-pencil"></i></a>
+
+							<!--  listado de rutas diarias si es admin-->
+							<a
+								th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}"
+								th:href="@{#{link.rutas.rutasdiarias}(from=${#calendars.format(rutaDiaria.fecha, 'dd/MM/yyyy')}, to=${#calendars.format(rutaDiaria.fecha, 'dd/MM/yyyy')})}"
+								class="btn-sm" data-toggle="tooltip"
+								th:title="#{lbl_historial_rutas}"> <i
 								class="glyphicon glyphicon-list"></i>
+							</a>
+							<!-- my historial de rutas si esta autenticado -->
+							<a th:if="${#authorization.expression('isAuthenticated()')}"
+								th:href="@{#{link.rutas.misrutas}}" class="btn-sm"
+								data-toggle="tooltip" th:title="#{lbl_historial_mis_rutas}">
+								<i class="glyphicon glyphicon-list-alt"></i>
 							</a>
 						</div>
 					</div>
@@ -39,74 +74,115 @@
 				<div class="panel-body">
 					<input th:if="*{id}" type="hidden"
 						class="mayusculas col-sm-6 form-control" id="id" th:field="*{id}" />
+					<input th:if="*{id}" type="hidden"
+						class="mayusculas col-sm-6 form-control" id="rutaId"
+						th:field="*{ruta.id}" />
 
 					<div class="table-responsive">
 						<table class="table table-hover">
-							<tbody th:object="${rutaForm}">
-								<tr>
-									<td class="text-success" th:text="#{lbl_tipo_basura_recoger}"></td>
-									<td>
-										<table class="table table-responsive">
-											<thead class="text-success">
-												<tr>
-													<th scope="col">#</th>
-													<th scope="col" colspan="2" th:text="#{lbl_tipo}">Tipo</th>
-													<th scope="col" th:text="#{lbl_color}">Color</th>
-												</tr>
-											</thead>
-											<tbody th:if="${tiposDeBasuraAsignadas.size()> 0}"
-												class="text-success">
-												<tr th:each="item, rowStat : ${tiposDeBasuraAsignadas}">
-													<td th:text="${rowStat.index+1}"></td>
-													<td colspan="2" th:text="#{${item.tipo}}">Name</td>
-													<td><div th:style="'background: #' + ${item.color}"
-															class="basura_color_cuadro"></div>
-												</tr>
-
-											</tbody>
-										</table>
-									</td>
-								</tr>
-
+							<tbody th:object="${rutaDiaria}">
 								<tr>
 									<td class="text-success" th:text="#{lbl_camion_asignado}"></td>
 									<td>
 										<p>
-											<a th:text="${#strings.toUpperCase(camionAsignado.nombre)}"
-												th:href="@{#{link.camiones.detalles}(id=${camionAsignado.id})}"
+											<a th:text="${#strings.toUpperCase('__*{camion.nombre}__')}"
+												th:href="@{#{link.camiones.detalles}(id=*{camion.id})}"
 												class="btn-sm"> </a>
 										</p>
 									</td>
 								</tr>
+
 								<tr>
 									<td class="text-success"
 										th:text="#{frm_header_lista_contenedores}"></td>
 									<td>
 										<table class="table table-hover table-responsive">
 											<thead class="text-success">
-												<tr>
+												<tr th:if="*{rutaDiariaContenedores.size()>0}">
 													<th scope="col">#</th>
 													<th scope="col" th:text="#{lbl_contenedor}"></th>
 													<th scope="col" th:text="#{lbl_tipo}"></th>
+													<th scope="col" th:text="#{lbl_sugerencia}"></th>
+													<th scope="col" th:text="#{lbl_recogio}"></th>
+													<th scope="col" th:text="#{lbl_fecha}"></th>
 													<th scope="col"></th>
 												</tr>
 											</thead>
-											<tbody th:if="${contenedoresAsignados.size()> 0}"
+											<tbody th:if="*{rutaDiariaContenedores.size()>0}"
 												class="text-success">
-												<tr th:each="item, rowStat : ${contenedoresAsignados}">
+												<tr th:each="item, rowStat : *{rutaDiariaContenedores}">
 													<td th:text="${rowStat.index+1}"></td>
 													<td>
-
 														<p>
-															<a th:text="${#strings.toUpperCase(item.nombre)}"
-																th:href="@{#{link.contenedores.detalles}(id=${item.id})}"
+															<a
+																th:text="${#strings.toUpperCase(item.pk.contenedor.nombre)}"
+																th:href="@{#{link.contenedores.detalles}(id=${item.pk.contenedor.id})}"
 																class="btn-sm"> </a>
 														</p>
+
+														<table th:if="${item.pk.contenedor.sensores.size()>0}">
+															<tr>
+																<th class="col-xs-1 col-sm-1">#</th>
+																<th class="text-success" th:text="#{lbl_sensor_tipo}">tipo</th>
+																<th class="text-success" th:text="#{lbl_sensor_nombre}">nombre</th>
+																<th class="text-success" th:text="#{lbl_sensor_nivel}">nivel</th>
+															</tr>
+															<tr
+																th:each="sensor, rowStat : ${item.pk.contenedor.sensores}">
+
+																<!-- numero de fila -->
+																<td id="numFila" class="col-xs-1 text-success"
+																	th:text="${rowStat.index+1}"></td>
+																<!-- tipo de sensor -->
+																<td id="tipoSensor" th:text="#{${sensor.sensorType}}"></td>
+																<!-- nombre -->
+																<td id="nombre" th:text="${sensor.nombre}"></td>
+																<!-- nivel -->
+																<!-- capacidad -->
+																<td></td>
+																<td
+																	th:if="${sensor instanceof T(es.udc.citytrash.model.sensor.Bateria)}"
+																	th:text="${sensor.porcentajeBateria} + '%'"></td>
+
+																<td
+																	th:if="${sensor instanceof T(es.udc.citytrash.model.sensor.Volumen)}"
+																	th:text="${sensor.porcentajeVolumen}+ '%'"></td>
+
+																<td
+																	th:if="${sensor instanceof T(es.udc.citytrash.model.sensor.Temperatura)}"
+																	th:text="${sensor.gradosCentigrados} + 'ºC'"></td>
+
+																<td>
+																	<div class="btn-group text-center" id="options">
+																		<!-- view details -->
+																		<div id="otherOptions" class="btn-group text-center">
+																			<a id="link_ver_detalles"
+																				th:href="@{#{link.sensores.detalles}(contenedorId=${item.pk.contenedor.id},sensorId=${sensor.id})}"
+																				class="btn-sm"><i
+																				class="glyphicon glyphicon-eye-open"
+																				data-toggle="tooltip" th:title="#{lbl_ver_detalles}"></i></a>
+																		</div>
+																	</div>
+																</td>
+
+															</tr>
+
+														</table>
 													</td>
-													<td><div th:if="${item.modelo.tipo.color!=null}"
-															th:style="'background: #' + ${item.modelo.tipo.color}"
-															class="basura_color_cuadro"></div>
-													<td></td>
+													<td><div
+															th:if="${item.pk.contenedor.modelo.tipo.color!=null}"
+															th:style="'background: #' + ${item.pk.contenedor.modelo.tipo.color}"
+															class="basura_color_cuadro"></div></td>
+													<td><input type="checkbox" name="active"
+														th:checked="${item.sugerencia}" disabled="disabled" /></td>
+
+													<td><input type="checkbox" name="active"
+														th:checked="${item.recogio}" disabled="disabled" /></td>
+
+													<td>
+														<p
+															th:text="${#calendars.format(item.fHUltimaActualizacion,'dd-MMM-yyyy')}"></p>
+													</td>
 												</tr>
 
 											</tbody>
@@ -115,61 +191,101 @@
 								</tr>
 
 								<!-- localizacion -->
+								<!--
 								<tr>
+								
 									<td class="text-success"
 										th:text="${#strings.capitalize('__#{lbl_localizacion}__')}"></td>
 
-									<td colspan="2">
+									 <td colspan="2">
 
-										<div th:object="${rutaForm.puntoInicio}">
+										<div th:object="${rutaDiaria.ruta}">
 											<span class="glyphicon glyphicon-map-marker"></span> <label
 												for="puntoInicio" class="col-form-label"
 												th:text="#{lbl_punto_inicio}"></label> <label
-												id="puntoInicio" th:data-lat="${rutaForm.puntoInicio.lat}"
-												th:data-lng="${rutaForm.puntoInicio.lng}"
-												th:text="${#strings.toUpperCase(rutaForm.puntoInicio)}">
+												id="puntoInicio" th:data-lat="*{puntoInicio.lat}"
+												th:data-lng="*{puntoInicio.lng}"
+												th:text="${#strings.toUpperCase('__*{puntoInicio}__')}">
 											</label> <label class="text-left text-success"> <var>(DD)</var>
 											</label>
-
-
 										</div>
 										<p id="puntoInicioDir" class="text-info"></p>
-
-										<div th:object="${rutaForm.puntoFinal}">
+										<div th:object="${rutaDiaria.ruta}">
 											<span class="glyphicon glyphicon-map-marker"></span> <label
 												for="puntoFinal" class="col-form-label"
 												th:text="#{lbl_punto_final}"></label> <label id="puntoFinal"
-												th:data-lat="${rutaForm.puntoFinal.lat}"
-												th:data-lng="${rutaForm.puntoFinal.lng}"
-												th:text="${#strings.toUpperCase(rutaForm.puntoFinal)}">
+												th:data-lat="*{puntoFinal.lat}"
+												th:data-lng="*{puntoFinal.lng}"
+												th:text="${#strings.toUpperCase('__*{puntoFinal}__')}">
 											</label> <label class="text-left text-success"> <var>(DD)</var>
 											</label>
 										</div>
 										<p id="puntoFinalDir" class="text-info"></p>
 									</td>
 								</tr>
-								<!-- activo -->
+								-->
 								<tr>
-									<td class="text-success"
-										th:text="${#strings.capitalize('__#{lbl_ruta_activa}__')}"></td>
+									<td th:text="#{lbl_conductor}" class="text-success"></td>
 
-									<td th:if="*{activo == true}"><i class="fa fa-toggle-on">
-									</i></td>
-									<td th:unless="*{activo == true}"><i
-										class="fa fa-toggle-off"> </i></td>
+
+									<td class="align-middle"><a th:if="*{conductor!=null}"
+										th:text="${#strings.toUpperCase('__*{conductor.nombre} + ' ' + *{conductor.apellidos}__')}"
+										th:href="@{#{link.trabajadores.detalles}(id=*{conductor.id})}"
+										class="btn-sm"><i class="glyphicon glyphicon-pencil"
+											data-toggle="tooltip" th:title="#{lbl_detalles}"></i></a>
+										<p th:unless="*{conductor!=null}">---</td>
+
+								</tr>
+								<tr>
+									<td th:text="#{lbl_recolectores}" class="text-success"></td>
+									<td>
+
+										<p>
+											<a th:if="${rutaDiaria.recogedor1!=null}"
+												th:text="${#strings.toUpperCase(rutaDiaria.recogedor1.nombre + ' ' + rutaDiaria.recogedor1.apellidos)}"
+												th:href="@{#{link.trabajadores.detalles}(id=${rutaDiaria.recogedor1.id})}"
+												class="btn-sm"><i class="glyphicon glyphicon-pencil"
+												data-toggle="tooltip" th:title="#{lbl_detalles}"></i></a>
+										</p>
+										<p th:unless="${rutaDiaria.recogedor1!=null}">---</p>
+
+										<p class="align-middle">
+											<a th:if="${rutaDiaria.recogedor2!=null}"
+												th:text="${#strings.toUpperCase(rutaDiaria.recogedor2.nombre + ' ' + rutaDiaria.recogedor2.apellidos)}"
+												th:href="@{#{link.trabajadores.detalles}(id=${rutaDiaria.recogedor2.id})}"
+												class="btn-sm"><i class="glyphicon glyphicon-pencil"
+												data-toggle="tooltip" th:title="#{lbl_detalles}"></i></a>
+										<p th:unless="${rutaDiaria.recogedor2!=null}">---</p>
+									</td>
+								</tr>
+								<tr>
+									<td th:text="#{lbl_fecha_inicio}" class="text-success"></td>
+									<td>
+										<p th:if="*{fechaHoraInicio}!=null"
+											th:text="${#calendars.format('__*{fechaHoraInicio}__','dd-MMM-yyyy HH:mm')}"></p>
+									</td>
+								</tr>
+								<tr>
+									<td th:text="#{lbl_fecha_fin}" class="text-success"></td>
+									<td>
+										<p th:if="*{fechaHoraFin}!=null"
+											th:text="${#calendars.format('__*{fechaHoraFin}__','dd-MMM-yyyy HH:mm')}"></p>
+									</td>
+								</tr>
+								<tr>
+									<td th:text="#{lbl_duracion}" class="text-success"></td>
+									<td class="align-middle"><span th:if="*{duracion!=null}"
+										class="articleTitle truncated" data-toggle="tooltip"
+										data-placement="bottom" th:title="*{duracion}"
+										th:text="*{duracion}"> </span> <var th:text="#{lbl_minutos}"></var>
+										<span class="form-control-feedback"> </span></td>
 								</tr>
 							</tbody>
+
 						</table>
 					</div>
-					<!-- mapa -->
-					<div class="table-responsive">
-						<div id="ruta" th:fragment="mapa">
-							<div id="map"></div>
-						</div>
-					</div>
+					<div class="panel-footer"></div>
 				</div>
-
-				<div class="panel-footer"></div>
 			</div>
 		</div>
 	</div>

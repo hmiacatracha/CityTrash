@@ -1,5 +1,6 @@
 package es.udc.citytrash.model.trabajador;
 
+import java.util.Calendar;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -54,7 +55,8 @@ public interface TrabajadorDao extends GenericDAO<Trabajador, Long> {
 	 * Lista de todos los trabajadores
 	 * 
 	 * @param List
-	 * @param mostrarSoloActivos mostrar solo activos
+	 * @param mostrarSoloActivos
+	 *            mostrar solo activos
 	 * @return
 	 */
 	List<Trabajador> buscarTrabajadoresOrderByApellidos(boolean mostrarSoloActivos);
@@ -165,4 +167,13 @@ public interface TrabajadorDao extends GenericDAO<Trabajador, Long> {
 	 */
 	Page<Trabajador> buscarTrabajadoresPorCpYTipo(Pageable pageable, String cp, TipoTrabajador trabajadorType,
 			Boolean mostrarTodos);
+
+	/**
+	 * Lista de trabajadores asignados a varias rutas diarias
+	 * 
+	 * @param fecha
+	 *            fecha de la ruta
+	 * @return Lista de trabajadores
+	 */
+	List<Trabajador> buscarTrabajadoresAsignadosAVariasRutas(Calendar fecha);
 }

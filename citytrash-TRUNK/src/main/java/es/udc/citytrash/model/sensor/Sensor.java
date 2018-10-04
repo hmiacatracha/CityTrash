@@ -3,6 +3,7 @@ package es.udc.citytrash.model.sensor;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Calendar;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -17,13 +18,14 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
-
+import es.udc.citytrash.model.sensorValor.*;
 import es.udc.citytrash.model.contenedor.Contenedor;
 import es.udc.citytrash.util.GlobalNames;
 
@@ -118,6 +120,15 @@ public abstract class Sensor implements Serializable {
 		this.sensorType = sensorType;
 	}
 
+	@OneToMany(mappedBy = "sensor")
+	public List<Valor> getValores() {
+		return valores;
+	}
+
+	public void setValores(List<Valor> valores) {
+		this.valores = valores;
+	}
+
 	private static final long serialVersionUID = 1L;
 	private Long id;
 	private String nombre;
@@ -125,7 +136,7 @@ public abstract class Sensor implements Serializable {
 	private Calendar ultimaActualizacion;
 	private boolean activo;
 	private String sensorType;
-	
+	private List<Valor> valores;
 
 	@Override
 	public String toString() {

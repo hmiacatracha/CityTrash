@@ -12,7 +12,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import es.udc.citytrash.controller.util.anotaciones.CamposNoIguales;
 import es.udc.citytrash.controller.util.anotaciones.CoductorValido;
 import es.udc.citytrash.controller.util.anotaciones.RecolectorValido;
-import es.udc.citytrash.controller.util.anotaciones.TrabajadorInactivo;
+import es.udc.citytrash.controller.util.anotaciones.TrabajadorActivo;
 import es.udc.citytrash.model.camion.Camion;
 import es.udc.citytrash.model.contenedor.Contenedor;
 
@@ -51,7 +51,7 @@ public class CamionDto {
 	@Size(min = 0, max = 17)
 	private String vin = "";
 
-	@NotBlank
+	@NotNull
 	@Size(min = 2, max = 100)
 	private String nombre = "";
 
@@ -61,19 +61,19 @@ public class CamionDto {
 	@NotNull
 	private int modeloCamion;
 
-	@TrabajadorInactivo
+	@TrabajadorActivo
 	@RecolectorValido(allowNull = true)
 	private Long recogedorUno = null;
 
-	@TrabajadorInactivo
+	@TrabajadorActivo
 	@RecolectorValido(allowNull = true)
 	private Long recogedorDos = null;
 
-	@TrabajadorInactivo
+	@TrabajadorActivo
 	@CoductorValido(allowNull = false)
 	private Long conductorPrincipal = null;
 
-	@TrabajadorInactivo
+	@TrabajadorActivo
 	@CoductorValido(allowNull = true)
 	private Long conductorSuplente = null;
 

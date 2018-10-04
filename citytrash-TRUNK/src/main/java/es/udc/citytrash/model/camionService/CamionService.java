@@ -30,84 +30,61 @@ import es.udc.citytrash.model.util.excepciones.InvalidFieldException;
 public interface CamionService {
 
 	/**
-	 * comprobar si el modelo de un camion existe
+	 * Ver los detalles de un camion
 	 * 
-	 * @param modelo
-	 *            id del modelo
-	 * @return true si existe o false en caso contrario.
+	 * @param id
+	 *            id del camion
+	 * @return Camion Dto
+	 * @throws InstanceNotFoundException
+	 *             camion no encontrado
 	 */
-	boolean esModeloExistenteById(int modelo);
+	Camion buscarCamionById(long id) throws InstanceNotFoundException;
 
 	/**
-	 * Buscar modelo de camion por nombre
-	 * 
-	 * @param nombre
-	 * @return
-	 */
-	boolean esModeloCamionByNombreExistente(String nombre);
-
-	/**
-	 * Verifica si la matricula existe ya en la base de datos
-	 * 
-	 * @param matricula
-	 * @return true si ya existe o false en caso contrario.
-	 */
-
-	boolean esCamionByMatriculaExistente(String matricula);
-
-	/**
-	 * verifica si el nombre del camion ya existe
+	 * Buscar a un camión por matricula
 	 * 
 	 * @param nombre
-	 * @return
+	 * @return camion
+	 * @throws InstanceNotFoundException
 	 */
-	boolean esCamionByNombreExistente(String nombre);
+	Camion buscarCamionByMatricula(String nombre) throws InstanceNotFoundException;
 
 	/**
-	 * Verifica si el vin del camion ya existe
+	 * Busca un camión por el vin
 	 * 
 	 * @param vin
 	 * @return
+	 * @throws InstanceNotFoundException
 	 */
-	boolean esCamionByVinExistente(String vin);
+	Camion buscarCamionByVin(String vin) throws InstanceNotFoundException;
 
 	/**
-	 * Habilita o desactiva el estado de un camion
+	 * Buscar camion por el nombre del camión
 	 * 
-	 * @param id
+	 * @param nombre
 	 * @return
 	 * @throws InstanceNotFoundException
-	 *             camion no existente
 	 */
-	boolean cambiarEstadoCamion(long id) throws InstanceNotFoundException;
-
-	
-	/**
-	 * Lista de camiones
-	 * 
-	 * @param pageable
-	 * @param formBusqueda
-	 * @return
-	 */
-	Page<Camion> buscarCamiones(Pageable pageable, CamionFormBusq formBusqueda) throws FormBusquedaException;
+	Camion buscarCamionByNombre(String nombre) throws InstanceNotFoundException;
 
 	/**
-	 * Listar todos los modelos de un camion por pageable y formde busqueda
 	 * 
-	 * @param pageable
-	 *            pageable
-	 * @param ContenedorModeloFormBusq
-	 *            formulario de busqueda
-	 * @return
+	 * @param id
+	 *            id del modelo del camion
+	 * @return Entidad camion
+	 * @throws InstanceNotFoundException
+	 *             no se encontro ningun modelo con estos
 	 */
-	Page<CamionModelo> buscarModelos(Pageable pageable, CamionModeloFormBusq formBusqueda) throws FormBusquedaException;
+	CamionModelo buscarModeloById(int id) throws InstanceNotFoundException;
 
 	/**
-	 * Buscar todos los modelos ordenados por nombre del modelo y por tipos de basura si la lista es distinta de nulo
+	 * Buscar un modelo de camión por el nombre del modelo
 	 * 
+	 * @param nombre
 	 * @return
+	 * @throws InstanceNotFoundException
 	 */
-	List<CamionModelo> buscarTodosLosModelosOrderByModelo(List<Integer> tiposDeBasura);
+	CamionModelo buscarModeloCamionByNombre(String nombre) throws InstanceNotFoundException;
 
 	/**
 	 * Registrar un camion
@@ -128,6 +105,17 @@ public interface CamionService {
 	 */
 	Camion registrarCamion(CamionRegistroDto form) throws InstanceNotFoundException, DuplicateInstanceException,
 			InactiveResourceException, InvalidFieldException;
+
+	/**
+	 * 
+	 * @param form
+	 *            camionModeloDto
+	 * @return CamionModeloDto
+	 * @throws DuplicateInstanceException
+	 *             el nombre del modelo
+	 * @throws InstanceNotFoundException
+	 */
+	CamionModelo registrarModelo(CamionModeloDto form) throws DuplicateInstanceException, InstanceNotFoundException;
 
 	/**
 	 * Modifica los cambios de un camion
@@ -151,28 +139,6 @@ public interface CamionService {
 			InactiveResourceException, InvalidFieldException;
 
 	/**
-	 * Ver los detalles de un camion
-	 * 
-	 * @param id
-	 *            id del camion
-	 * @return Camion Dto
-	 * @throws InstanceNotFoundException
-	 *             camion no encontrado
-	 */
-	Camion buscarCamionById(long id) throws InstanceNotFoundException;
-
-	/**
-	 * 
-	 * @param form
-	 *            camionModeloDto
-	 * @return CamionModeloDto
-	 * @throws DuplicateInstanceException
-	 *             el nombre del modelo
-	 * @throws InstanceNotFoundException 
-	 */
-	CamionModelo registrarModelo(CamionModeloDto form) throws DuplicateInstanceException, InstanceNotFoundException;
-
-	/**
 	 * 
 	 * @param form
 	 * @return CamionModelo
@@ -184,41 +150,15 @@ public interface CamionService {
 	CamionModelo modificarModelo(CamionModeloDto form) throws InstanceNotFoundException, DuplicateInstanceException;
 
 	/**
+	 * Guardar o Realizar cambios en los modelos tipos de basura
 	 * 
-	 * @param id
-	 *            id del modelo del camion
-	 * @return Entidad camion
-	 * @throws InstanceNotFoundException
-	 *             no se encontro ningun modelo con estos
-	 */
-	CamionModelo buscarModeloById(int id) throws InstanceNotFoundException;
-
-	/**
-	 * Añadir o modificar tipo, Modelo si la capacidad <= 0 entonces se elimina,
-	 * sino se modifica o se añade la capacidad.
-	 * 
-	 * @param tipo
-	 * @param Modelo
-	 */
-	// void agregarOrModificarTipoModelo(int tipo, int Modelo, BigDecimal
-	// capacidad) throws InstanceNotFoundException;
-
-	/**
-	 * Listar los tipos modelo basura de un modelo
-	 * 
-	 * @param idModelo
-	 *            identificador del modelo
+	 * @param modeloId
+	 * @param tipos
 	 * @return
 	 * @throws InstanceNotFoundException
 	 */
-	List<CamionModeloTipoDeBasura> buscarTipoDeBasuraByModelo(int idModelo) throws InstanceNotFoundException;
-
-	/**
-	 * Listar los tipos de basura
-	 * 
-	 * @return
-	 */
-	List<TipoDeBasura> buscarTiposDeBasura();
+	List<CamionModeloTipoDeBasura> guardarModeloTipoDeBasura(int modeloId, List<CamionModeloTipoDeBasuraDto> tipos)
+			throws InstanceNotFoundException;
 
 	/**
 	 * Eliminar modelo tipo de basura
@@ -230,33 +170,78 @@ public interface CamionService {
 	void eliminarModeloTipoDeBasura(int idModelo, int tipoId) throws InstanceNotFoundException;
 
 	/**
-	 * Guardar o Realizar cambios en los modelos tipos de basura
-	 * @param modeloId
-	 * @param tipos
+	 * Habilita o desactiva el estado de un camion
+	 * 
+	 * @param id
 	 * @return
 	 * @throws InstanceNotFoundException
+	 *             camion no existente
 	 */
-	List<CamionModeloTipoDeBasura> guardarOActualizarModeloTipoDeBasura(int modeloId, List<CamionModeloTipoDeBasuraDto> tipos)
-			throws InstanceNotFoundException;
+	boolean cambiarEstadoCamion(long id) throws InstanceNotFoundException;
 
 	/**
+	 * Buscar camiones by tipos de basura
+	 * 
+	 * @param tiposDeBasura
+	 * @return
+	 */
+	List<Camion> buscarCamionesByTipos(List<Integer> tiposDeBasura);
+
+	
+	/**
+	 * Lista de camiones
+	 * 
+	 * @param pageable
+	 * @param formBusqueda
+	 * @return
+	 */
+	Page<Camion> buscarCamiones(Pageable pageable, CamionFormBusq formBusqueda) throws FormBusquedaException;
+
+	
+	/**
 	 * Buscar camiones
+	 * 
 	 * @param mostrarSoloActivos
 	 * @param mostrarSoloCamionesDeAlta
 	 * @return
 	 */
 	List<Camion> buscarCamiones(boolean mostrarSoloActivos, boolean mostrarSoloCamionesDeAlta);
 
-	
+
 	/**
-	 * Buscar camiones by tipos de basura
-	 * @param tiposDeBasura
+	 * Listar todos los modelos de un camion por pageable y formde busqueda
+	 * 
+	 * @param pageable
+	 *            pageable
+	 * @param ContenedorModeloFormBusq
+	 *            formulario de busqueda
 	 * @return
 	 */
-	List<Camion> buscarCamionesByTipos(List<Integer> tiposDeBasura);
-	
+	Page<CamionModelo> buscarModelos(Pageable pageable, CamionModeloFormBusq formBusqueda) throws FormBusquedaException;
+
+	/**
+	 * Buscar todos los modelos ordenados por nombre del modelo y por tipos de
+	 * basura si la lista es distinta de nulo
+	 * 
+	 * @return
+	 */
+	List<CamionModelo> buscarTodosLosModelosOrderByModelo(List<Integer> tiposDeBasura);
+
+
+	/**
+	 * Listar los tipos modelo basura de un modelo
+	 * 
+	 * @param idModelo
+	 *            identificador del modelo
+	 * @return
+	 * @throws InstanceNotFoundException
+	 */
+	List<CamionModeloTipoDeBasura> buscarTipoDeBasuraByModelo(int idModelo) throws InstanceNotFoundException;
+
+
 	/**
 	 * Buscar camiones disponibles para una ruta by tipos de basura
+	 * 
 	 * @param tiposDeBasura
 	 * @return
 	 */

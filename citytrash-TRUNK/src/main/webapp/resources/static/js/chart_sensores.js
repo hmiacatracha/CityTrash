@@ -145,14 +145,12 @@ function cb(start, end) {
 	var contenedor = document.getElementById('contenedor').innerHTML;
 	var lbl_pronostico = document.getElementById('lbl_pronostico').innerHTML;
 	var lbl_tiempo_real = document.getElementById('lbl_tiempo_real').innerHTML;
-
 	var progress = document.getElementById('animationProgress');
 	console.log("antes");
 	dibujarGrafica(start, end, contenedor, modeloId, tipo, progress, lbl_tiempo_real, lbl_pronostico);
 	console.log("despues");
 
 	console.log("cb function fin");
-
 }
 
 $(function() {

@@ -255,4 +255,58 @@ public class RutaDiariaDaoHibernate extends GenericHibernateDAOImpl<RutaDiaria, 
 		rutasDiariaContenedores = query.list();
 		return rutasDiariaContenedores;
 	}
+
+	@Override
+	public List<RutaDiaria> buscarRutasGeneradasSinConductor(Calendar f) {
+		logger.info("buscarRutasGeneradasSinConductor INICIO");
+		Date fecha = f.getTime();
+		Query<RutaDiaria> query;
+		List<RutaDiaria> rutas = new ArrayList<RutaDiaria>();
+		logger.info("buscarRutasGeneradasSinConductor 1");
+		StringBuilder querySql = new StringBuilder(
+				"Select distinct rd FROM RutaDiaria rd where rd.conductor is null and DATE(rd.fecha) = DATE(:fecha)");
+		query = getSession().createQuery(querySql.toString(), RutaDiaria.class);
+		logger.info("buscarRutasGeneradasSinConductor 2");
+		/* set parameters */
+		query.setParameter("fecha", fecha);
+		rutas = query.list();
+		logger.info("buscarRutasGeneradasSinConductor FIN");
+		return rutas;
+	}
+
+	@Override
+	public List<RutaDiaria> buscarRutasGeneradasSinRecolectores(Calendar f) {
+		logger.info("buscarRutasGeneradasSinRecolectores inicio");
+		Date fecha = f.getTime();
+		Query<RutaDiaria> query;
+		List<RutaDiaria> rutas = new ArrayList<RutaDiaria>();
+		logger.info("buscarRutasGeneradasSinRecolectores 1");
+		StringBuilder querySql = new StringBuilder(
+				"Select distinct rd FROM RutaDiaria rd where (rd.recogedor1 is null AND rd.recogedor2 is null) and DATE(rd.fecha) = DATE(:fecha)");
+		query = getSession().createQuery(querySql.toString(), RutaDiaria.class);
+		logger.info("buscarRutasGeneradasSinRecolectores 2");
+		/* set parameters */
+		query.setParameter("fecha", fecha);
+		rutas = query.list();
+		logger.info("buscarRutasGeneradasSinRecolectores FINAL");
+		return rutas;
+	}
+
+	@Override
+	public List<RutaDiaria> buscarRutasDiariasGeneradas(Calendar f) {
+		logger.info("buscarRutasDiariasGeneradas INICIO");
+		Date fecha = f.getTime();
+		Query<RutaDiaria> query;
+		List<RutaDiaria> rutas = new ArrayList<RutaDiaria>();
+		logger.info("buscarRutasDiariasGeneradas 2");
+		StringBuilder querySql = new StringBuilder(
+				"Select distinct rd FROM RutaDiaria rd where DATE(rd.fecha) =  DATE(:fecha)");
+		query = getSession().createQuery(querySql.toString(), RutaDiaria.class);
+		logger.info("buscarRutasDiariasGeneradas");
+		/* set parameters */
+		query.setParameter("fecha", fecha);
+		rutas = query.list();
+		logger.info("buscarRutasDiariasGeneradas FIN");
+		return rutas;
+	}
 }

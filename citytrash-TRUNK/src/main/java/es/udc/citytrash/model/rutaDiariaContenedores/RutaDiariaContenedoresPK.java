@@ -21,6 +21,11 @@ public class RutaDiariaContenedoresPK implements Serializable {
 
 	}
 
+	/**
+	 * 
+	 * @param ruta
+	 * @param contenedor
+	 */
 	public RutaDiariaContenedoresPK(RutaDiaria ruta, Contenedor contenedor) {
 		this.rutaDiaria = ruta;
 		this.contenedor = contenedor;
@@ -65,7 +70,7 @@ public class RutaDiariaContenedoresPK implements Serializable {
 			return false;
 		return true;
 	}
-	
+
 	private RutaDiaria rutaDiaria;
 	private Contenedor contenedor;
 }

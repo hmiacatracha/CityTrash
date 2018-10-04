@@ -19,7 +19,7 @@
 		<hibernate.show_sql>true</hibernate.show_sql>
 		<hibernate.format_sql>true</hibernate.format_sql>
 		<hibernate.use_sql_comments>true</hibernate.use_sql_comments>
-		<hibernate.timezone>UTC</hibernate.timezone>
+		<hibernate.timezone>Europe/Madrid</hibernate.timezone>
 		<!-- Encoding -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<!-- project versions -->
@@ -83,8 +83,8 @@
 				<jdbcDriver.className>com.mysql.cj.jdbc.Driver</jdbcDriver.className>
 				<!--Data source properties -->
 				<url>jdbc:mysql://localhost/citytrashpojo</url>
-				<dataSource.url>${url}?serverTimezone=UTC</dataSource.url>
-				<testDataSource.url>${url}test?serverTimezone=UTC</testDataSource.url>
+				<dataSource.url>${url}?serverTimezone=Europe/Madrid</dataSource.url>
+				<testDataSource.url>${url}test?serverTimezone=Europe/Madrid</testDataSource.url>
 				<dataSource.createTablesScript>1-MySQLCreateTables.sql</dataSource.createTablesScript>
 				<dataSource.createDataScript>2-MySQLCreateData.sql</dataSource.createDataScript>
 				<!-- Hibernate properties -->

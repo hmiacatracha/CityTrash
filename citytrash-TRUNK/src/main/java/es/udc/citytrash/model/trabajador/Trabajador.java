@@ -38,7 +38,6 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotBlank;
 
-import es.udc.citytrash.model.telefono.Telefono;
 import es.udc.citytrash.util.GlobalNames;
 import es.udc.citytrash.util.enums.Idioma;
 

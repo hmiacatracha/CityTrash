@@ -119,8 +119,15 @@ public class WebUtils {
 	public static final String VISTA_RUTAS_HISTORIAL_MY_HISTORIAL = VISTA_RUTAS_DIARIAS_PREFIX + "myhistorial";
 	public static final String VISTA_RUTAS_HISTORIAL_EDITAR = VISTA_RUTAS_DIARIAS_PREFIX + "historialEditar";
 	public static final String VISTA_RUTAS_HISTORIAL_DETALLES = VISTA_RUTAS_DIARIAS_PREFIX + "historialDetalles";
-	
-	
+
+	public static final String VISTA_RUTAS_NAVEGAR = "mapas/navegar";
+
+	public static final String VISTA_ALERTAS_PREFIX = "alertas/";
+	public static final String VISTA_ALERTAS_RECICLADO = VISTA_ALERTAS_PREFIX + "alertas";
+
+	public static final String VISTA_ESTADISTICAS_PREFIX = "estadisticas/";
+	public static final String VISTA_ESTADISTICAS_RECICLADO = VISTA_ESTADISTICAS_PREFIX + "estadisticasReciclado";
+
 	/**
 	 * URLS
 	 */
@@ -300,6 +307,9 @@ public class WebUtils {
 	public static final String URL_MAPPING_RUTAS = "/rutas";
 	public static final String REQUEST_MAPPING_RUTAS = "/";
 
+	public static final String URL_MAPPING_ALERTAS = "/rutas/alertas";
+	public static final String REQUEST_MAPPING_ALERTAS = "/alertas";
+
 	public static final String URL_MAPPING_MAPA_RUTAS = "rutas/map";
 	public static final String REQUEST_MAPPING_MAPA_RUTAS = "/map";
 
@@ -334,11 +344,17 @@ public class WebUtils {
 	public static final String URL_MAPPING_RUTAS_HISTORIAL_FINALIZAR = "/rutas/historial/{id}/finalizar";
 	public static final String REQUEST_MAPPING_HISTORIAL_FINALIZAR = "/historial/{id}/finalizar";
 
-	public static final String URL_MAPPING_RUTAS_HISTORIAL_RECOGER = "/rutas/historial/{id}/contenedor/{contenedorId}/recoger";
-	public static final String REQUEST_MAPPING_HISTORIAL_RECOGER = "/historial/{id}/contenedor/{contenedorId}/recoger";
-
 	public static final String URL_MAPPING_RUTAS_HISTORIAL_DETALLES = "/rutas/historial/{id}/detalles";
 	public static final String REQUEST_MAPPING_HISTORIAL_DETALLES = "/historial/{id}/detalles";
+
+	public static final String URL_MAPPING_RUTAS_NAVEGAR = "/rutas/historial/{id}/navegar";
+	public static final String REQUEST_MAPPING_RUTA_NAVEGAR = "/historial/{id}/navegar";
+
+	public static final String URL_MAPPING_NAVEGAR_CONTENEDOR_INFO = "rutas/historial/{rutaId}/contenedor/{contenedorId}/info";
+	public static final String REQUEST_NAVEGAR_CONTENEDOR_INFO = "/historial/{rutaId}/contenedor/{contenedorId}/info";
+
+	public static final String URL_MAPPING_NAVEGAR_CONTENEDOR_RECOGER = "/rutas/historial/{rutaId}/contenedor/{contenedorId}/recoger";
+	public static final String REQUEST_MAPPING_NAVEGAR_CONTENEDOR_RECOGER = "/historial/{rutaId}/contenedor/{contenedorId}/recoger";
 
 	public static String getUrlWithContextPath(HttpServletRequest request) {
 		return request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()

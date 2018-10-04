@@ -1,6 +1,8 @@
 package es.udc.citytrash.model.trabajador;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -75,7 +77,11 @@ public class TrabajadorDaoHibernate extends GenericHibernateDAOImpl<Trabajador, 
 		if (mostrarActivos)
 			hql.append(" WHERE (" + alias + ".activeWorker = :activo) ");
 		hql.append(" ORDER BY " + alias + ".apellidos");
-		trabajadores = getSession().createQuery(hql.toString(), Trabajador.class).list();
+		if (mostrarActivos)
+			trabajadores = getSession().createQuery(hql.toString(), Trabajador.class)
+					.setParameter("activo", mostrarActivos).list();
+		else
+			trabajadores = getSession().createQuery(hql.toString(), Trabajador.class).list();
 		return trabajadores;
 	}
 
@@ -561,5 +567,20 @@ public class TrabajadorDaoHibernate extends GenericHibernateDAOImpl<Trabajador, 
 			System.out.println("Updated " + rowsAffected + " rows.");
 			throw new InstanceNotFoundException(trabajadorId, Trabajador.class.getName());
 		}
+	}
+
+	@Override
+	public List<Trabajador> buscarTrabajadoresAsignadosAVariasRutas(Calendar fecha) {
+		List<Trabajador> trabajadores = new ArrayList<Trabajador>();
+		Date hoy = fecha.getTime();
+		String alias = "t";
+		StringBuilder hql = new StringBuilder("Select t FROM Trabajador t  WHERE t.activeWorker = :activo and "
+				+ " 1 < (Select  count(rd) from RutaDiaria rd where (rd.recogedor1 = t or rd.recogedor2 = t or rd.conductor = t ) "
+				+ " and DATE(rd.fecha) = DATE(:fecha) and rd.fechaHoraInicio is null and rd.fechaHoraFin is null)");
+		/* Filtro tipo de trabajador */
+		hql.append(" ORDER BY " + alias + ".apellidos");
+		trabajadores = getSession().createQuery(hql.toString(), Trabajador.class).setParameter("activo", true)
+				.setParameter("fecha", hoy).list();
+		return trabajadores;
 	}
 }

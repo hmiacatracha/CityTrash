@@ -6,8 +6,6 @@ import static es.udc.citytrash.util.GlobalNames.SPRING_SECURITY_FILE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Calendar;
@@ -20,22 +18,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.DisabledException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.udc.citytrash.controller.util.dtos.trabajador.TrabajadorRegistroFormDto;
-import es.udc.citytrash.controller.util.dtos.trabajador.TrabajadorUpdateFormDto;
 import es.udc.citytrash.model.trabajador.Trabajador;
 import es.udc.citytrash.model.trabajador.TrabajadorDao;
 import es.udc.citytrash.model.trabajadorService.TrabajadorService;
-import es.udc.citytrash.model.usuarioService.UsuarioService;
 import es.udc.citytrash.model.util.excepciones.DuplicateInstanceException;
 import es.udc.citytrash.model.util.excepciones.InstanceNotFoundException;
 import es.udc.citytrash.model.util.excepciones.PasswordInvalidException;
-import es.udc.citytrash.util.GlobalNames;
 import es.udc.citytrash.util.enums.Idioma;
 import es.udc.citytrash.util.enums.TipoTrabajador;
 
@@ -69,9 +63,6 @@ public class UserServiceTest {
 	private final String APELLIDO = "PRUEBA";
 
 	@Autowired
-	UsuarioService cuentaServicio;
-
-	@Autowired
 	private TrabajadorService trabajadorService;
 
 	@Autowired
@@ -99,28 +90,28 @@ public class UserServiceTest {
 
 	@Test(expected = InstanceNotFoundException.class)
 	public void buscarTrabajadorPorEmailNoExistente() throws InstanceNotFoundException {
-		cuentaServicio.buscarTrabajadorPorEmail(T_EMAIL_NO_EXISTENTE);
+		trabajadorService.buscarTrabajadorPorEmail(T_EMAIL_NO_EXISTENTE);
 	}
 
 	@Test
 	public void buscarTrabajadorPorEmailExistente() throws InstanceNotFoundException {
-		Trabajador tEncontrado = cuentaServicio.buscarTrabajadorPorEmail(trabajadorConductor.getEmail());
+		Trabajador tEncontrado = trabajadorService.buscarTrabajadorPorEmail(trabajadorConductor.getEmail());
 		assertEquals(tEncontrado, trabajadorConductor);
 	}
 
 	@Test(expected = InstanceNotFoundException.class)
 	public void recuperarCuentaPorEmailNoExistente() throws InstanceNotFoundException {
-		cuentaServicio.recuperarCuenta(T_EMAIL_NO_EXISTENTE);
+		trabajadorService.recuperarCuenta(T_EMAIL_NO_EXISTENTE);
 	}
 
 	@Test(expected = DisabledException.class)
 	public void recuperarCuentaPorEmailExistentePeroDeshabilitada()
 			throws InstanceNotFoundException, DisabledException {
 
-		cuentaServicio.recuperarCuenta(T_EMAIL_ADMIN);
+		trabajadorService.recuperarCuenta(T_EMAIL_ADMIN);
 		trabajadorAdmin.setActiveWorker(false);
 		trabajadorDao.guardar(trabajadorAdmin);
-		cuentaServicio.recuperarCuenta(T_EMAIL_ADMIN);
+		trabajadorService.recuperarCuenta(T_EMAIL_ADMIN);
 	}
 
 	@Test
@@ -128,14 +119,14 @@ public class UserServiceTest {
 		String token = trabajadorAdmin.getToken();
 		Calendar fechaVencimiento = trabajadorAdmin.getFechaExpiracionToken();
 
-		cuentaServicio.recuperarCuenta(trabajadorAdmin.getEmail());
+		trabajadorService.recuperarCuenta(trabajadorAdmin.getEmail());
 		assertNotEquals(token, trabajadorAdmin.getToken());
 		assertNotEquals(fechaVencimiento, trabajadorAdmin.getFechaExpiracionToken());
 	}
 
 	@Test(expected = InstanceNotFoundException.class)
 	public void cambiarIdiomaEmailNoExistente() throws InstanceNotFoundException {
-		cuentaServicio.cambiarIdioma(T_EMAIL_NO_EXISTENTE, Idioma.es);
+		trabajadorService.cambiarIdioma(T_EMAIL_NO_EXISTENTE, Idioma.es);
 	}
 
 	@Test
@@ -152,36 +143,36 @@ public class UserServiceTest {
 			idiomaDespues = Idioma.es;
 		}
 
-		cuentaServicio.cambiarIdioma(trabajadorAdmin.getEmail(), idiomaDespues);
+		trabajadorService.cambiarIdioma(trabajadorAdmin.getEmail(), idiomaDespues);
 		assertNotEquals(idiomaAntes, trabajadorAdmin.getIdioma());
 		assertEquals(idiomaDespues, trabajadorAdmin.getIdioma());
 
 		idiomaAntes = trabajadorAdmin.getIdioma();
-		cuentaServicio.cambiarIdioma(trabajadorAdmin.getEmail(), idiomaAntes);
+		trabajadorService.cambiarIdioma(trabajadorAdmin.getEmail(), idiomaAntes);
 		assertEquals(idiomaAntes, trabajadorAdmin.getIdioma());
 	}
 
 	@Test(expected = InstanceNotFoundException.class)
 	public void obtenerIdiomaPreferenciaCuentaNoExistente() throws InstanceNotFoundException {
-		cuentaServicio.obtenerIdiomaPreferencia(NON_EXISTENT_USER_PROFILE_ID);
+		trabajadorService.obtenerIdiomaPreferencia(NON_EXISTENT_USER_PROFILE_ID);
 	}
 
 	@Test
 	public void obtenerIdiomaPreferenciaCuentaExistente() throws InstanceNotFoundException {
-		assertEquals(T_IDIOMA_CONDUCT, cuentaServicio.obtenerIdiomaPreferencia(trabajadorConductor.getId()));
-		assertEquals(T_IDIOMA_ADMIN, cuentaServicio.obtenerIdiomaPreferencia(trabajadorAdmin.getId()));
-		assertEquals(T_IDIOMA_RECOLECTOR, cuentaServicio.obtenerIdiomaPreferencia(trabajadorRecolec.getId()));
+		assertEquals(T_IDIOMA_CONDUCT, trabajadorService.obtenerIdiomaPreferencia(trabajadorConductor.getId()));
+		assertEquals(T_IDIOMA_ADMIN, trabajadorService.obtenerIdiomaPreferencia(trabajadorAdmin.getId()));
+		assertEquals(T_IDIOMA_RECOLECTOR, trabajadorService.obtenerIdiomaPreferencia(trabajadorRecolec.getId()));
 	}
 
 	@Test(expected = InstanceNotFoundException.class)
 	public void reiniciarPasswordNoExistente() throws InstanceNotFoundException, PasswordInvalidException {
-		cuentaServicio.reiniciarPassword(NON_EXISTENT_USER_PROFILE_ID, "hola");
+		trabajadorService.reiniciarPassword(NON_EXISTENT_USER_PROFILE_ID, "hola");
 	}
 
 	@Test
 	public void reiniciarPassword() throws InstanceNotFoundException, PasswordInvalidException {
 		String nuevaContraseña = "hoLa";
-		cuentaServicio.reiniciarPassword(trabajadorConductor.getId(), nuevaContraseña);
+		trabajadorService.reiniciarPassword(trabajadorConductor.getId(), nuevaContraseña);
 		assertTrue(passwordEncoder.matches(nuevaContraseña, trabajadorConductor.getPassword()));
 		assertFalse(passwordEncoder.matches(nuevaContraseña + "_", trabajadorConductor.getPassword()));
 	}

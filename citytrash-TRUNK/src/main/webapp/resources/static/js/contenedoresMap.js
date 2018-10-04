@@ -7,7 +7,7 @@
 var shownLayer,
 	polygon;
 
-var map = L.map('mapa', {
+var map = L.map('mapaContenedores', {
 	center : [ 41.3818, 2.1685 ],
 	minZoom : 0,
 	zoom : 10

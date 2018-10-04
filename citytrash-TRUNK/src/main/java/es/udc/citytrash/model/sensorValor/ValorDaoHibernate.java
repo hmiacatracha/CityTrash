@@ -1,24 +1,21 @@
 package es.udc.citytrash.model.sensorValor;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
+import org.hibernate.Hibernate;
 import org.hibernate.query.Query;
+import org.hibernate.type.StandardBasicTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.StringUtils;
 
+import es.udc.citytrash.model.tipoDeBasura.TipoDeBasura;
+import es.udc.citytrash.model.util.excepciones.InstanceNotFoundException;
 import es.udc.citytrash.model.util.genericdao.GenericHibernateDAOImpl;
+import es.udc.citytrash.util.enums.TipoComparativa;
 
 @Repository("ValoresDao")
 public class ValorDaoHibernate extends GenericHibernateDAOImpl<Valor, ValorPk> implements ValorDao {
@@ -29,7 +26,7 @@ public class ValorDaoHibernate extends GenericHibernateDAOImpl<Valor, ValorPk> i
 	public List<Valor> buscarValoresBySensor(Long sensorId, Date fechaInicio, Date fechaFin) {
 		Query<Valor> query;
 		List<Valor> valores = new ArrayList<Valor>();
-		logger.info("BUSCAR VALORES BY SENSOR VALORDAO 1");
+		// logger.info("BUSCAR VALORES BY SENSOR VALORDAO 1");
 		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
 		Date fromDate = null, toDate = null;
 
@@ -44,7 +41,7 @@ public class ValorDaoHibernate extends GenericHibernateDAOImpl<Valor, ValorPk> i
 		else if (sensorId == null && (fechaInicio != null || fechaFin != null))
 			hql.append(" WHERE ");
 
-		logger.info("BUSCAR VALORES BY SENSOR VALORDAO 2");
+		// logger.info("BUSCAR VALORES BY SENSOR VALORDAO 2");
 		if (fechaInicio != null && fechaFin != null) {
 			hql.append(" DATE(" + alias + ".pk.fechaHora) >= DATE(:fechaInicio) AND DATE(" + alias
 					+ ".pk.fechaHora) <= DATE(:fechaFin) ");
@@ -87,42 +84,68 @@ public class ValorDaoHibernate extends GenericHibernateDAOImpl<Valor, ValorPk> i
 	}
 
 	@Override
-	public Page<Valor> buscarValoresBySensor(Pageable pageable, Long sensorId) {
+	public List<Valor> obtenerLosDosUltimosValoresDeUnSensor(long sensorId) {
 		Query<Valor> query;
 		List<Valor> valores = new ArrayList<Valor>();
-		logger.info("BUSCAR VALORES BY SENSOR VALORDAO");
-
-		Page<Valor> page = new PageImpl<Valor>(valores, pageable, valores.size());
-		String alias = "v";
-		StringBuilder hql = new StringBuilder("Select " + alias + " FROM Valor " + alias);
-
-		if (sensorId != null)
-			hql.append(" WHERE " + alias + ".sensor.id = :id)");
-
-		String order = StringUtils
-				.collectionToCommaDelimitedString(StreamSupport.stream(pageable.getSort().spliterator(), false)
-						.map(o -> alias + "." + o.getProperty() + " " + o.getDirection()).collect(Collectors.toList()));
-		hql.append(" ORDER BY " + order);
+		logger.info("obtenerLosDosUltimosValoresDeUnSensor");
+		StringBuilder hql = new StringBuilder("Select v FROM Valor v  inner join v.pk key  WHERE v.sensor.id = :id"
+				+ " ORDER BY key.fechaHora DESC ");
 
 		logger.info("Consulta =>" + hql.toString());
 		query = getSession().createQuery(hql.toString(), Valor.class);
-
-		if (sensorId != null)
-			query.setParameter("id", sensorId);
-
+		query.setMaxResults(2);
+		query.setParameter("id", sensorId);
 		valores = query.list();
-		logger.info("valores =>" + valores.toString());
-		int start = pageable.getOffset();
-		int end = (start + pageable.getPageSize()) > valores.size() ? valores.size() : (start + pageable.getPageSize());
-		boolean rangoExistente = (valores.size() - start >= 0) && (valores.size() - end >= 0);
+		return valores;
+	}
 
-		if (rangoExistente) {
-			page = new PageImpl<Valor>(valores.subList(start, end), pageable, valores.size());
-		} else {
-			List<Valor> contenedoresAux = new ArrayList<Valor>();
-			page = new PageImpl<Valor>(contenedoresAux, pageable, contenedoresAux.size());
+	@Override
+	public Valor obtenerElUltimoValorDeUnSensor(long sensorId) throws InstanceNotFoundException {
+		logger.info("obtenerElUltimoValorDeUnSensor");
+		Query<Valor> query;
+		StringBuilder hql = new StringBuilder(
+				"Select v FROM Valor v  inner join v.pk key  WHERE v.sensor.id = :id ORDER BY key.fechaHora DESC ");
+		query = getSession().createQuery(hql.toString(), Valor.class).setMaxResults(1).setParameter("id", sensorId);
+		List<Valor> valor = query.list();
+		if (valor.isEmpty())
+			throw new InstanceNotFoundException(sensorId, Valor.class.getName());
+		return valor.get(0);
+	}
+
+	@Override
+	public Double buscarMediaDeVolumen(int tipoBasura, TipoComparativa tipoComparativa, Date fecha) {
+		StringBuilder hql = new StringBuilder("");
+		logger.info("BUSCAR MEDIA DE VOLUMEN 1");
+
+		switch (tipoComparativa) {
+		case YEAR:
+			hql = new StringBuilder("Select AVG(v.valor) FROM Valor v inner join v.sensor s inner join s.contenedor c "
+					+ " inner join c.modelo m inner join m.tipo tipo WHERE YEAR(v.pk.fechaHora) = YEAR(:fecha)  "
+					+ " and tipo.id = :tipoBasura and TYPE(s) = Volumen");
+			break;
+		case MONTH:
+			hql = new StringBuilder("Select AVG(v.valor) FROM Valor v inner join v.sensor s inner join s.contenedor c "
+					+ " inner join c.modelo m inner join m.tipo tipo WHERE MONTH(v.pk.fechaHora) = MONTH(:fecha)  "
+					+ " and tipo.id = :tipoBasura and TYPE(s) = Volumen");
+			break;
+		default:
+			hql = new StringBuilder("Select AVG(v.valor) FROM Valor v inner join v.sensor s inner join s.contenedor c "
+					+ " inner join c.modelo m inner join m.tipo tipo WHERE DAY(v.pk.fechaHora) = DAY(:fecha)  "
+					+ " and tipo.id = :tipoBasura and TYPE(s) = Volumen");
+			break;
 		}
-		return page;
 
+		logger.info("BUSCAR MEDIA DE VOLUMEN 2");
+		Object resultado = getSession().createQuery(hql.toString()).setParameter("fecha", fecha)
+				.setParameter("tipoBasura", tipoBasura).getSingleResult();
+		logger.info("BUSCAR MEDIA DE VOLUMEN 3");
+		System.out.println("AVG VOLUMEN -> " + resultado);
+		Double valor;
+		if (resultado != null)
+			valor = new Double(resultado.toString());
+		else
+			valor = new Double(0);
+		logger.info("BUSCAR MEDIA DE VOLUMEN 4");
+		return valor;
 	}
 }

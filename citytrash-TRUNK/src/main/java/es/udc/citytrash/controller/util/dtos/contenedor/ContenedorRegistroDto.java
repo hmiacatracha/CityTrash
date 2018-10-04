@@ -15,7 +15,7 @@ import es.udc.citytrash.controller.util.anotaciones.CamposNoIguales;
 import es.udc.citytrash.controller.util.anotaciones.CoductorValido;
 import es.udc.citytrash.controller.util.anotaciones.ContenedorNombreUnico;
 import es.udc.citytrash.controller.util.anotaciones.RecolectorValido;
-import es.udc.citytrash.controller.util.anotaciones.TrabajadorInactivo;
+import es.udc.citytrash.controller.util.anotaciones.TrabajadorActivo;
 import es.udc.citytrash.model.camion.Camion;
 import es.udc.citytrash.model.contenedor.Contenedor;
 import es.udc.citytrash.model.contenedorModelo.ContenedorModelo;

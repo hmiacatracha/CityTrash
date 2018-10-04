@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import es.udc.citytrash.controller.util.anotaciones.CamionNombreUnico;
 import es.udc.citytrash.model.camionService.CamionService;
+import es.udc.citytrash.model.util.excepciones.InstanceNotFoundException;
 
 @Component
 public class CamionNombreUnicoImpl implements ConstraintValidator<CamionNombreUnico, String> {
@@ -25,6 +26,11 @@ public class CamionNombreUnicoImpl implements ConstraintValidator<CamionNombreUn
 
 	@Override
 	public boolean isValid(String nombre, ConstraintValidatorContext context) {
-		return !cServicio.esCamionByNombreExistente(nombre);
+		try {
+			cServicio.buscarCamionByNombre(nombre);
+			return false;
+		} catch (InstanceNotFoundException e) {
+			return true;
+		}
 	}
 }

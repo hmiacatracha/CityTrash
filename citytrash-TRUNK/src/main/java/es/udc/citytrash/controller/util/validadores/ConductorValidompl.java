@@ -9,7 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.udc.citytrash.controller.util.anotaciones.CoductorValido;
+import es.udc.citytrash.model.trabajador.Conductor;
 import es.udc.citytrash.model.trabajador.ConductorDao;
+import es.udc.citytrash.model.trabajador.Recolector;
+import es.udc.citytrash.model.trabajador.Trabajador;
 import es.udc.citytrash.model.trabajadorService.TrabajadorService;
 import es.udc.citytrash.model.util.excepciones.InstanceNotFoundException;
 
@@ -39,7 +42,17 @@ public class ConductorValidompl implements ConstraintValidator<CoductorValido, L
 			valid = false;
 			logger.info("paso2");
 		} else {
-			valid = tServicio.esTrabajadorConductor(id);
+			try {
+				Trabajador t = tServicio.buscarTrabajador(id);
+				if (t instanceof Conductor)
+					valid = true;
+				else
+					valid = false;
+
+			} catch (InstanceNotFoundException e) {
+				valid = false;
+			}
+
 		}
 		return valid;
 	}

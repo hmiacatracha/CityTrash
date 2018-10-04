@@ -229,5 +229,4 @@ public class RutaDaoHibernate extends GenericHibernateDAOImpl<Ruta, Integer> imp
 
 		return rutas;
 	}
-
 }

@@ -1,14 +1,11 @@
 package es.udc.citytrash.controller;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,16 +31,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
-import es.udc.citytrash.controller.cuenta.CustomUserDetails;
 import es.udc.citytrash.controller.excepciones.PageNotFoundException;
 import es.udc.citytrash.controller.util.AjaxUtils;
 import es.udc.citytrash.controller.util.WebUtils;
 import es.udc.citytrash.controller.util.anotaciones.UsuarioActual;
 import es.udc.citytrash.controller.util.dtos.camion.CamionFormBusq;
 import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorFormBusq;
+import es.udc.citytrash.controller.util.dtos.cuenta.CustomUserDetails;
+import es.udc.citytrash.controller.util.dtos.estadisticas.EstadisticasPorRecicladoForm;
 import es.udc.citytrash.controller.util.dtos.ruta.GenerarRutaFormDto;
 import es.udc.citytrash.controller.util.dtos.ruta.RutaDto;
 import es.udc.citytrash.controller.util.dtos.ruta.RutasDiariaFormBusq;
@@ -57,8 +54,10 @@ import es.udc.citytrash.model.contenedorService.ContenedorService;
 import es.udc.citytrash.model.ruta.Ruta;
 import es.udc.citytrash.model.rutaDiaria.RutaDiaria;
 import es.udc.citytrash.model.rutaService.RutaService;
+import es.udc.citytrash.model.tipoDeBasura.TipoDeBasura;
+import es.udc.citytrash.model.tipoDeBasura.TipoDeBasuraDao;
 import es.udc.citytrash.model.trabajadorService.TrabajadorService;
-import es.udc.citytrash.model.usuarioService.UsuarioService;
+import es.udc.citytrash.model.util.excepciones.GeoLocationException;
 import es.udc.citytrash.model.util.excepciones.InstanceNotFoundException;
 import es.udc.citytrash.model.util.excepciones.TokenInvalidException;
 import es.udc.citytrash.util.enums.Idioma;
@@ -68,9 +67,6 @@ public class PublicController {
 
 	@Autowired
 	TrabajadorService tservicio;
-
-	@Autowired
-	UsuarioService usuarioService;
 
 	@Autowired
 	ContenedorService contServicio;
@@ -83,6 +79,13 @@ public class PublicController {
 
 	final Logger logger = LoggerFactory.getLogger(PublicController.class);
 
+	@ModelAttribute("listaTiposDeBasura")
+	public List<TipoDeBasura> getTiposDeBasura() {
+		List<TipoDeBasura> tipos = new ArrayList<TipoDeBasura>();
+		tipos = contServicio.buscarTiposDeBasura();
+		return tipos;
+	}
+
 	/* HOME */
 	@RequestMapping(value = { WebUtils.URL_HOME, WebUtils.URL_HOME1, WebUtils.URL_HOME2 }, method = RequestMethod.GET)
 	public String index(@UsuarioActual CustomUserDetails usuario, HttpServletRequest request,
@@ -93,7 +96,7 @@ public class PublicController {
 			String lang = request.getLocale().toLanguageTag();
 			Idioma idioma;
 			try {
-				idioma = usuarioService.obtenerIdiomaPreferencia(usuario.getPerfil().getId());
+				idioma = tservicio.obtenerIdiomaPreferencia(usuario.getPerfil().getId());
 			} catch (es.udc.citytrash.model.util.excepciones.InstanceNotFoundException e) {
 				idioma = Idioma.es;
 			}
@@ -108,6 +111,14 @@ public class PublicController {
 	@RequestMapping(value = { WebUtils.URL_ABOUT_US }, method = RequestMethod.GET)
 	public String cambiarIdioma() {
 		return WebUtils.VISTA_ABOUT_US;
+	}
+
+	@RequestMapping(value = "/chart/reciclado", method = RequestMethod.GET)
+	public String estadisticasPorReciclado(Model model) {
+		EstadisticasPorRecicladoForm form = new EstadisticasPorRecicladoForm();
+		model.addAttribute("estadisticasPorRecicladoForm", form);
+		model.addAttribute("listaTiposDeBasura", contServicio.buscarTiposDeBasura());
+		return WebUtils.VISTA_ESTADISTICAS_RECICLADO;
 	}
 
 	/* LOGIN */
@@ -132,6 +143,49 @@ public class PublicController {
 		return WebUtils.VISTA_LOGIN;
 	}
 
+	/**
+	 * Mapas
+	 * 
+	 * @param response
+	 * @param email
+	 * @return
+	 */
+
+	@RequestMapping(value = WebUtils.REQUEST_MAPPING_MAPA_CONTENEDORES, method = RequestMethod.GET)
+	public String getContenedoresMaps(HttpServletRequest request,
+			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith)
+			throws GeoLocationException {
+		logger.info("GET REQUEST_MAPPING_MAPA_CONTENEDORES");
+		if (AjaxUtils.isAjaxRequest(requestedWith))
+			return WebUtils.VISTA_MAPA_CONTENEDORES.concat(" ::content");
+		return WebUtils.VISTA_MAPA_CONTENEDORES;
+	}
+
+	@RequestMapping(value = WebUtils.REQUEST_MAPPING_MAPA_RUTAS, method = RequestMethod.GET)
+	public String getRutas(Model model,
+			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
+		logger.info("GET REQUEST_MAPPING_MAPA_RUTAS");
+		if (AjaxUtils.isAjaxRequest(requestedWith))
+			return WebUtils.VISTA_MAPA_RUTAS.concat(" ::content");
+		return WebUtils.VISTA_MAPA_RUTAS;
+	}
+
+	@RequestMapping(value = WebUtils.REQUEST_MAPPING_MAPA_RUTA_NAVEGAR, method = RequestMethod.GET)
+	public String getNavegar(@PathVariable("id") long id, Model model,
+			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
+		logger.info("GET REQUEST_MAPPING_MAPA_RUTAS");
+		if (AjaxUtils.isAjaxRequest(requestedWith))
+			return WebUtils.VISTA_MAPA_RUTA_NAVEGAR.concat(" ::content");
+		return WebUtils.VISTA_MAPA_RUTA_NAVEGAR;
+	}
+
+	/**
+	 * Ajax fuctions
+	 * 
+	 * @param response
+	 * @param email
+	 * @return
+	 */
 	@RequestMapping(value = "/cuenta/validarEmail", method = RequestMethod.POST)
 	public @ResponseBody Boolean emailExistente(HttpServletResponse response,
 			@RequestParam(value = "email", required = true) String email) {
@@ -154,7 +208,7 @@ public class PublicController {
 			contenedores = contServicio.buscarContenedoresDiponiblesParaUnaRuta(form.getId(),
 					rutaForm.getTiposDeBasura());
 		else
-			contenedores = contServicio.buscarContenedoresDiponiblesParaUnaRuta(rutaForm.getTiposDeBasura());
+			contenedores = contServicio.buscarContenedoresDiponiblesParaRutas(rutaForm.getTiposDeBasura());
 
 		List<Camion> camiones = camServicio.buscarCamionesDisponiblesParaUnaRutaByTipos(rutaForm.getTiposDeBasura());
 
@@ -255,7 +309,7 @@ public class PublicController {
 			contenedores = contServicio.buscarContenedoresDiponiblesParaUnaRuta(form.getId(),
 					rutaForm.getTiposDeBasura());
 		else
-			contenedores = contServicio.buscarContenedoresDiponiblesParaUnaRuta(rutaForm.getTiposDeBasura());
+			contenedores = contServicio.buscarContenedoresDiponiblesParaRutas(rutaForm.getTiposDeBasura());
 		logger.info("listaCamionesDisponibles contenedores  => " + form.getContenedores().toString());
 		logger.info("listaCamionesDisponibles camion  => " + form.getClass().toString());
 		rutaForm.setContenedores(form.getContenedores());

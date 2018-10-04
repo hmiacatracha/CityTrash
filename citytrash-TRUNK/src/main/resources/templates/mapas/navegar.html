@@ -1,16 +1,183 @@
-
-<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<!DOCTYPE>
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:th="http://www.thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{layouts/maps}" th:with="currentPage='rutas'">
+	layout:decorate="~{layouts/navegar}" th:with="currentPage='rutas'">
 <head>
-<title th:text="#{page_mapa_contenedores}"></title>
+<title th:text="#{page_rutas_navegar}"></title>
 </head>
-<body class="fondoBlanco">
-	<div id="viewBody" class="container" th:fragment="content">
-		
+<body class="formularios">
+	<div id="content" class="container" th:fragment="content"
+		th:remove="tag" th:if="${rutaDiaria}!=null">
+
+		<div
+			class="col-sm-12 col-md-offset-1 col-md-10 col-lg-offset-2 col-lg-8">
+
+			<div class="panel panel-default" th:object="${rutaDiaria}">
+
+				<div class="panel-heading">
+					<!--  generar rutas diarias si es admin-->
+					<a th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}"
+						data-toggle="tooltip" th:title="#{lbl_generar_rutas}"
+						class="btn btn-default" th:href="@{#{link.rutas.generar}}"
+						role="button"><img
+						th:src="@{/resources/static/img/route4.svg}"
+						th:alt="#{page_rutas}" width=32 height=32 /></a> <br>
+
+					<!-- titulo -->
+					<h3 class="text-center text-success"
+						th:text="${#strings.toUpperCase('__#{lbl_ruta_diaria_navegar}__')} + ' #' + *{ruta.id}"></h3>
+
+					<h4 class="text-center text-success"
+						th:text="${#strings.toUpperCase('__${#calendars.format(rutaDiaria.fecha,'dd-MMM-yyyy')}__')}"></h4>
+
+					<!-- tipos de basura -->
+					<table class="center">
+						<tr>
+							<th></th>
+							<th th:each="
+						item, row: ${rutaDiaria.tiposDeBasura}"
+								th:style="'background: #' + ${item.color}"
+								class="basura_color_cuadro"></th>
+						</tr>
+					</table>
+
+					<div class="col-xs-12 text-right">
+						<div class="btn-group text-center">
+							<!-- editar ruta diaria si es admin-->
+							<a
+								th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}"
+								th:href="@{#{link.rutas.historial.editar}(id=*{id})}"
+								class="btn-sm" data-toggle="tooltip" th:title="#{lbl_editar}"><i
+								class="glyphicon glyphicon-pencil"></i></a>
+
+							<!--  listado de rutas diarias si es admin-->
+							<a
+								th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}"
+								th:href="@{#{link.rutas.rutasdiarias}(from=${#calendars.format(rutaDiaria.fecha, 'dd/MM/yyyy')}, to=${#calendars.format(rutaDiaria.fecha, 'dd/MM/yyyy')})}"
+								class="btn-sm" data-toggle="tooltip"
+								th:title="#{lbl_historial_rutas}"> <i
+								class="glyphicon glyphicon-list"></i>
+							</a>
+							<!-- my historial de rutas si esta autenticado -->
+							<a th:if="${#authorization.expression('isAuthenticated()')}"
+								th:href="@{#{link.rutas.misrutas}}" class="btn-sm"
+								data-toggle="tooltip" th:title="#{lbl_historial_mis_rutas}">
+								<i class="glyphicon glyphicon-list-alt"></i>
+							</a>
+						</div>
+					</div>
+					<br>
+				</div>
+
+				<div class="panel-body">
+					<input th:if="*{id}" type="hidden"
+						class="mayusculas col-sm-6 form-control" id="id" th:field="*{id}" />
+					<input th:if="*{id}" type="hidden"
+						class="mayusculas col-sm-6 form-control" id="rutaId"
+						th:field="*{ruta.id}" />
+
+					<div class="table-responsive">
+						<table class="table table-hover">
+							<tbody th:object="${rutaDiaria}">
+
+								<tr>
+									<td class="text-success" th:text="#{lbl_camion_asignado}"></td>
+									<td>
+										<p>
+											<a th:text="${#strings.toUpperCase('__*{camion.nombre}__')}"
+												th:href="@{#{link.camiones.detalles}(id=*{camion.id})}"
+												class="btn-sm"> </a>
+										</p>
+									</td>
+								</tr>
+								<!-- conductor -->
+								<tr>
+									<td th:text="#{lbl_conductor}" class="text-success"></td>
+									<td>
+										<p th:if="*{conductor!=null}"
+											th:text="${#strings.toUpperCase('__*{conductor.nombre} + ' ' + *{conductor.apellidos}__')}"></p>
+									</td>
+								</tr>
+								<!-- recolectores -->
+								<tr>
+									<td th:text="#{lbl_recolectores}" class="text-success"></td>
+									<td>
+										<p th:if="*{recogedor1!=null}"
+											th:text="${#strings.toUpperCase('__*{recogedor1.nombre} + ' ' + *{recogedor1.apellidos}__')}"></p>
+										<p th:if="*{recogedor2!=null}"
+											th:text="${#strings.toUpperCase('__*{recogedor2.nombre} + ' ' + *{recogedor2.apellidos}__')}"></p>
+									</td>
+								</tr>
+								<!-- localizacion -->
+								<tr>
+									<td class="text-success"
+										th:text="${#strings.capitalize('__#{lbl_localizacion}__')}"></td>
+									<td colspan="2">
+										<div th:object="${rutaDiaria.ruta}">
+											<span class="glyphicon glyphicon-map-marker"></span> <label
+												for="puntoInicio" class="col-form-label"
+												th:text="#{lbl_punto_inicio}"></label> <label
+												id="puntoInicio" th:data-lat="*{puntoInicio.lat}"
+												th:data-lng="*{puntoInicio.lng}"
+												th:text="${#strings.toUpperCase('__*{puntoInicio}__')}">
+											</label> <label class="text-left text-success"> <var>(DD)</var>
+											</label>
+										</div>
+										<p id="puntoInicioDir" class="text-info"></p>
+										<div th:object="${rutaDiaria.ruta}">
+											<span class="glyphicon glyphicon-map-marker"></span> <label
+												for="puntoFinal" class="col-form-label"
+												th:text="#{lbl_punto_final}"></label> <label id="puntoFinal"
+												th:data-lat="*{puntoFinal.lat}"
+												th:data-lng="*{puntoFinal.lng}"
+												th:text="${#strings.toUpperCase('__*{puntoFinal}__')}">
+											</label> <label class="text-left text-success"> <var>(DD)</var>
+											</label>
+										</div>
+										<p id="puntoFinalDir" class="text-info"></p>
+									</td>
+								</tr>
+								<tr>
+								</tr>
+								<tr>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="span9">
+						<div id="map-wrapper">
+							<div id="button-wrapper">
+								<button type="button" class="btn btn-default btn-md">
+									<i data-toggle="tooltip" th:title="#{lbl_iniciar}"
+										class="material-icons" style="color: green;">navigation</i>
+								</button>
+								<button type="button" class="btn btn-default btn-md">
+									<i data-toggle="tooltip" th:title="#{lbl_finalizar}"
+										class="material-icons" style="color: red;">navigation</i>
+								</button>
+
+								<br>
+							</div>
+							<div id="mapa"></div>
+						</div>
+					</div>
+
+
+
+					<!-- 
+					<div class="table-responsive">
+						<div id="ruta" th:fragment="mapa">
+							<div id="map"></div>
+						</div>
+					</div>
+				</div>
+				 -->
+					<div class="panel-footer"></div>
+				</div>
+			</div>
+		</div>
 	</div>
 </body>
 </html>

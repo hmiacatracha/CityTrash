@@ -184,9 +184,9 @@
 							<th class="col-xs-1 col-sm-1">#</th>
 							<th class="text-success" th:text="#{lbl_sensor_tipo}">tipo</th>
 							<th class="text-success" th:text="#{lbl_sensor_nombre}">nombre</th>
-							<th class="text-success" th:text="#{lbl_sensor_nivel}">nombre</th>
+							<th class="text-success" th:text="#{lbl_sensor_nivel}">nivel</th>
 							<th class="text-success"
-								th:text="#{lbl_sensor_fecha_ultima_actualizacion}">nombre</th>
+								th:text="#{lbl_sensor_fecha_ultima_actualizacion}">actualizacion</th>
 							<th class="text-success" th:text="#{lbl_activo}">activo</th>
 							<th></th>
 						</tr>
@@ -240,17 +240,7 @@
 											th:href="@{#{link.sensores.detalles}(contenedorId=${objecto.id},sensorId=${sensores[__${rowStat.index}__].id})}"
 											class="btn-sm"><i class="glyphicon glyphicon-eye-open"
 											data-toggle="tooltip" th:title="#{lbl_ver_detalles}"></i></a>
-									</div>
-									<!-- 
-										<div id="changeState" class="btn-group text-center">
-											<a id="link_change_state"
-												th:href="@{#{link.trabajadores.estado}(id=${trabajador.id})}"
-												class="btn-sm"> <i id="iconState"
-												th:class="${trabajador.trabajadorActivo == true}? 'fa fa-toggle-on' : 'fa fa-toggle-off'"
-												data-toggle="tooltip" th:title="#{lbl_estado}"> </i>
-											</a>
-										</div>
-									 -->
+									</div>									
 								</div>
 							</td>
 						</tr>

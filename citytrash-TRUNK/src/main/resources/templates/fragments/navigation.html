@@ -101,7 +101,7 @@
 							th:text="#{lbl_historial_mis_rutas}"
 							th:href="@{#{link.rutas.misrutas}}"> </a></li>
 					</ul></li>
-
+	
 				<!-- estadísticas -->
 				<li th:classappend="${currentPage == 'estadisticas'} ? 'active'"
 					th:class="dropdown" class="dropdown"><a
@@ -121,9 +121,9 @@
 
 				<li th:classappend="${currentPage == 'alertas'} ? 'active'"
 					th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}"
-					th:class="${classActiveSettings}"><a href="#"> <label
-						th:text="#{alertas}"> </label> <span class="badge pull-right">
-							4 </span>
+					th:class="${classActiveSettings}"><a
+					th:href="@{#{link.alertas}}"> <label th:text="#{alertas}">
+					</label> <span id="numeroDeAlertas" class="badge badge-pill badge-warning">0</span>
 				</a></li>
 
 				<li th:classappend="${currentPage == 'cuenta'} ? 'active'"

@@ -3,16 +3,13 @@ package es.udc.citytrash.controller.util.dtos.camion;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.hibernate.validator.constraints.NotBlank;
-
 import es.udc.citytrash.controller.util.anotaciones.CamionMatriculaUnico;
 import es.udc.citytrash.controller.util.anotaciones.CamionNombreUnico;
 import es.udc.citytrash.controller.util.anotaciones.CamionVinUnico;
 import es.udc.citytrash.controller.util.anotaciones.CamposNoIguales;
 import es.udc.citytrash.controller.util.anotaciones.CoductorValido;
 import es.udc.citytrash.controller.util.anotaciones.RecolectorValido;
-import es.udc.citytrash.controller.util.anotaciones.TrabajadorInactivo;
-import es.udc.citytrash.model.camion.Camion;
+import es.udc.citytrash.controller.util.anotaciones.TrabajadorActivo;
 
 /**
  * Dto para registrar camiones
@@ -34,7 +31,7 @@ public class CamionRegistroDto {
 	@CamionVinUnico
 	private String vin = "";
 
-	@NotBlank
+	@NotNull
 	@Size(min = 2, max = 100)
 	@CamionNombreUnico
 	private String nombre = "";
@@ -46,19 +43,19 @@ public class CamionRegistroDto {
 	@NotNull
 	private int modeloCamion;
 
-	@TrabajadorInactivo
+	@TrabajadorActivo
 	@RecolectorValido(allowNull = true)
 	private Long recogedorUno = null;
 
-	@TrabajadorInactivo
+	@TrabajadorActivo
 	@RecolectorValido(allowNull = true)
 	private Long recogedorDos = null;
 
-	@TrabajadorInactivo
+	@TrabajadorActivo
 	@CoductorValido(allowNull = false)
 	private Long conductorPrincipal = null;
 
-	@TrabajadorInactivo
+	@TrabajadorActivo
 	@CoductorValido(allowNull = true)
 	private Long conductorSuplente = null;
 

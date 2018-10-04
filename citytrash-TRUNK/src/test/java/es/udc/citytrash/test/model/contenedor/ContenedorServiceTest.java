@@ -491,19 +491,13 @@ public class ContenedorServiceTest {
 		}
 	}
 
-	@Test(expected = InstanceNotFoundException.class)
-	public void buscarTipoDeBasuraByModeloNoExistente()
-			throws InstanceNotFoundException, DuplicateInstanceException, InvalidFieldException {
-		cService.buscarTipoDeBasuraByModelo(MODELO_ID_NO_EXISTENTE);
-	}
-
 	@Test
 	public void buscarTipoDeBasuraByModelo()
 			throws InstanceNotFoundException, DuplicateInstanceException, InvalidFieldException {
 		ContenedorModelo modelo1 = cService.registrarModelo(getFormRegistroModelo(CM_NOMBRE_1, new BigDecimal("19.2"),
 				new BigDecimal("19.2"), new BigDecimal("19.2"), new BigDecimal("19.2"), new BigDecimal("19.2"),
 				new BigDecimal("19.2"), tipo1.getId()));
-		cService.buscarTipoDeBasuraByModelo(modelo1.getId());
+		//cService.buscarModeloById(modelo1.getId());
 		assertEquals(tipo1, modelo1.getTipo());
 	}
 

@@ -14,7 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.udc.citytrash.controller.camiones.CamionesController;
 import es.udc.citytrash.controller.util.dtos.camion.CamionDto;
 import es.udc.citytrash.controller.util.dtos.camion.CamionFormBusq;
 import es.udc.citytrash.controller.util.dtos.camion.CamionModeloDto;
@@ -30,11 +29,8 @@ import es.udc.citytrash.model.camionModeloTipoDeBasura.CamionModeloTipoDeBasuraD
 import es.udc.citytrash.model.camionModeloTipoDeBasura.CamionModeloTipoDeBasuraPK;
 import es.udc.citytrash.model.tipoDeBasura.TipoDeBasura;
 import es.udc.citytrash.model.tipoDeBasura.TipoDeBasuraDao;
-import es.udc.citytrash.model.trabajador.AdministradorDao;
 import es.udc.citytrash.model.trabajador.Conductor;
-import es.udc.citytrash.model.trabajador.ConductorDao;
 import es.udc.citytrash.model.trabajador.Recolector;
-import es.udc.citytrash.model.trabajador.RecolectorDao;
 import es.udc.citytrash.model.trabajador.Trabajador;
 import es.udc.citytrash.model.trabajador.TrabajadorDao;
 import es.udc.citytrash.model.util.excepciones.DuplicateInstanceException;
@@ -47,15 +43,6 @@ import es.udc.citytrash.util.enums.CampoBusqPalabrasClavesCamion;
 @Service("camionService")
 @Transactional
 public class CamionServiceImpl implements CamionService {
-
-	@Autowired
-	AdministradorDao administradorDao;
-
-	@Autowired
-	RecolectorDao recolectorDao;
-
-	@Autowired
-	ConductorDao conductorDao;
 
 	@Autowired
 	TrabajadorDao trabajadorDao;
@@ -75,57 +62,23 @@ public class CamionServiceImpl implements CamionService {
 	final Logger logger = LoggerFactory.getLogger(CamionServiceImpl.class);
 
 	@Override
-	public boolean esModeloExistenteById(int modelo) {
-		boolean existe = false;
-
-		try {
-			modeloDao.buscarById(modelo);
-			existe = true;
-		} catch (InstanceNotFoundException i) {
-			existe = false;
-		}
-		return existe;
+	public Camion buscarCamionByMatricula(String matricula) throws InstanceNotFoundException {
+		return camionDao.buscarByMatricula(matricula);
 	}
 
 	@Override
-	public boolean esCamionByMatriculaExistente(String matricula) {
-
-		try {
-			camionDao.buscarByMatricula(matricula);
-			return true;
-		} catch (InstanceNotFoundException e) {
-			return false;
-		}
+	public Camion buscarCamionByVin(String vin) throws InstanceNotFoundException {
+		return camionDao.buscarByVin(vin);
 	}
 
 	@Override
-	public boolean esCamionByNombreExistente(String nombre) {
-		try {
-			camionDao.buscarByNombre(nombre);
-			return true;
-		} catch (InstanceNotFoundException e) {
-			return false;
-		}
+	public Camion buscarCamionByNombre(String nombre) throws InstanceNotFoundException {
+		return camionDao.buscarByNombre(nombre);
 	}
 
 	@Override
-	public boolean esModeloCamionByNombreExistente(String nombre) {
-		try {
-			modeloDao.buscarModeloPorNombre(nombre);
-			return true;
-		} catch (InstanceNotFoundException e) {
-			return false;
-		}
-	}
-
-	@Override
-	public boolean esCamionByVinExistente(String vin) {
-		try {
-			camionDao.buscarByVin(vin);
-			return true;
-		} catch (InstanceNotFoundException e) {
-			return false;
-		}
+	public CamionModelo buscarModeloCamionByNombre(String nombre) throws InstanceNotFoundException {
+		return modeloDao.buscarModeloPorNombre(nombre);
 	}
 
 	@Override
@@ -162,11 +115,6 @@ public class CamionServiceImpl implements CamionService {
 	}
 
 	@Override
-	public List<TipoDeBasura> buscarTiposDeBasura() {
-		return tipoDao.buscarTodos();
-	}
-
-	@Override
 	public List<CamionModeloTipoDeBasura> buscarTipoDeBasuraByModelo(int idModelo) throws InstanceNotFoundException {
 		List<CamionModeloTipoDeBasura> list = new ArrayList<CamionModeloTipoDeBasura>(
 				modeloDao.buscarById(idModelo).getTiposDeBasura());
@@ -177,10 +125,10 @@ public class CamionServiceImpl implements CamionService {
 	public Camion registrarCamion(CamionRegistroDto form) throws InstanceNotFoundException, DuplicateInstanceException,
 			InactiveResourceException, InvalidFieldException {
 		CamionModelo modelo = null;
-		Conductor conductor = null;
-		Conductor conductorSuplente = null;
-		Recolector recolector1 = null;
-		Recolector recolector2 = null;
+		Trabajador conductor = null;
+		Trabajador conductorSuplente = null;
+		Trabajador recolector1 = null;
+		Trabajador recolector2 = null;
 		Camion camion = null;
 		/* Verificamos que el modelo exista */
 
@@ -210,8 +158,11 @@ public class CamionServiceImpl implements CamionService {
 		logger.info("paso4 registrarCamion");
 		/* Verificamos que la matricula no exista */
 		if (form.getMatricula().length() > 0) {
-			if (this.esCamionByMatriculaExistente(form.getMatricula())) {
+			try {
+				camionDao.buscarByMatricula(form.getMatricula());
 				throw new DuplicateInstanceException(form.getMatricula(), Camion.class.getName());
+			} catch (InstanceNotFoundException e) {
+
 			}
 			camion.setMatricula(form.getMatricula());
 		}
@@ -233,15 +184,19 @@ public class CamionServiceImpl implements CamionService {
 		if (form.getConductorPrincipal() != null) {
 			try {
 				logger.info("paso51 registrarCamion");
-				conductor = conductorDao.buscarById(form.getConductorPrincipal());
-				logger.info("paso52 registrarCamion");
-				if (!conductor.isActiveWorker()) {
-					logger.info("paso53 registrarCamion");
-					throw new InactiveResourceException(conductor.getNombre() + " " + conductor.getApellidos(),
-							Conductor.class.getName());
+				conductor = trabajadorDao.buscarById(form.getConductorPrincipal());
+				if (conductor instanceof Conductor) {
+					if (!conductor.isActiveWorker()) {
+						logger.info("paso53 registrarCamion");
+						throw new InactiveResourceException(conductor.getNombre() + " " + conductor.getApellidos(),
+								Conductor.class.getName());
+					}
+					logger.info("paso54 registrarCamion");
+					camion.setConductor(conductor);
+				} else {
+					throw new InstanceNotFoundException(form.getConductorPrincipal(), Conductor.class.getName());
 				}
-				logger.info("paso54 registrarCamion");
-				camion.setConductor(conductor);
+
 			} catch (InstanceNotFoundException e) {
 				logger.info("paso55 registrarCamion");
 				throw new InstanceNotFoundException(form.getConductorPrincipal(), Conductor.class.getName());
@@ -250,12 +205,16 @@ public class CamionServiceImpl implements CamionService {
 		logger.info("paso6 registrarCamion");
 		if (form.getConductorSuplente() != null) {
 			try {
-				conductorSuplente = conductorDao.buscarById(form.getConductorSuplente());
-				if (!conductorSuplente.isActiveWorker())
-					throw new InactiveResourceException(
-							conductorSuplente.getNombre() + " " + conductorSuplente.getApellidos(),
-							Conductor.class.getName());
-				camion.setConductorSuplente(conductorSuplente);
+				conductorSuplente = trabajadorDao.buscarById(form.getConductorSuplente());
+				if (conductorSuplente instanceof Conductor) {
+					if (!conductorSuplente.isActiveWorker())
+						throw new InactiveResourceException(
+								conductorSuplente.getNombre() + " " + conductorSuplente.getApellidos(),
+								Conductor.class.getName());
+					camion.setConductorSuplente(conductorSuplente);
+				} else {
+					throw new InstanceNotFoundException(form.getConductorPrincipal(), Conductor.class.getName());
+				}
 			} catch (InstanceNotFoundException e) {
 				throw new InstanceNotFoundException(form.getConductorSuplente(), Conductor.class.getName());
 			}
@@ -263,11 +222,15 @@ public class CamionServiceImpl implements CamionService {
 		logger.info("paso7 registrarCamion");
 		if (form.getRecogedorUno() != null) {
 			try {
-				recolector1 = recolectorDao.buscarById(form.getRecogedorUno());
-				camion.setRecogedor1(recolector1);
-				if (!recolector1.isActiveWorker())
-					throw new InactiveResourceException(recolector1.getNombre() + " " + recolector1.getApellidos(),
-							Recolector.class.getName());
+				recolector1 = trabajadorDao.buscarById(form.getRecogedorUno());
+				if (recolector1 instanceof Recolector) {
+					camion.setRecogedor1(recolector1);
+					if (!recolector1.isActiveWorker())
+						throw new InactiveResourceException(recolector1.getNombre() + " " + recolector1.getApellidos(),
+								Recolector.class.getName());
+				} else {
+					throw new InstanceNotFoundException(form.getRecogedorUno(), Recolector.class.getName());
+				}
 			} catch (InstanceNotFoundException e) {
 				throw new InstanceNotFoundException(form.getRecogedorUno(), Recolector.class.getName());
 			}
@@ -276,11 +239,15 @@ public class CamionServiceImpl implements CamionService {
 		logger.info("paso8 registrarCamion");
 		if (form.getRecogedorDos() != null) {
 			try {
-				recolector2 = recolectorDao.buscarById(form.getRecogedorDos());
-				camion.setRecogedor2(recolector2);
-				if (!recolector2.isActiveWorker())
-					throw new InactiveResourceException(recolector2.getNombre() + " " + recolector2.getApellidos(),
-							Recolector.class.getName());
+				recolector2 = trabajadorDao.buscarById(form.getRecogedorDos());
+				if (recolector2 instanceof Recolector) {
+					camion.setRecogedor2(recolector2);
+					if (!recolector2.isActiveWorker())
+						throw new InactiveResourceException(recolector2.getNombre() + " " + recolector2.getApellidos(),
+								Recolector.class.getName());
+				} else {
+					throw new InstanceNotFoundException(form.getRecogedorDos(), Recolector.class.getName());
+				}
 			} catch (InstanceNotFoundException e) {
 				throw new InstanceNotFoundException(form.getRecogedorDos(), Recolector.class.getName());
 			}
@@ -353,11 +320,16 @@ public class CamionServiceImpl implements CamionService {
 		 */
 		if (camionForm.getConductorPrincipal() != null) {
 			try {
-				conductor = conductorDao.buscarById(camionForm.getConductorPrincipal());
-				if (!conductor.isActiveWorker())
-					throw new InactiveResourceException(conductor.getNombre() + " " + conductor.getApellidos(),
-							Conductor.class.getName());
-				camion.setConductor(conductor);
+				conductor = trabajadorDao.buscarById(camionForm.getConductorPrincipal());
+				if (conductor instanceof Conductor) {
+					if (!conductor.isActiveWorker())
+						throw new InactiveResourceException(conductor.getNombre() + " " + conductor.getApellidos(),
+								Conductor.class.getName());
+					camion.setConductor(conductor);
+				} else {
+					throw new InstanceNotFoundException(camionForm.getConductorPrincipal(), Conductor.class.getName());
+				}
+
 			} catch (InstanceNotFoundException e) {
 				throw new InstanceNotFoundException(camionForm.getConductorPrincipal(), Conductor.class.getName());
 			}
@@ -365,13 +337,18 @@ public class CamionServiceImpl implements CamionService {
 
 		if (camionForm.getConductorSuplente() != null) {
 			try {
-				conductorSuplente = conductorDao.buscarById(camionForm.getConductorSuplente());
-				if (!conductorSuplente.isActiveWorker())
-					throw new InactiveResourceException(
-							conductorSuplente.getNombre() + " " + conductorSuplente.getApellidos(),
-							Conductor.class.getName());
+				conductorSuplente = trabajadorDao.buscarById(camionForm.getConductorSuplente());
+				if (conductorSuplente instanceof Conductor) {
+					if (!conductorSuplente.isActiveWorker())
+						throw new InactiveResourceException(
+								conductorSuplente.getNombre() + " " + conductorSuplente.getApellidos(),
+								Conductor.class.getName());
 
-				camion.setConductorSuplente(conductorSuplente);
+					camion.setConductorSuplente(conductorSuplente);
+				} else {
+					throw new InstanceNotFoundException(camionForm.getConductorSuplente(), Conductor.class.getName());
+				}
+
 			} catch (InstanceNotFoundException e) {
 				throw new InstanceNotFoundException(camionForm.getConductorSuplente(), Conductor.class.getName());
 			}
@@ -379,11 +356,16 @@ public class CamionServiceImpl implements CamionService {
 
 		if (camionForm.getRecogedorUno() != null) {
 			try {
-				recolector1 = recolectorDao.buscarById(camionForm.getRecogedorUno());
-				camion.setRecogedor1(recolector1);
-				if (!recolector1.isActiveWorker())
-					throw new InactiveResourceException(recolector1.getNombre() + " " + recolector1.getApellidos(),
-							Recolector.class.getName());
+				recolector1 = trabajadorDao.buscarById(camionForm.getRecogedorUno());
+				if (recolector1 instanceof Recolector) {
+					camion.setRecogedor1(recolector1);
+					if (!recolector1.isActiveWorker())
+						throw new InactiveResourceException(recolector1.getNombre() + " " + recolector1.getApellidos(),
+								Recolector.class.getName());
+				} else {
+					throw new InstanceNotFoundException(camionForm.getRecogedorUno(), Recolector.class.getName());
+				}
+
 			} catch (InstanceNotFoundException e) {
 				throw new InstanceNotFoundException(camionForm.getRecogedorUno(), Recolector.class.getName());
 			}
@@ -391,11 +373,16 @@ public class CamionServiceImpl implements CamionService {
 
 		if (camionForm.getRecogedorDos() != null) {
 			try {
-				recolector2 = recolectorDao.buscarById(camionForm.getRecogedorDos());
-				camion.setRecogedor2(recolector2);
-				if (!recolector2.isActiveWorker())
-					throw new InactiveResourceException(recolector2.getNombre() + " " + recolector2.getApellidos(),
-							Recolector.class.getName());
+				recolector2 = trabajadorDao.buscarById(camionForm.getRecogedorDos());
+				if (recolector2 instanceof Recolector) {
+					camion.setRecogedor2(recolector2);
+					if (!recolector2.isActiveWorker())
+						throw new InactiveResourceException(recolector2.getNombre() + " " + recolector2.getApellidos(),
+								Recolector.class.getName());
+				} else {
+					throw new InstanceNotFoundException(camionForm.getRecogedorDos(), Recolector.class.getName());
+				}
+
 			} catch (InstanceNotFoundException e) {
 				throw new InstanceNotFoundException(camionForm.getRecogedorDos(), Recolector.class.getName());
 			}
@@ -426,7 +413,7 @@ public class CamionServiceImpl implements CamionService {
 		camionModelo.setVolumenTolva(form.getVolumenTolva() != null ? form.getVolumenTolva() : null);
 		modeloDao.guardar(camionModelo);
 		logger.info("antes guardar tipos de basura");
-		guardarOActualizarModeloTipoDeBasura(camionModelo.getId(), form.getListaTiposDeBasura());
+		guardarModeloTipoDeBasura(camionModelo.getId(), form.getListaTiposDeBasura());
 		logger.info("despues guardar tipos de basura");
 		return modeloDao.buscarById(camionModelo.getId());
 	}
@@ -459,7 +446,7 @@ public class CamionServiceImpl implements CamionService {
 
 		}
 		logger.info("antes guardar tipos de basura");
-		guardarOActualizarModeloTipoDeBasura(camionModelo.getId(), form.getListaTiposDeBasura());
+		guardarModeloTipoDeBasura(camionModelo.getId(), form.getListaTiposDeBasura());
 		logger.info("despues guardar tipos de basura");
 		return modeloDao.buscarById(camionModelo.getId());
 	}
@@ -609,7 +596,7 @@ public class CamionServiceImpl implements CamionService {
 	}
 
 	@Override
-	public List<CamionModeloTipoDeBasura> guardarOActualizarModeloTipoDeBasura(int modeloId,
+	public List<CamionModeloTipoDeBasura> guardarModeloTipoDeBasura(int modeloId,
 			List<CamionModeloTipoDeBasuraDto> tipos) throws InstanceNotFoundException {
 
 		for (CamionModeloTipoDeBasuraDto dto : tipos) {
@@ -639,14 +626,9 @@ public class CamionServiceImpl implements CamionService {
 		return cmtbDao.buscarTiposDeBasuraByModelo(modeloId);
 	}
 
-	/**
-	 * metodo privado => cambia de fecha a calendar
-	 * 
-	 * @param date
-	 * @return
-	 */
 	private static Calendar dateToCalendar(Date date) {
 		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
 		calendar.setTime(date);
 		return calendar;
 	}

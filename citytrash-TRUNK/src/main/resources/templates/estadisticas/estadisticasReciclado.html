@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	th:with="currentPage='estadisticas'">
+<head>
+<meta charset="utf-8"></meta>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
+<meta name="description" content=""></meta>
+<meta name="author" content=""></meta>
+
+<link rel="shortcut icon" type="image/png"
+	th:href="@{/resources/static/img/icon.png}"></link>
+<!-- boostrap -->
+<link rel="stylesheet" media="screen"
+	th:href="@{/webjars/bootstrap/3.3.7-1/css/bootstrap.min.css}" />
+<!-- boostrap datapicker -->
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css" />
+
+<!-- BOOSTRAP SELECT -->
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
+
+<!-- fonts -->
+<link rel="stylesheet"
+	href="https://fonts.googleapis.com/css?family=Tangerine">
+<!--fonts -->
+<link href="https://fonts.googleapis.com/css?family=Lustria"
+	rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Merienda+One"
+	rel="stylesheet">
+
+<!-- icons -->
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+	rel="stylesheet">
+<!-- owner -->
+<link th:href="@{/resources/static/css/styles.css}" rel="stylesheet"></link>
+<meta name="author" content="heidy">
+<title layout:title-pattern="$LAYOUT_TITLE - $CONTENT_TITLE"></title>
+
+<!-- rank date -->
+<link rel="stylesheet" type="text/css"
+	href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+</head>
+<body>
+	<div th:replace="fragments/navigation :: nav(${menu})"></div>
+	<div id="content" class="container" th:fragment="content">
+		<div class="row">
+			<h1 id="titulo" th:text="#{lbl_estadisticas_reciclado}" hidden="true"
+				class="text-center text-success"></h1>
+			
+
+			<div class="col-md-2">
+				<button type="button" class="btn btn-default" id="download-pdf">
+					<i class="fa fa-download"></i>
+				</button>
+			</div>
+			<div class="col-xs-12 col-md-10 pull-right">
+				<!-- search form -->
+				<div id="searchForm">
+					<form id="estadisticasForm" role="form"
+						class="form-narrow form-horizontal" method="get" action="#"
+						th:object="${estadisticasPorRecicladoForm}">
+						<fieldset>
+							<div class="form-group row">
+								<!-- tipos de basura -->
+								<div th:if="${listaTiposDeBasura}"
+									class="text-center col-xs-6 col-md-4">
+									<select th:title="#{lbl_tipo_basura_recoger}"
+										class="selectpicker" data-style="btn btn-default"
+										data-live-search="true" th:field="*{tiposDeBasura}"
+										id="estRecicladotiposDeBasura" multiple>
+										<option th:each="row, index: ${listaTiposDeBasura}"
+											th:value="${row.id}" th:text="#{${row.tipo}}"></option>
+									</select>
+								</div>
+								<!-- tipo comparativa -->
+								<div class="text-center col-xs-6  col-md-3">
+									<select th:field="*{tipoComparativa}"
+										class="form-control mySelect" data-style="btn-default"
+										id="estRecicladotipoComparativa">
+										<option
+											th:each="tipoComparativa : ${T(es.udc.citytrash.util.enums.TipoComparativa).values()}"
+											th:value="${tipoComparativa}"
+											th:text="#{${tipoComparativa + ''}}"></option>
+									</select>
+								</div>
+							</div>
+						</fieldset>
+					</form>
+				</div>
+			</div>
+			<div class="col-md-12">
+				<canvas class="canvas" id="contenedor-canvas"></canvas>
+				<div id="postResultDiv"></div>
+			</div>
+			<div class="col-md-12">
+				<progress id="animationProgress" max="1" value="0"
+					style="width: 100%"></progress>
+			</div>
+		</div>
+		<!-- /row -->
+	</div>
+	<div th:replace="fragments/footer :: footer()"></div>
+	<!-- pdf -->
+	<script src="https://unpkg.com/jspdf@latest/dist/jspdf.min.js"></script>
+
+	<!-- CHARTS -->
+	<script type="text/javascript"
+		th:src="@{/webjars/chart.js/2.7.2/dist/Chart.min.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/static/js/chart_tipo_residuo.js}">
+		</script>
+
+	<!-- jquery rank date http://www.daterangepicker.com/-->
+	<script type="text/javascript"
+		src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+	<script type="text/javascript"
+		src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+	<script type="text/javascript"
+		src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+</body>
+</html>

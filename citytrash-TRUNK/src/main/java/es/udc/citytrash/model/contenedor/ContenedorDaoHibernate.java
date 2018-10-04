@@ -376,5 +376,4 @@ public class ContenedorDaoHibernate extends GenericHibernateDAOImpl<Contenedor, 
 		logger.info("buscarContenedoresByTiposDeBasura dao paso 5");
 		return contenedores;
 	}
-
 }

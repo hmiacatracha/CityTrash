@@ -13,9 +13,7 @@
 		th:if="${pageRutas}">
 		<!-- pagination size and add button -->
 		<div class="form-group row">
-			<div class="col-xs-6">
-				
-			</div>
+			<div class="col-xs-6"></div>
 			<div class="col-xs-6">
 				<div class="pull-right">
 					<!-- page size selector (dropdrwown) -->
@@ -136,7 +134,7 @@
 										<!-- view details -->
 										<div id="otherOptions" class="btn-group text-center">
 											<a id="link_ver_detalles"
-												th:href="@{#{link.rutas.rutasdiarias.detalles}(id=${rutaDiaria.id})}"
+												th:href="@{#{link.rutas.historial.navegar}(id=${rutaDiaria.id})}"
 												class="btn-sm"> <i data-toggle="tooltip"
 												th:title="#{lbl_navegar}" class="material-icons"
 												style="color: green">navigation</i>

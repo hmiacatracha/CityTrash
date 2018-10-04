@@ -12,6 +12,7 @@ import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorModeloEditarDt
 import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorModeloFormBusq;
 import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorModeloRegistroDto;
 import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorRegistroDto;
+import es.udc.citytrash.controller.util.dtos.estadisticas.ComparativaPorTipoReciclado;
 import es.udc.citytrash.model.contenedor.Contenedor;
 import es.udc.citytrash.model.contenedorModelo.ContenedorModelo;
 import es.udc.citytrash.model.sensor.Sensor;
@@ -20,6 +21,7 @@ import es.udc.citytrash.model.tipoDeBasura.TipoDeBasura;
 import es.udc.citytrash.model.util.excepciones.DuplicateInstanceException;
 import es.udc.citytrash.model.util.excepciones.InstanceNotFoundException;
 import es.udc.citytrash.model.util.excepciones.InvalidFieldException;
+import es.udc.citytrash.util.enums.TipoComparativa;
 
 /**
  * Servicio de Contenedores -CRUD CONTENEDORES -CRU MODELO DE CONTENEDORES
@@ -28,39 +30,6 @@ import es.udc.citytrash.model.util.excepciones.InvalidFieldException;
  *
  */
 public interface ContenedorService {
-
-	/**
-	 * Devuelve true si el modelo existe
-	 * 
-	 * @param modelo
-	 * @return
-	 */
-	boolean esModeloExistenteById(int modelo);
-
-	/**
-	 * Cambia el estado de un contenedor (Lo habilita o Deshabilita)
-	 * 
-	 * @param id
-	 * @return
-	 * @throws InstanceNotFoundException
-	 */
-	boolean cambiarEstadoContenedor(long id) throws InstanceNotFoundException;
-
-	/**
-	 * devuelve true si ya hay un contenedor con ese nombre
-	 * 
-	 * @param nombre
-	 * @return
-	 */
-	boolean esContenedorByNombreExistente(String nombre);
-
-	/**
-	 * devuelve tru si ya existe un modelo con ese nombre
-	 * 
-	 * @param nombre
-	 * @return
-	 */
-	boolean esModeloContenedorByNombreExistente(String nombre);
 
 	/**
 	 * Busca un contenedor by id
@@ -72,6 +41,15 @@ public interface ContenedorService {
 	Contenedor buscarContenedorById(long id) throws InstanceNotFoundException;
 
 	/**
+	 * Buscar contenedor by nombre
+	 * 
+	 * @param nombre
+	 * @return
+	 * @throws InstanceNotFoundException
+	 */
+	Contenedor buscarContenedorByNombre(String nombre) throws InstanceNotFoundException;
+
+	/**
 	 * Busca modelo by Id
 	 * 
 	 * @param id
@@ -81,45 +59,13 @@ public interface ContenedorService {
 	ContenedorModelo buscarModeloById(int id) throws InstanceNotFoundException;
 
 	/**
-	 * Busca todos los modelos ordenados por nombre del modelo
+	 * devuelve tru si ya existe un modelo con ese nombre
 	 * 
-	 * @return
-	 */
-	// List<ContenedorModelo> buscarTodosLosModelosOrderByModelo();
-
-	/**
-	 * Busca modelos by tipo de basura
-	 * 
-	 * @param tipos
-	 *            tipos de basura
-	 * @return
-	 */
-	List<ContenedorModelo> buscarTodosLosModelosOrderByModelo(List<Integer> tipos);
-
-	/**
-	 * Busca los tipos de basura
-	 * 
-	 * @return
-	 */
-	List<TipoDeBasura> buscarTiposDeBasura();
-
-	/**
-	 * Busca el tipo de basura de un modelo
-	 * 
-	 * @param id
+	 * @param nombre
 	 * @return
 	 * @throws InstanceNotFoundException
 	 */
-	TipoDeBasura buscarTipoDeBasuraByModelo(int id) throws InstanceNotFoundException;
-
-	/**
-	 * Buscar tipo de basura por contenedor
-	 * 
-	 * @param id
-	 * @return
-	 * @throws InstanceNotFoundException
-	 */
-	TipoDeBasura buscarTiposDeBasuraByContenedor(long id) throws InstanceNotFoundException;
+	ContenedorModelo buscarModeloContenedorByNombre(String nombre) throws InstanceNotFoundException;
 
 	/**
 	 * registrar contenedor
@@ -167,33 +113,6 @@ public interface ContenedorService {
 			throws InstanceNotFoundException, DuplicateInstanceException, InvalidFieldException;
 
 	/**
-	 * Buscar modelos
-	 * 
-	 * @param pageable
-	 * @param formBusqueda
-	 * @return Pageable
-	 */
-	Page<ContenedorModelo> buscarModelos(Pageable pageable, ContenedorModeloFormBusq formBusqueda);
-
-	/**
-	 * Buscar contenedores
-	 * 
-	 * @param pageable
-	 * @param formBusqueda
-	 * @return Pageable
-	 */
-	Page<Contenedor> buscarContenedores(Pageable pageable, ContenedorFormBusq formBusqueda);
-
-	/**
-	 * Buscar contenedores
-	 * 
-	 * @param formBusqueda
-	 *            formulario de busqueda
-	 * @return List
-	 */
-	List<Contenedor> buscarContenedores(ContenedorFormBusq form);
-
-	/**
 	 * Eliminar un sensorId de un contenedor
 	 * 
 	 * @param sensorId
@@ -211,24 +130,6 @@ public interface ContenedorService {
 	Sensor buscarSensorById(Long sensorId) throws InstanceNotFoundException;
 
 	/**
-	 * Buscar un sensor by contenedor
-	 * 
-	 * @param contenedorId
-	 * @return
-	 * @throws InstanceNotFoundException
-	 */
-	List<Sensor> buscarSensorsByContenedor(Long contenedorId) throws InstanceNotFoundException;
-
-	/**
-	 * Buscar valores de un sensor
-	 * 
-	 * @param pageable
-	 * @param sensorId
-	 * @return
-	 */
-	Page<Valor> buscarValoresBySensor(Pageable pageable, Long sensorId);
-
-	/**
 	 * Buscar valores by sensor
 	 * 
 	 * @param sensorId
@@ -237,6 +138,76 @@ public interface ContenedorService {
 	 * @return
 	 */
 	List<Valor> buscarValoresBySensor(Long sensorId, Date fechaInicio, Date fechaFin);
+
+	/**
+	 * Cambia el estado de un contenedor (Lo habilita o Deshabilita)
+	 * 
+	 * @param id
+	 * @return
+	 * @throws InstanceNotFoundException
+	 */
+	boolean cambiarEstadoContenedor(long id) throws InstanceNotFoundException;
+
+	/**
+	 * Buscar contenedores
+	 * 
+	 * @param pageable
+	 * @param formBusqueda
+	 * @return Pageable
+	 */
+	Page<Contenedor> buscarContenedores(Pageable pageable, ContenedorFormBusq formBusqueda);
+
+	/**
+	 * Buscar modelos
+	 * 
+	 * @param pageable
+	 * @param formBusqueda
+	 * @return Pageable
+	 */
+	Page<ContenedorModelo> buscarModelos(Pageable pageable, ContenedorModeloFormBusq formBusqueda);
+
+	/**
+	 * Busca modelos by tipo de basura
+	 * 
+	 * @param tipos
+	 *            tipos de basura
+	 * @return
+	 */
+	List<ContenedorModelo> buscarTodosLosModelosOrderByModelo(List<Integer> tipos);
+
+	/**
+	 * Busca los tipos de basura
+	 * 
+	 * @return
+	 */
+	List<TipoDeBasura> buscarTiposDeBasura();
+
+	/**
+	 * Buscar tipo de basura por contenedor
+	 * 
+	 * @param id
+	 * @return
+	 * @throws InstanceNotFoundException
+	 */
+	TipoDeBasura buscarTiposDeBasuraByContenedor(long id) throws InstanceNotFoundException;
+
+	/**
+	 * Buscar contenedores por lista de ids
+	 * 
+	 * @param idsContenedores
+	 * @return
+	 */
+	List<Contenedor> buscarContenedores(List<Long> idsContenedores);
+
+
+	/**
+	 * Buscar contenedores
+	 * 
+	 * @param formBusqueda
+	 *            formulario de busqueda
+	 * @return List
+	 */
+	List<Contenedor> buscarContenedores(ContenedorFormBusq form);
 
 	/**
 	 * Lista de contenedores disponibles para una ruta by ruta id
@@ -254,7 +225,7 @@ public interface ContenedorService {
 	 *            List de ids de tipos
 	 * @return
 	 */
-	List<Contenedor> buscarContenedoresDiponiblesParaUnaRuta(List<Integer> tiposDeBasura);
+	List<Contenedor> buscarContenedoresDiponiblesParaRutas(List<Integer> tiposDeBasura);
 
 	/**
 	 * 
@@ -262,13 +233,16 @@ public interface ContenedorService {
 	 * @return
 	 */
 	List<Contenedor> buscarContenedoresByTiposDeBasura(List<Integer> tiposDeBasura);
-
+	
 	/**
-	 * Buscar contenedores por lista de ids
+	 * Devuelve la comparativa por tipo de reciclado
 	 * 
-	 * @param idsContenedores
+	 * @param tipoComparativa
+	 * @param tiposDeBasura
 	 * @return
 	 */
-	List<Contenedor> buscarContenedores(List<Long> idsContenedores);
+	List<ComparativaPorTipoReciclado> comparativaPorTipoReciclado(TipoComparativa tipoComparativa,
+			List<Integer> tiposDeBasura);
+
 
 }

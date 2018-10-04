@@ -18,6 +18,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.util.StringUtils;
 
+import es.udc.citytrash.model.alerta.Alerta;
 import es.udc.citytrash.model.trabajador.Trabajador;
 import es.udc.citytrash.model.util.excepciones.InstanceNotFoundException;
 import es.udc.citytrash.util.enums.TipoTrabajador;

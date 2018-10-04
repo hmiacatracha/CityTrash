@@ -163,6 +163,7 @@ public class RutaDiaria {
 	@Transient
 	public double getDuracion() {
 		Calendar ahora = Calendar.getInstance();
+		ahora.set(Calendar.HOUR_OF_DAY, 0);
 		Calendar fi = this.fechaHoraInicio != null ? this.fechaHoraInicio : ahora;
 		Calendar ff = this.fechaHoraFin != null ? fechaHoraFin : ahora;
 		// Cálculo de la diferencia de tiempo

@@ -1,5 +1,6 @@
 package es.udc.citytrash.model.rutaService;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -22,6 +23,8 @@ import es.udc.citytrash.controller.util.dtos.ruta.RutaDiariaDto;
 import es.udc.citytrash.controller.util.dtos.ruta.RutaDto;
 import es.udc.citytrash.controller.util.dtos.ruta.RutasDiariaFormBusq;
 import es.udc.citytrash.controller.util.dtos.ruta.RutasFormBusq;
+import es.udc.citytrash.model.alerta.Alerta;
+import es.udc.citytrash.model.alerta.AlertaDao;
 import es.udc.citytrash.model.camion.Camion;
 import es.udc.citytrash.model.camion.CamionDao;
 import es.udc.citytrash.model.contenedor.Contenedor;
@@ -32,32 +35,31 @@ import es.udc.citytrash.model.rutaDiaria.RutaDiaria;
 import es.udc.citytrash.model.rutaDiaria.RutaDiariaDao;
 import es.udc.citytrash.model.rutaDiariaContenedores.RutaDiariaContenedores;
 import es.udc.citytrash.model.rutaDiariaContenedores.RutaDiariaContenedoresDao;
+import es.udc.citytrash.model.rutaDiariaContenedores.RutaDiariaContenedoresPK;
+import es.udc.citytrash.model.sensor.Sensor;
+import es.udc.citytrash.model.sensor.Volumen;
+import es.udc.citytrash.model.sensorValor.Valor;
+import es.udc.citytrash.model.sensorValor.ValorDao;
 import es.udc.citytrash.model.tipoDeBasura.TipoDeBasura;
 import es.udc.citytrash.model.tipoDeBasura.TipoDeBasuraDao;
 import es.udc.citytrash.model.trabajador.Conductor;
-import es.udc.citytrash.model.trabajador.ConductorDao;
 import es.udc.citytrash.model.trabajador.Recolector;
-import es.udc.citytrash.model.trabajador.RecolectorDao;
 import es.udc.citytrash.model.trabajador.Trabajador;
 import es.udc.citytrash.model.trabajador.TrabajadorDao;
-import es.udc.citytrash.model.util.dto.Notificacion;
 import es.udc.citytrash.model.util.excepciones.DuplicateInstanceException;
 import es.udc.citytrash.model.util.excepciones.InactiveResourceException;
 import es.udc.citytrash.model.util.excepciones.InstanceNotFoundException;
 import es.udc.citytrash.model.util.excepciones.RutaIniciadaException;
+import es.udc.citytrash.util.enums.Mensaje;
+import es.udc.citytrash.util.enums.Prioridad;
+import es.udc.citytrash.util.enums.TipoDeAlerta;
 
 @Service("rutaService")
 @Transactional
 public class RutaServiceImpl implements RutaService {
 
 	@Autowired
-	RecolectorDao tDao;
-
-	@Autowired
-	RecolectorDao recolectorDao;
-
-	@Autowired
-	ConductorDao conductorDao;
+	TrabajadorDao tDao;
 
 	@Autowired
 	CamionDao camionDao;
@@ -69,6 +71,9 @@ public class RutaServiceImpl implements RutaService {
 	ContenedorDao contenedorDao;
 
 	@Autowired
+	ValorDao valorDao;
+
+	@Autowired
 	RutaDao rutaDao;
 
 	@Autowired
@@ -76,6 +81,9 @@ public class RutaServiceImpl implements RutaService {
 
 	@Autowired
 	RutaDiariaContenedoresDao rutaDiariaContenedoresDao;
+
+	@Autowired
+	AlertaDao alertaDao;
 
 	final Logger logger = LoggerFactory.getLogger(RutaServiceImpl.class);
 
@@ -87,6 +95,16 @@ public class RutaServiceImpl implements RutaService {
 	@Override
 	public RutaDiaria buscarRutaDiaria(long rutaDiariaId) throws InstanceNotFoundException {
 		return rutaDiariaDao.buscarById(rutaDiariaId);
+	}
+
+	@Override
+	public RutaDiariaContenedores rutaDiariaContenedor(long rutaDiariaId, long contenedorId)
+			throws InstanceNotFoundException {
+		RutaDiaria rd = rutaDiariaDao.buscarById(rutaDiariaId);
+		Contenedor c = contenedorDao.buscarById(contenedorId);
+
+		RutaDiariaContenedoresPK pk = new RutaDiariaContenedoresPK(rd, c);
+		return rutaDiariaContenedoresDao.buscarById(pk);
 	}
 
 	@Override
@@ -220,6 +238,7 @@ public class RutaServiceImpl implements RutaService {
 		List<RutaDiaria> rd = new ArrayList<RutaDiaria>();
 		Ruta ruta;
 		Calendar calendar = form.getFecha() != null ? dateToCalendar(form.getFecha()) : Calendar.getInstance();
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
 		Set<Integer> rutas = new HashSet<Integer>(form.getRutas());
 		List<Integer> listaRutas = new ArrayList<Integer>(rutas);
 
@@ -324,22 +343,12 @@ public class RutaServiceImpl implements RutaService {
 				}
 
 				/* Añade la ruta, solo si no tiene ningun error */
-				rutaDiaria = rutaDiariaDao.guardar(rutaDiaria);
-
-				if (listaMensajes.size() > 0) {
-					Notificacion notificacion = new Notificacion(RutaDiaria.class.getName(), ruta.getId(),
-							listaMensajes);
-					// guardar notificacion
-				}
+				rutaDiaria = rutaDiariaDao.guardar(rutaDiaria);				
 
 			} catch (InstanceNotFoundException e) {
-				listaMensajes.add("InstanceNotFoundException_ruta_diaria_ruta");
-				Notificacion notificacion = new Notificacion(RutaDiaria.class.getName(), id, listaMensajes);
-				// guardar notificacion
+
 			} catch (DuplicateInstanceException e) {
-				listaMensajes.add("DuplicateInstanceException_ruta_diaria");
-				Notificacion notificacion = new Notificacion(RutaDiaria.class.getName(), id, listaMensajes);
-				// guardar notifiacion
+
 			}
 		}
 	}
@@ -464,8 +473,14 @@ public class RutaServiceImpl implements RutaService {
 				}
 			} else if (size == 2) {
 				try {
-					Trabajador r1 = recolectorDao.buscarById(form.getRecolectores().get(0));
-					Trabajador r2 = recolectorDao.buscarById(form.getRecolectores().get(1));
+
+					Trabajador r1 = tDao.buscarById(form.getRecolectores().get(0));
+					Trabajador r2 = tDao.buscarById(form.getRecolectores().get(1));
+					if (!(r1 instanceof Recolector))
+						throw new InstanceNotFoundException(form.getRecolectores().get(0), Recolector.class.getName());
+					if (!(r2 instanceof Recolector))
+						throw new InstanceNotFoundException(form.getRecolectores().get(1), Recolector.class.getName());
+
 					if (!r1.isActiveWorker()) {
 						throw new InactiveResourceException(r1.getNombre() + " " + r1.getApellidos(),
 								Recolector.class.getName());
@@ -477,6 +492,7 @@ public class RutaServiceImpl implements RutaService {
 					}
 					rd.setRecogedor1(r1);
 					rd.setRecogedor2(r2);
+
 				} catch (InstanceNotFoundException e) {
 					throw new InstanceNotFoundException(form.getRecolectores().get(0), Recolector.class.getName());
 				}
@@ -489,7 +505,10 @@ public class RutaServiceImpl implements RutaService {
 		/* MODIFICACAMOS EL CONDUCTOR */
 		if (form.getConductor() != null) {
 			try {
-				Trabajador t = conductorDao.buscarById(form.getConductor());
+				Trabajador t = tDao.buscarById(form.getConductor());
+				if (!(t instanceof Conductor)) {
+					throw new InstanceNotFoundException(form.getConductor(), Conductor.class.getName());
+				}
 				rd.setConductor(t);
 			} catch (InstanceNotFoundException e) {
 				throw new InstanceNotFoundException(form.getConductor(), Conductor.class.getName());
@@ -497,24 +516,6 @@ public class RutaServiceImpl implements RutaService {
 		}
 
 		logger.info("actualizarRutaDiaria paso10");
-		List<RutaDiariaContenedores> contenedoresGuardados = new ArrayList<RutaDiariaContenedores>();
-		contenedoresGuardados = rd.getRutaDiariaContenedores();
-
-		// List<Contenedor> contenedores = new ArrayList<Contenedor>();
-		/* Eliminanos los contenedores que ya no pertenecen a esta ruta */
-		for (RutaDiariaContenedores c : contenedoresGuardados) {
-
-		}
-
-		/* Añadimos los contenedores nuevos */
-		/*
-		 * for (Long contenedorId : form.getContenedores()) { if (contenedorId
-		 * != null) { if (contenedorDao.existe(contenedorId)) { Contenedor
-		 * contenedor = contenedorDao.buscarById(contenedorId);
-		 * contenedor.setRuta(ruta); contenedorDao.guardar(contenedor); } } }
-		 */
-
-		logger.info("actualizarRutaDiaria paso11");
 		rd = rutaDiariaDao.guardar(rd);
 		logger.info("actualizarRutaDiaria fin");
 		return rd;
@@ -523,6 +524,152 @@ public class RutaServiceImpl implements RutaService {
 	@Override
 	public List<Contenedor> buscarContenedoresDeRutaDiaria(long rutaDiariaId) {
 		return rutaDiariaDao.buscarContenedores(rutaDiariaId);
+	}
+
+	@Override
+	public void crearAlertaTrabajadoresAsignadosAMasDeUnaRuta() {
+		Calendar fechaAlerta = Calendar.getInstance();
+		fechaAlerta.set(Calendar.HOUR_OF_DAY, 0);
+		Prioridad prioridad = Prioridad.M;
+		TipoDeAlerta tipo = TipoDeAlerta.TRABAJADORES;
+		Mensaje mensaje = Mensaje.TRABAJADOR_ASIGNADO_EN_MAS_DE_UNA_RUTA;
+
+		logger.info("alertasAsignacionRecursosAUnaRutaDiaria");
+		List<Trabajador> trabajadores = tDao.buscarTrabajadoresAsignadosAVariasRutas(fechaAlerta);
+		for (Trabajador t : trabajadores) {
+			String recurso = t.getNombre() + " " + t.getApellidos();
+			Alerta a = new Alerta(prioridad, tipo, mensaje, recurso);
+			alertaDao.guardar(a);
+		}
+	}
+
+	@Override
+	public void crearAlertaRutaSinConductorAsignado() {
+		Calendar fechaAlerta = Calendar.getInstance();
+		fechaAlerta.set(Calendar.HOUR_OF_DAY, 0);
+		Prioridad prioridad = Prioridad.H;
+		TipoDeAlerta tipo = TipoDeAlerta.RUTA;
+		Mensaje mensaje = Mensaje.RUTA_SIN_CONDUCTOR_ASIGNADO;
+		logger.info("alertasAsignacionRecursosAUnaRutaDiaria");
+		List<RutaDiaria> rutas = rutaDiariaDao.buscarRutasGeneradasSinConductor(fechaAlerta);
+		for (RutaDiaria r : rutas) {
+			String recurso = String.valueOf(r.getId());
+			Alerta a = new Alerta(prioridad, tipo, mensaje, recurso);
+			alertaDao.guardar(a);
+		}
+	}
+
+	@Override
+	public void crearAlertaRutaSinRecolectoresAsignado() {
+		Calendar fechaAlerta = Calendar.getInstance();
+		fechaAlerta.set(Calendar.HOUR_OF_DAY, 0);
+		Prioridad prioridad = Prioridad.L;
+		TipoDeAlerta tipo = TipoDeAlerta.RUTA;
+		Mensaje mensaje = Mensaje.RUTA_SIN_RECOLECTORES_ASIGNADOS;
+		logger.info("crearAlertaRutaSinRecolectoresAsignado");
+		List<RutaDiaria> rutas = rutaDiariaDao.buscarRutasGeneradasSinRecolectores(fechaAlerta);
+		for (RutaDiaria r : rutas) {
+			String recurso = String.valueOf(r.getId());
+			Alerta a = new Alerta(prioridad, tipo, mensaje, recurso);
+			alertaDao.guardar(a);
+		}
+	}
+
+	@Override
+	public void crearAlertaContenedoresLlenos() {
+		Calendar fechaAlerta = Calendar.getInstance();
+		fechaAlerta.set(Calendar.HOUR_OF_DAY, 0);
+		Prioridad prioridad = Prioridad.M;
+		TipoDeAlerta tipo = TipoDeAlerta.CONTENEDORES;
+		Mensaje mensaje = Mensaje.CONTENEDOR_LLENO_COMPLETO;
+		logger.info("crearAlertaContenedorLleno 1");
+		List<RutaDiaria> rutasGeneradas = rutaDiariaDao.buscarRutasDiariasGeneradas(fechaAlerta);
+
+		for (RutaDiaria r : rutasGeneradas) {
+			logger.info("crearAlertaContenedorLleno 2");
+			List<RutaDiariaContenedores> rdc = r.getRutaDiariaContenedores();
+			for (RutaDiariaContenedores rc : rdc) {
+				logger.info("crearAlertaContenedorLleno 3");
+				List<Sensor> sensores = rc.getContenedor().getSensores();
+				logger.info("crearAlertaContenedorLleno 4");
+				for (Sensor s : sensores) {
+					if (s instanceof Volumen) {
+						logger.info("crearAlertaContenedorLleno 5");
+						Valor valor;
+						try {
+							logger.info("crearAlertaContenedorLleno 6");
+							valor = valorDao.obtenerElUltimoValorDeUnSensor(s.getId());
+							logger.info("crearAlertaContenedorLleno 7");
+							if (valor.getValor().compareTo(new BigDecimal(90)) > 1) {
+								logger.info("crearAlertaContenedorLleno 8");
+								String recurso = rc.getContenedor().getNombre();
+								Alerta a = new Alerta(prioridad, tipo, mensaje, recurso);
+								alertaDao.guardar(a);
+								logger.info("crearAlertaContenedorLleno 9");
+							}
+						} catch (InstanceNotFoundException e) {
+
+						}
+					}
+				}
+			}
+		}
+	}
+
+	@Override
+	public void crearAlertaCambioBruscoContenedor() {
+		Calendar fechaAlerta = Calendar.getInstance();
+		fechaAlerta.set(Calendar.HOUR_OF_DAY, 0);
+		Prioridad prioridad = Prioridad.M;
+		TipoDeAlerta tipo = TipoDeAlerta.CONTENEDORES;
+		Mensaje mensaje = Mensaje.CAMBIO_BRUSCO_DE_VOLUMEN;
+		logger.info("crearAlertaCambioBruscoContenedor fecha=>" + fechaAlerta.toString());
+		List<RutaDiaria> rutasGeneradas = rutaDiariaDao.buscarRutasDiariasGeneradas(fechaAlerta);
+
+		for (RutaDiaria r : rutasGeneradas) {
+			List<RutaDiariaContenedores> rdc = r.getRutaDiariaContenedores();
+			for (RutaDiariaContenedores rc : rdc) {
+				List<Sensor> sensores = rc.getContenedor().getSensores();
+				for (Sensor s : sensores) {
+					if (s instanceof Volumen) {
+						List<Valor> valores = valorDao.obtenerLosDosUltimosValoresDeUnSensor(s.getId());
+						if (valores.size() == 2) {
+							if (valores.get(1).getValor().compareTo(BigDecimal.ZERO) > 0) {
+								BigDecimal part1 = (valores.get(0).getValor().subtract(valores.get(1).getValor()))
+										.abs();
+								BigDecimal part2 = (valores.get(1).getValor()).abs();
+								BigDecimal porcentaje = part1.divide(part2);
+								if (porcentaje.compareTo(new BigDecimal(30)) > 1) {
+									String recurso = rc.getContenedor().getNombre();
+									Alerta a = new Alerta(prioridad, tipo, mensaje, recurso);
+									alertaDao.guardar(a);
+								}
+							}
+
+						}
+					}
+				}
+			}
+		}
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public Page<Alerta> buscarAlertas(Pageable pageable) {
+		logger.info("buscarAlertas");
+		List<Alerta> alertaRuta = new ArrayList<Alerta>();
+		Page<Alerta> page = new PageImpl<Alerta>(alertaRuta, pageable, alertaRuta.size());
+		logger.info("buscarAlertas paso2");
+		page = alertaDao.buscarAlertas(pageable);
+		logger.info("buscarAlertas paso 3");
+		return page;
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public int getNumeroAlertas() {
+		int items = alertaDao.obtenerNumeroAlertas();
+		return items;
 	}
 
 }

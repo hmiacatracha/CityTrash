@@ -16,7 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import es.udc.citytrash.model.telefono.Telefono;
+import es.udc.citytrash.model.trabajador.Telefono;
 import es.udc.citytrash.model.trabajador.Trabajador;
 import es.udc.citytrash.util.enums.Idioma;
 import es.udc.citytrash.util.enums.TipoTrabajador;

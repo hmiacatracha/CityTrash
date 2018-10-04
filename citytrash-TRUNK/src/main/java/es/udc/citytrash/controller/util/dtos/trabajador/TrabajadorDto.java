@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.List;
 
-import es.udc.citytrash.model.telefono.Telefono;
+import es.udc.citytrash.model.trabajador.Telefono;
 import es.udc.citytrash.model.trabajador.Trabajador;
 import es.udc.citytrash.util.enums.Idioma;
 import es.udc.citytrash.util.enums.TipoTrabajador;

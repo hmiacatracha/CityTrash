@@ -95,10 +95,10 @@ function mostrarRuta(data) {
 
 	route.push(inicio);
 	//console.log("route inicio =>" + route);
-	
+
 	$.each(data.features, function(i, feature) {
 		var id = feature.properties.id
-		
+
 		var latlng = feature.geometry.coordinates;
 		var iconUrl = '/citytrash/resources/static/img/contenedores/c_negro.png';
 		switch (feature.properties.tipo) {

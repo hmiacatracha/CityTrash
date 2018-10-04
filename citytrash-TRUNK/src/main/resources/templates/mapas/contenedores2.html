@@ -73,8 +73,15 @@
 <body class="fondoBlanco">
 	<div th:replace="fragments/navigation :: nav(${menu})"></div>
 	<div id="viewBody" class="container" th:fragment="content">
-		<div id="mapa" class="container"></div>
-		<nav id='filter-group' class='filter-group'></nav>
+		<!-- <div id="map" class="container"></div> -->
+
+		<div>
+			<div id="map-wrapper">
+				<div id="mapaContenedores"></div>
+			</div>
+		</div>
+
+		<!-- <nav id='filter-group' class='filter-group'></nav>-->
 	</div>
 	<div th:replace="fragments/footer :: footer()"></div>
 	<!-- LEAFLET -->
@@ -82,7 +89,7 @@
 
 	<!-- Load Esri Leaflet from CDN -->
 	<script src="https://unpkg.com/esri-leaflet@2.1.4"></script>
-	
+
 	<!-- Esri Leaflet Geocoder -->
 	<link rel="stylesheet"
 		href="https://unpkg.com/esri-leaflet-geocoder@2.2.12/dist/esri-leaflet-geocoder.css">

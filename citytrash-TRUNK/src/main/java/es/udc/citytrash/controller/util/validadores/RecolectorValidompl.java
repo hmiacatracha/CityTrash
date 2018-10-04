@@ -9,7 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.udc.citytrash.controller.util.anotaciones.RecolectorValido;
+import es.udc.citytrash.model.trabajador.Recolector;
+import es.udc.citytrash.model.trabajador.Trabajador;
 import es.udc.citytrash.model.trabajadorService.TrabajadorService;
+import es.udc.citytrash.model.util.excepciones.InstanceNotFoundException;
 
 @Component
 public class RecolectorValidompl implements ConstraintValidator<RecolectorValido, Long> {
@@ -37,7 +40,16 @@ public class RecolectorValidompl implements ConstraintValidator<RecolectorValido
 			valid = false;
 			logger.info("paso2");
 		} else {
-			valid = tServicio.esTrabajadorRecolector(id);
+			try {
+				Trabajador t = tServicio.buscarTrabajador(id);
+				if (t instanceof Recolector)
+					valid = true;
+				else
+					valid = false;
+
+			} catch (InstanceNotFoundException e) {
+				valid = false;
+			}
 
 		}
 		return valid;

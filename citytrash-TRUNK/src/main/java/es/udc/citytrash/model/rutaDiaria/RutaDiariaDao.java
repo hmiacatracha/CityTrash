@@ -1,5 +1,6 @@
 package es.udc.citytrash.model.rutaDiaria;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -53,8 +54,33 @@ public interface RutaDiariaDao extends GenericDAO<RutaDiaria, Long> {
 
 	/**
 	 * Buscar contenedores de una ruta diaria
+	 * 
 	 * @param rutaDiariaId
 	 * @return
 	 */
 	List<Contenedor> buscarContenedores(long rutaDiariaId);
+
+	/**
+	 * Buscar rutas diarias generadas
+	 * 
+	 * @param fecha
+	 * @return
+	 */
+	List<RutaDiaria> buscarRutasDiariasGeneradas(Calendar calendar);
+
+	/**
+	 * Devuelve la lista de rutas que no tienen conductor asignado
+	 * 
+	 * @param fecha
+	 * @return
+	 */
+	List<RutaDiaria> buscarRutasGeneradasSinConductor(Calendar calendar);
+
+	/**
+	 * Busca las rutas generadas que no tienen recolectores
+	 * 
+	 * @param fecha
+	 * @return
+	 */
+	List<RutaDiaria> buscarRutasGeneradasSinRecolectores(Calendar fecha);
 }
