@@ -54,7 +54,7 @@ public class Valor implements Serializable {
 	}
 
 	/** Metodo setter que representa la llave primaria compuesta */
-	public void setPk(ValorPk pk) {
+	protected void setPk(ValorPk pk) {
 		this.pk = pk;
 	}
 

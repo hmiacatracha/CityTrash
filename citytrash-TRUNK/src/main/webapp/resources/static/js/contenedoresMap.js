@@ -3,7 +3,6 @@
 //https://savaslabs.com/2015/05/18/mapping-geojson.html
 //https://www.atomicsmash.co.uk/blog/build-interactive-map-leaflet-js/
 
-
 var shownLayer,
 	polygon;
 
@@ -14,7 +13,7 @@ var map = L.map('mapaContenedores', {
 })
 
 L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-	attribution : '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+	attribution : '&copy; <a hrefL.marker="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 	subdomains : [ 'a', 'b', 'c' ],
 	maxZoom : 20,
 	minZoom : 5
@@ -69,32 +68,37 @@ $.ajax({
 	url : "geojson",
 	dataType : "json",
 	success : function(data) {
-
 		markerClusters.clearLayers();
 		$.each(data.features, function(i, feature) {
 			console.log("PASO tipo =>" + feature.properties.tipo);
 			var latlng = feature.geometry.coordinates;
 			var iconUrl = '/citytrash/resources/static/img/contenedores/c_negro.png';
+			var tags = 'NONE';
 			switch (feature.properties.tipo) {
 			case 'INORG':
 				iconUrl = '/citytrash/resources/static/img/contenedores/c_amarrillo_di.png';
 				console.log("INORG");
+				tags = 'INORGANIC';
 				break;
 			case 'ORGAN':
 				iconUrl = '/citytrash/resources/static/img/contenedores/c_marron.png';
 				console.log("ORGAN");
+				tags = 'ORGANIC';
 				break;
 			case 'GLASS':
 				iconUrl = '/citytrash/resources/static/img/contenedores/c_verde.png';
 				console.log("GLASS");
+				tags = 'GLASS';
 				break;
 			case 'PAPER':
 				iconUrl = '/citytrash/resources/static/img/contenedores/c_azul_claro.png';
 				console.log("PAPER");
+				tags = 'PAPER';
 				break;
 			case 'PLAST':
 				iconUrl = '/citytrash/resources/static/img/contenedores/c_rojo.png';
 				console.log("PLAST");
+				tags = 'PLASTIC';
 				break;
 			default:
 				iconUrl = '/citytrash/resources/static/img/contenedores/c_negro.png';
@@ -106,9 +110,10 @@ $.ajax({
 				iconAnchor : [ 9, 20 ], // point of the icon which will correspond to marker's location
 				popupAnchor : [ -3, -76 ] // point from which the popup should open relative to the iconAnchor
 			});
-
+			
 			var marker = L.marker(latlng, {
-				icon : ICONO
+				tags:  [tags],
+				icon : ICONO,
 			});
 
 			marker.bindPopup(popupHtml(feature));
@@ -159,8 +164,12 @@ $.ajax({
 
 		map.addLayer(markerClusters);
 
-	/*L.geoJson(data, {
-		onEachFeature : onEachFeature,
+		L.control.tagFilterButton({
+			data: ['INORGANIC', 'ORGANIC', 'GLASS', 'PAPER', 'PLASTIC']
+		}).addTo(map);
+		
+/*
+	L.geoJson(data, {
 		pointToLayer : function(feature, latlng) {
 			//Returns L.Marker object
 			console.log("pasa por aqui pointToLayer tipo =>" + feature.properties.tipo);
@@ -206,6 +215,8 @@ $.ajax({
 	}
 });
 
+
+		
 function popupHtml(feature) {
 	var a = '<a href="' + feature.properties.id + '/detalles" target="_blank">' + feature.properties.nombre + '</a>'
 	var html = a + '<br> TIPO: ' + feature.properties.tipo + '<br> CARGA NOMINAL: '

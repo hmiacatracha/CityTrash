@@ -66,7 +66,7 @@ public class Camion implements Serializable {
 		return id;
 	}
 
-	public void setId(long id) {
+	protected void setId(long id) {
 		this.id = id;
 	}
 

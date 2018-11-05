@@ -85,10 +85,13 @@ public class ValorDaoHibernate extends GenericHibernateDAOImpl<Valor, ValorPk> i
 
 	@Override
 	public List<Valor> obtenerLosDosUltimosValoresDeUnSensor(long sensorId) {
+	
 		Query<Valor> query;
 		List<Valor> valores = new ArrayList<Valor>();
 		logger.info("obtenerLosDosUltimosValoresDeUnSensor");
-		StringBuilder hql = new StringBuilder("Select v FROM Valor v  inner join v.pk key  WHERE v.sensor.id = :id"
+		StringBuilder hql = new StringBuilder("Select v FROM Valor v  inner join v.pk key  "
+				+ " WHERE DATE(key.fechaHora) = DATE(current_date)"
+				+ " AND v.sensor.id = :id"
 				+ " ORDER BY key.fechaHora DESC ");
 
 		logger.info("Consulta =>" + hql.toString());

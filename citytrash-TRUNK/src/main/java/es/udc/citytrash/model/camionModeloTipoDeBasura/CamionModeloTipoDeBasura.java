@@ -62,7 +62,7 @@ public class CamionModeloTipoDeBasura implements Serializable {
 		return pk;
 	}
 
-	public void setPk(CamionModeloTipoDeBasuraPK pk) {
+	protected void setPk(CamionModeloTipoDeBasuraPK pk) {
 		this.pk = pk;
 	}
 

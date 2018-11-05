@@ -16,8 +16,7 @@
 		<property name="hibernate.connection.characterEncoding">${hibernate.charSet}</property>
 		<property name="hibernate.connection.useUnicode">${hibernate.useunicode}</property>
 		<!--https://vladmihalcea.com/the-hibernate-enable_lazy_load_no_trans-anti-pattern/> -->
-		<property name="hibernate.enable_lazy_load_no_trans">true</property>
-		
+		<property name="hibernate.enable_lazy_load_no_trans">true</property>		
 		<!-- mapping -->
 		<mapping class="es.udc.citytrash.model.alerta.Alerta" />
 		<mapping class="es.udc.citytrash.model.trabajador.Trabajador" />

@@ -91,7 +91,7 @@ public class CamionModelo implements Serializable {
 		return id;
 	}
 
-	public void setId(int id) {
+	protected void setId(int id) {
 		this.id = id;
 	}
 
