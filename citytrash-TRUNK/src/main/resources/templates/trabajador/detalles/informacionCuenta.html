@@ -3,7 +3,8 @@
 	xmlns:th="http://www.thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{layouts/default}" th:with="currentPage='trabajadores'">
+	layout:decorate="~{layouts/default}"
+	th:with="currentPage='trabajadores'">
 <head>
 <title th:text="#{page_trabajadores_detalle}"></title>
 </head>
@@ -76,7 +77,7 @@
 							class="glyphicon glyphicon-calendar"></i> <label
 							class="mayusculas" th:text="#{lbl_trabajador_fecha_creacion}"></label></td>
 						<td>
-							<!-- http://www.baeldung.com/dates-in-thymeleaf -->
+
 							<p th:if="${trabajador.fechaCreacion != null}"
 								th:with="df=#{fecha_formato_completo}"
 								th:text="${#dates.format(trabajador.fechaCreacion, df)}"></p>

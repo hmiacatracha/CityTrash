@@ -12,7 +12,7 @@ public interface GenericDAO<T, ID extends Serializable> {
 	List<T> buscarTodos();
 
 	T guardar(T entity);
-
+	
 	void eliminar(T entity);
 
 	boolean existe(ID id);

@@ -12,11 +12,9 @@
 		<br>
 		<div class="row container center-block">
 			<h3 th:if="${nombreDelCamion!=null}"
-				class="pull-left text-success
-				col-xs-6"
+				class="pull-left text-success col-xs-6"
 				th:text="${#strings.toUpperCase(nombreDelCamion)}"></h3>
 		</div>
-
 		<div th:if="${objecto}" th:object="${objecto}">
 			<div class="panel-heading ">
 				<div class="col-xs-12 text-right">
@@ -33,20 +31,15 @@
 			</div>
 
 			<div class="panel-body">
-
 				<div class="table-responsive">
 					<table class="table table-hover">
 						<tbody>
 							<!-- nombre -->
 							<tr>
-								<td class="text-success"><label
+								<td class="text-success"><label class="mayusculas"
 									th:text="#{lbl_camion_nombre}"></label></td>
-								<td>
-									<div th:if="*{nombre}"
-										class="input-group date  has-feedback col-sm-6">
-										<input type="text" class="form-control" id="vin"
-											th:field="*{nombre}" disabled="disabled">
-									</div>
+								<td th:if="*{nombre}">
+									<p th:text="*{nombre}"></p>
 								</td>
 							</tr>
 							<!-- matricula -->
@@ -55,12 +48,7 @@
 									th:text="#{lbl_camion_matricula}"></label></td>
 
 								<td>
-									<!-- <p th:if="*{matricula}" class="text-right col-xs-6"
-										th:text="*{matricula}"></p>-->
-									<div class="input-group date  has-feedback col-sm-6">
-										<input type="text" class="form-control" id="vin"
-											th:field="*{matricula}" disabled="disabled">
-									</div>
+									<p th:if="*{matricula}" th:text="*{matricula}"></p>
 								</td>
 							</tr>
 							<!-- vin -->
@@ -68,33 +56,24 @@
 								<td class="text-success"><label th:text="#{lbl_camion_vin}"></label></td>
 
 								<td>
-									<!-- <p th:if="*{vin}" class="text-right col-xs-6" th:text="*{vin}"></p>-->
-
-									<div class="input-group date  has-feedback col-sm-6">
-										<input type="text" class="form-control" id="vin"
-											th:field="*{vin}" disabled="disabled">
-									</div>
+									<p th:if="*{vin}" th:text="*{vin}"></p>
 								</td>
 							</tr>
 							<!-- conductor principal -->
 							<tr>
 								<td class="text-success"><label th:text="#{lbl_conductor}"></label></td>
-								<td><select th:field="*{conductorPrincipal}"
-									disabled="disabled" id="modelo" class="text-right col-xs-6">
-										<option value="" th:text="#{lbl_seleccione}"></option>
-										<option th:if="${todosLosTrabajadores}!=null"
-											th:each="row, index: ${todosLosTrabajadores}"
-											th:value="${row.id}"
-											th:text="${#strings.toUpperCase(row.apellidos + ' '  + row.nombre)}"></option>
-								</select></td>
+								<td><a class="text-left" th:if="${conductor!=null}"
+									th:text="${#strings.toUpperCase(conductor.apellidos + ' '  + conductor.nombre)}"
+									th:href="@{#{link.trabajadores.detalles}(id=${conductor.id})}">
+								</a></td>
 							</tr>
 							<!-- conductor suplente -->
 							<tr>
 								<td class="text-success"><label
 									th:text="#{lbl_conductor_suplente}"></label></td>
+								<!-- 
 								<td>
-									<!-- <p th:if="*{conductorSuplente}" class="text-right col-xs-6"
-									th:text="*{conductorSuplente}"></p> --> <select
+									<select
 									th:field="*{conductorSuplente}" disabled="disabled" id="modelo"
 									class="text-right col-xs-6">
 										<option value="" th:text="#{lbl_seleccione}"></option>
@@ -103,14 +82,20 @@
 											th:value="${row.id}"
 											th:text="${#strings.toUpperCase(row.apellidos + ' '  + row.nombre)}"></option>
 								</select>
-
 								</td>
+								-->
+								<td><a class="text-left" th:if="${conductorSuplente!=null}"
+									th:text="${#strings.toUpperCase(conductorSuplente.apellidos + ' '  + conductorSuplente.nombre)}"
+									th:href="@{#{link.trabajadores.detalles}(id=${conductorSuplente.id})}">
+								</a></td>
+
 							</tr>
 							<!-- recogedor uno -->
 							<tr>
 								<td class="text-success"><label th:text="#{lbl_conductor}"></label></td>
 
-								<td><select th:field="*{recogedorUno}" disabled="disabled"
+
+								<!-- <td><select th:field="*{recogedorUno}" disabled="disabled"
 									id="modelo" class="text-right col-xs-6">
 										<option value="" th:text="#{lbl_seleccione}"></option>
 										<option th:if="${todosLosTrabajadores}!=null"
@@ -118,6 +103,12 @@
 											th:value="${row.id}"
 											th:text="${#strings.toUpperCase(row.apellidos + ' '  + row.nombre)}"></option>
 								</select></td>
+								-->
+								<td><a class="text-left" th:if="${recogedor1!=null}"
+									th:text="${#strings.toUpperCase(recogedor1.apellidos + ' '  + recogedor1.nombre)}"
+									th:href="@{#{link.trabajadores.detalles}(id=${recogedor1.id})}">
+								</a></td>
+
 							</tr>
 
 							<!-- recogedor dos -->
@@ -125,6 +116,12 @@
 							<tr>
 								<td class="text-success"><label th:text="#{lbl_recolector}"></label></td>
 
+								<td><a class="text-left" th:if="${recogedor2!=null}"
+									th:text="${#strings.toUpperCase(recogedor2.apellidos + ' '  + recogedor2.nombre)}"
+									th:href="@{#{link.trabajadores.detalles}(id=${recogedor2.id})}">
+								</a></td>
+
+								<!-- 
 								<td><select th:field="*{RecogedorDos}" disabled="disabled"
 									id="modelo" class="text-right col-xs-6">
 										<option value="" th:text="#{lbl_seleccione}"></option>
@@ -133,22 +130,17 @@
 											th:value="${row.id}"
 											th:text="${#strings.toUpperCase(row.apellidos + ' '  + row.nombre)}"></option>
 								</select></td>
+								-->
 							</tr>
 							<!-- fecha de alta -->
 							<tr>
 								<td class="text-success"><i
 									class="glyphicon glyphicon-calendar"></i> <label
 									class="mayusculas" th:text="#{lbl_fechaAlta}"></label></td>
-								<td>								
-									<div class="input-group date  has-feedback col-sm-6"
-										id="datetimePicker">
-										<input type="text" class="form-control" id="fechaAlta"
-											th:field="*{fechaAlta}" th:data-provide="datepicker"
-											th:with="df=#{fecha_formato}" data-date-format=df
-											th:data-date-autoclose="true"
-											th:data-date-today-highlight="true"
-											th:data-date-orientation="bottom" disabled="disabled" />
-									</div>
+								<td>
+									<p th:if="*{fechaAlta != null}"
+										th:with="df=#{fecha_formato_completo}"
+										th:text="*{{fechaAlta}}"></p>
 								</td>
 							</tr>
 
@@ -158,6 +150,9 @@
 									class="glyphicon glyphicon-calendar"></i> <label
 									class="mayusculas" th:text="#{lbl_fechaBaja}"></label></td>
 								<td>
+									<p th:if="*{fechaBaja != null}"
+										th:with="df=#{fecha_formato_completo}"
+										th:text="*{{fechaBaja}}"></p> <!-- 
 									<div class="input-group date  has-feedback col-sm-6"
 										id="datetimePicker">
 										<input type="text" class="form-control" id="fechaBaja"
@@ -167,6 +162,7 @@
 											th:data-date-today-highlight="true"
 											th:data-date-orientation="bottom" disabled="disabled" />
 									</div>
+									-->
 
 								</td>
 							</tr>

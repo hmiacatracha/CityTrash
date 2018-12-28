@@ -205,7 +205,6 @@ function mostrarRuta(data) {
 						glyphSize : '20px',
 					});
 				}
-
 				return L.marker(wp.latLng, {
 					draggable : true,
 					bounceOnAdd : false,

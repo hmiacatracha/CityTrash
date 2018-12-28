@@ -178,13 +178,12 @@
 
 						<tbody>
 							<tr th:each="rutaDiaria : ${pageRutas.content}">
-
 								<td class="align-middle"><a
 									th:if="${rutaDiaria.ruta!=null}"
 									th:text="#{lbl_ruta} + '-' + ${rutaDiaria.ruta.id}"
-									th:href="@{#{link.rutas.detalle}(id=${rutaDiaria.ruta.id})}"
-									class="btn-sm"><i class="glyphicon glyphicon-pencil"
-										data-toggle="tooltip" th:title="#{lbl_detalles}"></i></a></td>
+									th:href="@{#{link.rutas.detalle}(id=${rutaDiaria.ruta.id})}"><i
+										class="glyphicon glyphicon-pencil" data-toggle="tooltip"
+										th:title="#{lbl_detalles}"></i></a></td>
 
 								<!-- fecha -->
 								<td class="align-middle"><span
@@ -195,8 +194,8 @@
 								<td class="align-middle"><a
 									th:if="${rutaDiaria.camion!=null}"
 									th:text="${#strings.toUpperCase(rutaDiaria.camion.nombre)}"
-									th:href="@{#{link.camiones.detalles}(id=${rutaDiaria.camion.id})}"
-									class="btn-sm"><i th:if="${rutaDiaria.camion!=null}"
+									th:href="@{#{link.camiones.detalles}(id=${rutaDiaria.camion.id})}"><i
+										th:if="${rutaDiaria.camion!=null}"
 										class="glyphicon glyphicon-pencil" data-toggle="tooltip"
 										th:title="#{lbl_detalles}"></i></a>
 									<p th:unless="${rutaDiaria.camion!=null}">---</p></td>
@@ -206,27 +205,27 @@
 								<td class="align-middle"><a
 									th:if="${rutaDiaria.conductor!=null}"
 									th:text="${#strings.toUpperCase(rutaDiaria.conductor.nombre + ' ' + rutaDiaria.conductor.apellidos)}"
-									th:href="@{#{link.trabajadores.detalles}(id=${rutaDiaria.conductor.id})}"
-									class="btn-sm"><i class="glyphicon glyphicon-pencil"
-										data-toggle="tooltip" th:title="#{lbl_detalles}"></i></a>
+									th:href="@{#{link.trabajadores.detalles}(id=${rutaDiaria.conductor.id})}"><i
+										class="glyphicon glyphicon-pencil" data-toggle="tooltip"
+										th:title="#{lbl_detalles}"></i></a>
 									<p th:unless="${rutaDiaria.conductor!=null}">---</td>
 
 								<!-- recolector1 -->
 								<td class="align-middle"><a
 									th:if="${rutaDiaria.recogedor1!=null}"
 									th:text="${#strings.toUpperCase(rutaDiaria.recogedor1.nombre + ' ' + rutaDiaria.recogedor1.apellidos)}"
-									th:href="@{#{link.trabajadores.detalles}(id=${rutaDiaria.recogedor1.id})}"
-									class="btn-sm"><i class="glyphicon glyphicon-pencil"
-										data-toggle="tooltip" th:title="#{lbl_detalles}"></i></a>
+									th:href="@{#{link.trabajadores.detalles}(id=${rutaDiaria.recogedor1.id})}"><i
+										class="glyphicon glyphicon-pencil" data-toggle="tooltip"
+										th:title="#{lbl_detalles}"></i></a>
 									<p th:unless="${rutaDiaria.recogedor1!=null}">---</td>
 
 								<!-- recogedor2 -->
 								<td class="align-middle"><a
 									th:if="${rutaDiaria.recogedor2!=null}"
 									th:text="${#strings.toUpperCase(rutaDiaria.recogedor2.nombre + ' ' + rutaDiaria.recogedor2.apellidos)}"
-									th:href="@{#{link.trabajadores.detalles}(id=${rutaDiaria.recogedor2.id})}"
-									class="btn-sm"><i class="glyphicon glyphicon-pencil"
-										data-toggle="tooltip" th:title="#{lbl_detalles}"></i></a>
+									th:href="@{#{link.trabajadores.detalles}(id=${rutaDiaria.recogedor2.id})}"><i
+										class="glyphicon glyphicon-pencil" data-toggle="tooltip"
+										th:title="#{lbl_detalles}"></i></a>
 									<p th:unless="${rutaDiaria.recogedor2!=null}">---</td>
 
 								<!-- duracion -->

@@ -123,7 +123,7 @@
 				</div>
 				<!-- tabla -->
 				<div class="table-responsive">
-					<table class="table">
+					<table class="table table-hover">
 						<thead class="thead-dark">
 							<tr>
 								<th><a class="sorted" sd:pagination-sort="id"
@@ -132,13 +132,6 @@
 								<th><a class="sorted" sd:pagination-sort="nombre"
 									th:text="${#strings.toUpperCase('__#{lbl_contenedor_nombre}__')}">
 								</a></th>
-								<!-- 
-								<th><a class="sorted" sd:pagination-sort="latitud"
-									th:text="${#strings.toUpperCase('__#{lbl_contenedor_latitud}__')}"></a></th>
-
-								<th><a class="sorted" sd:pagination-sort="longitud"
-									th:text="${#strings.toUpperCase('__#{lbl_contenedor_longitude}__')}"></a></th>
-								 -->
 
 								<th th:text="${#strings.toUpperCase('__#{lbl_fecha_alta}__')}"></th>
 
@@ -149,7 +142,6 @@
 								<th th:text="${#strings.toUpperCase('__#{lbl_acciones}__')}"></th>
 							</tr>
 						</thead>
-
 						<tbody>
 							<tr th:each="contenedor : ${pageContenedores.content}">
 								<td class="align-middle"><span
@@ -159,14 +151,6 @@
 
 								<td class="align-middle"
 									th:text="${#strings.toUpperCase(contenedor.nombre)}"></td>
-
-								<!-- 
-								<td class="align-middle" th:text="${contenedor.latitud}"></td>
-
-								<td class="align-middle" th:text="${contenedor.longitud}">
-								</td>
-								 -->
-
 
 								<td class="align-middle">
 									<p th:if="${contenedor.fechaAlta != null}"
@@ -185,9 +169,9 @@
 								<td class="align-middle"><a
 									th:if="${contenedor.modelo!=null}"
 									th:text="${#strings.toUpperCase(contenedor.modelo.modelo)}"
-									th:href="@{#{link.contenedores.modelos.detalle}(id=${contenedor.modelo.id})}"
-									class="btn-sm"><i class="glyphicon glyphicon-pencil"
-										data-toggle="tooltip" th:title="#{lbl_detalles}"></i></a></td>
+									th:href="@{#{link.contenedores.modelos.detalle}(id=${contenedor.modelo.id})}"><i
+										class="glyphicon glyphicon-pencil" data-toggle="tooltip"
+										th:title="#{lbl_detalles}"></i></a></td>
 								<td>
 									<div class="btn-group text-center" id="options">
 

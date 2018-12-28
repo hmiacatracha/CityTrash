@@ -134,7 +134,7 @@
 				</div>
 				<!-- tabla -->
 				<div class="table-responsive">
-					<table class="table">
+					<table class="table table-striped table-hover">
 						<thead class="thead-dark">
 							<tr>
 								<th><a class="sorted" sd:pagination-sort="id"
@@ -200,25 +200,22 @@
 									th:if="${camion.ModeloCamion!=null}"
 									th:text="${#strings.toUpperCase(camion.ModeloCamion.modelo)}"
 									th:href="@{#{link.camiones.modelos.detalle}(id=${camion.ModeloCamion.id})}"
-									class="btn-sm"><i class="glyphicon glyphicon-pencil"
+									><i class="glyphicon glyphicon-pencil"
 										data-toggle="tooltip" th:title="#{lbl_detalles}"></i></a></td>
 
 								<td>
 									<div class="btn-group text-center" id="options">
-
 										<!-- view details -->
 										<div id="otherOptions" class="btn-group text-center">
 											<a id="link_ver_detalles"
 												th:href="@{#{link.camiones.detalles}(id=${camion.id})}"
 												class="btn-sm"><i class="glyphicon glyphicon-eye-open"
 												data-toggle="tooltip" th:title="#{lbl_ver_detalles}"></i></a>
-
 											<!-- edit -->
 											<a id="link_editar"
 												th:href="@{#{link.camiones.editar}(id=${camion.id})}"
 												class="btn-sm"><i class="glyphicon glyphicon-pencil"
 												data-toggle="tooltip" th:title="#{lbl_editar}"></i></a>
-
 										</div>
 										<div id="changeState" class="btn-group text-center">
 											<a id="link_change_state"

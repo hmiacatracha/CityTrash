@@ -308,10 +308,34 @@ public class CamionesController {
 			throws ResourceNotFoundException {
 		logger.info("GET REQUEST_MAPPING_CAMIONES_DETALLES_INFO_CAMION");
 		try {
-			CamionDto camionDto = new CamionDto(cServicio.buscarCamionById(id));
+			Camion camion = cServicio.buscarCamionById(id);
+			CamionDto camionDto = new CamionDto(camion);
 			model.addAttribute("objecto", camionDto);
 			model.addAttribute("id", camionDto.getId());
 			model.addAttribute("nombreDelCamion", camionDto.getNombre());
+			logger.info("PASO1 camionDto.getConductorPrincipal() => " + camionDto.getConductorPrincipal());
+
+			Trabajador cp = camionDto.getConductorPrincipal() != null
+					? tServicio.buscarTrabajador(camionDto.getConductorPrincipal()) : null;
+
+			logger.info("PASO1 camionDto.getConductorPrincipal()");
+			model.addAttribute("conductor", cp);
+
+			logger.info("PASO2 camionDto.getConductorPrincipal()");
+			Trabajador cs = camionDto.getConductorSuplente() != null
+					? tServicio.buscarTrabajador(camionDto.getConductorSuplente()) : null;
+			model.addAttribute("conductorSuplente", cs);
+
+			logger.info("PASO3 camionDto.getConductorPrincipal()");
+			Trabajador r1 = camionDto.getRecogedorUno() != null
+					? tServicio.buscarTrabajador(camionDto.getRecogedorUno()) : null;
+			model.addAttribute("recogedor1", r1);
+
+			logger.info("PASO4 camionDto.getConductorPrincipal()");
+			Trabajador r2 = camionDto.getRecogedorDos() != null
+					? tServicio.buscarTrabajador(camionDto.getRecogedorDos()) : null;
+			model.addAttribute("recogedor2", r2);
+			logger.info("PASO5 camionDto.getConductorPrincipal()");
 
 			if (AjaxUtils.isAjaxRequest(requestedWith))
 				return WebUtils.VISTA_CAMIONES_DETALLES_INFO.concat("::content");
@@ -348,13 +372,11 @@ public class CamionesController {
 	}
 
 	/******************************** MODELOS ****************************************/
-	
-	
+
 	@RequestMapping(value = { WebUtils.REQUEST_MAPPING_CAMIONES_MODELOS,
 			WebUtils.REQUEST_MAPPING_CAMIONES_MODELOS + "/" }, method = RequestMethod.GET)
 	public String getModelos(
-			@PageableDefault(size = WebUtils.DEFAULT_PAGE_SIZE, page = WebUtils.DEFAULT_PAGE_NUMBER, direction = Direction.DESC) 
-			@SortDefault("id") Pageable pageRequest,
+			@PageableDefault(size = WebUtils.DEFAULT_PAGE_SIZE, page = WebUtils.DEFAULT_PAGE_NUMBER, direction = Direction.DESC) @SortDefault("id") Pageable pageRequest,
 			@RequestParam(value = "palabrasClaveModelo", required = false, defaultValue = "") String palabrasClaves,
 			@RequestParam(value = "tipos", required = false) List<Integer> types, Model model,
 			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith)
@@ -555,7 +577,7 @@ public class CamionesController {
 			}
 
 		} catch (InstanceNotFoundException e) {
-			
+
 		} catch (IndexOutOfBoundsException e) {
 			logger.info("row =>" + row);
 			logger.info("IndexOutOfBoundsException =>");

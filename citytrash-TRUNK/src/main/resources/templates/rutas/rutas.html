@@ -182,7 +182,7 @@
 								<td class="align-middle"><a th:if="${ruta.camion!=null}"
 									th:text="${#strings.toUpperCase(ruta.camion.nombre)}"
 									th:href="@{#{link.camiones.detalles}(id=${ruta.camion.id})}"
-									class="btn-sm"><i class="glyphicon glyphicon-pencil"
+									><i class="glyphicon glyphicon-pencil"
 										data-toggle="tooltip" th:title="#{lbl_detalles}"></i></a></td>
 								<td>
 									<table>
