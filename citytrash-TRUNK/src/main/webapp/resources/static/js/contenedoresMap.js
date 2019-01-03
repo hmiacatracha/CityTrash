@@ -1,31 +1,22 @@
-//https://leafletjs.com/examples/geojson/
-//https://savaslabs.com/2015/05/18/mapping-geojson.html
-//https://www.atomicsmash.co.uk/blog/build-interactive-map-leaflet-js/
+
+var osmUrl = 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
+	osmAttrib = '&copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+	osm = L.tileLayer(osmUrl, {
+		maxZoom : 18,
+		attribution : osmAttrib,
+	});
+
+var tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+		maxZoom : 18,
+		attribution : '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Points &copy 2012 LINZ'
+	}),
+	latlng = L.latLng(-42.82, 175.24);
 
 
-/***************************************************************************************************
- * **
- * *			inicio
- * *
- * *************************************************************************************************/
-var shownLayer,
-	polygon;
+var map = L.map('mapaContenedores')
+	.setView([ 41.3818, 2.1685 ], 12)
+	.addLayer(osm);
 
-
-var map = L.map('mapaContenedores', {
-	center : [ 41.3818, 2.1685 ],
-	minZoom : 0,
-	zoom : 10
-})
-
-var basemap = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-	attribution : '&copy; <a hrefL.marker="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-	subdomains : [ 'a', 'b', 'c' ],
-	maxZoom : 20,
-	minZoom : 5
-}).addTo(map)
-
-/*******************search control*****************************/
 var searchControl = L.esri.Geocoding.geosearch({
 	providers : [
 		L.esri.Geocoding.arcgisOnlineProvider({
@@ -48,13 +39,7 @@ searchControl.on('results', function(data) {
 	}
 });
 
-/*******************MARKET CLUSTER*****************************/
-var mcgLayerSupportGroup = L.markerClusterGroup(),
-	myLayerGroup = L.layerGroup();
 
-/******************************TAG FILTER******************************************/
-
-/*********************************** JAX CALL ***********************************************/
 var contenedores = $.ajax({
 	url : "geojson",
 	dataType : "json",
@@ -63,6 +48,46 @@ var contenedores = $.ajax({
 		alert(xhr.statusText)
 	}
 });
+
+var mcgLayerSupportGroup = L.markerClusterGroup.layerSupport(),
+	group1 = L.layerGroup(),
+	group2 = L.layerGroup(),
+	group3 = L.layerGroup(),
+	group4 = L.layerGroup(),
+	group5 = L.layerGroup(),
+	control = L.control.layers(null, null, {
+		collapsed : true
+	});
+
+
+$.when(contenedores).done(function() {
+	console.log("contenedores done");
+
+	var plasticBins = L.geoJSON(contenedores.responseJSON, myLayerPlaticOptions).addTo(group1);
+	var glassBins = L.geoJSON(contenedores.responseJSON, myLayerGlassOptions).addTo(group2);
+	var organicBins = L.geoJSON(contenedores.responseJSON, myLayerOrganicOptions).addTo(group3);
+	var inorganicBins = L.geoJSON(contenedores.responseJSON, myLayerInorganicOptions).addTo(group4);
+	var paperBins = L.geoJSON(contenedores.responseJSON, myLayerPaperOptions).addTo(group5);
+
+	mcgLayerSupportGroup.addTo(map);
+	mcgLayerSupportGroup.checkIn([ group1, group2, group3, group4, group5 ]);
+
+	control.addOverlay(group1, 'Plástico');
+	control.addOverlay(group2, 'Vidrio');
+	control.addOverlay(group3, 'Orgánica');
+	control.addOverlay(group4, 'Inorganica');
+	control.addOverlay(group5, 'Papel');
+	control.addTo(map);
+	
+	group1.addTo(map); // Adding to map or to AutoMCG are now equivalent.
+	group2.addTo(map);
+	group3.addTo(map);
+	group4.addTo(map);
+	group5.addTo(map);
+	map.fitBounds(mcgLayerSupportGroup.getBounds());
+
+});
+
 
 /*********************************** ICONS MARKET ***********************************************/
 function paperIcon(feature, latlng) {
@@ -179,35 +204,6 @@ let myLayerPaperOptions = {
 	filter : paperFilter,
 	tags : [ 'paper' ]
 };
-
-$.when(contenedores).done(function() {
-	console.log("contenedores done");
-	//console.log("contenedores =>" + JSON.stringify(contenedores));
-	console.log("contenedores =>" + contenedores.responseJSON);
-
-	// Add requested external GeoJSON to map
-	console.log("geoJSON antes =>" + contenedores.responseJSON);
-	var plasticBins = L.geoJSON(contenedores.responseJSON, myLayerPlaticOptions).addTo(map);
-	var glassBins = L.geoJSON(contenedores.responseJSON, myLayerGlassOptions).addTo(map);
-	var organicBins = L.geoJSON(contenedores.responseJSON, myLayerOrganicOptions).addTo(map);
-	var inorganicBins = L.geoJSON(contenedores.responseJSON, myLayerInorganicOptions).addTo(map);
-	var paperBins = L.geoJSON(contenedores.responseJSON, myLayerPaperOptions).addTo(map);
-
-	console.log("contenedores después 2");
-	var tipoBasuraFiltro = L.control.tagFilterButton({
-		data : [ 'plastic', 'glass', 'organic', 'inorganic', 'paper' ],
-		filterOnEveryClick : true,
-	}).addTo(map);
-
-	/*mcgLayerSupportGroup.addLayer(myLayerGroup);
-	mcgLayerSupportGroup.addTo(map);
-	mcgLayerSupportGroup.checkIn(myLayerGroup); // <= this is where the magic happens!
-	myLayerGroup.addTo(map);
-	console.log("contenedores después 3");
-	*/
-	mcgLayerSupportGroup.addTo(map);
-
-});
 
 
 function plasticFilter(feature) {

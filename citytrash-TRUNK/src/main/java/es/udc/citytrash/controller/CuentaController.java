@@ -80,7 +80,6 @@ public class CuentaController {
 		ReiniciarPasswordFormDto activarCuentaForm = new ReiniciarPasswordFormDto();
 		model.addAttribute("activarCuentaForm", activarCuentaForm);
 		model.addAttribute("token", token);
-
 		try {
 			cuentaServicio.loguearsePorIdToken(id, token);
 		} catch (TokenInvalidException e) {
