@@ -73,13 +73,16 @@ public class RestController {
 	public @ResponseBody FeatureCollection getContenedoresGeoJson() {
 		ContenedorFormBusq form = new ContenedorFormBusq();
 		FeatureCollection featureCollection = new FeatureCollection();
+
 		List<Contenedor> contenedores = contServicio.buscarContenedores(form);
 		TipoDeBasura tipo;
 		ContenedorModelo modelo;
 
 		for (Contenedor contenedor : contenedores) {
 			Feature feature = new Feature();
-			Point geometry = new Point(contenedor.getLatitud().doubleValue(), contenedor.getLongitud().doubleValue());
+
+			Point geometry = new Point(contenedor.getLongitud().doubleValue(), contenedor.getLatitud().doubleValue());
+
 			feature.setGeometry(geometry);
 			feature.setProperty("id", contenedor.getId());
 			feature.setProperty("nombre", contenedor.getNombre());
