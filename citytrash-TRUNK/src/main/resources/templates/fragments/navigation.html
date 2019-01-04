@@ -101,7 +101,7 @@
 							th:text="#{lbl_historial_mis_rutas}"
 							th:href="@{#{link.rutas.misrutas}}"> </a></li>
 					</ul></li>
-	
+
 				<!-- estadísticas -->
 				<li th:classappend="${currentPage == 'estadisticas'} ? 'active'"
 					th:class="dropdown" class="dropdown"><a
@@ -111,11 +111,11 @@
 					<ul class="dropdown-menu">
 						<li><a th:text="#{reciclado}"
 							th:href="@{#{menu.estadisticas_reciclado_link_ref}}"> </a></li>
-						<li><a th:text="#{pronostico}"
+						<!-- <li><a th:text="#{pronostico}"
 							th:href="@{#{menu.estadisticas_pronos_realid_link_ref}}"> </a></li>
+							-->
 					</ul></li>
 			</ul>
-
 			<ul id="menuUsuarioAutenticado" class="nav navbar-nav navbar-right"
 				sec:authorize="isAuthenticated()">
 

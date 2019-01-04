@@ -76,13 +76,14 @@
 					</label>
 				</a></li>
 				<!-- historial de rutas -->
-				<li role="historialRutas"><a data-target="#historialRutas"
+				<!-- <li role="historialRutas"><a data-target="#historialRutas"
 					aria-controls="historialRutas" role="tab" data-toggle="tab"
 					id="historialRutasTab"
 					th:href="@{#{link.contenedores.detalle.rutas}(id=${id})}"
 					aria-selected="false"> <i class="fa fa-truck"></i> <label
 						th:text="#{lbl_historial_rutas}"> </label>
 				</a></li>
+				-->
 			</ul>
 			<div class="tab-content" id="detallesContenedorModeloTabContent">
 				<div role="tabpanel" class="tab-pane" id="welcome"
@@ -109,7 +110,6 @@
 		src="https://unpkg.com/esri-leaflet-geocoder@2.2.9/dist/esri-leaflet-geocoder.js"
 		integrity="sha512-QXchymy6PyEfYFQeOUuoz5pH5q9ng0eewZN8Sv0wvxq3ZhujTGF4eS/ySpnl6YfTQRWmA2Nn3Bezi9xuF8yNiw=="
 		crossorigin=""></script>
-	<script th:src="@{/resources/static/js/contenedorDetallesMap.js}"></script>
-
+	<!-- <script th:src="@{/resources/static/js/contenedorDetallesMap.js}"></script>-->
 </body>
 </html>

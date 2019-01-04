@@ -6,7 +6,8 @@ import java.util.List;
 public class CamionModeloFormBusq {
 
 	public CamionModeloFormBusq() {
-
+		tipos = new ArrayList<Integer>();
+		palabrasClaveModelo = "";
 	}
 
 	public CamionModeloFormBusq(List<Integer> tipos, String modelo) {
@@ -14,7 +15,7 @@ public class CamionModeloFormBusq {
 			tipos = new ArrayList<Integer>();
 		else
 			this.tipos = tipos;
-		this.palabrasClaveModelo = modelo;
+		this.palabrasClaveModelo = modelo!=null? modelo: "";
 	}
 
 	String palabrasClaveModelo;

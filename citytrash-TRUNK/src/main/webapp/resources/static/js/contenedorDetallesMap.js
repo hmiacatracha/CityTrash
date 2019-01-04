@@ -25,6 +25,17 @@ $(document).ready(function() {
 });
 
 
+$('a[data-toggle=tab]').click(function() {
+	alert(this.id);
+	console.log("cargando mapa! 2");
+});
+
+
+$(document).on('shown.bs.tab', 'a[data-toggle="tab"]', function(e) {
+	console.log("cargando mapa! 1");
+	initialize();
+});
+
 function initialize() {
 	var labelDireccion = $('#direccion');
 	var labelLatitud = $('#lat');

@@ -106,7 +106,7 @@
 									class="glyphicon glyphicon-calendar"></i> <label
 									class="mayusculas" th:text="#{lbl_fechaAlta}"></label></td>
 
-								<td th:with="df=#{fecha_formato}" th:text="*{fechaAlta}"
+								<td th:with="df=#{fecha_formato}" th:text="*{{fechaAlta}}"
 									th:data-provide="datepicker" th:data-date-autoclose="true"
 									th:data-date-today-highlight="true"
 									th:data-date-orientation="bottom" data-date-format=df></td>
@@ -170,8 +170,10 @@
 							<tr>
 							<tr>
 
-								<td colspan="2"><label id="direccion" class="text-success"></label>
-									<div class="col-xs-offset-1 col-xs-10 map_canvas" id="mapa"></div>
+								<td class="text-success"><label th:text="#{lbl_direccion}"></label></td>
+
+								<td colspan="1"><label id="direccion"></label>
+									<div class="col-xs-offset-1 col-xs-10"></div>
 							</tr>
 						</tbody>
 
@@ -239,14 +241,13 @@
 											th:href="@{#{link.sensores.detalles}(contenedorId=${objecto.id},sensorId=${sensores[__${rowStat.index}__].id})}"
 											class="btn-sm"><i class="glyphicon glyphicon-eye-open"
 											data-toggle="tooltip" th:title="#{lbl_ver_detalles}"></i></a>
-									</div>									
+									</div>
 								</div>
 							</td>
 						</tr>
 						<tr>
 						</tr>
 					</table>
-
 				</div>
 				<!-- mapa -->
 				<div class="col-xs-offset-1 col-xs-10 map_canvas" id="mapa"></div>
@@ -254,9 +255,9 @@
 
 			<div class="panel-footer">
 				<div class="pull-left">
-					<a th:href="@{#{link.camiones}}"> <i
+					<a th:href="@{#{link.contenedores}}"> <i
 						class="glyphicon glyphicon-list"></i> &nbsp; <label
-						th:text="#{lbl_lista_de_camiones}"></label>
+						th:text="#{lbl_contenedores}"></label>
 					</a>
 				</div>
 				<br />

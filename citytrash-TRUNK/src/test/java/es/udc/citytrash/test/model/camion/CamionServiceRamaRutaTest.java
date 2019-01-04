@@ -1,4 +1,4 @@
-package es.udc.citytrash.test.model.contenedor;
+package es.udc.citytrash.test.model.camion;
 
 import static es.udc.citytrash.test.util.GlobalNames.SPRING_CONFIG_TEST_FILE;
 import static es.udc.citytrash.util.GlobalNames.SPRING_CONFIG_FILE;
@@ -31,6 +31,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.udc.citytrash.controller.util.dtos.camion.CamionModeloDto;
+import es.udc.citytrash.controller.util.dtos.camion.CamionModeloFormBusq;
+import es.udc.citytrash.controller.util.dtos.camion.CamionModeloTipoDeBasuraDto;
 import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorEditarDto;
 import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorFormBusq;
 import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorModeloEditarDto;
@@ -40,6 +43,10 @@ import es.udc.citytrash.controller.util.dtos.contenedor.ContenedorRegistroDto;
 import es.udc.citytrash.controller.util.dtos.trabajador.TrabajadorBusqFormDto;
 import es.udc.citytrash.controller.util.dtos.trabajador.TrabajadorRegistroFormDto;
 import es.udc.citytrash.controller.util.dtos.trabajador.TrabajadorUpdateFormDto;
+import es.udc.citytrash.model.camion.CamionDao;
+import es.udc.citytrash.model.camionModelo.CamionModelo;
+import es.udc.citytrash.model.camionModelo.CamionModeloDao;
+import es.udc.citytrash.model.camionService.CamionService;
 import es.udc.citytrash.model.contenedor.Contenedor;
 import es.udc.citytrash.model.contenedor.ContenedorDao;
 import es.udc.citytrash.model.contenedorModelo.ContenedorModelo;
@@ -65,21 +72,21 @@ import es.udc.citytrash.util.enums.TipoTrabajador;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { SPRING_CONFIG_FILE, SPRING_SECURITY_FILE, SPRING_CONFIG_TEST_FILE })
 @Transactional
-public class ContenedorServiceTest {
+public class CamionServiceRamaRutaTest {
 
 	@Autowired
-	ContenedorService cService;
+	CamionService cService;
 
 	@Autowired
-	ContenedorDao contenedorDao;
+	CamionDao camionDao;
 
 	@Autowired
-	ContenedorModeloDao modeloDao;
+	CamionModeloDao modeloDao;
 
 	@Autowired
 	TipoDeBasuraDao tipoDao;
 
-	final Logger logger = LoggerFactory.getLogger(ContenedorServiceTest.class);
+	final Logger logger = LoggerFactory.getLogger(CamionServiceRamaRutaTest.class);
 
 	private final int TIPO_ID_NO_EXISTENTE = -1;
 	private final String TIPO_NOMBRE_1 = "TIPO1";
@@ -115,22 +122,27 @@ public class ContenedorServiceTest {
 		tipos.add(tipo3);
 	}
 
-	public ContenedorModeloRegistroDto getFormRegistroModelo(String nombre, BigDecimal altura, BigDecimal anchura,
-			BigDecimal capacidadNominal, BigDecimal cargaNominal, BigDecimal pesoVacio, BigDecimal profundidad,
-			int tipo) {
-		ContenedorModeloRegistroDto modeloRegistro = new ContenedorModeloRegistroDto();
+	public CamionModeloTipoDeBasuraDto getTipoDeBasura(int tipo, BigDecimal capacidad) {
+		return new CamionModeloTipoDeBasuraDto(tipo, capacidad);
+	}
+
+	public CamionModeloDto getFormRegistroModelo(String nombre, BigDecimal altura, BigDecimal ancho,
+			BigDecimal distancia, BigDecimal longitud, BigDecimal volumenTolva, Integer pma,
+			List<CamionModeloTipoDeBasuraDto> listaTiposDeBasura) {
+		CamionModeloDto modeloRegistro = new CamionModeloDto();
 		modeloRegistro.setAltura(altura);
-		modeloRegistro.setAncho(anchura);
-		modeloRegistro.setCapacidadNominal(capacidadNominal);
-		modeloRegistro.setCargaNominal(cargaNominal);
+		modeloRegistro.setAncho(ancho);
+		modeloRegistro.setDistancia(distancia);
+		modeloRegistro.setListaTiposDeBasura(listaTiposDeBasura);
+		modeloRegistro.setLongitud(longitud);
+		modeloRegistro.setModificado(false);
 		modeloRegistro.setNombre(nombre);
-		modeloRegistro.setPesoVacio(pesoVacio);
-		modeloRegistro.setProfundidad(profundidad);
-		modeloRegistro.setTipo(tipo);
+		modeloRegistro.setPma(pma);
+		modeloRegistro.setVolumenTolva(volumenTolva);
 		return modeloRegistro;
 	}
 
-	public ContenedorRegistroDto getFormRegistroContenedor(String nombre, int modeloId, Date fechaAlta, Date fechaBaja,
+	public ContenedorRegistroDto getFormRegistroCamion(String nombre, int modeloId, Date fechaAlta, Date fechaBaja,
 			BigDecimal latitud, BigDecimal longitud, String localizacion, boolean activo) {
 		ContenedorRegistroDto ContenedorRegistroDto = new ContenedorRegistroDto();
 		ContenedorRegistroDto.setNombre(nombre);
@@ -144,119 +156,98 @@ public class ContenedorServiceTest {
 		return ContenedorRegistroDto;
 	}
 
-	@Test
-	public void buscarTiposDeBasura()
-			throws InstanceNotFoundException, DuplicateInstanceException, InvalidFieldException {
-		assertEquals(tipos.size(), cService.buscarTiposDeBasura().size());
-		assertTrue(tipos.contains(tipo1));
-		assertTrue(tipos.contains(tipo2));
-		assertTrue(tipos.contains(tipo3));
-		TipoDeBasura tipoSinGuardar = new TipoDeBasura(TIPO_NOMBRE_3, TIPO_COLOR_3);
-		assertFalse(tipos.contains(tipoSinGuardar));
-	}
-
+	
 	@Test(expected = InstanceNotFoundException.class)
 	public void buscarModeloNoEncontrado() throws InstanceNotFoundException {
 		cService.buscarModeloById(TIPO_ID_NO_EXISTENTE);
 	}
 
+	
 	@Test
-	public void buscarModeloOk() throws InstanceNotFoundException, DuplicateInstanceException, InvalidFieldException {
-		ContenedorModelo modelo1 = cService.registrarModelo(getFormRegistroModelo(CM_NOMBRE_1, new BigDecimal("19.2"),
+	public void buscarModeloOk() throws InstanceNotFoundException, DuplicateInstanceException, InvalidFieldException {		
+		List<CamionModeloTipoDeBasuraDto> tiposDeBasuraCamion = new ArrayList<CamionModeloTipoDeBasuraDto>();
+		CamionModeloTipoDeBasuraDto tipoBasura1 = getTipoDeBasura(tipo1.getId(), new BigDecimal(100));
+		CamionModeloTipoDeBasuraDto tipoBasura2 = getTipoDeBasura(tipo2.getId(), new BigDecimal(100));
+		tiposDeBasuraCamion.add(tipoBasura1);
+		tiposDeBasuraCamion.add(tipoBasura2);
+				
+		CamionModelo modelo1 = cService.registrarModelo(getFormRegistroModelo(CM_NOMBRE_1, new BigDecimal("19.2"),
 				new BigDecimal("19.2"), new BigDecimal("19.2"), new BigDecimal("19.2"), new BigDecimal("19.2"),
-				new BigDecimal("19.2"), tipo1.getId()));
-		ContenedorModelo tipoEncontrado1 = cService.buscarModeloById(modelo1.getId());
+				2, tiposDeBasuraCamion));
+		
+		CamionModelo tipoEncontrado1 = cService.buscarModeloById(modelo1.getId());
 		assertEquals(tipoEncontrado1.getModelo(), modelo1.getModelo());
 		assertEquals(tipoEncontrado1, modelo1);
 	}
 
-	@Test
-	public void registrarModeloOk() throws DuplicateInstanceException, InvalidFieldException {
-		ContenedorModeloRegistroDto registroForm = getFormRegistroModelo(CM_NOMBRE_1, new BigDecimal("19.2"),
-				new BigDecimal("19.2"), new BigDecimal("19.2"), new BigDecimal("19.2"), new BigDecimal("19.2"),
-				new BigDecimal("19.2"), tipo1.getId());
-		ContenedorModelo modelo = cService.registrarModelo(registroForm);
-		assertEquals(modelo.getModelo(), registroForm.getNombre());
-	}
-
+	
+	
 	@Test(expected = DuplicateInstanceException.class)
 	public void registrarModeloDuplicado()
 			throws InstanceNotFoundException, DuplicateInstanceException, InvalidFieldException {
-
-		cService.registrarModelo(getFormRegistroModelo(CM_NOMBRE_1, new BigDecimal("19.2"), new BigDecimal("19.2"),
-				new BigDecimal("19.2"), new BigDecimal("19.2"), new BigDecimal("19.2"), new BigDecimal("19.2"),
-				tipo1.getId()));
-
-		cService.registrarModelo(getFormRegistroModelo(CM_NOMBRE_1, new BigDecimal("19.2"), new BigDecimal("18.2"),
-				new BigDecimal("18.2"), new BigDecimal("19.2"), new BigDecimal("14.2"), new BigDecimal("19.2"),
-				tipo2.getId()));
-	}
-
+		List<CamionModeloTipoDeBasuraDto> tiposDeBasuraCamion = new ArrayList<CamionModeloTipoDeBasuraDto>();
+		CamionModeloTipoDeBasuraDto tipoBasura1 = getTipoDeBasura(tipo1.getId(), new BigDecimal(100));
+		CamionModeloTipoDeBasuraDto tipoBasura2 = getTipoDeBasura(tipo2.getId(), new BigDecimal(100));
+		tiposDeBasuraCamion.add(tipoBasura1);
+		tiposDeBasuraCamion.add(tipoBasura2);
+		
+		cService.registrarModelo(getFormRegistroModelo(CM_NOMBRE_1, new BigDecimal("19.2"),
+				new BigDecimal("1.2"), new BigDecimal("19.2"), new BigDecimal("9.2"), new BigDecimal("19.2"),
+				2, tiposDeBasuraCamion));
+		
+		cService.registrarModelo(getFormRegistroModelo(CM_NOMBRE_1, new BigDecimal("19.0"),
+				new BigDecimal("13.4"), new BigDecimal("1.5"), new BigDecimal("12.2"), new BigDecimal("19.2"),
+				2, tiposDeBasuraCamion));
+	}	
+	
+	
 	@Test
-	public void registrarModeloInvalidFieldException() throws InstanceNotFoundException, DuplicateInstanceException {
-		try {
-			cService.registrarModelo(getFormRegistroModelo(CM_NOMBRE_1, new BigDecimal("19.2"), new BigDecimal("19.2"),
-					new BigDecimal("19.2"), new BigDecimal("19.2"), new BigDecimal("19.2"), new BigDecimal("19.2"),
-					TIPO_ID_NO_EXISTENTE));
-			assert (false);
-		} catch (InvalidFieldException e) {
-			assert (true);
-		}
-
-		try {
-			BigDecimal cargaNominal = new BigDecimal(-1);
-			cService.registrarModelo(getFormRegistroModelo(CM_NOMBRE_1, new BigDecimal("19.2"), new BigDecimal("19.2"),
-					new BigDecimal("19.2"), cargaNominal, new BigDecimal("19.2"), new BigDecimal("19.2"),
-					tipo1.getId()));
-			assert (false);
-		} catch (InvalidFieldException e) {
-			assert (true);
-		}
-
-		try {
-			BigDecimal capacidadNominal = new BigDecimal(-1);
-			cService.registrarModelo(
-					getFormRegistroModelo(CM_NOMBRE_1, new BigDecimal("19.2"), new BigDecimal("19.2"), capacidadNominal,
-							new BigDecimal("19.2"), new BigDecimal("19.2"), new BigDecimal("19.2"), tipo1.getId()));
-			assert (false);
-		} catch (InvalidFieldException e) {
-			assert (true);
-		}
-	}
-
-	@Test
-	public void buscarModelosPageableVacios() {
+	public void buscarModelosPageableVacios() throws FormBusquedaException {
 		int psize = 1;
 		int pnum = 0;
 		String campoSort = "id";
-		ContenedorModeloFormBusq formBusqueda = new ContenedorModeloFormBusq();
+		CamionModeloFormBusq formBusqueda = new CamionModeloFormBusq(null, null);
 		Pageable pageable = createPageRequest(pnum, psize, campoSort);
-		Page<ContenedorModelo> page = cService.buscarModelos(pageable, formBusqueda);
-		assertTrue(page.getContent().isEmpty());
+		Page<CamionModelo> page;		
+		page = cService.buscarModelos(pageable, formBusqueda);
+		assertTrue(page.getContent().isEmpty());		
 	}
 
+	
 	@Test
 	public void buscarModelosPageable()
-			throws InstanceNotFoundException, DuplicateInstanceException, InvalidFieldException {
+			throws InstanceNotFoundException, DuplicateInstanceException, InvalidFieldException, FormBusquedaException {
 		int pnum = 0;
 		int psize = 2;
 		String campoSort = "id";
-		ContenedorModeloFormBusq formBusqueda = new ContenedorModeloFormBusq();
-
-		ContenedorModelo modelo1 = cService.registrarModelo(getFormRegistroModelo(CM_NOMBRE_1, new BigDecimal("19.2"),
+		CamionModeloFormBusq formBusqueda = new CamionModeloFormBusq();
+		
+		List<CamionModeloTipoDeBasuraDto> tiposDeBasuraCamion1 = new ArrayList<CamionModeloTipoDeBasuraDto>();		
+		CamionModeloTipoDeBasuraDto tipoBasura1 = getTipoDeBasura(tipo1.getId(), new BigDecimal(100));
+		CamionModeloTipoDeBasuraDto tipoBasura2 = getTipoDeBasura(tipo2.getId(), new BigDecimal(100));
+		tiposDeBasuraCamion1.add(tipoBasura1);
+		tiposDeBasuraCamion1.add(tipoBasura2);
+		
+		List<CamionModeloTipoDeBasuraDto> tiposDeBasuraCamion2 = new ArrayList<CamionModeloTipoDeBasuraDto>();		
+		CamionModeloTipoDeBasuraDto tipoBasura3 = getTipoDeBasura(tipo2.getId(), new BigDecimal(60));		
+		tiposDeBasuraCamion1.add(tipoBasura3);
+				
+		CamionModelo modelo1 = cService.registrarModelo(getFormRegistroModelo(CM_NOMBRE_1, new BigDecimal("19.2"),
 				new BigDecimal("19.2"), new BigDecimal("19.2"), new BigDecimal("19.2"), new BigDecimal("19.2"),
-				new BigDecimal("19.2"), tipo1.getId()));
-		ContenedorModelo modelo2 = cService.registrarModelo(getFormRegistroModelo(CM_NOMBRE_2, new BigDecimal("19.2"),
+				2, tiposDeBasuraCamion1));
+		
+		CamionModelo modelo2 = cService.registrarModelo(getFormRegistroModelo(CM_NOMBRE_2, new BigDecimal("19.2"),
 				new BigDecimal("19.2"), new BigDecimal("19.2"), new BigDecimal("19.2"), new BigDecimal("19.2"),
-				new BigDecimal("19.2"), tipo2.getId()));
-
-		List<ContenedorModelo> modelos = new ArrayList<ContenedorModelo>();
+				2, tiposDeBasuraCamion2));
+		
+		List<CamionModelo> modelos = new ArrayList<CamionModelo>();
 		modelos.add(modelo1);
 		modelos.add(modelo2);
 		Pageable pageable = createPageRequest(pnum, modelos.size(), campoSort);
-		Page<ContenedorModelo> page = cService.buscarModelos(pageable, formBusqueda);
+		Page<CamionModelo> page = cService.buscarModelos(pageable, formBusqueda);
 		assertTrue(page.getContent().size() == modelos.size());
 
+		
 		pnum = 0;
 		psize = 1;
 		pageable = createPageRequest(pnum, psize, "id");
@@ -269,44 +260,91 @@ public class ContenedorServiceTest {
 		pageable = createPageRequest(pnum, psize, "id");
 		page = cService.buscarModelos(pageable, formBusqueda);
 		assertTrue(page.getContent().size() == psize);
-		assertEquals(page.getContent().get(0), modelo2);
+		assertEquals(page.getContent().get(0), modelo2);		
 
 	}
 
+	
+
 	@Test
-	public void buscarModelosPageableByPalabrasClave()
-			throws InstanceNotFoundException, DuplicateInstanceException, InvalidFieldException {
+	public void buscarModelosPageableByPalabrasClaves()
+			throws InstanceNotFoundException, DuplicateInstanceException, InvalidFieldException, FormBusquedaException {
 		int pnum = 0;
 		int psize = 2;
 		String campoSort = "id";
-		ContenedorModeloFormBusq formBusqueda = new ContenedorModeloFormBusq();
-
-		ContenedorModelo modelo1 = cService.registrarModelo(getFormRegistroModelo(CM_NOMBRE_1, new BigDecimal("19.2"),
+		CamionModeloFormBusq formBusqueda = new CamionModeloFormBusq();
+		
+		List<CamionModeloTipoDeBasuraDto> tiposDeBasuraCamion1 = new ArrayList<CamionModeloTipoDeBasuraDto>();		
+		CamionModeloTipoDeBasuraDto tipoBasura1 = getTipoDeBasura(tipo1.getId(), new BigDecimal(100));
+		CamionModeloTipoDeBasuraDto tipoBasura2 = getTipoDeBasura(tipo2.getId(), new BigDecimal(100));
+		tiposDeBasuraCamion1.add(tipoBasura1);
+		tiposDeBasuraCamion1.add(tipoBasura2);
+		
+		List<CamionModeloTipoDeBasuraDto> tiposDeBasuraCamion2 = new ArrayList<CamionModeloTipoDeBasuraDto>();		
+		CamionModeloTipoDeBasuraDto tipoBasura3 = getTipoDeBasura(tipo2.getId(), new BigDecimal(60));		
+		tiposDeBasuraCamion1.add(tipoBasura3);
+				
+		CamionModelo modelo1 = cService.registrarModelo(getFormRegistroModelo(CM_NOMBRE_1, new BigDecimal("19.2"),
 				new BigDecimal("19.2"), new BigDecimal("19.2"), new BigDecimal("19.2"), new BigDecimal("19.2"),
-				new BigDecimal("19.2"), tipo1.getId()));
-		ContenedorModelo modelo2 = cService.registrarModelo(getFormRegistroModelo(CM_NOMBRE_2, new BigDecimal("19.2"),
+				2, tiposDeBasuraCamion1));
+		
+		CamionModelo modelo2 = cService.registrarModelo(getFormRegistroModelo(CM_NOMBRE_2, new BigDecimal("19.2"),
 				new BigDecimal("19.2"), new BigDecimal("19.2"), new BigDecimal("19.2"), new BigDecimal("19.2"),
-				new BigDecimal("19.2"), tipo2.getId()));
-
-		List<ContenedorModelo> modelos = new ArrayList<ContenedorModelo>();
+				2, tiposDeBasuraCamion2));
+		
+		formBusqueda.setPalabrasClaveModelo("modelo");
+		List<CamionModelo> modelos = new ArrayList<CamionModelo>();
 		modelos.add(modelo1);
 		modelos.add(modelo2);
 		Pageable pageable = createPageRequest(pnum, modelos.size(), campoSort);
-		Page<ContenedorModelo> page = cService.buscarModelos(pageable, formBusqueda);
+		Page<CamionModelo> page = cService.buscarModelos(pageable, formBusqueda);
 		assertTrue(page.getContent().size() == modelos.size());
 
-		/* Con form busqueda palabras claves */
+		
 		pnum = 0;
-		psize = modelos.size();
-		formBusqueda.setPalabrasClaveModelo(modelo2.getModelo());
+		psize = 1;
 		pageable = createPageRequest(pnum, psize, "id");
 		page = cService.buscarModelos(pageable, formBusqueda);
-		assertTrue(page.getContent().size() == 1);
-		assertEquals(page.getContent().get(0), modelo2);
+		assertTrue(page.getContent().size() == psize);
+		assertEquals(page.getContent().get(0), modelo1);
+
+		pnum = 1;
+		psize = 1;
+		pageable = createPageRequest(pnum, psize, "id");
+		page = cService.buscarModelos(pageable, formBusqueda);
+		assertTrue(page.getContent().size() == psize);
+		assertEquals(page.getContent().get(0), modelo2);	
+		
+		
+		////////////////////////////////
+		
+		formBusqueda.setPalabrasClaveModelo("modelo1");
+		modelos = new ArrayList<CamionModelo>();
+		modelos.add(modelo1);
+		modelos.add(modelo2);
+		pageable = createPageRequest(pnum, modelos.size(), campoSort);
+		page = cService.buscarModelos(pageable, formBusqueda);
+		assertTrue(page.getContent().size() == modelos.size());
+
+		
+		pnum = 0;
+		psize = 1;
+		pageable = createPageRequest(pnum, psize, "id");
+		page = cService.buscarModelos(pageable, formBusqueda);
+		assertTrue(page.getContent().size() == psize);
+		assertEquals(page.getContent().get(1), modelo1);
+
+		pnum = 1;
+		psize = 1;
+		pageable = createPageRequest(pnum, psize, "id");
+		page = cService.buscarModelos(pageable, formBusqueda);
+		assertTrue(page.getContent().size() == 0);
 
 	}
 
-	@Test
+
+	/*
+	//@Test
 	public void buscarModelosPageableByTipo()
 			throws InstanceNotFoundException, DuplicateInstanceException, InvalidFieldException {
 		int pnum = 0;
@@ -328,7 +366,7 @@ public class ContenedorServiceTest {
 		Page<ContenedorModelo> page = cService.buscarModelos(pageable, formBusqueda);
 		assertTrue(page.getContent().size() == modelos.size());
 
-		/* Con form busqueda tipo */
+		 Con form busqueda tipo 
 		List<Integer> tiposBasuraInt = new ArrayList<Integer>();
 		tiposBasuraInt.add(tipo1.getId());
 		formBusqueda.setTipos(tiposBasuraInt);
@@ -342,7 +380,7 @@ public class ContenedorServiceTest {
 
 	}
 
-	@Test
+	//@Test
 	public void buscarModelosPageableByPalabrasClaveYTipo()
 			throws InstanceNotFoundException, DuplicateInstanceException, InvalidFieldException {
 		int pnum = 0;
@@ -364,7 +402,7 @@ public class ContenedorServiceTest {
 		Page<ContenedorModelo> page = cService.buscarModelos(pageable, formBusqueda);
 		assertTrue(page.getContent().size() == modelos.size());
 
-		/* Con form busqueda palabras claves y tipo */
+		 Con form busqueda palabras claves y tipo 
 		List<Integer> tiposBasuraInt = new ArrayList<Integer>();
 		tiposBasuraInt.add(tipo2.getId());
 		tiposBasuraInt.add(TIPO_ID_NO_EXISTENTE);
@@ -381,7 +419,7 @@ public class ContenedorServiceTest {
 		assertEquals(page.getContent().get(0), modelo2);
 	}
 
-	@Test
+	//@Test
 	public void buscarModelosPageableByPalabrasClaveYTipoVacio()
 			throws InstanceNotFoundException, DuplicateInstanceException, InvalidFieldException {
 		int pnum = 0;
@@ -403,7 +441,7 @@ public class ContenedorServiceTest {
 		Page<ContenedorModelo> page = cService.buscarModelos(pageable, formBusqueda);
 		assertTrue(page.getContent().size() == modelos.size());
 
-		/* Con form busqueda palabras claves y tipo */
+		 Con form busqueda palabras claves y tipo 
 		List<Integer> tiposBasuraInt = new ArrayList<Integer>();
 		tiposBasuraInt.add(tipo2.getId());
 		tiposBasuraInt.add(TIPO_ID_NO_EXISTENTE);
@@ -418,7 +456,7 @@ public class ContenedorServiceTest {
 		assertTrue(page.getContent().isEmpty());
 	}
 
-	@Test
+	//@Test
 	public void modificarModeloOk()
 			throws DuplicateInstanceException, InvalidFieldException, InstanceNotFoundException {
 		ContenedorModeloRegistroDto registroForm = getFormRegistroModelo(CM_NOMBRE_1, new BigDecimal("19.2"),
@@ -437,7 +475,7 @@ public class ContenedorServiceTest {
 		assertEquals(modelo, modeloModificado);
 	}
 
-	@Test(expected = DuplicateInstanceException.class)
+	//@Test(expected = DuplicateInstanceException.class)
 	public void modificarModeloDuplicado()
 			throws InstanceNotFoundException, DuplicateInstanceException, InvalidFieldException {
 
@@ -454,7 +492,7 @@ public class ContenedorServiceTest {
 		cService.modificarModelo(modificarForm);
 	}
 
-	@Test
+	//@Test
 	public void modificarModeloInvalidFieldException()
 			throws InstanceNotFoundException, DuplicateInstanceException, InvalidFieldException {
 
@@ -491,7 +529,7 @@ public class ContenedorServiceTest {
 		}
 	}
 
-	@Test
+	//@Test
 	public void buscarTipoDeBasuraByModelo()
 			throws InstanceNotFoundException, DuplicateInstanceException, InvalidFieldException {
 		ContenedorModelo modelo1 = cService.registrarModelo(getFormRegistroModelo(CM_NOMBRE_1, new BigDecimal("19.2"),
@@ -503,7 +541,7 @@ public class ContenedorServiceTest {
 
 	/////////////////////////////////////////////////////////////////////////////////////////////
 
-	@Test
+	//@Test
 	public void registrarContenedorOk()
 			throws DuplicateInstanceException, InvalidFieldException, InstanceNotFoundException {
 		ContenedorModeloRegistroDto registroModeloForm = getFormRegistroModelo(CM_NOMBRE_1, new BigDecimal("19.2"),
@@ -525,7 +563,7 @@ public class ContenedorServiceTest {
 		assertEquals(contenedor.getModelo(), modelo);
 	}
 
-	@Test(expected = DuplicateInstanceException.class)
+	//@Test(expected = DuplicateInstanceException.class)
 	public void registrarContenedorDuplicado()
 			throws InstanceNotFoundException, DuplicateInstanceException, InvalidFieldException {
 
@@ -551,7 +589,7 @@ public class ContenedorServiceTest {
 
 	}
 
-	@Test(expected = InstanceNotFoundException.class)
+	//@Test(expected = InstanceNotFoundException.class)
 	public void registrarContenedorModeloNoExistente() throws InstanceNotFoundException, DuplicateInstanceException {
 		BigDecimal latitud = new BigDecimal("41.00002");
 		BigDecimal longitud = new BigDecimal("2.0232");
@@ -560,7 +598,7 @@ public class ContenedorServiceTest {
 		cService.registrarContenedor(registroContenedorForm1);
 	}
 
-	@Test
+	//@Test
 	public void buscarContenedoresPageableVacios() {
 		int psize = 1;
 		int pnum = 0;
@@ -571,7 +609,7 @@ public class ContenedorServiceTest {
 		assertTrue(page.getContent().isEmpty());
 	}
 
-	@Test
+	//@Test
 	public void buscarContenedoresPageable()
 			throws InstanceNotFoundException, DuplicateInstanceException, InvalidFieldException {
 		int pnum = 0;
@@ -615,7 +653,7 @@ public class ContenedorServiceTest {
 
 	}
 
-	@Test
+	//@Test
 	public void buscarContenedoresPageableByPalabrasClave()
 			throws InstanceNotFoundException, DuplicateInstanceException, InvalidFieldException {
 		int pnum = 0;
@@ -653,7 +691,7 @@ public class ContenedorServiceTest {
 		assertTrue(page.getContent().contains(contenedor2));
 	}
 
-	@Test
+	//@Test
 	public void buscarContenedorPageableByTipo()
 			throws InstanceNotFoundException, DuplicateInstanceException, InvalidFieldException {
 		int pnum = 0;
@@ -703,7 +741,7 @@ public class ContenedorServiceTest {
 
 	}
 
-	@Test
+	//@Test
 	public void buscarContenedoresPageableByModelo()
 			throws InstanceNotFoundException, DuplicateInstanceException, InvalidFieldException {
 		int pnum = 0;
@@ -747,7 +785,7 @@ public class ContenedorServiceTest {
 		assertTrue(page.getContent().contains(contenedor2));
 	}
 
-	@Test
+	//@Test
 	public void buscarContenedoresPageableByPalabrasClavesTipoYModelo()
 			throws InstanceNotFoundException, DuplicateInstanceException, InvalidFieldException {
 		int pnum = 0;
@@ -798,7 +836,7 @@ public class ContenedorServiceTest {
 		assertTrue(page.getContent().size() == 0);
 	}
 
-	@Test
+	//@Test
 	public void modificarContenedorOk()
 			throws DuplicateInstanceException, InvalidFieldException, InstanceNotFoundException {
 
@@ -821,7 +859,7 @@ public class ContenedorServiceTest {
 		assertFalse(contenedor1.getActivo());
 	}
 
-	@Test(expected = InstanceNotFoundException.class)
+	//@Test(expected = InstanceNotFoundException.class)
 	public void modificarContenedorInstanceNotFoundExceptio()
 			throws DuplicateInstanceException, InstanceNotFoundException {
 		ContenedorEditarDto editarContenedorForm1 = new ContenedorEditarDto();
@@ -831,7 +869,7 @@ public class ContenedorServiceTest {
 		cService.modificarContenedor(editarContenedorForm1);
 	}
 
-	@Test(expected = DuplicateInstanceException.class)
+	//@Test(expected = DuplicateInstanceException.class)
 	public void modificarContenedorDuplicado()
 			throws InstanceNotFoundException, DuplicateInstanceException, InvalidFieldException {
 
@@ -860,7 +898,7 @@ public class ContenedorServiceTest {
 		cService.modificarContenedor(editarContenedorForm1);
 	}
 
-	@Test(expected = InstanceNotFoundException.class)
+	//@Test(expected = InstanceNotFoundException.class)
 	public void modificarContenedorByModeloNoExistente() throws InstanceNotFoundException, DuplicateInstanceException {
 
 		ContenedorModelo modelo1 = null;
@@ -892,12 +930,12 @@ public class ContenedorServiceTest {
 		cService.modificarContenedor(editarContenedorForm1);
 	}
 
-	@Test(expected = InstanceNotFoundException.class)
+	//@Test(expected = InstanceNotFoundException.class)
 	public void buscarTipoDeBasuraByContenedorNoExistente()
 			throws InstanceNotFoundException, DuplicateInstanceException, InvalidFieldException {
 		cService.buscarTiposDeBasuraByContenedor(CONTENEDOR_ID_NO_EXISTENTE);
 	}
-
+	*/
 	private Pageable createPageRequest(int page, int size, String campoSort) {
 		return new PageRequest(page, size, Sort.Direction.ASC, campoSort);
 	}
