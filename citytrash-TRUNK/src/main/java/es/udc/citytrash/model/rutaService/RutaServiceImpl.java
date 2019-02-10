@@ -102,7 +102,6 @@ public class RutaServiceImpl implements RutaService {
 			throws InstanceNotFoundException {
 		RutaDiaria rd = rutaDiariaDao.buscarById(rutaDiariaId);
 		Contenedor c = contenedorDao.buscarById(contenedorId);
-
 		RutaDiariaContenedoresPK pk = new RutaDiariaContenedoresPK(rd, c);
 		return rutaDiariaContenedoresDao.buscarById(pk);
 	}
@@ -343,7 +342,7 @@ public class RutaServiceImpl implements RutaService {
 				}
 
 				/* Añade la ruta, solo si no tiene ningun error */
-				rutaDiaria = rutaDiariaDao.guardar(rutaDiaria);				
+				rutaDiaria = rutaDiariaDao.guardar(rutaDiaria);
 
 			} catch (InstanceNotFoundException e) {
 
@@ -395,40 +394,6 @@ public class RutaServiceImpl implements RutaService {
 		ruta.setActivo(!ruta.isActivo());
 		rutaDao.guardar(ruta);
 		return ruta.isActivo();
-	}
-
-	public void eliminarTipoBasuraByRuta(int rutaId, int tipoId) throws InstanceNotFoundException {
-		Ruta r = rutaDao.buscarById(rutaId);
-		TipoDeBasura t = tipoDao.buscarById(tipoId);
-		if (r.containsTipoDeBasura(t)) {
-			r.eliminarTipoDeBasura(t);
-			rutaDao.guardar(r);
-		} else {
-			throw new InstanceNotFoundException(t, Ruta.class.getName());
-		}
-	}
-
-	public boolean existeTipoBasuraByRuta(int rutaId, int tipoId) {
-		Ruta r = null;
-		TipoDeBasura t = null;
-		try {
-			r = rutaDao.buscarById(rutaId);
-			t = tipoDao.buscarById(tipoId);
-		} catch (InstanceNotFoundException e) {
-			return false;
-		}
-
-		if (r.containsTipoDeBasura(t)) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	public static Calendar dateToCalendar(Date date) {
-		Calendar calendar = new GregorianCalendar();
-		calendar.setTime(date);
-		return calendar;
 	}
 
 	@Override
@@ -560,7 +525,7 @@ public class RutaServiceImpl implements RutaService {
 	}
 
 	@Override
-	public void crearAlertaRutaSinRecolectoresAsignado() {
+	public void crearAlertaRutaSinRecolectoresAsignados() {
 		Calendar fechaAlerta = Calendar.getInstance();
 		fechaAlerta.set(Calendar.HOUR_OF_DAY, 0);
 		Prioridad prioridad = Prioridad.L;
@@ -672,4 +637,9 @@ public class RutaServiceImpl implements RutaService {
 		return items;
 	}
 
+	private static Calendar dateToCalendar(Date date) {
+		Calendar calendar = new GregorianCalendar();
+		calendar.setTime(date);
+		return calendar;
+	}
 }

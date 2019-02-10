@@ -52,7 +52,7 @@ public class TaskScheduler {
 	@Async
 	public void alertasRutasSinRecursos() {
 		logger.info("INICIO alertasRutasSinRecursos");
-		rServicio.crearAlertaRutaSinRecolectoresAsignado();
+		rServicio.crearAlertaRutaSinRecolectoresAsignados();
 		rServicio.crearAlertaRutaSinConductorAsignado();
 		logger.info("FIN alertasRutasSinRecursos");
 	}

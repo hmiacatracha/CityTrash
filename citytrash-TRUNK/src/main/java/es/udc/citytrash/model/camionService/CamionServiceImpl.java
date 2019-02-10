@@ -622,7 +622,6 @@ public class CamionServiceImpl implements CamionService {
 				}
 			}
 		}
-
 		return cmtbDao.buscarTiposDeBasuraByModelo(modeloId);
 	}
 

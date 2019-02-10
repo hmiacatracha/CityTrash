@@ -87,9 +87,9 @@ public class CamionDaoHibernate extends GenericHibernateDAOImpl<Camion, Long> im
 		if (tiposAux.size() == 0) {
 			hql = new StringBuilder("Select " + alias + " FROM Camion " + alias);
 		} else {
-			hql = new StringBuilder("Select " + alias + " FROM Camion " + alias + " inner join " + alias
+			hql = new StringBuilder("Select " + alias + " FROM Camion " + alias + " left join " + alias
 					+ ".modeloCamion mc " + " WHERE :items = (SELECT COUNT(distinct pk.tipo) "
-					+ " FROM CamionModelo mc2 inner join mc2.tiposDeBasura mtb inner join  mtb.pk pk inner join pk.tipo t"
+					+ " FROM CamionModelo mc2 left join mc2.tiposDeBasura mtb left join  mtb.pk pk left join pk.tipo t"
 					+ " WHERE mc2.id = mc.id AND t.id in (:tipos)" + ")");
 		}
 
@@ -125,7 +125,7 @@ public class CamionDaoHibernate extends GenericHibernateDAOImpl<Camion, Long> im
 
 		if (tiposAux.size() > 0)
 			hql = new StringBuilder(
-					"Select " + alias + " FROM Camion " + alias + " inner join " + alias + ".modeloCamion mc ");
+					"Select " + alias + " FROM Camion " + alias + " left join " + alias + ".modeloCamion mc ");
 
 		hql.append(" WHERE (" + alias + ".activo = :activo) ");
 
@@ -139,7 +139,7 @@ public class CamionDaoHibernate extends GenericHibernateDAOImpl<Camion, Long> im
 
 		if (tiposAux.size() > 0) {
 			hql.append(" AND :items = (select count(distinct pk.tipo) "
-					+ "			from CamionModelo mc2 inner join mc2.tiposDeBasura t inner join t.pk pk"
+					+ "			from CamionModelo mc2 left join mc2.tiposDeBasura t left join t.pk pk"
 					+ "  		where mc2.id = mc.id and pk.tipo in (:tipos)" + ")");
 		}
 
@@ -254,8 +254,8 @@ public class CamionDaoHibernate extends GenericHibernateDAOImpl<Camion, Long> im
 		Page<Camion> page = new PageImpl<Camion>(camiones, pageable, camiones.size());
 		List<TipoDeBasura> tiposAux = tipos != null ? tipos : new ArrayList<TipoDeBasura>();
 		String alias = "c";
-		StringBuilder hql = new StringBuilder("Select " + alias + " FROM Camion " + alias + " inner join " + alias
-				+ ".modeloCamion mc " + " inner join mc.tiposDeBasura t inner join t.pk pk");
+		StringBuilder hql = new StringBuilder("Select " + alias + " FROM Camion " + alias + " left join " + alias
+				+ ".modeloCamion mc " + " left join mc.tiposDeBasura t left join t.pk pk");
 
 		// muestra solo los trabajadores de alta, los de baja no
 		if (mostrarSoloActivos) {
@@ -343,8 +343,8 @@ public class CamionDaoHibernate extends GenericHibernateDAOImpl<Camion, Long> im
 		String alias = "c";
 		// StringBuilder hql = new StringBuilder("Select " + alias + " FROM
 		// Camion " + alias);
-		StringBuilder hql = new StringBuilder("Select " + alias + " FROM Camion " + alias + " inner join " + alias
-				+ ".modeloCamion mc " + " inner join mc.tiposDeBasura t inner join t.pk pk");
+		StringBuilder hql = new StringBuilder("Select " + alias + " FROM Camion " + alias + " left join " + alias
+				+ ".modeloCamion mc " + " left join mc.tiposDeBasura t left join t.pk pk");
 
 		/* Palabras claves */
 		for (int i = 0; i < palabras.length; i++) {
@@ -437,11 +437,9 @@ public class CamionDaoHibernate extends GenericHibernateDAOImpl<Camion, Long> im
 		Page<Camion> page = new PageImpl<Camion>(camiones, pageable, camiones.size());
 		List<TipoDeBasura> tiposAux = tipos != null ? tipos : new ArrayList<TipoDeBasura>();
 		String alias = "c";
-		// StringBuilder hql = new StringBuilder("Select " + alias + " FROM
-		// Camion " + alias);
 
-		StringBuilder hql = new StringBuilder("Select distinct " + alias + " FROM CamionModelo " + alias
-				+ " inner join " + alias + ".tiposDeBasura t inner join t.pk pk");
+		StringBuilder hql = new StringBuilder("Select distinct " + alias + " FROM Camion " + alias
+				+ " left join c.modeloCamion m  left join m.tiposDeBasura t left join t.pk pk");
 
 		/* Palabras claves */
 		for (int i = 0; i < palabras.length; i++) {
@@ -459,9 +457,9 @@ public class CamionDaoHibernate extends GenericHibernateDAOImpl<Camion, Long> im
 				hql.append(" WHERE " + alias + ".activo = :activo ");
 
 		if ((palabras.length > 0 || mostrarSoloActivos) && modelo != null) {
-			hql.append(" AND " + alias + ".modeloCamion = :modelo");
+			hql.append(" AND m = :modelo");
 		} else if (modelo != null) {
-			hql.append(" WHERE " + alias + ".modeloCamion = :modelo");
+			hql.append(" WHERE m = :modelo");
 		}
 
 		if ((palabras.length > 0 || mostrarSoloActivos || modelo != null) && mostrarSoloCamionesDeAlta) {

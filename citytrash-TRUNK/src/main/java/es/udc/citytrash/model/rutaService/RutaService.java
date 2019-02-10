@@ -170,7 +170,7 @@ public interface RutaService {
 	/**
 	 * Crear alerta ruta sin recolectores asignados
 	 */
-	void crearAlertaRutaSinRecolectoresAsignado();
+	void crearAlertaRutaSinRecolectoresAsignados();
 
 	/**
 	 * Crar alerta ruta sin conductor asignado

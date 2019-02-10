@@ -136,9 +136,13 @@ public class TrabajadorServiceImpl implements TrabajadorService, UserDetailsServ
 
 		fechaExpiracionToken.add(Calendar.HOUR, 24);
 		logger.info("fecha de expiracion (registrar usuario" + fechaExpiracionToken.toString());
+		logger.info("user get tipo antes");
+		logger.info("user get tipo", user.getTipo());
+		logger.info("user get tipo después");
 		switch (user.getTipo()) {
 		/* ADMINISTRADOR */
 		case ADMIN:
+			logger.info("usuario administrador");
 			trabajador = new Administrador(user.getDocumento(), user.getNombre(), user.getApellidos(),
 					dateToCalendar(user.getFechaNacimiento()), user.getEmail(), token, fechaExpiracionToken,
 					user.getIdioma(), user.getVia(),
@@ -150,6 +154,7 @@ public class TrabajadorServiceImpl implements TrabajadorService, UserDetailsServ
 			break;
 		/* CONDUCTOR */
 		case CONDUCT:
+			logger.info("usuario conductor antes");
 			trabajador = new Conductor(user.getDocumento(), user.getNombre(), user.getApellidos(),
 					dateToCalendar(user.getFechaNacimiento()), user.getEmail(), token, fechaExpiracionToken,
 					user.getIdioma(), user.getVia(),
@@ -158,9 +163,11 @@ public class TrabajadorServiceImpl implements TrabajadorService, UserDetailsServ
 					user.getProvincia(), user.getLocalidad(),
 					esBigDecimal(user.getCp()) ? truncateToBigDecimaRouding(user.getCp()) : null,
 					user.getRestoDireccion());
+			logger.info("usuario conductor despues");
 			break;
 		/* default es RECOLECTOR */
 		default:
+			logger.info("usuario recolector por defecto");
 			trabajador = new Recolector(user.getDocumento(), user.getNombre(), user.getApellidos(),
 					dateToCalendar(user.getFechaNacimiento()), user.getEmail(), token, fechaExpiracionToken,
 					user.getIdioma(), user.getVia(),
@@ -171,11 +178,13 @@ public class TrabajadorServiceImpl implements TrabajadorService, UserDetailsServ
 					user.getRestoDireccion());
 		}
 		/* By default you can only add a telephone */
-		if (user.getTelefono().trim().length() > 0) {
-			Telefono telefono = new Telefono();
-			telefono.setTipo(TipoTelefono.HOME);
-			telefono.setNumero(user.getTelefono());
-			trabajador.addTelefono(telefono);
+		if (user.getTelefono() != null) {
+			if (user.getTelefono().trim().length() > 0) {
+				Telefono telefono = new Telefono();
+				telefono.setTipo(TipoTelefono.HOME);
+				telefono.setNumero(user.getTelefono());
+				trabajador.addTelefono(telefono);
+			}
 		}
 
 		/* Check if the email and the documentoId are not duplicate */
@@ -194,6 +203,7 @@ public class TrabajadorServiceImpl implements TrabajadorService, UserDetailsServ
 			logger.debug("Register documento no duplicado");
 		}
 
+		logger.info("trabajador => " + trabajador.toString());
 		trabajadorProfileDao.guardar(trabajador);
 		return trabajador;
 	}
@@ -307,7 +317,7 @@ public class TrabajadorServiceImpl implements TrabajadorService, UserDetailsServ
 	public Trabajador buscarTrabajador(long id) throws InstanceNotFoundException {
 		Trabajador t = trabajadorProfileDao.buscarById(id);
 		logger.info("trabajador =>" + t.toString());
-		
+
 		return t;
 	}
 
@@ -709,6 +719,8 @@ public class TrabajadorServiceImpl implements TrabajadorService, UserDetailsServ
 	}
 
 	private static boolean esInteger(String cadena) {
+		if (cadena == null)
+			return false;
 		try {
 			Integer.parseInt(cadena);
 			return true;
@@ -720,6 +732,8 @@ public class TrabajadorServiceImpl implements TrabajadorService, UserDetailsServ
 	}
 
 	private static boolean esBigDecimal(String cadena) {
+		if (cadena == null)
+			return false;
 		try {
 			Double.parseDouble(cadena);
 			BigDecimal bigDecimal = new BigDecimal(cadena);
